@@ -1,6 +1,6 @@
 {
   "extends": "./tsconfig.json",
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "../../libs/common/src/models/user-response.ts"],
   "compilerOptions": {
     "types": ["jest", "node"]
   }

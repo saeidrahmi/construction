@@ -8,6 +8,9 @@ tmp
 # dependencies
 node_modules
 
+
+db-data/mysql.sock
+
 # IDEs and editors
 /.idea
 .project

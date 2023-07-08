@@ -1,0 +1,23 @@
+<div *ngIf="!loading" class="container mt-5 w-50">
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="login()">
+        <div class="form-group">
+            <label for="userId">User ID</label>
+            <input type="text" class="form-control" id="userId" formControlName="userId">
+            <div *ngIf="loginForm.get('userId')?.hasError('required') && (loginForm.dirty || loginForm.get('userId')?.touched)"
+                class="text-danger">
+                User ID is required.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" id="password" formControlName="password">
+            <div *ngIf="loginForm.get('password')?.hasError('required') && (loginForm.dirty || loginForm.get('password')?.touched)"
+                class="text-danger">
+                password is required.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+<app-spinner [isLoading]="loading"></app-spinner>
