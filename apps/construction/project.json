@@ -29,12 +29,19 @@
           "@angular/material/prebuilt-themes/indigo-pink.css",
           "apps/construction/src/styles.scss",
           "bootstrap/dist/css/bootstrap.min.css"
+<<<<<<< HEAD
            
+=======
+>>>>>>> 5b702b8dfad85bd404726b5325675085c5be2aca
         ],
         "scripts": [
           "bootstrap/dist/js/bootstrap.bundle.min.js",
           "@popperjs/core/dist/umd/popper.min.js" 
+<<<<<<< HEAD
       ] 
+=======
+      ]
+>>>>>>> 5b702b8dfad85bd404726b5325675085c5be2aca
       },
       "configurations": {
         "production": {
