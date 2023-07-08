@@ -12,20 +12,13 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from '../services/storage.service';
 import { Router } from '@angular/router';
-<<<<<<< HEAD
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { delay, finalize, tap } from 'rxjs';
-=======
->>>>>>> 5b702b8dfad85bd404726b5325675085c5be2aca
 
 @Component({
   selector: 'construction-login',
   standalone: true,
-<<<<<<< HEAD
   imports: [CommonModule, ReactiveFormsModule, SpinnerComponent],
-=======
-  imports: [CommonModule, ReactiveFormsModule],
->>>>>>> 5b702b8dfad85bd404726b5325675085c5be2aca
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
