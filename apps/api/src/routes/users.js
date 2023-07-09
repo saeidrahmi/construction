@@ -4,10 +4,55 @@ const connectToDatabase = require('../db');
 
 const CryptoJS = require('crypto-js');
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
-//import { UserResponseInterface } from '../../../../libs/common/src/models/user-response';
+const passport = require('passport');
+
+const jwt = require('jsonwebtoken');
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const env = new EnvironmentInfo();
+const secretKey = env.secretKey();
+const passportOpts = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: env.secretKey(),
+};
+
+passport.use(
+  new JwtStrategy(passportOpts, function (jwtPayload, done) {
+    const expirationDate = new Date(jwtPayload.exp * 1000);
+    if (expirationDate < new Date()) {
+      return done(null, false);
+    }
+    done(null, jwtPayload);
+  })
+);
+
+passport.serializeUser(function (user, done) {
+  done(null, user.username);
+});
+
+function verifyToken(req, res, next) {
+  if (!req.headers.authorization) {
+    return res.status(401).send({ message: 'Unauthorized request' });
+  }
+  let token = req.headers.authorization.split(' ')[1];
+  if (token === 'null') {
+    return res.status(401).send({ message: 'Unauthorized request' });
+  }
+  jwt.verify(token, secretKey, function (err, decoded) {
+    if (!decoded) {
+      return res.status(401).send({ message: 'Unauthorized request' });
+    }
+    if (err) {
+      res.status(401).send({
+        message: 'Unauthorized! Access Token was expired!',
+      });
+    } else {
+      next();
+    }
+  });
+}
+
 function decryptCredentials(encryptedCredentials) {
-  let env = new EnvironmentInfo();
-  const secretKey = env.secretKey();
   // Decode the Base64 encoded encrypted credentials
   const encodedCredentials = Buffer.from(
     encryptedCredentials,
@@ -30,8 +75,6 @@ function decryptCredentials(encryptedCredentials) {
   return { userId: decryptedUsername, password: decryptedPassword };
 }
 function decryptItem(item) {
-  let env = new EnvironmentInfo();
-  const secretKey = env.secretKey();
   // Decode the Base64 encoded encrypted credentials
 
   // Decrypt the username and password using AES decryption with the secret key
@@ -47,14 +90,12 @@ router.get('/', async (req, res) => {
 
     // Execute a query
     const [rows] = await connection.execute('SELECT * FROM users');
-    console.log('Query results:', rows);
 
     // Close the connection
     await connection.end();
 
     res.json(rows);
   } catch (error) {
-    console.error('Error performing the query:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -80,13 +121,15 @@ router.post('/login', async (req, res) => {
     } else {
       let user = {
         userId: rows[0].userId,
-        jwtToken: rows[0].jwtToken,
         role: rows[0].role,
         firstName: rows[0].firstName,
         lastName: rows[0].lastName,
-        registerdDate: rows[0].registerdDate,
+        registeredDate: rows[0].registeredDate,
       };
+      let payload = { subject: user };
 
+      let token = jwt.sign(payload, secretKey, { expiresIn: 3600 });
+      Object.assign(user, { jwtToken: token });
       res.status(200).json(user);
     }
   } catch (error) {

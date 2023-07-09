@@ -4,5 +4,5 @@ export interface UserApiResponseInterface {
   role?: string;
   firstName?: string;
   lastName?: string;
-  registerdDate?: string;
+  registeredDate?: Date | null | undefined;
 }

@@ -71,6 +71,7 @@ export class StorageService {
       error: '',
       firstName: '',
       lastName: '',
+      registeredDate: null,
     };
     this.store.update((state) => {
       return { ...state, user: user };
@@ -86,6 +87,7 @@ export class StorageService {
       error: '',
       firstName: response?.firstName,
       lastName: response?.lastName,
+      registeredDate: response?.registeredDate,
     };
     this.store.update((state) => {
       return { ...state, user: user };
@@ -101,6 +103,7 @@ export class StorageService {
       error: error,
       firstName: '',
       lastName: '',
+      registeredDate: null,
     };
     this.store.update((state) => {
       return { ...state, user: user };
@@ -117,6 +120,7 @@ export class StorageService {
         error: '',
         firstName: '',
         lastName: '',
+        registeredDate: null,
       },
     };
   }
