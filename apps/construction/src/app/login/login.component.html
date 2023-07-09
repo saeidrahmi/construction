@@ -1,9 +1,11 @@
-<div *ngIf="!loading" class="container mt-5 w-50">
-    <h2>Login</h2>
-    <form [formGroup]="loginForm" (ngSubmit)="login()">
+<div class="container mt-5 w-50 border p-3 border-1">
+    <h2  >Login</h2>
+    <hr>
+    <api-server-error *ngIf="loginError()" [error]="loginError()" /> 
+    <form [formGroup]="loginForm"  >
         <div class="form-group">
             <label for="userId">User ID</label>
-            <input type="text" class="form-control" id="userId" formControlName="userId">
+            <input type="text" class="form-control" id="userId" formControlName="userId" >
             <div *ngIf="loginForm.get('userId')?.hasError('required') && (loginForm.dirty || loginForm.get('userId')?.touched)"
                 class="text-danger">
                 User ID is required.
@@ -17,7 +19,8 @@
                 password is required.
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit" [disabled]="loginForm.invalid" (click)="login()" class="btn btn-primary my-2">Login</button>
+        <button (click)="reset()" class="btn btn-primary my-2 mx-2">Reset</button>
     </form>
 </div>
-<app-spinner [isLoading]="loading"></app-spinner>
+ 

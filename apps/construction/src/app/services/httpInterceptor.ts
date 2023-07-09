@@ -8,33 +8,34 @@ import {
 import { inject } from '@angular/core';
 import { Observable, catchError, throwError } from 'rxjs';
 import { StorageService } from './storage.service';
+import { ApiService } from './api.service';
 
 export const httpInterceptor: HttpInterceptorFn = (
   req: HttpRequest<unknown>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<unknown>> => {
   const storageService = inject(StorageService);
+  const apiService = inject(ApiService);
   let token = storageService.getJwtToken();
-  if (token()) {
+  if (!!token()) {
     req = req.clone({
       setHeaders: {
         Authorization: 'bearer ' + token,
       },
     });
   }
-  console.log('interceptor token', token(), 'req', req);
-  // return next(req);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      let erroMessage = '';
+      let errorMessage = '';
       if (error.error instanceof ErrorEvent) {
-        erroMessage = `Client Side Error: ${error.error.message}`;
+        errorMessage = `Client Side Error: ${error.error.message}`;
       } else {
-        erroMessage = getErrorMessage(error);
+        errorMessage = getErrorMessage(error);
+        if (error.status == 401) apiService.logout().subscribe();
       }
-      console.log('interceptor error', erroMessage);
-      return throwError(() => new Error(erroMessage));
+      console.log('interceptor error', errorMessage);
+      return throwError(() => new Error(errorMessage));
     })
   );
 };
@@ -42,36 +43,16 @@ export const httpInterceptor: HttpInterceptorFn = (
 const getErrorMessage = (error: HttpErrorResponse): string => {
   switch (error.status) {
     case 400: {
-      // this.userService.logout();
-
       return 'Bad Request: The request was unacceptable, often due to missing a required parameter. ';
     }
     case 401: {
-      // this.userService.logout();
-
-      return (
-        'Unauthorized/unauthenticated access to server. ' + error.error.message
-      );
-
-      //clean up and logout user and route to login page
+      return 'Unauthorized/unauthenticated access to server.';
     }
     case 402: {
-      //  this.userService.logout();
-
-      return (
-        'Request Failed: The parameters were valid but the request failed. ' +
-        error.error.message
-      );
-
-      //clean up and logout user and route to login page
+      return 'Request Failed: The parameters were valid but the request failed. ';
     }
     case 403: {
-      //this.userService.logout();
-
-      return (
-        'Forbiden access to resource: the API key does not have permissions to perform the request. ' +
-        error.error.message
-      );
+      return 'Forbiden access to resource: the API key does not have permissions to perform the request. ';
     }
     case 404: {
       return 'Resouce not found.';
@@ -90,10 +71,9 @@ const getErrorMessage = (error: HttpErrorResponse): string => {
       return 'Internal server error/exception ';
     }
     case 503: {
-      return 'Service Unavailable ' + error.error.message;
+      return 'Service Unavailable ';
     }
     default: {
-      console.log(error);
       return 'Unknown error ';
     }
   }

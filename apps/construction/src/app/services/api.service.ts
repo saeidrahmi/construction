@@ -1,6 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, delay, finalize, map, of, tap } from 'rxjs';
+import {
+  Observable,
+  catchError,
+  delay,
+  finalize,
+  map,
+  of,
+  take,
+  tap,
+} from 'rxjs';
 import { LoginCredential } from '../models/login';
 import { AES } from 'crypto-js';
 import { EnvironmentInfo } from '../../../../../libs/common/src/models/common';
@@ -8,13 +17,16 @@ import { UserInterface } from '../models/user';
 import { StorageService } from './storage.service';
 import { UserApiResponseInterface } from '../../../../../libs/common/src/models/user-response';
 import { Router } from '@angular/router';
+import { UserRoutingService } from './user-routing.service';
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
   env: EnvironmentInfo = new EnvironmentInfo();
   storageService = inject(StorageService);
+  user = this.storageService.getUser();
   router = inject(Router);
+  userRouting = inject(UserRoutingService);
   backendApiUrl: string = `${this.env.apiUrl()}:${this.env.apiPort()}`;
   constructor(private httpClient: HttpClient) {}
   encryptItem(item: string): string {
@@ -33,12 +45,11 @@ export class ApiService {
     return btoa(encryptedCredentials); // Encode the encrypted credentials using Base64
   }
   login(credential: LoginCredential): Observable<UserApiResponseInterface> {
-    console.log(credential, 'login');
     const encryptedCredentials = this.encryptCredentials(
       credential?.userId,
       credential?.password
     );
-    console.log(encryptedCredentials, 'encrypted');
+
     return this.httpClient
       .post(
         this.backendApiUrl + '/users/login',
@@ -47,41 +58,41 @@ export class ApiService {
       )
       .pipe(
         tap(() => {
-          //spinner service show
+          this.storageService.updateIsLoading(true);
         }),
+        take(1),
+        delay(200),
         finalize(() => {
-          // spinner service hide
+          this.storageService.updateIsLoading(false);
         }),
         map((response: UserApiResponseInterface) => {
           this.storageService.updateStateLoginSuccessful(response);
+          this.userRouting.navigateToUserMainPage();
         }),
         catchError((error) => {
           this.storageService.updateStateLoginFailure(error?.message);
-          return of(error);
+          return of(error.message);
         })
       );
   }
-  logout(userId: string): Observable<any> {
-    // const encryptedCredentials = this.encryptCredentials(
-    //   credential?.userId,
-    //   credential?.password
-    // );
-
-    return this.httpClient
-      .post(
-        this.backendApiUrl + '/users/logout',
-
-        { userID: userId }
-      )
-      .pipe(
-        tap(() => {
-          //spinner service show
-        }),
-        finalize(() => {
-          // spinner service hide
-          this.storageService.updateStateLogoutSuccessful();
-          this.router.navigate(['/login']);
+  logout(): Observable<any> {
+    if (this.user()?.userId)
+      return this.httpClient
+        .post(this.backendApiUrl + '/users/logout', {
+          userId: this.encryptItem(this.user()?.userId as string),
         })
-      );
+        .pipe(
+          tap(() => {
+            this.storageService.updateIsLoading(true);
+          }),
+          take(1),
+          delay(200),
+          finalize(() => {
+            this.storageService.updateStateLogoutSuccessful();
+            this.storageService.updateIsLoading(false);
+            this.router.navigate(['/login']);
+          })
+        );
+    else return of(null);
   }
 }

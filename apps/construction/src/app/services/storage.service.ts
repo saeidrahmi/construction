@@ -34,19 +34,37 @@ export class StorageService {
   isUserLoggedIn(): Signal<boolean | undefined> {
     return computed(() => this.store()?.user?.loggedIn);
   }
+  isLoading(): Signal<boolean | undefined> {
+    return computed(() => this.store()?.isLoading);
+  }
   getJwtToken(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.jwtToken);
   }
+  loginError(): Signal<string | undefined> {
+    return computed(() => this.store()?.user?.error);
+  }
+
   getUser(): Signal<UserInterface> {
     return computed(() => this.store()?.user);
   }
   saveStore() {
     sessionStorage.setItem(this.stateSessionItem, JSON.stringify(this.store()));
   }
+  updateIsLoading(flag: boolean) {
+    this.store.update((state) => {
+      return { ...state, isLoading: flag };
+    });
+    this.saveStore();
+  }
+  updateLoginError() {
+    this.store.update((state) => {
+      return { ...state, user: { ...state.user, error: '' } };
+    });
+    this.saveStore();
+  }
   updateStateLogoutSuccessful() {
     const user: UserInterface = {
       loggedIn: false,
-      loaded: true,
       userId: '',
       jwtToken: '',
       role: '',
@@ -62,7 +80,6 @@ export class StorageService {
   updateStateLoginSuccessful(response: UserApiResponseInterface) {
     const user: UserInterface = {
       loggedIn: true,
-      loaded: true,
       userId: response?.userId,
       jwtToken: response?.jwtToken,
       role: response?.userId,
@@ -78,7 +95,6 @@ export class StorageService {
   updateStateLoginFailure(error: string) {
     const user: UserInterface = {
       loggedIn: false,
-      loaded: true,
       userId: '',
       jwtToken: '',
       role: '',
@@ -95,7 +111,6 @@ export class StorageService {
     return {
       user: {
         loggedIn: false,
-        loaded: false,
         userId: '',
         jwtToken: '',
         role: '',

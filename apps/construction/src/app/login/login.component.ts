@@ -13,12 +13,19 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from '../services/storage.service';
 import { Router } from '@angular/router';
 import { SpinnerComponent } from '../spinner/spinner.component';
-import { delay, finalize, tap } from 'rxjs';
+import { catchError, delay, finalize, of, tap } from 'rxjs';
+import { UserRoutingService } from '../services/user-routing.service';
+import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
 
 @Component({
   selector: 'construction-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SpinnerComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    SpinnerComponent,
+    ApiServerErrorComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
@@ -28,11 +35,13 @@ export class LoginComponent {
   fb = inject(FormBuilder);
   storageService = inject(StorageService);
   isLoggedIn = this.storageService.isUserLoggedIn();
+  loginError = this.storageService.loginError();
   loginForm: FormGroup;
   destroyRef = inject(DestroyRef);
-  loading: boolean = false;
+  userRouting = inject(UserRoutingService);
+  serverError: string = '';
   constructor() {
-    if (this.isLoggedIn()) this.router.navigate(['/']);
+    if (this.isLoggedIn()) this.userRouting.navigateToUserMainPage();
     this.loginForm = this.fb.nonNullable.group({
       userId: new FormControl<string>('admin', [Validators.required]),
       password: new FormControl<string>('admin', [Validators.required]),
@@ -40,18 +49,14 @@ export class LoginComponent {
   }
 
   login() {
-    this.apiService
-      .login(this.loginForm.value)
-      .pipe(
-        tap(() => {
-          this.loading = true;
-        }),
-        delay(1000),
-        finalize(() => {
-          this.loading = false;
-        }),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe();
+    if (this.loginForm.valid)
+      this.apiService
+        .login(this.loginForm.value)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe();
+  }
+  reset() {
+    this.loginForm.reset();
+    this.storageService.updateLoginError();
   }
 }

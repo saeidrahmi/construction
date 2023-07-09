@@ -29,7 +29,18 @@ function decryptCredentials(encryptedCredentials) {
 
   return { userId: decryptedUsername, password: decryptedPassword };
 }
+function decryptItem(item) {
+  let env = new EnvironmentInfo();
+  const secretKey = env.secretKey();
+  // Decode the Base64 encoded encrypted credentials
 
+  // Decrypt the username and password using AES decryption with the secret key
+  const decryptedItem = CryptoJS.AES.decrypt(item, secretKey).toString(
+    CryptoJS.enc.Utf8
+  );
+
+  return decryptedItem;
+}
 router.get('/', async (req, res) => {
   try {
     const connection = await connectToDatabase();
@@ -75,6 +86,7 @@ router.post('/login', async (req, res) => {
         lastName: rows[0].lastName,
         registerdDate: rows[0].registerdDate,
       };
+
       res.status(200).json(user);
     }
   } catch (error) {
@@ -82,6 +94,9 @@ router.post('/login', async (req, res) => {
   }
 });
 router.post('/logout', async (req, res) => {
+  // decrypt credentials
+  const userId = decryptItem(req.body.userId);
+
   res.status(200).json();
 });
 

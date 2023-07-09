@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { StorageService } from '../services/storage.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../services/api.service';
@@ -8,7 +8,7 @@ import { ApiService } from '../services/api.service';
 @Component({
   selector: 'construction-header',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
@@ -20,7 +20,7 @@ export class HeaderComponent {
   destroyRef = inject(DestroyRef);
   logout() {
     this.apiService
-      .logout('admin')
+      .logout()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
   }
