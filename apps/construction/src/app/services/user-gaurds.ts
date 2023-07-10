@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
 import { StorageService } from './storage.service';
-import { Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 
-export const isUserAdmin = (): boolean => {
+export const isUserAdmin: CanActivateFn = () => {
   const storageService = inject(StorageService);
   const router = inject(Router);
   const user = storageService.getUser();

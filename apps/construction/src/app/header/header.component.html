@@ -30,10 +30,11 @@
             <a class="nav-link " (click)="logout()" *ngIf="isLoggedIn()" >Logout</a>
           </li>
         </ul>
-        <form class="d-flex" role="search">
+          <button class="btn btn-outline-success" (click)="changeThemeMode()">{{theme()=='dark' ? 'Light Theme' : 'Dark Theme'}}</button>
+        <!-- <form class="d-flex" role="search">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success" type="submit">Search</button>
-        </form>
+        </form> -->
       </div>
     </div>
   </nav>

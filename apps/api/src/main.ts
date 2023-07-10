@@ -2,12 +2,12 @@
  * This is not a production server yet!
  * This is only a minimal backend to get started.
  */
-
 import express from 'express';
 const bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 import * as path from 'path';
 const pool = require('./db');
+var logger = require('morgan');
 import { EnvironmentInfo } from '../../../libs/common/src/models/common';
 const usersRouter = require('./routes/users');
 
@@ -33,6 +33,7 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
+app.use(logger('dev'));
 app.use(cookieParser());
 // Parse JSON request bodies
 app.use(bodyParser.json());
@@ -53,11 +54,11 @@ let env: EnvironmentInfo = new EnvironmentInfo();
 const port = env.apiPort();
 const url = env.apiUrl();
 const server = app.listen(port, () => {
-  console.log(`Listening at ${url}:${port}/users`);
+  console.log(`Listening at ${url}:${port}`);
   // Check database connection
   connectToDatabase()
     .then(() => {
-      console.log('Databse connection Ok');
+      console.log('Database connection Ok');
     })
     .catch((error) => {
       console.error('Error connecting to the database:', error);

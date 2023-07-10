@@ -1,5 +1,7 @@
 export class EnvironmentInfo {
-  _secretKey = 'your-secret-key';
+  _multiLoginAllowed = false;
+  _webSecretKey = 'web-secret-key';
+  _dbSecretKey = 'db-secret-key';
   //backend info
   private _apiUrl: string = 'http://localhost';
   private _apiPort: number = 3000;
@@ -10,8 +12,14 @@ export class EnvironmentInfo {
   private _dbPassword: string = 'saeid';
   private _dbDatabseName: string = 'construction';
   constructor() {}
-  public secretKey() {
-    return this._secretKey;
+  public multiLoginAllowed() {
+    return this._multiLoginAllowed;
+  }
+  public webSecretKey() {
+    return this._webSecretKey;
+  }
+  public dbSecretKey() {
+    return this._dbSecretKey;
   }
   public apiUrl() {
     return this._apiUrl;

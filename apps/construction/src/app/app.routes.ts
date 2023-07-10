@@ -1,5 +1,4 @@
 import { Route } from '@angular/router';
-import { LoginComponent } from './login/login.component';
 import { isUserAdmin } from './services/user-gaurds';
 
 export const appRoutes: Route[] = [
@@ -15,7 +14,7 @@ export const appRoutes: Route[] = [
   },
   {
     path: 'admin',
-    canLoad: [() => isUserAdmin()],
+    canActivate: [isUserAdmin],
     loadChildren: () =>
       import('./admin/admin.module').then((mod) => mod.AdminModule),
   },

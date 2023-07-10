@@ -15,6 +15,7 @@ import { ApiService } from '../services/api.service';
 export class HeaderComponent {
   storageService = inject(StorageService);
   isLoggedIn = this.storageService.isUserLoggedIn();
+  theme = this.storageService.getTheme();
   apiService = inject(ApiService);
   router = inject(Router);
   destroyRef = inject(DestroyRef);
@@ -23,5 +24,9 @@ export class HeaderComponent {
       .logout()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe();
+  }
+  changeThemeMode() {
+    const theme = this.theme() === 'dark' ? 'light' : 'dark';
+    this.storageService.updateTheme(theme);
   }
 }

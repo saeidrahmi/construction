@@ -1,19 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const connectToDatabase = require('../db');
-
 const CryptoJS = require('crypto-js');
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
 const passport = require('passport');
-
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const env = new EnvironmentInfo();
-const secretKey = env.secretKey();
+const webSecretKey = env.webSecretKey();
+const dbSecretKey = env.dbSecretKey();
 const passportOpts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: env.secretKey(),
+  secretOrKey: env.webSecretKey(),
 };
 
 passport.use(
@@ -26,9 +25,9 @@ passport.use(
   })
 );
 
-passport.serializeUser(function (user, done) {
-  done(null, user.username);
-});
+// passport.serializeUser(function (user, done) {
+//   done(null, user.username);
+// });
 
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
@@ -38,7 +37,7 @@ function verifyToken(req, res, next) {
   if (token === 'null') {
     return res.status(401).send({ message: 'Unauthorized request' });
   }
-  jwt.verify(token, secretKey, function (err, decoded) {
+  jwt.verify(token, webSecretKey, function (err, decoded) {
     if (!decoded) {
       return res.status(401).send({ message: 'Unauthorized request' });
     }
@@ -65,16 +64,20 @@ function decryptCredentials(encryptedCredentials) {
   // Decrypt the username and password using AES decryption with the secret key
   const decryptedUsername = CryptoJS.AES.decrypt(
     encryptedUsername,
-    secretKey
+    webSecretKey
   ).toString(CryptoJS.enc.Utf8);
   const decryptedPassword = CryptoJS.AES.decrypt(
     encryptedPassword,
-    secretKey
+    webSecretKey
   ).toString(CryptoJS.enc.Utf8);
 
   return { userId: decryptedUsername, password: decryptedPassword };
 }
-function decryptItem(item) {
+function encryptItem(item, secretKey) {
+  const encryptedItem = CryptoJS.AES.encrypt(item, secretKey).toString();
+  return encryptedItem;
+}
+function decryptItem(item, secretKey) {
   // Decode the Base64 encoded encrypted credentials
 
   // Decrypt the username and password using AES decryption with the secret key
@@ -84,63 +87,103 @@ function decryptItem(item) {
 
   return decryptedItem;
 }
-router.get('/', async (req, res) => {
+
+const executeQuery = async (query, params = []) => {
+  const connection = await connectToDatabase();
   try {
-    const connection = await connectToDatabase();
-
-    // Execute a query
-    const [rows] = await connection.execute('SELECT * FROM users');
-
-    // Close the connection
-    await connection.end();
-
-    res.json(rows);
+    const [result] = await connection.execute(query, params);
+    return result;
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    throw error;
+  } finally {
+    connection.end();
   }
-});
+};
+
 router.post('/login', async (req, res) => {
   try {
-    const connection = await connectToDatabase();
+    // const enc = encryptItem('admin', dbSecretKey);
+    // console.log('admin encrypted', enc, ' ,', decryptItem(enc, dbSecretKey));
 
     const { credentials } = req.body;
-
-    // decrypt credentials
+    // Decrypt credentials
     const { userId, password } = decryptCredentials(credentials);
+    // Execute the select query
 
-    // Execute a query
-    const [rows] = await connection.execute(
-      'SELECT * FROM users WHERE userId = ? AND password = ?',
-      [userId, password]
-    );
-    // Close the connection
-    await connection.end();
+    const rows = await executeQuery('SELECT * FROM users WHERE userId = ? ', [
+      userId,
+    ]);
     if (rows.length === 0) {
       // User not found or incorrect credentials
-      return res.status(401).json({ error: 'Invalid userId or password' });
+      return res
+        .status(401)
+        .json({ errorMessage: 'Invalid userId or password' });
+    } else if (password != decryptItem(rows[0].password, dbSecretKey)) {
+      return res
+        .status(401)
+        .json({ errorMessage: 'Invalid userId or password.' });
+    } else if (env.multiLoginAllowed() == false && rows[0].loggedIn) {
+      return res
+        .status(401)
+        .json({ errorMessage: 'User is already logged-in.' });
+    } else if (!rows[0].registered) {
+      return res.status(401).json({ errorMessage: 'User is not registered.' });
+    } else if (!rows[0].active) {
+      return res.status(401).json({
+        errorMessage: 'User is not active. Please call to activate your user.',
+      });
     } else {
-      let user = {
+      const user = {
         userId: rows[0].userId,
         role: rows[0].role,
         firstName: rows[0].firstName,
         lastName: rows[0].lastName,
         registeredDate: rows[0].registeredDate,
+        loggedIn: rows[0].loggedIn,
+        active: rows[0].active,
+        registered: rows[0].registered,
+        lastLoginDate: new Date(),
       };
-      let payload = { subject: user };
-
-      let token = jwt.sign(payload, secretKey, { expiresIn: 3600 });
+      const payload = { subject: user };
+      const token = jwt.sign(payload, webSecretKey, { expiresIn: 3600 });
       Object.assign(user, { jwtToken: token });
-      res.status(200).json(user);
+
+      // Update user login info
+      const updateResult = await executeQuery(
+        'UPDATE users SET loginCount = loginCount + 1, jwtToken = ?, loggedIn = ?, lastLoginDate = ? WHERE userId = ?',
+        [token, 1, new Date(), userId]
+      );
+      if (updateResult.affectedRows === 0) {
+        // User not found or update operation failed
+        return res
+          .status(401)
+          .json({ errorMessage: 'Login Update operation failed.' });
+      }
+
+      // Send the user details and token
+      return res.status(200).json(user);
     }
   } catch (error) {
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ errorMessage: 'Internal Server Error' });
   }
 });
+
 router.post('/logout', async (req, res) => {
   // decrypt credentials
-  const userId = decryptItem(req.body.userId);
-
-  res.status(200).json();
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    // Execute a query
+    const result = await executeQuery(
+      'UPDATE  users SET jwtToken = ?, loggedIn = ? WHERE userId = ?',
+      ['', 0, userId]
+    );
+    if (result.affectedRows === 0) {
+      // User not found or incorrect credentials
+      return res.status(401).json({ errorMessage: 'Logout operation failed.' });
+    } else res.status(200).json();
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error updating user' });
+  }
 });
 
 module.exports = router;

@@ -1,0 +1,39 @@
+version: '3'
+services:
+  web-app:
+    extends:
+      file: docker-compose.base.yml
+      service: nx-app-base
+    command: npm run web-app
+    restart: always
+    ports:
+      - 80:80
+  api: 
+    extends:
+      file: docker-compose.base.yml
+      service: nx-app-base
+    command: npm run api
+    restart: always
+    ports:
+      - 3000:3000
+volumes:
+  mono-node-modules: null
+
+  # mysql:
+  #   image: mysql:latest
+  #   restart: always
+  #   environment:
+  #     MYSQL_DATABASE: construction
+  #     MYSQL_ROOT_PASSWORD: root
+  #     MYSQL_PASSWORD: saeid
+  #     MYSQL_USER: construction_user
+
+  # nginx:
+  #   image: nginx:latest
+  #   restart: always
+  #   ports:
+  #     - 8080:80
+  #   volumes:
+  #     - ./apps/construction/dist:/usr/share/nginx/html
+  #   depends_on:
+  #     - web-app

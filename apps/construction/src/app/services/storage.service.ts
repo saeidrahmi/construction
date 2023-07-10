@@ -1,4 +1,4 @@
-import { Injectable, Signal, computed, signal } from '@angular/core';
+import { Injectable, Signal, computed, effect, signal } from '@angular/core';
 import { UserInterface } from '../models/user';
 import { StoreInterface } from '../models/store';
 import { UserApiResponseInterface } from '../../../../../libs/common/src/models/user-response';
@@ -29,7 +29,13 @@ export class StorageService {
     );
     if (!!stateObject) {
       this.store.set(stateObject);
-    } else this.saveStore();
+    }
+    effect(() => {
+      this.saveStore();
+    });
+  }
+  getTheme(): Signal<string | undefined> {
+    return computed(() => this.store()?.theme);
   }
   isUserLoggedIn(): Signal<boolean | undefined> {
     return computed(() => this.store()?.user?.loggedIn);
@@ -54,13 +60,16 @@ export class StorageService {
     this.store.update((state) => {
       return { ...state, isLoading: flag };
     });
-    this.saveStore();
   }
   updateLoginError() {
     this.store.update((state) => {
       return { ...state, user: { ...state.user, error: '' } };
     });
-    this.saveStore();
+  }
+  updateTheme(theme: string) {
+    this.store.update((state) => {
+      return { ...state, theme: theme };
+    });
   }
   updateStateLogoutSuccessful() {
     const user: UserInterface = {
@@ -72,11 +81,13 @@ export class StorageService {
       firstName: '',
       lastName: '',
       registeredDate: null,
+      active: false,
+      registered: false,
+      lastLoginDate: null,
     };
     this.store.update((state) => {
       return { ...state, user: user };
     });
-    this.saveStore();
   }
   updateStateLoginSuccessful(response: UserApiResponseInterface) {
     const user: UserInterface = {
@@ -88,11 +99,13 @@ export class StorageService {
       firstName: response?.firstName,
       lastName: response?.lastName,
       registeredDate: response?.registeredDate,
+      active: response?.active,
+      registered: response?.registered,
+      lastLoginDate: response?.lastLoginDate,
     };
     this.store.update((state) => {
       return { ...state, user: user };
     });
-    this.saveStore();
   }
   updateStateLoginFailure(error: string) {
     const user: UserInterface = {
@@ -104,14 +117,17 @@ export class StorageService {
       firstName: '',
       lastName: '',
       registeredDate: null,
+      active: false,
+      registered: false,
+      lastLoginDate: null,
     };
     this.store.update((state) => {
       return { ...state, user: user };
     });
-    this.saveStore();
   }
   initializeStore(): StoreInterface {
     return {
+      theme: 'dark',
       user: {
         loggedIn: false,
         userId: '',
@@ -121,6 +137,9 @@ export class StorageService {
         firstName: '',
         lastName: '',
         registeredDate: null,
+        active: false,
+        registered: false,
+        lastLoginDate: null,
       },
     };
   }
