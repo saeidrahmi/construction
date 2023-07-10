@@ -7,4 +7,7 @@ export interface UserInterface {
   firstName?: string;
   lastName?: string;
   registeredDate?: Date | null | undefined;
+  active?: boolean;
+  registered?: boolean;
+  lastLoginDate?: Date | null | undefined;
 }

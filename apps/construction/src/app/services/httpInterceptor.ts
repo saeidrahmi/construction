@@ -46,7 +46,10 @@ const getErrorMessage = (error: HttpErrorResponse): string => {
       return 'Bad Request: The request was unacceptable, often due to missing a required parameter. ';
     }
     case 401: {
-      return 'Unauthorized/unauthenticated access to server.';
+      return (
+        'Unauthorized/unauthenticated access to server. ' +
+        error.error.errorMessage
+      );
     }
     case 402: {
       return 'Request Failed: The parameters were valid but the request failed. ';
@@ -55,7 +58,7 @@ const getErrorMessage = (error: HttpErrorResponse): string => {
       return 'Forbiden access to resource: the API key does not have permissions to perform the request. ';
     }
     case 404: {
-      return 'Resouce not found.';
+      return 'Resource not found.';
     }
     case 408: {
       return 'Request timed out ';

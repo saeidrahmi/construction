@@ -2,7 +2,13 @@
   "name": "@construction/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "web-app": "nx run construction:serve:development",
+    "api": "nx run api:serve:development",
+    "start": "nx serve",
+    "build": "nx build",
+    "test": "nx test"
+  },
   "private": true,
   "dependencies": {
     "@angular/animations": "~16.1.0",
@@ -24,6 +30,7 @@
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "jsonwebtoken": "^9.0.1",
+    "morgan": "^1.10.0",
     "mysql2": "^3.4.4",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",

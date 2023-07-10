@@ -30,15 +30,15 @@ export class ApiService {
   backendApiUrl: string = `${this.env.apiUrl()}:${this.env.apiPort()}`;
   constructor(private httpClient: HttpClient) {}
   encryptItem(item: string): string {
-    const secretKey = this.env.secretKey();
-    const encryptedItem = AES.encrypt(item, secretKey).toString();
+    const webSecretKey = this.env.webSecretKey();
+    const encryptedItem = AES.encrypt(item, webSecretKey).toString();
     return encryptedItem;
   }
 
   encryptCredentials(userId: string, password: string): string {
-    const secretKey = this.env.secretKey();
-    const encryptedUsername = AES.encrypt(userId, secretKey).toString();
-    const encryptedPassword = AES.encrypt(password, secretKey).toString();
+    const webSecretKey = this.env.webSecretKey();
+    const encryptedUsername = AES.encrypt(userId, webSecretKey).toString();
+    const encryptedPassword = AES.encrypt(password, webSecretKey).toString();
     // Concatenate the encrypted username and password with a delimiter
     const encryptedCredentials = encryptedUsername + ':' + encryptedPassword;
 

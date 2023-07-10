@@ -72,6 +72,9 @@ export class StorageService {
       firstName: '',
       lastName: '',
       registeredDate: null,
+      active: false,
+      registered: false,
+      lastLoginDate: null,
     };
     this.store.update((state) => {
       return { ...state, user: user };
@@ -88,6 +91,9 @@ export class StorageService {
       firstName: response?.firstName,
       lastName: response?.lastName,
       registeredDate: response?.registeredDate,
+      active: response?.active,
+      registered: response?.registered,
+      lastLoginDate: response?.lastLoginDate,
     };
     this.store.update((state) => {
       return { ...state, user: user };
@@ -104,6 +110,9 @@ export class StorageService {
       firstName: '',
       lastName: '',
       registeredDate: null,
+      active: false,
+      registered: false,
+      lastLoginDate: null,
     };
     this.store.update((state) => {
       return { ...state, user: user };
@@ -121,6 +130,9 @@ export class StorageService {
         firstName: '',
         lastName: '',
         registeredDate: null,
+        active: false,
+        registered: false,
+        lastLoginDate: null,
       },
     };
   }
