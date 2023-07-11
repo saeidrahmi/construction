@@ -1,5 +1,5 @@
 export class EnvironmentInfo {
-  _multiLoginAllowed = false;
+  _multiLoginAllowed = true;
   _webSecretKey = 'web-secret-key';
   _dbSecretKey = 'db-secret-key';
   //backend info

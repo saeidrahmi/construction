@@ -7,22 +7,8 @@ import { UserApiResponseInterface } from '../../../../../libs/common/src/models/
   providedIn: 'root',
 })
 export class StorageService {
-  // private usersSig = signal<UserInterface[]>([]);
-  // getUsers(): Signal<UserInterface[]> {
-  //   return computed(this.usersSig);
-  // }
-
-  // addUser(user: UserInterface): void {
-  //   this.usersSig.update((users) => [...users, user]);
-  // }
-
-  // removeUser(userId: string): void {
-  //   const updatedUsers = this.usersSig().filter((user) => user.id !== userId);
-  //   this.usersSig.set(updatedUsers);
-  // }
   private stateSessionItem = 'state';
   private store = signal<StoreInterface>(this.initializeStore());
-
   constructor() {
     const stateObject: StoreInterface | undefined = JSON.parse(
       sessionStorage.getItem(this.stateSessionItem) as string
@@ -35,7 +21,13 @@ export class StorageService {
     });
   }
   getTheme(): Signal<string | undefined> {
-    return computed(() => this.store()?.theme);
+    return computed(() => this.store()?.general?.theme);
+    // try {
+    //   return computed(() => this.store()?.general?.theme);
+    // } catch (e) {
+    //   this.errorMessage = typeof e === 'string' ? e : 'Error';
+    //   return null;
+    // }
   }
   isUserLoggedIn(): Signal<boolean | undefined> {
     return computed(() => this.store()?.user?.loggedIn);
@@ -45,6 +37,11 @@ export class StorageService {
   }
   getJwtToken(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.jwtToken);
+  }
+  getUserName(): Signal<string | undefined> {
+    return computed(
+      () => this.store()?.user?.firstName + ' ' + this.store()?.user?.lastName
+    );
   }
   loginError(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.error);
@@ -68,7 +65,7 @@ export class StorageService {
   }
   updateTheme(theme: string) {
     this.store.update((state) => {
-      return { ...state, theme: theme };
+      return { ...state, general: { ...state.general, theme: theme } };
     });
   }
   updateStateLogoutSuccessful() {
@@ -127,7 +124,7 @@ export class StorageService {
   }
   initializeStore(): StoreInterface {
     return {
-      theme: 'dark',
+      general: { theme: 'dark' },
       user: {
         loggedIn: false,
         userId: '',

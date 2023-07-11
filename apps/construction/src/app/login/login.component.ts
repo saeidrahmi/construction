@@ -1,6 +1,5 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ApiService } from '../services/api.service';
 import {
   FormBuilder,
@@ -13,7 +12,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { StorageService } from '../services/storage.service';
 import { Router } from '@angular/router';
 import { SpinnerComponent } from '../spinner/spinner.component';
-import { catchError, delay, finalize, of, tap } from 'rxjs';
 import { UserRoutingService } from '../services/user-routing.service';
 import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
 

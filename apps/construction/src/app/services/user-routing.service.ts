@@ -12,11 +12,9 @@ export class UserRoutingService {
   user = this.storageService.getUser();
   constructor() {}
   navigateToUserMainPage() {
-    if (
-      this.user() &&
-      this.user().loggedIn &&
-      this.user().role?.toLocaleLowerCase() == 'admin'
-    )
-      this.router.navigate(['/admin']);
+    if (this.user()?.loggedIn) {
+      if (this.user().role?.toLocaleLowerCase() == 'admin')
+        this.router.navigate(['/admin']);
+    } else this.router.navigate(['/']);
   }
 }

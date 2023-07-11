@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { StorageService } from '../services/storage.service';
+import { UserRoutingService } from '../services/user-routing.service';
 
 @Component({
   selector: 'construction-home',
@@ -8,4 +10,11 @@ import { CommonModule } from '@angular/common';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {}
+export class HomeComponent {
+  storageService = inject(StorageService);
+  isLoggedIn = this.storageService.isUserLoggedIn();
+  userRouting = inject(UserRoutingService);
+  constructor() {
+    if (this.isLoggedIn()) this.userRouting.navigateToUserMainPage();
+  }
+}
