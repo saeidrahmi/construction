@@ -1,8 +1,12 @@
 export class EnvironmentInfo {
+<<<<<<< HEAD
   _multiLoginAllowed = true;
   sessionIdle: number = 3600; // one hour
   sessionTimeout: number = 60; // one minute
   sessionPing: number = 20;
+=======
+  _multiLoginAllowed = false;
+>>>>>>> 3b7cdd30001f32926fc04c2bd5f4218e6290ef64
   _webSecretKey = 'web-secret-key';
   _dbSecretKey = 'db-secret-key';
   //backend info
