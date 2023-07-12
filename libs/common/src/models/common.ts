@@ -1,5 +1,8 @@
 export class EnvironmentInfo {
   _multiLoginAllowed = true;
+  sessionIdle: number = 3600; // one hour
+  sessionTimeout: number = 60; // one minute
+  sessionPing: number = 20;
   _webSecretKey = 'web-secret-key';
   _dbSecretKey = 'db-secret-key';
   //backend info

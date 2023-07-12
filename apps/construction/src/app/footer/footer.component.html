@@ -1,1 +1,23 @@
-<p>footer works!</p>
+<div *ngIf="isLoggedIn(); then loggedIn; else public"></div>
+<ng-template #loggedIn>
+    <div class="div">
+        <div class="row"><div class="col">
+            <p class="text-center">© {{ getYear() | date : "yyyy" }} Copyright:
+            <a class="text-reset fw-bold" href="https://ontsoft.com/">ontsoft.com</a></p>
+            
+        </div></div>
+    </div>
+    
+</ng-template>
+<ng-template #public>
+    <div class="div">
+        <div class="row">
+            <div class="col">
+                <p class="text-center">© {{ getYear() | date : "yyyy" }} Copyright:
+                    <a class="text-reset fw-bold" href="https://ontsoft.com/">ontsoft.com</a>
+                </p>
+    
+            </div>
+        </div>
+    </div>
+</ng-template>

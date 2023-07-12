@@ -30,7 +30,9 @@
             <a class="nav-link " (click)="logout()" *ngIf="isLoggedIn()" >Logout</a>
           </li>
         </ul>
-          <button class="btn btn-outline-success" (click)="changeThemeMode()">{{theme()=='dark' ? 'Light Theme' : 'Dark Theme'}}</button>
+       
+       
+          <button class="btn btn-outline-primary" (click)="changeThemeMode()"><i  [ngClass]="theme()=='dark'  ?  'bi bi-brightness-high': 'bi bi-cloud-sun-fill' " ></i> {{theme()=='dark' ? 'Light Theme' : 'Dark Theme'}}</button>
            <span class="mx-2">{{userName()}}</span>
           <!-- <form class="d-flex" role="search">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">

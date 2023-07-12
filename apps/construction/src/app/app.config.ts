@@ -12,6 +12,8 @@ import {
   withNoXsrfProtection,
 } from '@angular/common/http';
 import { httpInterceptor } from './services/httpInterceptor';
+import { NgIdleKeepaliveModule } from '@ng-idle/keepalive';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -28,5 +30,6 @@ export const appConfig: ApplicationConfig = {
     // ),
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideAnimations(),
+    importProvidersFrom([NgIdleKeepaliveModule.forRoot(), NgbTooltipModule]),
   ],
 };

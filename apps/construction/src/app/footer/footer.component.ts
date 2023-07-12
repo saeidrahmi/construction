@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { StorageService } from '../services/storage.service';
 
 @Component({
   selector: 'construction-footer',
@@ -8,4 +9,10 @@ import { CommonModule } from '@angular/common';
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.scss'],
 })
-export class FooterComponent {}
+export class FooterComponent {
+  storageService = inject(StorageService);
+  isLoggedIn = this.storageService.isUserLoggedIn();
+  getYear(): Date {
+    return new Date();
+  }
+}

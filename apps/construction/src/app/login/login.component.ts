@@ -14,6 +14,7 @@ import { Router } from '@angular/router';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { UserRoutingService } from '../services/user-routing.service';
 import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'construction-login',
@@ -22,6 +23,7 @@ import { ApiServerErrorComponent } from '../apiServerError/api-server-error.comp
     CommonModule,
     ReactiveFormsModule,
     SpinnerComponent,
+    NgbTooltipModule,
     ApiServerErrorComponent,
   ],
   templateUrl: './login.component.html',
@@ -45,7 +47,6 @@ export class LoginComponent {
       password: new FormControl<string>('admin', [Validators.required]),
     });
   }
-
   login() {
     if (this.loginForm.valid)
       this.apiService

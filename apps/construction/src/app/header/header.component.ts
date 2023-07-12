@@ -2,6 +2,7 @@ import {
   Component,
   DestroyRef,
   Inject,
+  Input,
   Renderer2,
   inject,
 } from '@angular/core';
@@ -26,6 +27,7 @@ export class HeaderComponent {
   ) {
     this.setAppTheme();
   }
+
   storageService = inject(StorageService);
   isLoggedIn = this.storageService.isUserLoggedIn();
   userName = this.storageService.getUserName();
