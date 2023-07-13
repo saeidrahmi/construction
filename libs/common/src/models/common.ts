@@ -8,6 +8,8 @@ export class EnvironmentInfo {
   //backend info
   private _apiUrl: string = 'http://localhost';
   private _apiPort: number = 3000;
+  private _userSessionTokenExpiry: number = 3600; // one hour
+  private _userRegistrationTokenExpiry: number = 172800; // 48 hours
   //databse info
   private _dbUrl: string = 'localhost';
   private _dbPort: number = 3306;
@@ -15,6 +17,12 @@ export class EnvironmentInfo {
   private _dbPassword: string = 'saeid';
   private _dbDatabseName: string = 'construction';
   constructor() {}
+  userSessionTokenExpiry() {
+    return this._userSessionTokenExpiry;
+  }
+  userRegistrationTokenExpiry() {
+    return this._userRegistrationTokenExpiry;
+  }
   public multiLoginAllowed() {
     return this._multiLoginAllowed;
   }

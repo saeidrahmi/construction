@@ -96,4 +96,15 @@ export class ApiService {
         );
     else return of(null);
   }
+  signup(userId: string): Observable<any> {
+    return this.httpClient
+      .post(
+        this.backendApiUrl + '/users/signup',
+
+        {
+          userId: this.encryptItem(userId as string),
+        }
+      )
+      .pipe(take(1), delay(300));
+  }
 }

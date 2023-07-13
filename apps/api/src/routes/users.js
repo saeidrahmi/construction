@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const connectToDatabase = require('../db');
 const CryptoJS = require('crypto-js');
+import { register } from 'ts-node';
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
@@ -10,6 +11,8 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const env = new EnvironmentInfo();
 const webSecretKey = env.webSecretKey();
 const dbSecretKey = env.dbSecretKey();
+const { sendVerificationEmail } = require('../../nodemailer');
+
 const passportOpts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: env.webSecretKey(),
@@ -25,10 +28,7 @@ passport.use(
   })
 );
 
-// passport.serializeUser(function (user, done) {
-//   done(null, user.username);
-// });
-
+ 
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
     return res.status(401).send({ message: 'Unauthorized request' });
@@ -145,7 +145,9 @@ router.post('/login', async (req, res) => {
         lastLoginDate: new Date(),
       };
       const payload = { subject: user };
-      const token = jwt.sign(payload, webSecretKey, { expiresIn: 3600 });
+      const token = jwt.sign(payload, webSecretKey, {
+        expiresIn: env.userSessionTokenExpiry(),
+      });
       Object.assign(user, { jwtToken: token });
 
       // Update user login info
@@ -181,6 +183,41 @@ router.post('/logout', async (req, res) => {
       // User not found or incorrect credentials
       return res.status(401).json({ errorMessage: 'Logout operation failed.' });
     } else res.status(200).json();
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error updating user' });
+  }
+});
+
+router.post('/signup', async (req, res) => {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const existingUser = await executeQuery(
+      `SELECT userId FROM users WHERE userId = ?`,
+      [userId]
+    );
+
+    if (existingUser.length > 0) {
+      // User already exists, handle accordingly (return error or update existing user)
+      return res.status(400).json({ errorMessage: 'User already registered' });
+    } else {
+      // const token = CryptoJS.lib.WordArray.random(80).toString();
+      const user = {
+        userId: userId,
+      };
+      const payload = { subject: user };
+      const token = jwt.sign(payload, webSecretKey, {
+        expiresIn: env.userRegistrationTokenExpiry(),
+      });
+      const query = `INSERT INTO users (userId, registeredDate,role, jwtToken, active, registered) VALUES ( ?,?, ?, ?, ?, ?)`;
+      const values = [userId, new Date(), 'general', token, 0, 0];
+      const result = await executeQuery(query, values);
+      if (result.affectedRows > 0 || result.insertId) {
+        await sendVerificationEmail(userId, token);
+        return res.status(200).json();
+      } else {
+        return res.status(500).json({ errorMessage: 'Error updating user' });
+      }
+    }
   } catch (error) {
     return res.status(500).json({ errorMessage: 'Error updating user' });
   }

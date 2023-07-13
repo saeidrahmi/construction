@@ -43,7 +43,9 @@ export const httpInterceptor: HttpInterceptorFn = (
 const getErrorMessage = (error: HttpErrorResponse): string => {
   switch (error.status) {
     case 400: {
-      return 'Bad Request: The request was unacceptable, often due to missing a required parameter. ';
+      return (
+        'Bad Request: The request was unacceptable. ' + error.error.errorMessage
+      );
     }
     case 401: {
       return (

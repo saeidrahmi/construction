@@ -6,10 +6,10 @@ import {
   inject,
   DestroyRef,
 } from '@angular/core';
-import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
+import { HeaderComponent } from './public/header/header.component';
+import { FooterComponent } from './public/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
-import { SpinnerComponent } from './spinner/spinner.component';
+import { SpinnerComponent } from './public/spinner/spinner.component';
 import { StorageService } from './services/storage.service';
 import { Idle, DEFAULT_INTERRUPTSOURCES } from '@ng-idle/core';
 import { Keepalive } from '@ng-idle/keepalive';

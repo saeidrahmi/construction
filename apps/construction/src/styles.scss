@@ -1,12 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@import '../../../node_modules/bootstrap/scss/bootstrap';
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
 .full-page-height {
-    height: 100vh;
-    min-height: 85%;
-  }
+  height: 100vh;
+  min-height: 85%;
+}
 
-  a {
-    cursor: pointer;
-  }
+a {
+  cursor: pointer;
+}
+.submit-button {
+  /* Inherit base button styles from Bootstrap */
+  @extend .btn;
+  @extend .btn-primary;
+  border-radius: 10px;
+}
+.reset-button {
+  @extend .btn;
+  @extend .btn-primary;
+  border-radius: 10px;
+}
