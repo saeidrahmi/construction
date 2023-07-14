@@ -107,4 +107,27 @@ export class ApiService {
       )
       .pipe(take(1), delay(300));
   }
+  checkToken(token: string): Observable<true> {
+    // return this.httpClient
+    //   .post(
+    //     this.backendApiUrl + '/users/signup',
+
+    //     {
+    //       userId: this.encryptItem(userId as string),
+    //     }
+    //   )
+    //   .pipe(take(1), delay(300));
+    return of(true);
+  }
+  register(user: UserInterface): Observable<UserApiResponseInterface> {
+    // return this.httpClient
+    //   .post(
+    //     this.backendApiUrl + '/users/signup',
+    //     {
+    //       userId: this.encryptItem(userId as string),
+    //     }
+    //   )
+    //   .pipe(take(1), delay(300));
+    return of({});
+  }
 }

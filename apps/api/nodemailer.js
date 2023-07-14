@@ -33,7 +33,13 @@ function sendVerificationEmail(userId, token) {
           `,
   };
 
-  return transporter.sendMail(mailOptions);
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      reject(error);
+    } else {
+      resolve();
+    }
+  });
 }
 
 module.exports = { sendVerificationEmail };

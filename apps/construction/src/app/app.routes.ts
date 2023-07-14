@@ -1,5 +1,7 @@
 import { Route } from '@angular/router';
 import { isUserAdmin } from './services/user-gaurds';
+import { PrivacyPolicyComponent } from './public/privacy-policy/privacy-policy.component';
+import { PageNotFoundComponent } from './public/page-not-found/page-not-found.component';
 
 export const appRoutes: Route[] = [
   {
@@ -24,7 +26,7 @@ export const appRoutes: Route[] = [
   {
     path: 'register/:token',
     loadComponent: () =>
-      import('./public/register/register.component').then(
+      import('./register/register.component').then(
         (com) => com.RegisterComponent
       ),
   },
@@ -33,5 +35,13 @@ export const appRoutes: Route[] = [
     canActivate: [isUserAdmin],
     loadChildren: () =>
       import('./admin/admin.module').then((mod) => mod.AdminModule),
+  },
+  {
+    path: 'privacy-policy',
+    component: PrivacyPolicyComponent,
+  },
+  {
+    path: '**',
+    component: PageNotFoundComponent,
   },
 ];

@@ -21,7 +21,7 @@ export class FormService {
     },
     {
       filedName: 'userId',
-      filedValue: 'User Id',
+      filedValue: 'User Id/Email',
     },
     {
       filedName: 'lastName',
@@ -58,6 +58,18 @@ export class FormService {
     {
       filedName: 'zip',
       filedValue: 'Zip Code',
+    },
+    {
+      filedName: 'confirmCheckbox',
+      filedValue: 'Confirmation Checkbox',
+    },
+    {
+      filedName: 'confirmPassword',
+      filedValue: 'Confirmation Password',
+    },
+    {
+      filedName: 'password',
+      filedValue: 'Password',
     },
   ];
 
@@ -114,7 +126,7 @@ export class FormService {
       case 'email':
         return `${controlLabel} must be a valid email address.`;
       case 'pattern':
-        return `${controlLabel} must be a valid phone number (e.g. +123456789012).`;
+        return `${controlLabel} does not follow the rules. Select a valid password.`;
       case 'maxlength':
         return `${controlLabel} cannot be more than ${errorValue.requiredLength} characters long.`;
       case 'minlength':
@@ -123,8 +135,8 @@ export class FormService {
         return `${controlLabel} must be greater than or equal to ${errorValue.min}.`;
       case 'max':
         return `${controlLabel} must be less than or equal to ${errorValue.max}.`;
-      // case 'customFormValidator':
-      //   return `Form is invalid: ${errorValue}.`;
+      case 'matchError':
+        return `Passwords do not match.`;
       default:
         return `${controlLabel} has an invalid value: ${errorValue}.`;
     }

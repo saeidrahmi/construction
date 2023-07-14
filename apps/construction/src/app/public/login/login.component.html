@@ -1,32 +1,50 @@
 <div class="container mt-5 w-50 border p-3 border-1">
-    <h2  >Login</h2>
-    <hr>
-    <app-form-errors [formErrors]="formErrors"></app-form-errors>
-    <api-server-error *ngIf="loginError()" [error]="loginError()" /> 
-    <form [formGroup]="loginForm"  >
-        <div class="form-group">
-            <label for="userId">User ID</label>
-            <input type="text" class="form-control" id="userId" formControlName="userId" >
-            
-        </div>
-        <div class="form-group">
-            <label for="password" >Password</label>
-            <input type="password" class="form-control" id="password" formControlName="password">
-       
-        </div>
-        <p class="my-2">
-            Forgot your password?
-        
-            <a [routerLink]="['/reset-password']" routerLinkActive="router-link-active">Reset</a>
-        </p>
-        
-        <p class="my-2">
-            Don’t have an account? <a routerLink="/signup">Sign-up</a>
-        </p>
-        <button type="submit"   (click)="login()" class="submit-button my-2">Login</button>
-        <button (click)="reset()" class="reset-button my-2 mx-2" ngbTooltip="Reset Form">Reset</button>
-    </form>
-</div>
- 
- 
+  <h2>Login</h2>
+  <hr />
+  <app-form-errors [formErrors]="formErrors"></app-form-errors>
+  <api-server-error *ngIf="loginError()" [error]="loginError()" />
+  <form [formGroup]="loginForm">
+    <div class="form-group">
+      <label for="userId">User ID</label>
+      <input
+        type="text"
+        class="form-control"
+        id="userId"
+        formControlName="userId"
+      />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        class="form-control"
+        id="password"
+        formControlName="password"
+      />
+    </div>
+    <p class="my-2">
+      Forgot your password?
 
+      <a
+        [routerLink]="['/reset-password']"
+        routerLinkActive="router-link-active"
+        >Reset</a
+      >
+    </p>
+
+    <p class="my-2">
+      Don’t have an account? <a routerLink="/signup">Sign-up</a>
+    </p>
+
+    <button type="submit" (click)="login()" class="submit-button my-2">
+      Login
+    </button>
+    <button
+      (click)="reset()"
+      class="reset-button my-2 mx-2"
+      ngbTooltip="Reset Form"
+    >
+      Reset
+    </button>
+  </form>
+</div>

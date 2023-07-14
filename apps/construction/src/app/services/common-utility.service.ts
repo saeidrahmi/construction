@@ -1,11 +1,36 @@
 import { Injectable } from '@angular/core';
-
+import jwt_decode from 'jwt-decode';
 @Injectable({
   providedIn: 'root',
 })
 export class CommonUtilityService {
   constructor() {}
+  isTokenValid(token: string): boolean {
+    try {
+      const decodedToken: any = jwt_decode(token);
+      const currentTimestamp = Math.floor(Date.now() / 1000);
+      // Check if the token is a valid JWT token
+      if (!decodedToken || typeof decodedToken !== 'object') {
+        return false;
+      }
+      // Check if the token is expired
+      else if (decodedToken?.exp < currentTimestamp) {
+        return false;
+      }
+      // Additional checks can be performed here if needed
+      else return true;
+    } catch (error) {
+      return false;
+    }
+  }
 
+  decodeStringJWTTokenInfo(token: string, info: string) {
+    if (token) {
+      let decodedJWT: any = jwt_decode(token);
+      console.log(decodedJWT, decodedJWT.subject[info]);
+      return decodedJWT.subject[info];
+    } else return null;
+  }
   trimString(data: string): string {
     const scriptPattern =
       /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi;

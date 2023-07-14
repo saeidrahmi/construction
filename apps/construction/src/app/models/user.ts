@@ -1,6 +1,8 @@
 export interface UserInterface {
   loggedIn?: boolean;
   userId?: string;
+  password?: string;
+  purpose?: string;
   jwtToken?: string;
   role?: string;
   error?: string;

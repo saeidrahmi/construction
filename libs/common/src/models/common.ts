@@ -15,8 +15,12 @@ export class EnvironmentInfo {
   private _dbPort: number = 3306;
   private _dbUserName: string = 'construction_user';
   private _dbPassword: string = 'saeid';
-  private _dbDatabseName: string = 'construction';
+  private _dbDatabaseName: string = 'construction';
+  private _roles = { general: 'General', admin: 'Admin', sAdmin: 'SAdmin' };
   constructor() {}
+  getRole() {
+    return this._roles;
+  }
   userSessionTokenExpiry() {
     return this._userSessionTokenExpiry;
   }
@@ -51,6 +55,6 @@ export class EnvironmentInfo {
     return this._dbPassword;
   }
   public dbName() {
-    return this._dbDatabseName;
+    return this._dbDatabaseName;
   }
 }

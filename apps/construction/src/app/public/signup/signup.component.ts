@@ -56,6 +56,7 @@ export class SignupComponent {
     private commonUtility: CommonUtilityService,
     private router: Router
   ) {
+    this.userId = this.route.snapshot.queryParams['email'];
     this.form = this.fb.group({
       userId: new FormControl<string>('', {
         validators: [
@@ -72,13 +73,11 @@ export class SignupComponent {
   register() {
     this.serverError = '';
     if (this.form.valid) {
+      this.loading = true;
       this.formErrors = [];
       this.apiService
         .signup(this.userId)
         .pipe(
-          tap(() => {
-            this.loading = true;
-          }),
           takeUntilDestroyed(this.destroyRef),
           finalize(() => {
             this.loading = false;

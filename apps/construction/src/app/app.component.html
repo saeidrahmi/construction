@@ -1,24 +1,35 @@
- 
-    <div class="w-100">
-        <div class="row"><div class="col"><construction-header  ></construction-header></div></div>
-        <div class="row"><div class="col full-page-height"><router-outlet></router-outlet></div></div>
-        <app-spinner [isLoading]="loading()"></app-spinner>
-        <div class="row"><div class="col"><construction-footer></construction-footer></div></div>  
+<div class="w-100 h-100">
+  <div class="row">
+    <div class="col"><construction-header></construction-header></div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <router-outlet></router-outlet>
     </div>
+  </div>
+  <app-spinner [isLoading]="loading()"></app-spinner>
+  <div class="row">
+    <div class="col"><construction-footer></construction-footer></div>
+  </div>
+</div>
 
-    <ng-template #sessionIdleTemplate let-modal>
-        <div class="modal-header">
-            <h4 class="modal-title">Modal title</h4>
-            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-        </div>
-        <div class="modal-body">
-            <p>Your session will time out in {{countdown}} seconds.</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-light" (click)="stay()">Stay</button>
-            <button type="button" class="btn btn-light" (click)="logout()">Logout</button>
-        </div>
-    </ng-template>
-
-
- 
+<ng-template #sessionIdleTemplate let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">Modal title</h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <p>Your session will time out in {{ countdown }} seconds.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-light" (click)="stay()">Stay</button>
+    <button type="button" class="btn btn-light" (click)="logout()">
+      Logout
+    </button>
+  </div>
+</ng-template>
