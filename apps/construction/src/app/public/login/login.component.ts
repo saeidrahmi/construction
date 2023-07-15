@@ -54,12 +54,13 @@ export class LoginComponent {
     });
   }
   login() {
-    if (this.loginForm.valid)
+    if (this.loginForm.valid) {
+      this.storageService.updateIsLoading(true);
       this.apiService
         .login(this.loginForm.value)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe();
-    else {
+    } else {
       // Get form validation errors
       this.formErrors = this.formService.getFormValidationErrorMessages(
         this.loginForm

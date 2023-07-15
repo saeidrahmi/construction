@@ -53,17 +53,12 @@ export class ApiService {
     );
 
     return this.httpClient
-      .post(
-        this.backendApiUrl + '/users/login',
-
-        { credentials: encryptedCredentials }
-      )
+      .post(this.backendApiUrl + '/users/login', {
+        credentials: encryptedCredentials,
+      })
       .pipe(
-        tap(() => {
-          this.storageService.updateIsLoading(true);
-        }),
         take(1),
-        delay(200),
+        delay(400),
         finalize(() => {
           this.storageService.updateIsLoading(false);
         }),
@@ -84,14 +79,11 @@ export class ApiService {
           userId: this.encryptItem(this.user()?.userId as string),
         })
         .pipe(
-          tap(() => {
-            this.storageService.updateIsLoading(true);
-          }),
           take(1),
-          delay(200),
+          delay(400),
           finalize(() => {
-            this.storageService.updateStateLogoutSuccessful();
             this.storageService.updateIsLoading(false);
+            this.storageService.updateStateLogoutSuccessful();
             this.router.navigate(['/login']);
           })
         );
@@ -106,7 +98,13 @@ export class ApiService {
           userId: this.encryptItem(userId as string),
         }
       )
-      .pipe(take(1), delay(300));
+      .pipe(
+        take(1),
+        delay(600),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
   }
   checkToken(token: string): Observable<true> {
     // return this.httpClient
@@ -126,8 +124,18 @@ export class ApiService {
   ): Observable<UserApiResponseInterface> {
     user.userId = this.encryptItem(user.userId as string);
     user.password = this.encryptItem(user.password as string);
-
     let data = { user: user, userSignupToken: userSignupToken };
-    return this.httpClient.post(this.backendApiUrl + '/users/register', data);
+    return this.httpClient
+      .post<UserApiResponseInterface>(
+        this.backendApiUrl + '/users/register',
+        data
+      )
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        }),
+        delay(300)
+      );
   }
 }

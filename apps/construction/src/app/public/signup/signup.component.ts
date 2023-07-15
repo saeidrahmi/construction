@@ -25,6 +25,7 @@ import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
 import { SpinnerComponent } from '../spinner/spinner.component';
+import { StorageService } from '../../services/storage.service';
 
 @Component({
   selector: 'app-signup',
@@ -44,9 +45,10 @@ export class SignupComponent {
   userId!: string;
   form!: FormGroup;
   signedUp: boolean = false;
-  loading: boolean = false;
+
   formErrors: string[] = [];
   formService = inject(FormService);
+  storageService = inject(StorageService);
   apiService = inject(ApiService);
   destroyRef = inject(DestroyRef);
   serverError: any;
@@ -70,21 +72,17 @@ export class SignupComponent {
     });
   }
 
-  register() {
+  signup() {
     this.serverError = '';
     this.signedUp = false;
     if (this.form.valid) {
-      this.loading = true;
+      this.storageService.updateIsLoading(true);
       this.formErrors = [];
       this.apiService
         .signup(this.userId)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          finalize(() => {
-            this.loading = false;
-          }),
-
-          map(() => {
+          tap(() => {
             this.signedUp = true;
           }),
           catchError((error) => {

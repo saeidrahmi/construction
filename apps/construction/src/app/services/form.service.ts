@@ -119,7 +119,7 @@ export class FormService {
     errorValue: any
   ): string {
     const controlLabel = this.getFormControlLable(controlName) || controlName;
-    console.log(errorValue);
+
     switch (errorName) {
       case 'required':
         return `${controlLabel} is required.`;

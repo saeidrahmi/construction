@@ -58,7 +58,6 @@
                     <input
                       class="form-control"
                       placeholder="Enter your first name..."
-                      [(ngModel)]="name"
                       formControlName="firstName"
                     />
                   </div>
@@ -69,7 +68,6 @@
                     <input
                       class="form-control"
                       placeholder="Enter your last name..."
-                      [(ngModel)]="name"
                       formControlName="lastName"
                     />
                   </div>
@@ -168,5 +166,4 @@
       </div>
     </div>
   </ng-template>
-  <app-spinner [isLoading]="loading"></app-spinner>
 </div>

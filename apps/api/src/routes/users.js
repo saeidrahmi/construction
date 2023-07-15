@@ -190,22 +190,47 @@ router.post('/logout', async (req, res) => {
 router.post('/signup', async (req, res) => {
   try {
     const userId = decryptItem(req.body.userId, webSecretKey);
+    const user = {
+      userId: userId,
+    };
+    const payload = { subject: user };
+    const token = jwt.sign(payload, jwtSecretKey, {
+      expiresIn: env.userRegistrationTokenExpiry(),
+    });
     const existingUser = await executeQuery(
-      `SELECT userId FROM users WHERE userId = ?`,
+      `SELECT * FROM users WHERE userId = ? `,
       [userId]
     );
-    if (existingUser.length > 0) {
+
+    if (existingUser.length > 0 && existingUser[0].registered == 0) {
       // User already exists, handle accordingly (return error or update existing user)
-      return res.status(400).json({ errorMessage: 'User already registered' });
-    } else {
-      // const token = CryptoJS.lib.WordArray.random(80).toString();
-      const user = {
-        userId: userId,
-      };
-      const payload = { subject: user };
-      const token = jwt.sign(payload, jwtSecretKey, {
-        expiresIn: env.userRegistrationTokenExpiry(),
+
+      const query = 'UPDATE  users SET  jwtToken = ?  WHERE userId = ? ';
+      const values = [token, userId];
+
+      const result = await executeQuery(query, values);
+      console.log(res);
+      if (result.affectedRows > 0 || result.insertId) {
+        try {
+          await sendVerificationEmail(userId, token);
+          return res.status(200).json({
+            message:
+              'Signup operation completed successfully. Please check your email.',
+          });
+        } catch (error) {
+          return res.status(500).json({
+            errorMessage:
+              'Failed to send verification email. Please try again later.',
+          });
+        }
+      } else {
+        return res.status(500).json({ errorMessage: 'Error updating user' });
+      }
+    } else if (existingUser.length > 0 && existingUser[0].registered == 1) {
+      return res.status(400).json({
+        errorMessage: 'User already registered. Please try again later.',
       });
+    } else {
       const query = `INSERT INTO users (userId, registeredDate,role, jwtToken, active, registered) VALUES ( ?,?, ?, ?, ?, ?)`;
       const values = [userId, new Date(), env.getRole().general, token, 0, 0];
       const result = await executeQuery(query, values);
@@ -214,7 +239,7 @@ router.post('/signup', async (req, res) => {
           await sendVerificationEmail(userId, token);
           return res.status(200).json({
             message:
-              'Password reset operation completed successfully. Please check your email.',
+              'Signup operation completed successfully. Please check your email.',
           });
         } catch (error) {
           return res.status(500).json({
@@ -266,7 +291,7 @@ router.post('/register', async (req, res) => {
       const query =
         'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
       const values = [
-        0,
+        1,
         userObj.registeredDate,
         userObj.lastLoginDate,
         token,

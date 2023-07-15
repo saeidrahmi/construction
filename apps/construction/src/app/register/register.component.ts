@@ -29,6 +29,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EnvironmentInfo } from 'libs/common/src/models/common';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormService } from '../services/form.service';
+import { StorageService } from '../services/storage.service';
+import { UserRoutingService } from '../services/user-routing.service';
+import { ValidatorsService } from '../services/validators.service';
 
 @Component({
   selector: 'construction-register',
@@ -50,7 +53,7 @@ import { FormService } from '../services/form.service';
 export class RegisterComponent implements OnInit {
   env: EnvironmentInfo = new EnvironmentInfo();
   userId: string = '';
-  name: string = '';
+
   password: string = '';
   confirmPassword: string = '';
   serverError: string = '';
@@ -58,8 +61,11 @@ export class RegisterComponent implements OnInit {
   useCase: string = 'Personal purpose';
   form!: FormGroup;
   destroyRef = inject(DestroyRef);
+  validatorsService = inject(ValidatorsService);
+  userRouting = inject(UserRoutingService);
+  storageService = inject(StorageService);
   options: string[] = ['Personal purpose', 'Business purpose'];
-  loading!: boolean;
+
   allowedOperation: boolean = false;
   token: string | null = '';
   constructor(
@@ -104,22 +110,13 @@ export class RegisterComponent implements OnInit {
       confirmPassword: new FormControl('', [Validators.required]),
       confirmCheckbox: new FormControl('', [Validators.required]),
     });
-    this.form.setValidators([this.matchPassword]);
+    this.form.setValidators([this.validatorsService.matchPassword]);
   }
-  matchPassword: ValidatorFn = (
-    control: AbstractControl
-  ): ValidationErrors | null => {
-    let pass = control.get('password')?.value;
-    let confirmPass = control.get('confirmPassword')?.value;
-    console.log(pass, confirmPass);
-    if (pass && confirmPass && pass !== confirmPass)
-      return { matchError: true };
-    else return null;
-  };
 
   register(): void {
     if (this.form.valid) {
-      this.loading = true;
+      this.storageService.updateIsLoading(true);
+      this.serverError = '';
       let user: UserInterface = {
         userId: this.commonUtility.trimString(this.form.get('userId')?.value),
         purpose: this.commonUtility.trimString(this.useCase),
@@ -140,13 +137,13 @@ export class RegisterComponent implements OnInit {
         .register(user, this.token as string)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          tap(() => {}),
+          tap((response) => {
+            this.storageService.updateStateLoginSuccessful(response);
+            this.userRouting.navigateToUserMainPage();
+          }),
           catchError((err) => {
             this.serverError = err;
             return of(err);
-          }),
-          finalize(() => {
-            this.loading = false;
           })
         )
         .subscribe();

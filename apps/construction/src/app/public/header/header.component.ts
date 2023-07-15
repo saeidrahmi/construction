@@ -43,6 +43,7 @@ export class HeaderComponent {
   userRouting = inject(UserRoutingService);
   destroyRef = inject(DestroyRef);
   logout() {
+    this.storageService.updateIsLoading(true);
     this.apiService
       .logout()
       .pipe(takeUntilDestroyed(this.destroyRef))

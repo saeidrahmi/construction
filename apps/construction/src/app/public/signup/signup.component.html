@@ -10,14 +10,13 @@
           placeholder="Enter email..."
           [(ngModel)]="userId"
           maxlength="50"
-        
           minlength="8"
           formControlName="userId"
           [class.error]="form.get('userId')?.invalid"
           type="email"
         />
       </form>
-      <button class="submit-button mt-2" (click)="register()">Sign-up</button>
+      <button class="submit-button mt-2" (click)="signup()">Sign-up</button>
     </div>
     <div class="col-md-6 col-sm-12">
       <div *ngIf="signedUp; then signed; else notSigned"></div>
@@ -30,7 +29,9 @@
       </ng-template>
       <ng-template #signed>
         <h3 class="text-success">Check your email</h3>
-        <h4 class="text-success">We sent you a message to verify your email address.</h4>
+        <h4 class="text-success">
+          We sent you a message to verify your email address.
+        </h4>
 
         <p class="m-0">
           If you don't receive a verification email within 5 minutes, try
@@ -38,7 +39,7 @@
         </p>
 
         <div class="mt-3" *ngIf="signedUp">
-          <a class="submit-button" (click)="register()"
+          <a class="submit-button" (click)="signup()"
             ><i class="fa fa-arrow-right"></i>resend email</a
           >
         </div>
@@ -46,4 +47,3 @@
     </div>
   </div>
 </div>
-<app-spinner [isLoading]="loading"></app-spinner>
