@@ -75,28 +75,11 @@ export class RegisterComponent implements OnInit {
       this.token as string
     );
     if (!!this.token && tokenValid) {
-      this.loading = true;
-      this.apiService
-        .checkToken(this.token)
-        .pipe(
-          takeUntilDestroyed(),
-          tap(() => {
-            this.allowedOperation = true;
-            this.userId = this.commonUtility.decodeStringJWTTokenInfo(
-              this.token as string,
-              'userId'
-            );
-          }),
-          catchError((err) => {
-            this.allowedOperation = false;
-            this.serverError = err;
-            return of(null);
-          }),
-          finalize(() => {
-            this.loading = false;
-          })
-        )
-        .subscribe();
+      this.allowedOperation = true;
+      this.userId = this.commonUtility.decodeStringJWTTokenInfo(
+        this.token as string,
+        'userId'
+      );
     } else this.allowedOperation = false;
   }
 
@@ -142,8 +125,8 @@ export class RegisterComponent implements OnInit {
         purpose: this.commonUtility.trimString(this.useCase),
         active: true,
         registeredDate: new Date(),
-        password: btoa(
-          this.commonUtility.trimString(this.form.get('password')?.value)
+        password: this.commonUtility.trimString(
+          this.form.get('password')?.value
         ),
         role: 'general',
         firstName: this.commonUtility.trimString(
@@ -154,7 +137,7 @@ export class RegisterComponent implements OnInit {
         ),
       };
       this.apiService
-        .register(user)
+        .register(user, this.token as string)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {}),

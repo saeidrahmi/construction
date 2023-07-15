@@ -43,7 +43,8 @@ export class ApiService {
     // Concatenate the encrypted username and password with a delimiter
     const encryptedCredentials = encryptedUsername + ':' + encryptedPassword;
 
-    return btoa(encryptedCredentials); // Encode the encrypted credentials using Base64
+    // return btoa(encryptedCredentials); // Encode the encrypted credentials using Base64
+    return encryptedCredentials; // Encode the encrypted credentials using Base64
   }
   login(credential: LoginCredential): Observable<UserApiResponseInterface> {
     const encryptedCredentials = this.encryptCredentials(
@@ -119,15 +120,14 @@ export class ApiService {
     //   .pipe(take(1), delay(300));
     return of(true);
   }
-  register(user: UserInterface): Observable<UserApiResponseInterface> {
-    // return this.httpClient
-    //   .post(
-    //     this.backendApiUrl + '/users/signup',
-    //     {
-    //       userId: this.encryptItem(userId as string),
-    //     }
-    //   )
-    //   .pipe(take(1), delay(300));
-    return of({});
+  register(
+    user: UserInterface,
+    userSignupToken: string
+  ): Observable<UserApiResponseInterface> {
+    user.userId = this.encryptItem(user.userId as string);
+    user.password = this.encryptItem(user.password as string);
+
+    let data = { user: user, userSignupToken: userSignupToken };
+    return this.httpClient.post(this.backendApiUrl + '/users/register', data);
   }
 }

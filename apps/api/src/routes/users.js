@@ -11,6 +11,7 @@ const ExtractJwt = require('passport-jwt').ExtractJwt;
 const env = new EnvironmentInfo();
 const webSecretKey = env.webSecretKey();
 const dbSecretKey = env.dbSecretKey();
+const jwtSecretKey = env.jwtSecretKey();
 const { sendVerificationEmail } = require('../../nodemailer');
 
 const passportOpts = {
@@ -52,13 +53,14 @@ function verifyToken(req, res, next) {
 
 function decryptCredentials(encryptedCredentials) {
   // Decode the Base64 encoded encrypted credentials
-  const encodedCredentials = Buffer.from(
-    encryptedCredentials,
-    'base64'
-  ).toString('ascii');
+  // const encodedCredentials = Buffer.from(
+  //   encryptedCredentials,
+  //   'base64'
+  // ).toString('ascii');
 
   // Split the encoded credentials into username and password using the delimiter
-  const [encryptedUsername, encryptedPassword] = encodedCredentials.split(':');
+  const [encryptedUsername, encryptedPassword] =
+    encryptedCredentials.split(':');
 
   // Decrypt the username and password using AES decryption with the secret key
   const decryptedUsername = CryptoJS.AES.decrypt(
@@ -77,8 +79,6 @@ function encryptItem(item, secretKey) {
   return encryptedItem;
 }
 function decryptItem(item, secretKey) {
-  // Decode the Base64 encoded encrypted credentials
-
   // Decrypt the username and password using AES decryption with the secret key
   const decryptedItem = CryptoJS.AES.decrypt(item, secretKey).toString(
     CryptoJS.enc.Utf8
@@ -101,17 +101,17 @@ const executeQuery = async (query, params = []) => {
 
 router.post('/login', async (req, res) => {
   try {
-    // const enc = encryptItem('admin', dbSecretKey);
-    // console.log('admin encrypted', enc, ' ,', decryptItem(enc, dbSecretKey));
-
     const { credentials } = req.body;
     // Decrypt credentials
+
     const { userId, password } = decryptCredentials(credentials);
+
     // Execute the select query
 
     const rows = await executeQuery('SELECT * FROM users WHERE userId = ? ', [
       userId,
     ]);
+
     if (rows.length === 0) {
       // User not found or incorrect credentials
       return res
@@ -144,7 +144,7 @@ router.post('/login', async (req, res) => {
         lastLoginDate: new Date(),
       };
       const payload = { subject: user };
-      const token = jwt.sign(payload, webSecretKey, {
+      const token = jwt.sign(payload, jwtSecretKey, {
         expiresIn: env.userSessionTokenExpiry(),
       });
       Object.assign(user, { jwtToken: token });
@@ -194,7 +194,6 @@ router.post('/signup', async (req, res) => {
       `SELECT userId FROM users WHERE userId = ?`,
       [userId]
     );
-
     if (existingUser.length > 0) {
       // User already exists, handle accordingly (return error or update existing user)
       return res.status(400).json({ errorMessage: 'User already registered' });
@@ -204,11 +203,11 @@ router.post('/signup', async (req, res) => {
         userId: userId,
       };
       const payload = { subject: user };
-      const token = jwt.sign(payload, webSecretKey, {
+      const token = jwt.sign(payload, jwtSecretKey, {
         expiresIn: env.userRegistrationTokenExpiry(),
       });
       const query = `INSERT INTO users (userId, registeredDate,role, jwtToken, active, registered) VALUES ( ?,?, ?, ?, ?, ?)`;
-      const values = [userId, new Date(), 'general', token, 0, 0];
+      const values = [userId, new Date(), env.getRole().general, token, 0, 0];
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         try {
@@ -231,5 +230,64 @@ router.post('/signup', async (req, res) => {
     return res.status(500).json({ errorMessage: 'Error updating user' });
   }
 });
+router.post('/register', async (req, res) => {
+  try {
+    const user = req.body.user;
+    const userSignupToken = req.body.userSignupToken;
+    const userId = decryptItem(user.userId, webSecretKey);
+    const password = decryptItem(user.password, webSecretKey);
 
+    const existingUser = await executeQuery(
+      `SELECT userId FROM users WHERE userId = ? and jwtToken=? and registered=?`,
+      [userId, userSignupToken, 0]
+    );
+    if (existingUser.length === 0) {
+      // User does not exists,
+      return res
+        .status(400)
+        .json({ errorMessage: 'User not allowed to signup. Invalid request.' });
+    } else {
+      const userObj = {
+        userId: userId,
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        registeredDate: new Date(),
+        loggedIn: 1,
+        active: 1,
+        registered: 1,
+        lastLoginDate: new Date(),
+      };
+      const payload = { subject: userObj };
+      const token = jwt.sign(payload, jwtSecretKey, {
+        expiresIn: env.userRegistrationTokenExpiry(),
+      });
+
+      const query =
+        'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
+      const values = [
+        0,
+        userObj.registeredDate,
+        userObj.lastLoginDate,
+        token,
+        1,
+        1,
+        1,
+        userObj.firstName,
+        userObj.lastName,
+        encryptItem(password, dbSecretKey),
+        userId,
+      ];
+
+      const result = await executeQuery(query, values);
+      if (result.affectedRows > 0 || result.insertId) {
+        return res.status(200).json(user);
+      } else {
+        return res.status(500).json({ errorMessage: 'Error updating user' });
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error registering user' });
+  }
+});
 module.exports = router;

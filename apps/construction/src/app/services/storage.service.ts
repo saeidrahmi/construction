@@ -91,7 +91,7 @@ export class StorageService {
       loggedIn: true,
       userId: response?.userId,
       jwtToken: response?.jwtToken,
-      role: response?.userId,
+      role: response?.role,
       error: '',
       firstName: response?.firstName,
       lastName: response?.lastName,

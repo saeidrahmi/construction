@@ -1,5 +1,5 @@
 import { Route } from '@angular/router';
-import { isUserAdmin } from './services/user-gaurds';
+import { isGeneralUser, isUserAdmin } from './services/user-gaurds';
 import { PrivacyPolicyComponent } from './public/privacy-policy/privacy-policy.component';
 import { PageNotFoundComponent } from './public/page-not-found/page-not-found.component';
 
@@ -35,6 +35,12 @@ export const appRoutes: Route[] = [
     canActivate: [isUserAdmin],
     loadChildren: () =>
       import('./admin/admin.module').then((mod) => mod.AdminModule),
+  },
+  {
+    path: 'general',
+    canActivate: [isGeneralUser],
+    loadChildren: () =>
+      import('./generalUser/general.module').then((mod) => mod.GeneralModule),
   },
   {
     path: 'privacy-policy',

@@ -4,6 +4,7 @@ export class EnvironmentInfo {
   sessionTimeout: number = 60; // one minute
   sessionPing: number = 20;
   _webSecretKey = 'web-secret-key';
+  _jwtSecretKey = 'jwt-secret-key';
   _dbSecretKey = 'db-secret-key';
   //backend info
   private _apiUrl: string = 'http://localhost';
@@ -29,6 +30,9 @@ export class EnvironmentInfo {
   }
   public multiLoginAllowed() {
     return this._multiLoginAllowed;
+  }
+  public jwtSecretKey() {
+    return this._jwtSecretKey;
   }
   public webSecretKey() {
     return this._webSecretKey;

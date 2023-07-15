@@ -72,6 +72,7 @@ export class SignupComponent {
 
   register() {
     this.serverError = '';
+    this.signedUp = false;
     if (this.form.valid) {
       this.loading = true;
       this.formErrors = [];
