@@ -43,5 +43,37 @@ function sendVerificationEmail(userId, token) {
     }
   });
 }
+function sendPasswordResetEmail(userId, token) {
+  var mailOptions = {
+    from: 'Ontsoft Web System',
+    to: userId,
+    subject: 'Account reset- Verify your email address',
+    html: `<div style="border: solid 1px blue; padding: 30px">
+                <h2>Reset your password</h2>
+                <p>Hello,</p>
 
-module.exports = { sendVerificationEmail };
+                <p>
+                  You're almost done resetting your password. please click the link below.
+                </p>
+                <p>
+                  <a href="http://localhost:4200/change-password/${token}"> Reset Password</a>
+                </p>
+                <p>
+                  For your security, this link will expire ${
+                    env.getPasswordResetExpiry() / 3600
+                  }  hours from the time this email
+                  was sent.
+                </p>
+                <p>Ontsoft Team</p>
+              </div>
+              `,
+  };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      reject(error);
+    } else {
+      resolve();
+    }
+  });
+}
+module.exports = { sendVerificationEmail, sendPasswordResetEmail };

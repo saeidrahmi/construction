@@ -45,6 +45,7 @@ export class ResetPasswordComponent {
   apiService = inject(ApiService);
   destroyRef = inject(DestroyRef);
   serverError: any;
+  loading: boolean = false;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -65,18 +66,19 @@ export class ResetPasswordComponent {
     });
   }
 
-  signup() {
+  resetPassword() {
     this.serverError = '';
     this.resetDone = false;
     if (this.form.valid) {
-      this.storageService.updateIsLoading(true);
+      this.loading = true;
       this.formErrors = [];
       this.apiService
-        .signup(this.userId)
+        .resetPassword(this.userId)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
             this.resetDone = true;
+            this.loading = false;
           }),
           catchError((error) => {
             this.serverError = error;

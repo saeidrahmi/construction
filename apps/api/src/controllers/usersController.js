@@ -14,7 +14,10 @@ const env = new EnvironmentInfo();
 const webSecretKey = env.webSecretKey();
 const dbSecretKey = env.dbSecretKey();
 const jwtSecretKey = env.jwtSecretKey();
-const { sendVerificationEmail } = require('../../nodemailer');
+const {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+} = require('../../nodemailer');
 const passportOpts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: env.webSecretKey(),
@@ -46,7 +49,6 @@ async function logoutController(req, res) {
     return res.status(500).json({ errorMessage: 'Error updating user' });
   }
 }
-//
 async function loginController(req, res) {
   try {
     const { credentials } = req.body;
@@ -181,6 +183,56 @@ async function signupController(req, res) {
     return res.status(500).json({ errorMessage: 'Error updating user' });
   }
 }
+async function resetPasswordController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const user = {
+      userId: userId,
+    };
+
+    const payload = { subject: user };
+    const token = jwt.sign(payload, jwtSecretKey, {
+      expiresIn: env.getPasswordResetExpiry(),
+    });
+    const existingUser = await executeQuery(
+      `SELECT * FROM users WHERE userId = ? and registered= ? and active= ?`,
+      [userId, 1, 1]
+    );
+
+    if (existingUser.length > 0) {
+      // User already exists, handle accordingly (return error or update existing user)
+
+      const query =
+        'UPDATE  users SET  jwtToken = ?, passwordReset = ?  WHERE userId = ? ';
+      const values = [token, 1, userId];
+
+      const result = await executeQuery(query, values);
+
+      if (result.affectedRows > 0 || result.insertId) {
+        try {
+          await sendPasswordResetEmail(userId, token);
+          return res.status(200).json({
+            message:
+              'Password Reset operation completed successfully. Please check your email.',
+          });
+        } catch (error) {
+          return res.status(500).json({
+            errorMessage: 'Failed to send email. Please try again later.',
+          });
+        }
+      } else {
+        return res.status(500).json({ errorMessage: 'Error updating user' });
+      }
+    } else
+      return res
+        .status(500)
+        .json({ errorMessage: 'Error: invalid request resetting password' });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error: invalid request  resetting password' });
+  }
+}
 async function registerController(req, res) {
   try {
     const user = req.body.user;
@@ -246,4 +298,5 @@ module.exports = {
   loginController,
   signupController,
   registerController,
+  resetPasswordController,
 };
