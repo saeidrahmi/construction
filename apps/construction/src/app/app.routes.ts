@@ -24,6 +24,14 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./public/reset-password/reset-password.component').then(
+        (com) => com.ResetPasswordComponent
+      ),
+  },
+
+  {
     path: 'register/:token',
     loadComponent: () =>
       import('./register/register.component').then(

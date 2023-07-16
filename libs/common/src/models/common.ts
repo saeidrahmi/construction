@@ -11,6 +11,7 @@ export class EnvironmentInfo {
   private _apiPort: number = 3000;
   private _userSessionTokenExpiry: number = 3600; // one hour
   private _userRegistrationTokenExpiry: number = 172800; // 48 hours
+  private _passwordResetExpiry: number = 3600; // one hours
   //databse info
   private _dbUrl: string = 'localhost';
   private _dbPort: number = 3306;
@@ -19,6 +20,9 @@ export class EnvironmentInfo {
   private _dbDatabaseName: string = 'construction';
   private _roles = { general: 'General', admin: 'Admin', sAdmin: 'SAdmin' };
   constructor() {}
+  getPasswordResetExpiry() {
+    return this._passwordResetExpiry;
+  }
   getRole() {
     return this._roles;
   }

@@ -7,16 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import {
-  takeUntil,
-  tap,
-  catchError,
-  of,
-  finalize,
-  map,
-  take,
-  delay,
-} from 'rxjs';
+import { tap, catchError, of } from 'rxjs';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { CommonModule } from '@angular/common';
 import { FormService } from '../../services/form.service';
@@ -26,6 +17,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
 import { SpinnerComponent } from '../spinner/spinner.component';
 import { StorageService } from '../../services/storage.service';
+import { EnvironmentInfo } from 'libs/common/src/models/common';
 
 @Component({
   selector: 'app-signup',
@@ -45,7 +37,8 @@ export class SignupComponent {
   userId!: string;
   form!: FormGroup;
   signedUp: boolean = false;
-
+  env: EnvironmentInfo = new EnvironmentInfo();
+  signupExpiry: number = this.env.userRegistrationTokenExpiry() / 3600; //convert to hour
   formErrors: string[] = [];
   formService = inject(FormService);
   storageService = inject(StorageService);
