@@ -137,7 +137,7 @@ async function signupController(req, res) {
       const values = [token, userId];
 
       const result = await executeQuery(query, values);
-      console.log(res);
+
       if (result.affectedRows > 0 || result.insertId) {
         try {
           await sendVerificationEmail(userId, token);
@@ -293,10 +293,65 @@ async function registerController(req, res) {
     return res.status(500).json({ errorMessage: 'Error registering user' });
   }
 }
+
+async function checkUserTokenController(req, res) {
+  try {
+    let token = req.body.token;
+    if (token === 'null') return res.status(200).json(false);
+    else {
+      jwt.verify(token, jwtSecretKey, async (err, decoded) => {
+        if (!decoded) return res.status(200).json(false);
+        else if (err) return res.status(200).json(false);
+        else {
+          let userId = decoded.subject.userId;
+
+          const existingUser = await executeQuery(
+            `SELECT * FROM users WHERE userId = ? and jwtToken= ?`,
+            [userId, token]
+          );
+
+          if (existingUser.length > 0) {
+            return res.status(200).json(true);
+          } else return res.status(200).json(false);
+        }
+      });
+    }
+  } catch (error) {
+    return res.status(500).json();
+  }
+}
+async function completeResetPasswordController(req, res) {
+  try {
+    let token = req.body.token;
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    let password = decryptItem(req.body.password, webSecretKey);
+    const query =
+      'UPDATE  users SET password= ?,jwtToken = ?, passwordReset = ?  WHERE userId = ? and jwtToken = ? and passwordReset = ?';
+    const values = [
+      encryptItem(password, dbSecretKey),
+      '',
+      0,
+      userId,
+      token,
+      1,
+    ];
+    const result = await executeQuery(query, values);
+
+    if (result.affectedRows > 0 || result.insertId) {
+      return res.status(200).json(true);
+    } else {
+      return res.status(500).json({ errorMessage: 'Error updating user' });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error resetting password.' });
+  }
+}
 module.exports = {
   logoutController,
   loginController,
   signupController,
   registerController,
   resetPasswordController,
+  completeResetPasswordController,
+  checkUserTokenController,
 };

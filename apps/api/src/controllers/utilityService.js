@@ -1,28 +1,41 @@
 const connectToDatabase = require('../db');
 const CryptoJS = require('crypto-js');
-
+const jwt = require('jsonwebtoken');
+import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
+const env = new EnvironmentInfo();
+const jwtSecretKey = env.jwtSecretKey();
 function verifyToken(req, res, next) {
   if (!req.headers.authorization) {
-    return res.status(401).send({ message: 'Unauthorized request' });
+    return res.status(401).send({ errorMessage: 'Unauthorized request' });
   }
   let token = req.headers.authorization.split(' ')[1];
   if (token === 'null') {
-    return res.status(401).send({ message: 'Unauthorized request' });
+    return res.status(401).send({ errorMessage: 'Unauthorized request' });
   }
-  jwt.verify(token, webSecretKey, function (err, decoded) {
+  jwt.verify(token, jwtSecretKey, async function (err, decoded) {
     if (!decoded) {
-      return res.status(401).send({ message: 'Unauthorized request' });
+      return res.status(401).send({ errorMessage: 'Unauthorized request' });
     }
     if (err) {
       res.status(401).send({
-        message: 'Unauthorized! Access Token was expired!',
+        errorMessage: 'Unauthorized! Access Token was expired!',
       });
     } else {
-      next();
+      let userId = decoded.subject.userId;
+      const existingUser = await executeQuery(
+        `SELECT * FROM users WHERE userId = ? and jwtToken= ?`,
+        [userId, token]
+      );
+
+      if (existingUser.length > 0) {
+        next();
+      } else
+        return res
+          .status(401)
+          .json({ errorMessage: 'Error resetting password.' });
     }
   });
 }
-
 function decryptCredentials(encryptedCredentials, secretKey) {
   // Decode the Base64 encoded encrypted credentials
   // const encodedCredentials = Buffer.from(

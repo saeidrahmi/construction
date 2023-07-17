@@ -34,9 +34,16 @@ export const appRoutes: Route[] = [
   {
     path: 'register/:token',
     loadComponent: () =>
-      import('./register/register.component').then(
+      import('./public/register/register.component').then(
         (com) => com.RegisterComponent
       ),
+  },
+  {
+    path: 'complete-reset-password/:token',
+    loadComponent: () =>
+      import(
+        './public/complete-reset-password/complete-reset-password.component'
+      ).then((com) => com.CompleteResetPasswordComponent),
   },
   {
     path: 'admin',

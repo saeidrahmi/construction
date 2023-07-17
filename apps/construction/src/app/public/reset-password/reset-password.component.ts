@@ -6,9 +6,9 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { tap, catchError, of } from 'rxjs';
-import { CommonUtilityService } from '../../services/common-utility.service';
+import { ActivatedRoute, RouterLink } from '@angular/router';
+import { tap, catchError, of, finalize } from 'rxjs';
+
 import { CommonModule } from '@angular/common';
 import { FormService } from '../../services/form.service';
 import { FormErrorsComponent } from '../form-errors.component';
@@ -46,12 +46,7 @@ export class ResetPasswordComponent {
   destroyRef = inject(DestroyRef);
   serverError: any;
   loading: boolean = false;
-  constructor(
-    private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private commonUtility: CommonUtilityService,
-    private router: Router
-  ) {
+  constructor(private route: ActivatedRoute, private fb: FormBuilder) {
     this.userId = this.route.snapshot.queryParams['email'];
     this.form = this.fb.group({
       userId: new FormControl<string>('', {
@@ -65,7 +60,6 @@ export class ResetPasswordComponent {
       }),
     });
   }
-
   resetPassword() {
     this.serverError = '';
     this.resetDone = false;
@@ -78,6 +72,8 @@ export class ResetPasswordComponent {
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
             this.resetDone = true;
+          }),
+          finalize(() => {
             this.loading = false;
           }),
           catchError((error) => {

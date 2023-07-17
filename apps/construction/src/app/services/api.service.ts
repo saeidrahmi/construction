@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import {
   Observable,
@@ -106,17 +106,12 @@ export class ApiService {
         })
       );
   }
-  checkToken(token: string): Observable<true> {
-    // return this.httpClient
-    //   .post(
-    //     this.backendApiUrl + '/users/signup',
-
-    //     {
-    //       userId: this.encryptItem(userId as string),
-    //     }
-    //   )
-    //   .pipe(take(1), delay(300));
-    return of(true);
+  checkUserToken(token: string): Observable<boolean> {
+    return this.httpClient
+      .post<boolean>(this.backendApiUrl + '/users/checkUserToken', {
+        token: token,
+      })
+      .pipe(take(1), delay(300));
   }
   register(
     user: UserInterface,
@@ -148,5 +143,19 @@ export class ApiService {
         }
       )
       .pipe(take(1), delay(600));
+  }
+  completeResetPassword(data: any): Observable<any> {
+    data.userId = this.encryptItem(data.userId as string);
+    data.password = this.encryptItem(data.password as string);
+
+    const headers = new HttpHeaders({
+      Authorization: 'bearer ' + data.token, // Replace 'yourAccessToken' with the actual access token
+      'Content-Type': 'application/json',
+    });
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/complete-reset-password', data, {
+        headers,
+      })
+      .pipe(take(1), delay(300));
   }
 }

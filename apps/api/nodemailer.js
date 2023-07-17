@@ -56,7 +56,7 @@ function sendPasswordResetEmail(userId, token) {
                   You're almost done resetting your password. please click the link below.
                 </p>
                 <p>
-                  <a href="http://localhost:4200/change-password/${token}"> Reset Password</a>
+                  <a href="http://localhost:4200/complete-reset-password/${token}"> Reset Password</a>
                 </p>
                 <p>
                   For your security, this link will expire ${
