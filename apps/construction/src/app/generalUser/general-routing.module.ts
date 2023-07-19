@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { GeneralComponent } from './general.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { GeneralSideBarComponent } from './generalSideBar/general-side-bar.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
 const routes: Routes = [
   {
     path: '',
@@ -15,6 +16,10 @@ const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+      },
+      {
+        path: 'user-profile',
+        component: UserProfileComponent,
       },
       {
         path: '',

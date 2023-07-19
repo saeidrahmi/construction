@@ -62,7 +62,7 @@ export class ApiService {
         finalize(() => {
           this.storageService.updateIsLoading(false);
         }),
-        map((response: UserApiResponseInterface) => {
+        tap((response: UserApiResponseInterface) => {
           this.storageService.updateStateLoginSuccessful(response);
           this.userRouting.navigateToUserMainPage();
         }),
@@ -157,5 +157,39 @@ export class ApiService {
         headers,
       })
       .pipe(take(1), delay(300));
+  }
+
+  editUserProfile(
+    data: UserApiResponseInterface
+  ): Observable<UserApiResponseInterface> {
+    data.userId = this.encryptItem(data.userId as string);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/edit-user-profile', {
+        user: data,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        }),
+        tap((response: UserApiResponseInterface) => {
+          this.storageService.updateStateProfileSuccessful(response);
+        })
+      );
+  }
+  getUserProfile(userId: string): Observable<UserApiResponseInterface> {
+    const userIdEncrypted = this.encryptItem(userId);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-user-profile', {
+        userId: userIdEncrypted,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
   }
 }

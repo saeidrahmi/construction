@@ -1,10 +1,49 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, computed, Signal } from '@angular/core';
 import jwt_decode from 'jwt-decode';
+import { HttpClient } from '@angular/common/http';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, take } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { CountryInterface } from '../models/country';
+
 @Injectable({
   providedIn: 'root',
 })
 export class CommonUtilityService {
   constructor() {}
+
+  http = inject(HttpClient);
+  canadaInfo$ = this.http
+    .get<CountryInterface[]>('../../assets/canada.json')
+    .pipe(
+      take(1),
+      map((response) => {
+        const data = JSON.parse(JSON.stringify(response));
+        const groupedData: CountryInterface[] = [];
+
+        for (const [city, province] of data) {
+          const existingProvince = groupedData.find(
+            (item) => item.province === province
+          );
+          if (existingProvince) {
+            existingProvince.cities.push(city);
+          } else {
+            groupedData.push({ province, cities: [city] });
+          }
+        }
+
+        return groupedData;
+      })
+    );
+
+  getCanadaInfo = toSignal<CountryInterface[], CountryInterface[]>(
+    this.canadaInfo$,
+    { initialValue: [] }
+  );
+  getCanada(): Signal<CountryInterface[]> {
+    return computed(this.getCanadaInfo);
+  }
+
   isTokenValid(token: string): boolean {
     try {
       const decodedToken: any = jwt_decode(token);

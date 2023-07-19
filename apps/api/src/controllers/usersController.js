@@ -89,8 +89,17 @@ async function loginController(req, res) {
         active: rows[0].active,
         registered: rows[0].registered,
         lastLoginDate: new Date(),
+        phone: rows[0].phone,
+        fax: rows[0].fax,
+        address: rows[0].address,
+        city: rows[0].city,
+        province: rows[0].province,
+        postalCode: rows[0].postalCode,
       };
-      const payload = { subject: user };
+      const jwtUser = {
+        userId: rows[0].userId,
+      };
+      const payload = { subject: jwtUser };
       const token = jwt.sign(payload, jwtSecretKey, {
         expiresIn: env.userSessionTokenExpiry(),
       });
@@ -346,6 +355,39 @@ async function completeResetPasswordController(req, res) {
     return res.status(500).json({ errorMessage: 'Error resetting password.' });
   }
 }
+async function editUserProfileController(req, res) {
+  try {
+    const user = req.body.user;
+    let userId = decryptItem(user.userId, webSecretKey);
+
+    const query =
+      'UPDATE  users SET firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?   WHERE userId = ? ';
+    const values = [
+      user.firstName,
+      user.lastName,
+      user.phone,
+      user.fax,
+      user.address,
+      user.city,
+      user.province,
+      user.postalCode,
+      userId,
+    ];
+    const result = await executeQuery(query, values);
+
+    if (result.affectedRows > 0 || result.insertId) {
+      const selectQuery = `SELECT * FROM users WHERE userId = ?`;
+      const selectResult = await executeQuery(selectQuery, [userId]);
+      let userObject = selectResult[0];
+      delete userObject.password;
+      return res.status(200).json(userObject);
+    } else {
+      return res.status(500).json({ errorMessage: 'Error updating user' });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error updating password.' });
+  }
+}
 module.exports = {
   logoutController,
   loginController,
@@ -354,4 +396,5 @@ module.exports = {
   resetPasswordController,
   completeResetPasswordController,
   checkUserTokenController,
+  editUserProfileController,
 };

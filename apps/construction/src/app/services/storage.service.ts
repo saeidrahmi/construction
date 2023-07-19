@@ -50,6 +50,9 @@ export class StorageService {
   getUser(): Signal<UserInterface> {
     return computed(() => this.store()?.user);
   }
+  getUserId(): Signal<string> {
+    return computed(() => this.store()?.user?.userId as string);
+  }
   saveStore() {
     sessionStorage.setItem(this.stateSessionItem, JSON.stringify(this.store()));
   }
@@ -92,6 +95,12 @@ export class StorageService {
       userId: response?.userId,
       jwtToken: response?.jwtToken,
       role: response?.role,
+      phone: response?.phone,
+      fax: response?.fax,
+      address: response?.address,
+      city: response?.city,
+      province: response?.province,
+      postalCode: response?.postalCode,
       error: '',
       firstName: response?.firstName,
       lastName: response?.lastName,
@@ -102,6 +111,25 @@ export class StorageService {
     };
     this.store.update((state) => {
       return { ...state, user: user };
+    });
+  }
+  updateStateProfileSuccessful(response: UserApiResponseInterface) {
+    console.log(response, 'respone');
+    this.store.update((state) => {
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          firstName: response?.firstName,
+          lastName: response?.lastName,
+          phone: response?.phone,
+          fax: response?.fax,
+          address: response?.address,
+          city: response?.city,
+          province: response?.province,
+          postalCode: response?.postalCode,
+        },
+      };
     });
   }
   updateStateLoginFailure(error: string) {

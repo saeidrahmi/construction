@@ -1,0 +1,137 @@
+<div *ngIf="serverGetError; then error; else show"></div>
+<ng-template #error>
+  <div style="margin: 100px">
+    <api-server-error *ngIf="serverGetError" [error]="serverGetError" />
+  </div>
+</ng-template>
+<ng-template #show>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <app-form-errors [formErrors]="formErrors"></app-form-errors>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-5">
+        <h3 class="mb-3">Edit/update your information</h3>
+        <h4 *ngIf="updateCompleted" class="text-success">Update Successful.</h4>
+        <h4 *ngIf="serverUpdateError" class="text-danger">
+          {{ serverUpdateError }}
+        </h4>
+      </div>
+    </div>
+    <form [formGroup]="form">
+      <div class="row">
+        <div class="col-md-2 mt-1">First Name</div>
+        <div class="col-md-4">
+          <input
+            class="form-control"
+            placeholder="Enter your first name..."
+            formControlName="firstName"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-1">Last Name</div>
+        <div class="col-md-4">
+          <input
+            class="form-control"
+            placeholder="Enter your last name..."
+            formControlName="lastName"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-1">Phone Number</div>
+        <div class="col-md-4">
+          <p-inputMask
+            mask="(999) 999-9999? x99999"
+            class=""
+            formControlName="phone"
+            placeholder="(999) 999-9999? x99999"
+          ></p-inputMask>
+
+          <!-- <input
+            class="form-control"
+            placeholder="Enter your last name..."
+            formControlName="phone"
+          /> -->
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-1">Fax Number</div>
+        <div class="col-md-4">
+          <p-inputMask
+            mask="(999) 999-9999? x99999"
+            class=""
+            formControlName="fax"
+            placeholder="(999) 999-9999? x99999"
+          ></p-inputMask>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-1">Address</div>
+        <div class="col-md-6">
+          <input
+            class="form-control"
+            placeholder="Enter your last name..."
+            formControlName="address"
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-1">Province</div>
+        <div class="col-md-4">
+          <select
+            formControlName="province"
+            class="form-select"
+            aria-label="Default select province"
+            [(ngModel)]="selectedProvince"
+            (change)="selectedProvinceAction()"
+          >
+            <option selected>Select Province</option>
+            <option
+              [value]="item.province"
+              *ngFor="let item of this.canadaCountryInfo()"
+            >
+              {{ item.province }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-1">City</div>
+        <div class="col-md-4">
+          <select
+            formControlName="city"
+            class="form-select"
+            aria-label="Default select city"
+            [(ngModel)]="selectedCity"
+          >
+            <option [value]="city" *ngFor="let city of cities()">
+              {{ city }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-1">Postal Code</div>
+        <div class="col-md-4">
+          <p-inputMask
+            mask="a9a-9a9"
+            class=""
+            formControlName="postalCode"
+            placeholder="a9a-9a9"
+          ></p-inputMask>
+        </div>
+      </div>
+    </form>
+    <div class="row">
+      <div class="col-md-2"></div>
+      <div class="col-md-4">
+        <button class="submit-button my-2" (click)="submit()">Submit</button>
+      </div>
+    </div>
+  </div>
+</ng-template>
