@@ -49,7 +49,10 @@ export class LoginComponent {
   constructor() {
     if (this.isLoggedIn()) this.userRouting.navigateToUserMainPage();
     this.loginForm = this.fb.nonNullable.group({
-      userId: new FormControl<string>('admin', [Validators.required]),
+      userId: new FormControl<string>('admin', [
+        Validators.required,
+        Validators.email,
+      ]),
       password: new FormControl<string>('admin', [Validators.required]),
     });
   }

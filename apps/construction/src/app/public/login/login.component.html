@@ -4,36 +4,47 @@
   <app-form-errors [formErrors]="formErrors"></app-form-errors>
   <api-server-error *ngIf="loginError()" [error]="loginError()" />
   <form [formGroup]="loginForm">
-    <div class="form-group">
-      <label for="userId">User ID</label>
+    <label for="userId form-label">User ID</label>
+    <div class="input-group flex-nowrap">
+      <span class="input-group-text" id="addon-wrapping">@</span>
       <input
-        type="text"
+        type="email"
+        [class.is-invalid]="loginForm.get('userId')?.invalid && loginForm.dirty"
         class="form-control"
         id="userId"
         formControlName="userId"
       />
     </div>
-    <div class="form-group">
-      <label for="password">Password</label>
+    <label for="password form-label">Password</label>
+    <div class="input-group flex-nowrap">
+      <span class="input-group-text" id="addon-wrapping"
+        ><i class="bi bi-key"></i
+      ></span>
       <input
         type="password"
+        [class.is-invalid]="
+          loginForm.get('password')?.invalid && loginForm.dirty
+        "
         class="form-control"
         id="password"
         formControlName="password"
       />
     </div>
-    <p class="my-2">
+
+    <p class="my-2 form-text">
       Forgot your password?
 
       <a
+        class="form-text"
         [routerLink]="['/reset-password']"
         routerLinkActive="router-link-active"
         >Reset</a
       >
     </p>
 
-    <p class="my-2">
-      Don’t have an account? <a routerLink="/signup">Sign-up</a>
+    <p class="my-2 form-text">
+      Don’t have an account?
+      <a routerLink="/signup" class="form-text">Sign-up</a>
     </p>
 
     <button type="submit" (click)="login()" class="submit-button my-2">

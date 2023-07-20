@@ -85,14 +85,18 @@
               <label for="newsletter1" class="visually-hidden"
                 >Email address</label
               >
-              <input
-                id="email"
-                [(ngModel)]="email"
-                type="text"
-                name="email"
-                class="form-control"
-                placeholder="Email address"
-              />
+              <div class="input-group flex-nowrap">
+                <span class="input-group-text" id="addon-wrapping">@</span>
+
+                <input
+                  id="email"
+                  [(ngModel)]="email"
+                  type="text"
+                  name="email"
+                  class="form-control"
+                  placeholder="Email address"
+                />
+              </div>
             </div>
             <button
               class="btn btn-primary my-2"
