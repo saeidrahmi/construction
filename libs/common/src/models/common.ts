@@ -3,6 +3,7 @@ export class EnvironmentInfo {
   sessionIdle: number = 3600; // one hour
   sessionTimeout: number = 60; // one minute
   sessionPing: number = 20;
+  _apiTimeoutValue: number = 120000; // one miniutes
   _webSecretKey = 'web-secret-key';
   _jwtSecretKey = 'jwt-secret-key';
   _dbSecretKey = 'db-secret-key';
@@ -22,6 +23,9 @@ export class EnvironmentInfo {
   constructor() {}
   getPasswordResetExpiry() {
     return this._passwordResetExpiry;
+  }
+  apiTimeoutValue() {
+    return this._apiTimeoutValue;
   }
   getRole() {
     return this._roles;

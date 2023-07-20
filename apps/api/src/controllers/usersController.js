@@ -388,6 +388,34 @@ async function editUserProfileController(req, res) {
     return res.status(500).json({ errorMessage: 'Error updating password.' });
   }
 }
+
+async function changePasswordController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    let password = decryptItem(req.body.password, webSecretKey);
+    let currentPassword = decryptItem(req.body.currentPassword, webSecretKey);
+    const existingUser = await executeQuery(
+      `SELECT password FROM users WHERE userId = ? `,
+      [userId]
+    );
+    if (
+      existingUser.length > 0 &&
+      currentPassword === decryptItem(existingUser[0].password, dbSecretKey)
+    ) {
+      const query = 'UPDATE  users SET password= ? WHERE userId = ? ';
+      const values = [encryptItem(password, dbSecretKey), userId];
+      const result = await executeQuery(query, values);
+
+      if (result.affectedRows > 0 || result.insertId) {
+        return res.status(200).json(true);
+      } else {
+        return res.status(500).json({ errorMessage: 'Error updating user' });
+      }
+    } else return res.status(400).json({ errorMessage: 'Wrong password' });
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error resetting password.' });
+  }
+}
 module.exports = {
   logoutController,
   loginController,
@@ -397,4 +425,5 @@ module.exports = {
   completeResetPasswordController,
   checkUserTokenController,
   editUserProfileController,
+  changePasswordController,
 };

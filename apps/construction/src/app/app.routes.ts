@@ -1,5 +1,9 @@
 import { Route } from '@angular/router';
-import { isGeneralUser, isUserAdmin } from './services/user-gaurds';
+import {
+  isGeneralUser,
+  isUserAdmin,
+  isUserLoggedIn,
+} from './services/user-gaurds';
 import { PrivacyPolicyComponent } from './public/privacy-policy/privacy-policy.component';
 import { PageNotFoundComponent } from './public/page-not-found/page-not-found.component';
 
@@ -45,6 +49,15 @@ export const appRoutes: Route[] = [
         './public/complete-reset-password/complete-reset-password.component'
       ).then((com) => com.CompleteResetPasswordComponent),
   },
+
+  // {
+  //   path: 'change-password',
+  //   canActivate: [isUserLoggedIn],
+  //   loadComponent: () =>
+  //     import(
+  //       './common-components/change-password/change-password.component'
+  //     ).then((com) => com.ChangePasswordComponent),
+  // },
   {
     path: 'admin',
     canActivate: [isUserAdmin],

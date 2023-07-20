@@ -4,6 +4,7 @@ import { GeneralComponent } from './general.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { GeneralSideBarComponent } from './generalSideBar/general-side-bar.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
 const routes: Routes = [
   {
     path: '',
@@ -20,6 +21,10 @@ const routes: Routes = [
       {
         path: 'user-profile',
         component: UserProfileComponent,
+      },
+      {
+        path: 'change-password',
+        component: ChangePasswordComponent,
       },
       {
         path: '',

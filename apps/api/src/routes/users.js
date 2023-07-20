@@ -9,6 +9,7 @@ const {
   completeResetPasswordController,
   checkUserTokenController,
   editUserProfileController,
+  changePasswordController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -23,4 +24,5 @@ router.post(
   verifyToken,
   completeResetPasswordController
 );
+router.post('/change-password', verifyToken, changePasswordController);
 module.exports = router;

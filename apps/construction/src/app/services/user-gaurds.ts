@@ -4,6 +4,17 @@ import { CanActivateFn, Router } from '@angular/router';
 import { EnvironmentInfo } from 'libs/common/src/models/common';
 const env: EnvironmentInfo = new EnvironmentInfo();
 
+export const isUserLoggedIn: CanActivateFn = () => {
+  const storageService = inject(StorageService);
+  const router = inject(Router);
+
+  if (storageService.isUserLoggedIn()) return true;
+  else {
+    router.navigate(['/login']);
+    return false;
+  }
+};
+
 export const isUserAdmin: CanActivateFn = () => {
   const storageService = inject(StorageService);
   const router = inject(Router);

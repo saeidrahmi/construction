@@ -9,6 +9,7 @@ import {
   of,
   take,
   tap,
+  timeout,
 } from 'rxjs';
 import { LoginCredential } from '../models/login';
 import { AES } from 'crypto-js';
@@ -24,6 +25,7 @@ import { UserRoutingService } from './user-routing.service';
 })
 export class ApiService {
   env: EnvironmentInfo = new EnvironmentInfo();
+  apiTimeoutValue = this.env.apiTimeoutValue();
   storageService = inject(StorageService);
   user = this.storageService.getUser();
   router = inject(Router);
@@ -191,5 +193,14 @@ export class ApiService {
           this.storageService.updateIsLoading(false);
         })
       );
+  }
+  changePassword(data: any): Observable<any> {
+    console.log(data);
+    data.userId = this.encryptItem(data.userId as string);
+    data.password = this.encryptItem(data.password as string);
+    data.currentPassword = this.encryptItem(data.currentPassword as string);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/change-password', data)
+      .pipe(take(1), timeout(this.apiTimeoutValue), delay(300));
   }
 }
