@@ -7,3 +7,6 @@ docker run --name phpmyadmin-container --link mysql-container:db -p 8080:80 -d p
 adding mateial
 npm i @angular/material
 nx generate @angular/material:ng-add --project=construction
+
+npm run web-app
+npm start api
