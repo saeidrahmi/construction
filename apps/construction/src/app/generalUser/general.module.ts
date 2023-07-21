@@ -11,6 +11,7 @@ import { FormErrorsComponent } from '../public/form-errors.component';
 import { ApiServerErrorComponent } from '../public/apiServerError/api-server-error.component';
 import { InputMaskModule } from 'primeng/inputmask';
 import { DropdownModule } from 'primeng/dropdown';
+import { GoogleMapsModule } from '@angular/google-maps';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -26,6 +27,7 @@ import { DropdownModule } from 'primeng/dropdown';
     ApiServerErrorComponent,
     InputMaskModule,
     DropdownModule,
+    GoogleMapsModule,
   ],
 })
 export class GeneralModule {}

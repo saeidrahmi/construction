@@ -53,7 +53,9 @@ export class UserProfileComponent {
   cities = signal<string[]>([]);
   provinces = ['New York', 'Rome'];
   canadaCountryInfo = this.commonUtility.getCanada();
+  googleAddresses: any;
   constructor(private fb: FormBuilder) {
+    this.getCurrentLocation();
     this.form = this.fb.group({
       firstName: new FormControl(this.user()?.firstName, [Validators.required]),
       lastName: new FormControl(this.user()?.lastName, [Validators.required]),
@@ -77,8 +79,7 @@ export class UserProfileComponent {
     let data = this.canadaCountryInfo().find(
       (item) => item.province == this.selectedProvince
     );
-
-    this.cities.set(data!.cities);
+    if (!!data && 'cities' in data) this.cities?.set(data.cities);
   }
   submit() {
     const currentFormValue = this.form.value;
@@ -131,5 +132,44 @@ export class UserProfileComponent {
         this.form
       );
     }
+  }
+  currentPosition: any;
+  address!: string;
+  getCurrentLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position: any) => {
+          this.currentPosition = position;
+          this.getAddressFromCoordinates();
+        },
+        (error: any) => {
+          console.error('Error getting location:', error);
+        }
+      );
+    } else {
+      console.error('Geolocation is not supported by this browser.');
+    }
+  }
+
+  getAddressFromCoordinates() {
+    const geocoder = new google.maps.Geocoder();
+    const latlng = new google.maps.LatLng(
+      this.currentPosition.coords.latitude,
+      this.currentPosition.coords.longitude
+    );
+
+    geocoder.geocode({ location: latlng }, (results: any, status: any) => {
+      console.log(results, status, 'res');
+      this.googleAddresses = results;
+      if (status === 'OK') {
+        if (results[0]) {
+          this.address = results[0].formatted_address;
+        } else {
+          this.address = 'Address not found';
+        }
+      } else {
+        console.error('Geocoder failed due to: ' + status);
+      }
+    });
   }
 }
