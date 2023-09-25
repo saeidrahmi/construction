@@ -51,9 +51,10 @@ export class UserProfileComponent {
   selectedCity: string = '';
   selectedProvince: string = '';
   cities = signal<string[]>([]);
-  provinces = ['New York', 'Rome'];
+
   canadaCountryInfo = this.commonUtility.getCanada();
-  googleAddresses: any;
+  googleAddresses!: any;
+  addressObject!: any;
   constructor(private fb: FormBuilder) {
     this.getCurrentLocation();
     this.form = this.fb.group({
@@ -64,6 +65,7 @@ export class UserProfileComponent {
       fax: new FormControl(this.user()?.fax, []),
       province: new FormControl('', []),
       city: new FormControl('', []),
+      currentAddress: new FormControl('', []),
       postalCode: new FormControl(
         this.user()?.postalCode?.toLocaleUpperCase(),
         []
@@ -74,12 +76,34 @@ export class UserProfileComponent {
     this.selectedCity = this.user()?.city as string;
 
     this.initialFormValue = this.form.value;
+    this.form
+      .get('currentAddress')
+      ?.valueChanges.pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((value) => {
+          if (value) {
+            this.form.get('address')?.disable();
+            this.form.get('city')?.disable();
+            this.form.get('province')?.disable();
+            this.form.get('postalCode')?.disable();
+          } else {
+            this.form.get('address')?.enable();
+            this.form.get('city')?.enable();
+            this.form.get('province')?.enable();
+            this.form.get('postalCode')?.enable();
+          }
+        })
+      )
+      .subscribe();
   }
   selectedProvinceAction() {
     let data = this.canadaCountryInfo().find(
-      (item) => item.province == this.selectedProvince
+      (item) =>
+        item.province?.toLocaleLowerCase() ==
+        this.selectedProvince?.toLocaleLowerCase()
     );
     if (!!data && 'cities' in data) this.cities?.set(data.cities);
+    console.log('citi', data?.cities, this.canadaCountryInfo());
   }
   submit() {
     const currentFormValue = this.form.value;
@@ -105,13 +129,24 @@ export class UserProfileComponent {
         ),
         phone: this.commonUtility.trimString(this.form.get('phone')?.value),
         fax: this.commonUtility.trimString(this.form.get('fax')?.value),
-
-        address: this.commonUtility.trimString(this.form.get('address')?.value),
-        city: this.selectedCity,
-        province: this.selectedProvince,
-        postalCode: this.commonUtility.trimString(
-          this.form.get('postalCode')?.value
-        ),
+        address: this.form.get('currentAddress')?.value
+          ? this.getAddressFromString()?.streetAddress
+          : this.commonUtility.trimString(this.form.get('address')?.value),
+        city: this.form.get('currentAddress')?.value
+          ? this.getAddressFromString()?.city?.toUpperCase()
+          : this.selectedCity,
+        province: this.form.get('currentAddress')?.value
+          ? this.getAddressFromString()?.province
+          : this.selectedProvince,
+        postalCode: this.form.get('currentAddress')?.value
+          ? this.getAddressFromString()?.postalCode
+          : this.form.get('postalCode')?.value,
+        //address: this.commonUtility.trimString(this.form.get('address')?.value),
+        //  city: this.selectedCity,
+        // province: this.selectedProvince,
+        //postalCode: this.commonUtility.trimString(
+        // this.form.get('postalCode')?.value
+        // ),
       };
 
       this.apiService
@@ -133,6 +168,28 @@ export class UserProfileComponent {
       );
     }
   }
+  getAddressFromString(): any {
+    const addressParts = this.address.split(',').map((part) => part.trim());
+
+    const streetAddress = addressParts[0];
+    const city = addressParts[1];
+    const province = this.commonUtility.getFullProvinceName(
+      addressParts[2].split(' ')[0]
+    );
+    const postalCode =
+      addressParts[2].split(' ')[1] + ' ' + addressParts[2].split(' ')[2];
+
+    const country = addressParts[3];
+
+    return {
+      streetAddress,
+      city,
+      province,
+      postalCode,
+      country,
+    };
+  }
+
   currentPosition: any;
   address!: string;
   getCurrentLocation() {
@@ -159,11 +216,11 @@ export class UserProfileComponent {
     );
 
     geocoder.geocode({ location: latlng }, (results: any, status: any) => {
-      console.log(results, status, 'res');
       this.googleAddresses = results;
       if (status === 'OK') {
         if (results[0]) {
           this.address = results[0].formatted_address;
+          this.addressObject = results[0];
         } else {
           this.address = 'Address not found';
         }

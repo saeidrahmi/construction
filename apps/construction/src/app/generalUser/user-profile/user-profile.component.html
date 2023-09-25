@@ -14,10 +14,10 @@
     <div class="row">
       <div class="col-md-2"></div>
       <div class="col-md-5">
-        <h3 class="mb-3">Edit/update your information</h3>
+        <!-- <h3 class="mb-3">Edit/update your information</h3>
         <p>Latitude: {{ currentPosition.coords.latitude }}</p>
         <p>Longitude: {{ currentPosition.coords.longitude }}</p>
-        <p>Address: {{ address }}</p>
+        <p>Address: {{ address }}</p> -->
 
         <h4 *ngIf="updateCompleted" class="text-success">Update Successful.</h4>
         <h4 *ngIf="serverUpdateError" class="text-danger">
@@ -72,6 +72,20 @@
             formControlName="fax"
             placeholder="(999) 999-9999? x99999"
           ></p-inputMask>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-1">
+          Use current location <i class="bi bi-location"></i>
+        </div>
+        <div class="col-md-6">
+          <input
+            type="checkbox"
+            formControlName="currentAddress"
+            name="currentAddress"
+            id=""
+          />
+          {{ address }}
         </div>
       </div>
       <div class="row">

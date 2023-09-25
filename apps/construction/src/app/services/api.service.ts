@@ -19,7 +19,7 @@ import { StorageService } from './storage.service';
 import { UserApiResponseInterface } from '../../../../../libs/common/src/models/user-response';
 import { Router } from '@angular/router';
 import { UserRoutingService } from './user-routing.service';
-
+import { ToastrService } from 'ngx-toastr';
 @Injectable({
   providedIn: 'root',
 })
@@ -27,6 +27,7 @@ export class ApiService {
   env: EnvironmentInfo = new EnvironmentInfo();
   apiTimeoutValue = this.env.apiTimeoutValue();
   storageService = inject(StorageService);
+  toastService = inject(ToastrService);
   user = this.storageService.getUser();
   router = inject(Router);
   userRouting = inject(UserRoutingService);
@@ -65,10 +66,23 @@ export class ApiService {
           this.storageService.updateIsLoading(false);
         }),
         tap((response: UserApiResponseInterface) => {
+          this.toastService.success('Login successfully!', 'Login Success', {
+            timeOut: 3000,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+
           this.storageService.updateStateLoginSuccessful(response);
           this.userRouting.navigateToUserMainPage();
         }),
         catchError((error) => {
+          this.toastService.error(error.message, 'Login Failed', {
+            timeOut: 3000,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          }); // Display an error toast
           this.storageService.updateStateLoginFailure(error?.message);
           return of(error.message);
         })
