@@ -14,6 +14,7 @@ import {
 import { httpInterceptor } from './services/httpInterceptor';
 import { NgIdleKeepaliveModule } from '@ng-idle/keepalive';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToastrModule } from 'ngx-toastr';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,6 +31,10 @@ export const appConfig: ApplicationConfig = {
     // ),
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideAnimations(),
-    importProvidersFrom([NgIdleKeepaliveModule.forRoot(), NgbTooltipModule]),
+    importProvidersFrom([
+      NgIdleKeepaliveModule.forRoot(),
+      NgbTooltipModule,
+      ToastrModule.forRoot(),
+    ]),
   ],
 };

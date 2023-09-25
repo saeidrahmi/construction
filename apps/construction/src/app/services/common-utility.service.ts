@@ -44,6 +44,26 @@ export class CommonUtilityService {
     return computed(this.getCanadaInfo);
   }
 
+  getFullProvinceName(shortName: string): string {
+    const provinces: any = {
+      AB: 'Alberta',
+      BC: 'British Columbia',
+      MB: 'Manitoba',
+      NB: 'New Brunswick',
+      NL: 'Newfoundland and Labrador',
+      NS: 'Nova Scotia',
+      ON: 'Ontario',
+      PE: 'Prince Edward Island',
+      QC: 'Quebec',
+      SK: 'Saskatchewan',
+      NT: 'Northwest Territories',
+      NU: 'Nunavut',
+      YT: 'Yukon',
+    };
+
+    return provinces[shortName] || 'Unknown Province';
+  }
+
   isTokenValid(token: string): boolean {
     try {
       const decodedToken: any = jwt_decode(token);

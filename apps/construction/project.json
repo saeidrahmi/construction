@@ -29,6 +29,7 @@
           "@angular/material/prebuilt-themes/indigo-pink.css",
           "apps/construction/src/styles.scss",
           "bootstrap/dist/css/bootstrap.min.css" ,
+          "node_modules/ngx-toastr/toastr.css",
            "bootstrap-icons/font/bootstrap-icons.css"
            
         ],
