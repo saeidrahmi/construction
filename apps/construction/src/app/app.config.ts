@@ -4,7 +4,10 @@ import {
   withEnabledBlockingInitialNavigation,
 } from '@angular/router';
 import { appRoutes } from './app.routes';
-import { provideAnimations } from '@angular/platform-browser/animations';
+import {
+  BrowserAnimationsModule,
+  provideAnimations,
+} from '@angular/platform-browser/animations';
 import {
   HttpClientModule,
   provideHttpClient,
@@ -15,6 +18,7 @@ import { httpInterceptor } from './services/httpInterceptor';
 import { NgIdleKeepaliveModule } from '@ng-idle/keepalive';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ToastrModule } from 'ngx-toastr';
+import { BrowserModule } from '@angular/platform-browser';
 
 export const appConfig: ApplicationConfig = {
   providers: [

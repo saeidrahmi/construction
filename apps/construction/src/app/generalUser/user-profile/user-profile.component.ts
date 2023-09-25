@@ -34,24 +34,22 @@ import { CountryInterface } from '../../models/country';
 export class UserProfileComponent {
   userInfo: any = null;
 
-  serverGetError: string = '';
+  serverGetError = '';
   destroyRef = inject(DestroyRef);
   validatorsService = inject(ValidatorsService);
   apiService = inject(ApiService);
   commonUtility = inject(CommonUtilityService);
   formService = inject(FormService);
-
   storageService = inject(StorageService);
   user = this.storageService.getUser();
   form: FormGroup;
   formErrors: string[] = [];
   initialFormValue: any;
-  updateCompleted: boolean = false;
+  updateCompleted = false;
   serverUpdateError: any;
-  selectedCity: string = '';
-  selectedProvince: string = '';
+  selectedCity = '';
+  selectedProvince = '';
   cities = signal<string[]>([]);
-
   canadaCountryInfo = this.commonUtility.getCanada();
   googleAddresses!: any;
   addressObject!: any;
@@ -59,6 +57,7 @@ export class UserProfileComponent {
     this.getCurrentLocation();
     this.form = this.fb.group({
       firstName: new FormControl(this.user()?.firstName, [Validators.required]),
+      middleName: new FormControl(this.user()?.middleName, []),
       lastName: new FormControl(this.user()?.lastName, [Validators.required]),
       address: new FormControl(this.user()?.address, [Validators.required]),
       phone: new FormControl(this.user()?.phone, []),
@@ -66,6 +65,7 @@ export class UserProfileComponent {
       province: new FormControl('', []),
       city: new FormControl('', []),
       currentAddress: new FormControl('', []),
+      website: new FormControl(this.user()?.website, []),
       postalCode: new FormControl(
         this.user()?.postalCode?.toLocaleUpperCase(),
         []
@@ -97,16 +97,13 @@ export class UserProfileComponent {
       .subscribe();
   }
   selectedProvinceAction() {
-    let data = this.canadaCountryInfo().find(
+    const data = this.canadaCountryInfo().find(
       (item) =>
         item.province?.toLocaleLowerCase() ==
         this.selectedProvince?.toLocaleLowerCase()
     );
     if (!!data && 'cities' in data) this.cities?.set(data.cities);
-<<<<<<< HEAD
-=======
     console.log('citi', data?.cities, this.canadaCountryInfo());
->>>>>>> d583e5d2d7bb8482512494aaf707efe7b535e8e3
   }
   submit() {
     const currentFormValue = this.form.value;
@@ -122,7 +119,7 @@ export class UserProfileComponent {
       this.initialFormValue = currentFormValue;
       this.storageService.updateIsLoading(true);
       const userId = this.storageService?.getUserId();
-      let user: UserInterface = {
+      const user: UserInterface = {
         userId: userId(),
         firstName: this.commonUtility.trimString(
           this.form.get('firstName')?.value
@@ -130,7 +127,11 @@ export class UserProfileComponent {
         lastName: this.commonUtility.trimString(
           this.form.get('lastName')?.value
         ),
+        middleName: this.commonUtility.trimString(
+          this.form.get('middleName')?.value
+        ),
         phone: this.commonUtility.trimString(this.form.get('phone')?.value),
+        website: this.commonUtility.trimString(this.form.get('website')?.value),
         fax: this.commonUtility.trimString(this.form.get('fax')?.value),
         address: this.form.get('currentAddress')?.value
           ? this.getAddressFromString()?.streetAddress
@@ -144,12 +145,6 @@ export class UserProfileComponent {
         postalCode: this.form.get('currentAddress')?.value
           ? this.getAddressFromString()?.postalCode
           : this.form.get('postalCode')?.value,
-        //address: this.commonUtility.trimString(this.form.get('address')?.value),
-        //  city: this.selectedCity,
-        // province: this.selectedProvince,
-        //postalCode: this.commonUtility.trimString(
-        // this.form.get('postalCode')?.value
-        // ),
       };
 
       this.apiService
@@ -171,11 +166,8 @@ export class UserProfileComponent {
       );
     }
   }
-<<<<<<< HEAD
-=======
   getAddressFromString(): any {
     const addressParts = this.address.split(',').map((part) => part.trim());
-
     const streetAddress = addressParts[0];
     const city = addressParts[1];
     const province = this.commonUtility.getFullProvinceName(
@@ -183,9 +175,7 @@ export class UserProfileComponent {
     );
     const postalCode =
       addressParts[2].split(' ')[1] + ' ' + addressParts[2].split(' ')[2];
-
     const country = addressParts[3];
-
     return {
       streetAddress,
       city,
@@ -195,7 +185,6 @@ export class UserProfileComponent {
     };
   }
 
->>>>>>> d583e5d2d7bb8482512494aaf707efe7b535e8e3
   currentPosition: any;
   address!: string;
   getCurrentLocation() {
@@ -222,18 +211,11 @@ export class UserProfileComponent {
     );
 
     geocoder.geocode({ location: latlng }, (results: any, status: any) => {
-<<<<<<< HEAD
-      console.log(results, status, 'res');
-=======
->>>>>>> d583e5d2d7bb8482512494aaf707efe7b535e8e3
       this.googleAddresses = results;
       if (status === 'OK') {
         if (results[0]) {
           this.address = results[0].formatted_address;
-<<<<<<< HEAD
-=======
           this.addressObject = results[0];
->>>>>>> d583e5d2d7bb8482512494aaf707efe7b535e8e3
         } else {
           this.address = 'Address not found';
         }

@@ -9,6 +9,7 @@ export interface UserInterface {
   role?: string;
   error?: string;
   firstName?: string;
+  middleName?: string;
   lastName?: string;
   registeredDate?: Date | null | undefined;
   active?: boolean;
@@ -20,4 +21,5 @@ export interface UserInterface {
   postalCode?: string;
   phone?: string;
   fax?: string;
+  website?: string;
 }

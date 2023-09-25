@@ -10,7 +10,9 @@ export interface UserApiResponseInterface {
   postalCode?: string;
   phone?: string;
   fax?: string;
+  website?: string;
   firstName?: string;
+  middleName?: string;
   lastName?: string;
   registeredDate?: Date | null | undefined;
   active?: boolean;

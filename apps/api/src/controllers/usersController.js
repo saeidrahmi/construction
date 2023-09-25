@@ -84,6 +84,7 @@ async function loginController(req, res) {
         role: rows[0].role,
         firstName: rows[0].firstName,
         lastName: rows[0].lastName,
+        middleName: rows[0].middleName,
         registeredDate: rows[0].registeredDate,
         loggedIn: rows[0].loggedIn,
         active: rows[0].active,
@@ -91,6 +92,7 @@ async function loginController(req, res) {
         lastLoginDate: new Date(),
         phone: rows[0].phone,
         fax: rows[0].fax,
+        website: rows[0].website,
         address: rows[0].address,
         city: rows[0].city,
         province: rows[0].province,
@@ -361,7 +363,7 @@ async function editUserProfileController(req, res) {
     let userId = decryptItem(user.userId, webSecretKey);
 
     const query =
-      'UPDATE  users SET firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?   WHERE userId = ? ';
+      'UPDATE  users SET firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
     const values = [
       user.firstName,
       user.lastName,
@@ -371,6 +373,8 @@ async function editUserProfileController(req, res) {
       user.city,
       user.province,
       user.postalCode,
+      user.website,
+      user.middleName,
       userId,
     ];
     const result = await executeQuery(query, values);

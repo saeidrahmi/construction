@@ -37,6 +37,16 @@
         </div>
       </div>
       <div class="row">
+        <div class="col-md-2 mt-1">Middle Name</div>
+        <div class="col-md-4">
+          <input
+            class="form-control"
+            placeholder="Enter your middle name..."
+            formControlName="middleName"
+          />
+        </div>
+      </div>
+      <div class="row">
         <div class="col-md-2 mt-1">Last Name</div>
         <div class="col-md-4">
           <input
@@ -49,29 +59,21 @@
       <div class="row">
         <div class="col-md-2 mt-1">Phone Number</div>
         <div class="col-md-4">
-          <p-inputMask
-            mask="(999) 999-9999? x99999"
-            class=""
-            formControlName="phone"
-            placeholder="(999) 999-9999? x99999"
-          ></p-inputMask>
-
-          <!-- <input
+          <input
             class="form-control"
-            placeholder="Enter your last name..."
+            placeholder="Phone Number"
             formControlName="phone"
-          /> -->
+          />
         </div>
       </div>
       <div class="row">
         <div class="col-md-2 mt-1">Fax Number</div>
         <div class="col-md-4">
-          <p-inputMask
-            mask="(999) 999-9999? x99999"
-            class=""
+          <input
+            class="form-control"
+            placeholder="Fax Number"
             formControlName="fax"
-            placeholder="(999) 999-9999? x99999"
-          ></p-inputMask>
+          />
         </div>
       </div>
       <div class="row">
@@ -136,12 +138,21 @@
       <div class="row">
         <div class="col-md-2 mt-1">Postal Code</div>
         <div class="col-md-4">
-          <p-inputMask
-            mask="a9a-9a9"
-            class=""
+          <input
+            class="form-control"
+            placeholder="Postal Code"
             formControlName="postalCode"
-            placeholder="a9a-9a9"
-          ></p-inputMask>
+          />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-2 mt-2">website</div>
+        <div class="col-md-4">
+          <input
+            class="form-control"
+            placeholder="Enter website"
+            formControlName="website"
+          />
         </div>
       </div>
     </form>
