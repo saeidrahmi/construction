@@ -95,6 +95,7 @@ export class StorageService {
     const user: UserInterface = {
       loggedIn: true,
       userId: response?.userId,
+      profileImage: response?.profileImage,
       jwtToken: response?.jwtToken,
       role: response?.role,
       phone: response?.phone,
@@ -124,6 +125,7 @@ export class StorageService {
         ...state,
         user: {
           ...state.user,
+          profileImage: response?.profileImage,
           firstName: response?.firstName,
           lastName: response?.lastName,
           middleName: response?.middleName,

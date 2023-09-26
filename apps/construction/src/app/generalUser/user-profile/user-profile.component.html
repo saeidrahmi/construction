@@ -5,7 +5,7 @@
   </div>
 </ng-template>
 <ng-template #show>
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
       <div class="col">
         <app-form-errors [formErrors]="formErrors"></app-form-errors>
@@ -25,140 +25,178 @@
         </h4>
       </div>
     </div>
-    <form [formGroup]="form">
-      <div class="row">
-        <div class="col-md-2 mt-1">First Name</div>
-        <div class="col-md-4">
-          <input
-            class="form-control"
-            placeholder="Enter your first name..."
-            formControlName="firstName"
-          />
-        </div>
+    <div class="row">
+      <div class="col-12"><p class="h2 border-bottom">Edit Profile</p></div>
+    </div>
+    <div class="row">
+      <div class="col-7">
+        <form [formGroup]="form">
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe form-label" for="formFile">
+              Profile Photo
+            </div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                type="file"
+                formControlName="photo"
+                accept="image/*"
+                aria-describedby="fileHelpBlock"
+                (change)="fileBrowseHandler($event)"
+              />
+              <div id="fileHelpBlock" class="form-text">
+                <span class="small-text">
+                  Max image size for profile pictures is 180 by 180 pixels with
+                  a maximum file size of 1 MB (megabyte).</span
+                >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">First Name</div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                placeholder="Enter your first name..."
+                formControlName="firstName"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">Middle Name</div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                placeholder="Enter your middle name..."
+                formControlName="middleName"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">Last Name</div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                placeholder="Enter your last name..."
+                formControlName="lastName"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">Phone Number</div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                placeholder="Phone Number"
+                formControlName="phone"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">Fax Number</div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                placeholder="Fax Number"
+                formControlName="fax"
+              />
+            </div>
+          </div>
+          <!-- <div class="row">
+            <div class="col-md-2 mt-1 form-labe">
+              Use current location <i class="bi bi-location"></i>
+            </div>
+            <div class="col-md-6">
+              <input
+                type="checkbox"
+                formControlName="currentAddress"
+                name="currentAddress"
+                id=""
+              />
+              {{ address }}
+            </div>
+          </div> -->
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">Address</div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                placeholder="Enter your last name..."
+                formControlName="address"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">Province</div>
+            <div class="col-md-6">
+              <select
+                formControlName="province"
+                class="form-select"
+                aria-label="Default select province"
+                [(ngModel)]="selectedProvince"
+                (change)="selectedProvinceAction()"
+              >
+                <option selected>Select Province</option>
+                <option
+                  [value]="item.province"
+                  *ngFor="let item of this.canadaCountryInfo()"
+                >
+                  {{ item.province }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">City</div>
+            <div class="col-md-6">
+              <select
+                formControlName="city"
+                class="form-select"
+                aria-label="Default select city"
+                [(ngModel)]="selectedCity"
+              >
+                <option [value]="city" *ngFor="let city of cities()">
+                  {{ city }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-1 form-labe">Postal Code</div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                placeholder="Postal Code"
+                formControlName="postalCode"
+              />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2 mt-2">website</div>
+            <div class="col-md-6">
+              <input
+                class="form-control"
+                placeholder="Enter website"
+                formControlName="website"
+              />
+            </div>
+          </div>
+        </form>
       </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">Middle Name</div>
-        <div class="col-md-4">
-          <input
-            class="form-control"
-            placeholder="Enter your middle name..."
-            formControlName="middleName"
-          />
-        </div>
+      <div class="col-5">
+        <img
+          #imageElement
+          [src]="getBlobDataUrl(bufferToBlob(user()?.profileImage))"
+          alt="Image"
+          width="200px"
+          height="200px"
+        />
       </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">Last Name</div>
-        <div class="col-md-4">
-          <input
-            class="form-control"
-            placeholder="Enter your last name..."
-            formControlName="lastName"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">Phone Number</div>
-        <div class="col-md-4">
-          <input
-            class="form-control"
-            placeholder="Phone Number"
-            formControlName="phone"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">Fax Number</div>
-        <div class="col-md-4">
-          <input
-            class="form-control"
-            placeholder="Fax Number"
-            formControlName="fax"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">
-          Use current location <i class="bi bi-location"></i>
-        </div>
-        <div class="col-md-6">
-          <input
-            type="checkbox"
-            formControlName="currentAddress"
-            name="currentAddress"
-            id=""
-          />
-          {{ address }}
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">Address</div>
-        <div class="col-md-6">
-          <input
-            class="form-control"
-            placeholder="Enter your last name..."
-            formControlName="address"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">Province</div>
-        <div class="col-md-4">
-          <select
-            formControlName="province"
-            class="form-select"
-            aria-label="Default select province"
-            [(ngModel)]="selectedProvince"
-            (change)="selectedProvinceAction()"
-          >
-            <option selected>Select Province</option>
-            <option
-              [value]="item.province"
-              *ngFor="let item of this.canadaCountryInfo()"
-            >
-              {{ item.province }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">City</div>
-        <div class="col-md-4">
-          <select
-            formControlName="city"
-            class="form-select"
-            aria-label="Default select city"
-            [(ngModel)]="selectedCity"
-          >
-            <option [value]="city" *ngFor="let city of cities()">
-              {{ city }}
-            </option>
-          </select>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2 mt-1">Postal Code</div>
-        <div class="col-md-4">
-          <input
-            class="form-control"
-            placeholder="Postal Code"
-            formControlName="postalCode"
-          />
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2 mt-2">website</div>
-        <div class="col-md-4">
-          <input
-            class="form-control"
-            placeholder="Enter website"
-            formControlName="website"
-          />
-        </div>
-      </div>
-    </form>
+    </div>
+
     <div class="row">
       <div class="col-md-2"></div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <button class="submit-button my-2" (click)="submit()">Submit</button>
       </div>
     </div>

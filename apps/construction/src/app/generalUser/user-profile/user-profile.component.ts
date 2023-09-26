@@ -25,7 +25,8 @@ import { UserInterface } from '../../models/user';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { TitleCasePipe } from '@angular/common';
 import { CountryInterface } from '../../models/country';
-
+import { ToastrService } from 'ngx-toastr';
+import { EncryptionService } from '../../services/encryption-service';
 @Component({
   selector: 'app-user-profile',
   templateUrl: './user-profile.component.html',
@@ -33,11 +34,12 @@ import { CountryInterface } from '../../models/country';
 })
 export class UserProfileComponent {
   userInfo: any = null;
-
+  toastService = inject(ToastrService);
   serverGetError = '';
   destroyRef = inject(DestroyRef);
   validatorsService = inject(ValidatorsService);
   apiService = inject(ApiService);
+  encryptionService = inject(EncryptionService);
   commonUtility = inject(CommonUtilityService);
   formService = inject(FormService);
   storageService = inject(StorageService);
@@ -53,9 +55,11 @@ export class UserProfileComponent {
   canadaCountryInfo = this.commonUtility.getCanada();
   googleAddresses!: any;
   addressObject!: any;
+  file: any;
   constructor(private fb: FormBuilder) {
     this.getCurrentLocation();
     this.form = this.fb.group({
+      photo: new FormControl(),
       firstName: new FormControl(this.user()?.firstName, [Validators.required]),
       middleName: new FormControl(this.user()?.middleName, []),
       lastName: new FormControl(this.user()?.lastName, [Validators.required]),
@@ -64,7 +68,6 @@ export class UserProfileComponent {
       fax: new FormControl(this.user()?.fax, []),
       province: new FormControl('', []),
       city: new FormControl('', []),
-      currentAddress: new FormControl('', []),
       website: new FormControl(this.user()?.website, []),
       postalCode: new FormControl(
         this.user()?.postalCode?.toLocaleUpperCase(),
@@ -76,25 +79,6 @@ export class UserProfileComponent {
     this.selectedCity = this.user()?.city as string;
 
     this.initialFormValue = this.form.value;
-    this.form
-      .get('currentAddress')
-      ?.valueChanges.pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap((value) => {
-          if (value) {
-            this.form.get('address')?.disable();
-            this.form.get('city')?.disable();
-            this.form.get('province')?.disable();
-            this.form.get('postalCode')?.disable();
-          } else {
-            this.form.get('address')?.enable();
-            this.form.get('city')?.enable();
-            this.form.get('province')?.enable();
-            this.form.get('postalCode')?.enable();
-          }
-        })
-      )
-      .subscribe();
   }
   selectedProvinceAction() {
     const data = this.canadaCountryInfo().find(
@@ -104,6 +88,17 @@ export class UserProfileComponent {
     );
     if (!!data && 'cities' in data) this.cities?.set(data.cities);
     console.log('citi', data?.cities, this.canadaCountryInfo());
+  }
+
+  bufferToBlob(buffer: any): Blob {
+    const uintArray = new Uint8Array(buffer?.data);
+    return new Blob([uintArray], { type: buffer.type });
+  }
+  getBlobDataUrl(blob: any): string {
+    if (blob) {
+      return URL.createObjectURL(blob);
+    }
+    return '';
   }
   submit() {
     const currentFormValue = this.form.value;
@@ -119,36 +114,47 @@ export class UserProfileComponent {
       this.initialFormValue = currentFormValue;
       this.storageService.updateIsLoading(true);
       const userId = this.storageService?.getUserId();
-      const user: UserInterface = {
-        userId: userId(),
-        firstName: this.commonUtility.trimString(
-          this.form.get('firstName')?.value
-        ),
-        lastName: this.commonUtility.trimString(
-          this.form.get('lastName')?.value
-        ),
-        middleName: this.commonUtility.trimString(
-          this.form.get('middleName')?.value
-        ),
-        phone: this.commonUtility.trimString(this.form.get('phone')?.value),
-        website: this.commonUtility.trimString(this.form.get('website')?.value),
-        fax: this.commonUtility.trimString(this.form.get('fax')?.value),
-        address: this.form.get('currentAddress')?.value
-          ? this.getAddressFromString()?.streetAddress
-          : this.commonUtility.trimString(this.form.get('address')?.value),
-        city: this.form.get('currentAddress')?.value
-          ? this.getAddressFromString()?.city?.toUpperCase()
-          : this.selectedCity,
-        province: this.form.get('currentAddress')?.value
-          ? this.getAddressFromString()?.province
-          : this.selectedProvince,
-        postalCode: this.form.get('currentAddress')?.value
-          ? this.getAddressFromString()?.postalCode
-          : this.form.get('postalCode')?.value,
-      };
+      const formData = new FormData();
+      formData.append('userId', this.encryptionService.encryptItem(userId()));
+      if (this.file) formData.append('profileImage', this.file, this.file.name);
+      else formData.append('profileImage', '');
+      formData.append(
+        'firstName',
+        this.commonUtility.trimString(this.form.get('firstName')?.value)
+      );
+      formData.append(
+        'lastName',
+        this.commonUtility.trimString(this.form.get('lastName')?.value)
+      );
+
+      formData.append(
+        'middleName',
+        this.commonUtility.trimString(this.form.get('middleName')?.value)
+      );
+
+      formData.append(
+        'phone',
+        this.commonUtility.trimString(this.form.get('phone')?.value)
+      );
+      formData.append(
+        'website',
+        this.commonUtility.trimString(this.form.get('website')?.value)
+      );
+
+      formData.append(
+        'fax',
+        this.commonUtility.trimString(this.form.get('fax')?.value)
+      );
+      formData.append(
+        'address',
+        this.commonUtility.trimString(this.form.get('address')?.value)
+      );
+      formData.append('city', this.selectedCity);
+      formData.append('province', this.selectedProvince);
+      formData.append('postalCode', this.form.get('postalCode')?.value);
 
       this.apiService
-        .editUserProfile(user)
+        .editUserProfile(formData)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
@@ -165,24 +171,6 @@ export class UserProfileComponent {
         this.form
       );
     }
-  }
-  getAddressFromString(): any {
-    const addressParts = this.address.split(',').map((part) => part.trim());
-    const streetAddress = addressParts[0];
-    const city = addressParts[1];
-    const province = this.commonUtility.getFullProvinceName(
-      addressParts[2].split(' ')[0]
-    );
-    const postalCode =
-      addressParts[2].split(' ')[1] + ' ' + addressParts[2].split(' ')[2];
-    const country = addressParts[3];
-    return {
-      streetAddress,
-      city,
-      province,
-      postalCode,
-      country,
-    };
   }
 
   currentPosition: any;
@@ -223,5 +211,44 @@ export class UserProfileComponent {
         console.error('Geocoder failed due to: ' + status);
       }
     });
+  }
+  fileBrowseHandler(event: any) {
+    this.file = event?.target?.files[0];
+    const maxFileSize = this.commonUtility._profilePhotoMaxSize;
+    const allowedFileTypes = this.commonUtility._profileImageMimeTypes;
+    if (this.file) {
+      const fileType = this.file?.name?.split('.')?.pop()?.toLowerCase();
+      if (fileType && !allowedFileTypes?.includes(fileType)) {
+        this.toastService.error(
+          'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+            allowedFileTypes.join(', '),
+          'Wrong File Type',
+          {
+            timeOut: 3000,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          }
+        );
+        this.form.get('photo')?.setValue('');
+        this.file = null;
+      }
+      if (this.file?.size == 0 || this.file?.size > maxFileSize) {
+        this.toastService.error(
+          'File size can not be empty and can not exceeds the maximum limit of 1 MB',
+          'Wrong File Size',
+          {
+            timeOut: 3000,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          }
+        );
+        this.form.get('photo')?.setValue('');
+        this.file = null;
+      } else {
+        // file ok
+      }
+    }
   }
 }

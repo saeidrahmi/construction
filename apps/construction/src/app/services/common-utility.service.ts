@@ -10,6 +10,9 @@ import { CountryInterface } from '../models/country';
   providedIn: 'root',
 })
 export class CommonUtilityService {
+  _profilePhotoMaxSize = 1 * 1024 * 1024;
+  _profileImageMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
+
   constructor() {}
 
   http = inject(HttpClient);

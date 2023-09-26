@@ -82,6 +82,7 @@ async function loginController(req, res) {
       const user = {
         userId: rows[0].userId,
         role: rows[0].role,
+        profileImage: rows[0].profileImage,
         firstName: rows[0].firstName,
         lastName: rows[0].lastName,
         middleName: rows[0].middleName,
@@ -359,34 +360,64 @@ async function completeResetPasswordController(req, res) {
 }
 async function editUserProfileController(req, res) {
   try {
-    const user = req.body.user;
-    let userId = decryptItem(user.userId, webSecretKey);
+    const user = req.body;
+    const userId = decryptItem(user.userId, webSecretKey);
 
-    const query =
-      'UPDATE  users SET firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
-    const values = [
-      user.firstName,
-      user.lastName,
-      user.phone,
-      user.fax,
-      user.address,
-      user.city,
-      user.province,
-      user.postalCode,
-      user.website,
-      user.middleName,
-      userId,
-    ];
-    const result = await executeQuery(query, values);
-
-    if (result.affectedRows > 0 || result.insertId) {
-      const selectQuery = `SELECT * FROM users WHERE userId = ?`;
-      const selectResult = await executeQuery(selectQuery, [userId]);
-      let userObject = selectResult[0];
-      delete userObject.password;
-      return res.status(200).json(userObject);
+    if (req.file) {
+      const image = req.file;
+      const { originalname, buffer, mimetype } = image;
+      const query =
+        'UPDATE  users SET profileImage = ?, firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
+      const values = [
+        buffer,
+        user.firstName,
+        user.lastName,
+        user.phone,
+        user.fax,
+        user.address,
+        user.city,
+        user.province,
+        user.postalCode,
+        user.website,
+        user.middleName,
+        userId,
+      ];
+      const result = await executeQuery(query, values);
+      if (result.affectedRows > 0 || result.insertId) {
+        const selectQuery = `SELECT * FROM users WHERE userId = ?`;
+        const selectResult = await executeQuery(selectQuery, [userId]);
+        let userObject = selectResult[0];
+        delete userObject.password;
+        return res.status(200).json(userObject);
+      } else {
+        return res.status(500).json({ errorMessage: 'Error updating user' });
+      }
     } else {
-      return res.status(500).json({ errorMessage: 'Error updating user' });
+      const query =
+        'UPDATE  users SET  firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
+      const values = [
+        user.firstName,
+        user.lastName,
+        user.phone,
+        user.fax,
+        user.address,
+        user.city,
+        user.province,
+        user.postalCode,
+        user.website,
+        user.middleName,
+        userId,
+      ];
+      const result = await executeQuery(query, values);
+      if (result.affectedRows > 0 || result.insertId) {
+        const selectQuery = `SELECT * FROM users WHERE userId = ?`;
+        const selectResult = await executeQuery(selectQuery, [userId]);
+        let userObject = selectResult[0];
+        delete userObject.password;
+        return res.status(200).json(userObject);
+      } else {
+        return res.status(500).json({ errorMessage: 'Error updating user' });
+      }
     }
   } catch (error) {
     return res.status(500).json({ errorMessage: 'Error updating password.' });

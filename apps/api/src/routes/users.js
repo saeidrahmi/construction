@@ -1,4 +1,7 @@
 const express = require('express');
+const multer = require('multer');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 const router = express.Router();
 const {
   logoutController,
@@ -18,7 +21,12 @@ router.post('/login', loginController);
 router.post('/signup', signupController);
 router.post('/register', registerController);
 router.post('/reset-password', resetPasswordController);
-router.post('/edit-user-profile', verifyToken, editUserProfileController);
+router.post(
+  '/edit-user-profile',
+  verifyToken,
+  upload.single('profileImage'),
+  editUserProfileController
+);
 router.post(
   '/complete-reset-password',
   verifyToken,

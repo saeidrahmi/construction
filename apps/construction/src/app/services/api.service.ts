@@ -12,7 +12,7 @@ import {
   timeout,
 } from 'rxjs';
 import { LoginCredential } from '../models/login';
-import { AES } from 'crypto-js';
+
 import { EnvironmentInfo } from '../../../../../libs/common/src/models/common';
 import { UserInterface } from '../models/user';
 import { StorageService } from './storage.service';
@@ -20,6 +20,7 @@ import { UserApiResponseInterface } from '../../../../../libs/common/src/models/
 import { Router } from '@angular/router';
 import { UserRoutingService } from './user-routing.service';
 import { ToastrService } from 'ngx-toastr';
+import { EncryptionService } from './encryption-service';
 @Injectable({
   providedIn: 'root',
 })
@@ -28,29 +29,15 @@ export class ApiService {
   apiTimeoutValue = this.env.apiTimeoutValue();
   storageService = inject(StorageService);
   toastService = inject(ToastrService);
+  encryptionService = inject(EncryptionService);
   user = this.storageService.getUser();
   router = inject(Router);
   userRouting = inject(UserRoutingService);
   backendApiUrl: string = `${this.env.apiUrl()}:${this.env.apiPort()}`;
   constructor(private httpClient: HttpClient) {}
-  encryptItem(item: string): string {
-    const webSecretKey = this.env.webSecretKey();
-    const encryptedItem = AES.encrypt(item, webSecretKey).toString();
-    return encryptedItem;
-  }
 
-  encryptCredentials(userId: string, password: string): string {
-    const webSecretKey = this.env.webSecretKey();
-    const encryptedUsername = AES.encrypt(userId, webSecretKey).toString();
-    const encryptedPassword = AES.encrypt(password, webSecretKey).toString();
-    // Concatenate the encrypted username and password with a delimiter
-    const encryptedCredentials = encryptedUsername + ':' + encryptedPassword;
-
-    // return btoa(encryptedCredentials); // Encode the encrypted credentials using Base64
-    return encryptedCredentials; // Encode the encrypted credentials using Base64
-  }
   login(credential: LoginCredential): Observable<UserApiResponseInterface> {
-    const encryptedCredentials = this.encryptCredentials(
+    const encryptedCredentials = this.encryptionService.encryptCredentials(
       credential?.userId,
       credential?.password
     );
@@ -92,7 +79,9 @@ export class ApiService {
     if (this.user()?.userId)
       return this.httpClient
         .post(this.backendApiUrl + '/users/logout', {
-          userId: this.encryptItem(this.user()?.userId as string),
+          userId: this.encryptionService.encryptItem(
+            this.user()?.userId as string
+          ),
         })
         .pipe(
           take(1),
@@ -111,7 +100,7 @@ export class ApiService {
         this.backendApiUrl + '/users/signup',
 
         {
-          userId: this.encryptItem(userId as string),
+          userId: this.encryptionService.encryptItem(userId as string),
         }
       )
       .pipe(
@@ -133,9 +122,9 @@ export class ApiService {
     user: UserInterface,
     userSignupToken: string
   ): Observable<UserApiResponseInterface> {
-    user.userId = this.encryptItem(user.userId as string);
-    user.password = this.encryptItem(user.password as string);
-    let data = { user: user, userSignupToken: userSignupToken };
+    user.userId = this.encryptionService.encryptItem(user.userId as string);
+    user.password = this.encryptionService.encryptItem(user.password as string);
+    const data = { user: user, userSignupToken: userSignupToken };
     return this.httpClient
       .post<UserApiResponseInterface>(
         this.backendApiUrl + '/users/register',
@@ -155,14 +144,14 @@ export class ApiService {
         this.backendApiUrl + '/users/reset-password',
 
         {
-          userId: this.encryptItem(userId as string),
+          userId: this.encryptionService.encryptItem(userId as string),
         }
       )
       .pipe(take(1), delay(600));
   }
   completeResetPassword(data: any): Observable<any> {
-    data.userId = this.encryptItem(data.userId as string);
-    data.password = this.encryptItem(data.password as string);
+    data.userId = this.encryptionService.encryptItem(data.userId as string);
+    data.password = this.encryptionService.encryptItem(data.password as string);
 
     const headers = new HttpHeaders({
       Authorization: 'bearer ' + data.token, // Replace 'yourAccessToken' with the actual access token
@@ -175,17 +164,14 @@ export class ApiService {
       .pipe(take(1), delay(300));
   }
 
-  editUserProfile(
-    data: UserApiResponseInterface
-  ): Observable<UserApiResponseInterface> {
-    data.userId = this.encryptItem(data.userId as string);
+  editUserProfile(data: FormData): Observable<UserApiResponseInterface> {
+    console.log(data, 'srvc');
     return this.httpClient
-      .post<any>(this.backendApiUrl + '/users/edit-user-profile', {
-        user: data,
-      })
+      .post<any>(this.backendApiUrl + '/users/edit-user-profile', data)
       .pipe(
         take(1),
         delay(300),
+        timeout(5000),
         finalize(() => {
           this.storageService.updateIsLoading(false);
         }),
@@ -195,7 +181,7 @@ export class ApiService {
       );
   }
   getUserProfile(userId: string): Observable<UserApiResponseInterface> {
-    const userIdEncrypted = this.encryptItem(userId);
+    const userIdEncrypted = this.encryptionService.encryptItem(userId);
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/get-user-profile', {
         userId: userIdEncrypted,
@@ -210,9 +196,11 @@ export class ApiService {
   }
   changePassword(data: any): Observable<any> {
     console.log(data);
-    data.userId = this.encryptItem(data.userId as string);
-    data.password = this.encryptItem(data.password as string);
-    data.currentPassword = this.encryptItem(data.currentPassword as string);
+    data.userId = this.encryptionService.encryptItem(data.userId as string);
+    data.password = this.encryptionService.encryptItem(data.password as string);
+    data.currentPassword = this.encryptionService.encryptItem(
+      data.currentPassword as string
+    );
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/change-password', data)
       .pipe(take(1), timeout(this.apiTimeoutValue), delay(300));
