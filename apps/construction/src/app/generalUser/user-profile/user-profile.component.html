@@ -1,112 +1,95 @@
-<div *ngIf="serverGetError; then error; else show"></div>
-<ng-template #error>
-  <div style="margin: 100px">
-    <api-server-error *ngIf="serverGetError" [error]="serverGetError" />
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <app-form-errors [formErrors]="formErrors"></app-form-errors>
+    </div>
   </div>
-</ng-template>
-<ng-template #show>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col">
-        <app-form-errors [formErrors]="formErrors"></app-form-errors>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-5">
-        <!-- <h3 class="mb-3">Edit/update your information</h3>
-        <p>Latitude: {{ currentPosition.coords.latitude }}</p>
-        <p>Longitude: {{ currentPosition.coords.longitude }}</p>
-        <p>Address: {{ address }}</p> -->
 
-        <h4 *ngIf="updateCompleted" class="text-success">Update Successful.</h4>
-        <h4 *ngIf="serverUpdateError" class="text-danger">
-          {{ serverUpdateError }}
-        </h4>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12"><p class="h2 border-bottom">Edit Profile</p></div>
-    </div>
-    <div class="row">
-      <div class="col-7">
-        <form [formGroup]="form">
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe form-label" for="formFile">
-              Profile Photo
-            </div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                type="file"
-                formControlName="photo"
-                accept="image/*"
-                aria-describedby="fileHelpBlock"
-                (change)="fileBrowseHandler($event)"
-              />
-              <div id="fileHelpBlock" class="form-text">
-                <span class="small-text">
-                  Max image size for profile pictures is 180 by 180 pixels with
-                  a maximum file size of 1 MB (megabyte).</span
-                >
-              </div>
+  <div class="row">
+    <div class="col-12"><p class="h2 border-bottom">Edit Profile</p></div>
+  </div>
+  <div class="row">
+    <div class="col-7">
+      <form [formGroup]="form">
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe form-label" for="formFile">
+            Profile Photo
+          </div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              type="file"
+              formControlName="photo"
+              accept="image/*"
+              aria-describedby="fileHelpBlock"
+              (change)="fileBrowseHandler($event)"
+            />
+            <div id="fileHelpBlock" class="form-text">
+              <span class="small-text">
+                Max image size for profile pictures is 180 by 180 pixels with a
+                maximum file size of 1 MB (megabyte).</span
+              >
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">First Name</div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                placeholder="Enter your first name..."
-                formControlName="firstName"
-              />
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">First Name</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter your first name..."
+              formControlName="firstName"
+            />
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">Middle Name</div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                placeholder="Enter your middle name..."
-                formControlName="middleName"
-              />
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">Middle Name</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter your middle name..."
+              formControlName="middleName"
+            />
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">Last Name</div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                placeholder="Enter your last name..."
-                formControlName="lastName"
-              />
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">Last Name</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter your last name..."
+              formControlName="lastName"
+            />
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">Phone Number</div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                placeholder="Phone Number"
-                formControlName="phone"
-              />
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">Phone Number</div>
+          <div class="col-md-8">
+            <input
+              formControlName="phone"
+              type="text"
+              class="form-control"
+              [showMaskTyped]="true"
+              mask="(000) 000-0000"
+            />
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">Fax Number</div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                placeholder="Fax Number"
-                formControlName="fax"
-              />
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">Fax Number</div>
+          <div class="col-md-8">
+            <input
+              formControlName="fax"
+              [showMaskTyped]="true"
+              class="form-control"
+              mask="(000) 000-0000"
+            />
           </div>
-          <!-- <div class="row">
+        </div>
+        <!-- <div class="row">
             <div class="col-md-2 mt-1 form-labe">
               Use current location <i class="bi bi-location"></i>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-8">
               <input
                 type="checkbox"
                 formControlName="currentAddress"
@@ -116,89 +99,122 @@
               {{ address }}
             </div>
           </div> -->
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">Address</div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                placeholder="Enter your last name..."
-                formControlName="address"
-              />
-            </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">Address</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter your last name..."
+              formControlName="address"
+            />
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">Province</div>
-            <div class="col-md-6">
-              <select
-                formControlName="province"
-                class="form-select"
-                aria-label="Default select province"
-                [(ngModel)]="selectedProvince"
-                (change)="selectedProvinceAction()"
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">Province</div>
+          <div class="col-md-8">
+            <select
+              formControlName="province"
+              class="form-select"
+              aria-label="Default select province"
+              [(ngModel)]="selectedProvince"
+              (change)="selectedProvinceAction()"
+            >
+              <option selected>Select Province</option>
+              <option
+                [value]="item.province"
+                *ngFor="let item of this.canadaCountryInfo()"
               >
-                <option selected>Select Province</option>
-                <option
-                  [value]="item.province"
-                  *ngFor="let item of this.canadaCountryInfo()"
-                >
-                  {{ item.province }}
-                </option>
-              </select>
-            </div>
+                {{ item.province }}
+              </option>
+            </select>
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">City</div>
-            <div class="col-md-6">
-              <select
-                formControlName="city"
-                class="form-select"
-                aria-label="Default select city"
-                [(ngModel)]="selectedCity"
-              >
-                <option [value]="city" *ngFor="let city of cities()">
-                  {{ city }}
-                </option>
-              </select>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">City</div>
+          <div class="col-md-8">
+            <select
+              formControlName="city"
+              class="form-select"
+              aria-label="Default select city"
+              [(ngModel)]="selectedCity"
+            >
+              <option [value]="city" *ngFor="let city of cities()">
+                {{ city }}
+              </option>
+            </select>
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-1 form-labe">Postal Code</div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                placeholder="Postal Code"
-                formControlName="postalCode"
-              />
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe">Postal Code</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Postal Code"
+              formControlName="postalCode"
+              mask="A0A-0A0"
+              [showMaskTyped]="true"
+            />
           </div>
-          <div class="row">
-            <div class="col-md-2 mt-2">website</div>
-            <div class="col-md-6">
-              <input
-                class="form-control"
-                placeholder="Enter website"
-                formControlName="website"
-              />
-            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-2">website</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter website"
+              formControlName="website"
+              type="url"
+            />
           </div>
-        </form>
-      </div>
-      <div class="col-5">
-        <img
-          #imageElement
-          [src]="getBlobDataUrl(bufferToBlob(user()?.profileImage))"
-          alt="Image"
-          width="200px"
-          height="200px"
-        />
-      </div>
-    </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-2">company</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter company"
+              formControlName="company"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-2">Profile Description</div>
+          <div class="col-md-8">
+            <textarea
+              class="form-control"
+              placeholder="Enter description"
+              formControlName="jobProfileDescription"
+              maxlength="400"
+              rows="5"
+            ></textarea>
+            <span class="text-danger">
+              {{
+                this.form?.get('jobProfileDescription')?.value?.length
+                  ? this.form?.get('jobProfileDescription')?.value?.length
+                  : 0
+              }}</span
+            >
 
-    <div class="row">
-      <div class="col-md-2"></div>
-      <div class="col-md-6">
-        <button class="submit-button my-2" (click)="submit()">Submit</button>
-      </div>
+            / 400
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-5 border-start">
+      <img
+        #imageElement
+        [src]="imageService.bufferToSafeUrl(user()?.profileImage)"
+        alt="Image"
+        width="200px"
+        height="200px"
+      />
     </div>
   </div>
-</ng-template>
+
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <button class="submit-button my-2" (click)="submit()">Submit</button>
+    </div>
+  </div>
+</div>

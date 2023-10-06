@@ -1,0 +1,46 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <form>
+            <mat-form-field class="chip-list">
+              <mat-label>My Services/Skills</mat-label>
+              <mat-chip-grid #chipGrid aria-label="Service selection">
+                <mat-chip-row
+                  *ngFor="let service of myServices"
+                  (removed)="remove(service)"
+                >
+                  <span class="text-primary">{{ service }}</span>
+                  <button matChipRemove [attr.aria-label]="'remove ' + service">
+                    <mat-icon>cancel</mat-icon>
+                  </button>
+                </mat-chip-row>
+              </mat-chip-grid>
+              <input
+                placeholder="New Service..."
+                #serviceInput
+                [formControl]="serviceCtrl"
+                [matChipInputFor]="chipGrid"
+                [matAutocomplete]="auto"
+                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="add($event)"
+              />
+              <mat-autocomplete
+                #auto="matAutocomplete"
+                (optionSelected)="selected($event)"
+              >
+                <mat-option
+                  *ngFor="let service of filteredServices | async"
+                  [value]="service"
+                >
+                  <span class="">{{ service }}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -80,7 +80,10 @@ export class StorageService {
       error: '',
       firstName: '',
       lastName: '',
+      company: '',
+      jobProfileDescription: '',
       website: '',
+      profileImage: undefined,
       middleName: '',
       registeredDate: null,
       active: false,
@@ -103,6 +106,8 @@ export class StorageService {
       address: response?.address,
       city: response?.city,
       website: response?.website,
+      jobProfileDescription: response?.jobProfileDescription,
+      company: response?.company,
       province: response?.province,
       postalCode: response?.postalCode,
       error: '',
@@ -119,7 +124,6 @@ export class StorageService {
     });
   }
   updateStateProfileSuccessful(response: UserApiResponseInterface) {
-    console.log(response, 'respone');
     this.store.update((state) => {
       return {
         ...state,
@@ -130,6 +134,8 @@ export class StorageService {
           lastName: response?.lastName,
           middleName: response?.middleName,
           website: response?.website,
+          jobProfileDescription: response?.jobProfileDescription,
+          company: response?.company,
           phone: response?.phone,
           fax: response?.fax,
           address: response?.address,
@@ -151,6 +157,8 @@ export class StorageService {
       lastName: '',
       website: '',
       middleName: '',
+      jobProfileDescription: '',
+      company: '',
       registeredDate: null,
       active: false,
       registered: false,
@@ -172,6 +180,9 @@ export class StorageService {
         firstName: '',
         lastName: '',
         website: '',
+        jobProfileDescription: '',
+        profileImage: undefined,
+        company: '',
         middleName: '',
         registeredDate: null,
         active: false,

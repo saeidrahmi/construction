@@ -68,16 +68,25 @@
           <a class="nav-link" (click)="logout()" *ngIf="isLoggedIn()">Logout</a>
         </li>
       </ul>
+      <ng-container *ngIf="isLoggedIn()">
+        <img
+          class="img-thumbnail rounded float-end"
+          width="40"
+          height="40"
+          [src]="imageService.bufferToSafeUrl(user()?.profileImage)"
+      /></ng-container>
 
+      <span class="mx-2">{{ userName() | titlecase }}</span>
       <button class="btn btn-outline-primary" (click)="changeThemeMode()">
         <i
           [ngClass]="
-            theme() == 'dark' ? 'bi bi-brightness-high' : 'bi bi-cloud-sun-fill'
+            theme() === 'dark'
+              ? 'bi bi-brightness-high'
+              : 'bi bi-cloud-sun-fill'
           "
         ></i>
-        {{ theme() == 'dark' ? 'Light Theme' : 'Dark Theme' }}
+        {{ theme() === 'dark' ? 'Light Theme' : 'Dark Theme' }}
       </button>
-      <span class="mx-2">{{ userName() | titlecase }}</span>
       <!-- <form class="d-flex" role="search">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success" type="submit">Search</button>

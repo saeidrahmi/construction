@@ -2,7 +2,7 @@ import { AddressInterface } from './address';
 
 export interface UserApiResponseInterface {
   userId?: string;
-  profileImage?: Blob;
+  profileImage?: { type: string; data: number[] };
   jwtToken?: string;
   role?: string;
   address?: string;
@@ -12,6 +12,8 @@ export interface UserApiResponseInterface {
   phone?: string;
   fax?: string;
   website?: string;
+  company?: string;
+  jobProfileDescription?: string;
   firstName?: string;
   middleName?: string;
   lastName?: string;

@@ -13,6 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../services/api.service';
 import { UserRoutingService } from '../../services/user-routing.service';
 import { CarouselHeaderComponent } from '../carousel-header/carousel-header.component';
+import { ImageService } from '../../services/image-service';
 
 @Component({
   selector: 'construction-header',
@@ -28,6 +29,7 @@ import { CarouselHeaderComponent } from '../carousel-header/carousel-header.comp
 })
 export class HeaderComponent {
   constructor(
+    public imageService: ImageService,
     private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document
   ) {
@@ -37,6 +39,7 @@ export class HeaderComponent {
   storageService = inject(StorageService);
   isLoggedIn = this.storageService.isUserLoggedIn();
   userName = this.storageService.getUserName();
+  user = this.storageService.getUser();
   theme = this.storageService.getTheme();
   apiService = inject(ApiService);
   router = inject(Router);

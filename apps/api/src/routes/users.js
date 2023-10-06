@@ -13,6 +13,9 @@ const {
   checkUserTokenController,
   editUserProfileController,
   changePasswordController,
+  userServicesListController,
+  addUserServicesController,
+  removeUserServicesController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -33,4 +36,8 @@ router.post(
   completeResetPasswordController
 );
 router.post('/change-password', verifyToken, changePasswordController);
+router.post('/list-user-services', verifyToken, userServicesListController);
+router.post('/add-user-services', verifyToken, addUserServicesController);
+router.post('/remove-user-services', verifyToken, removeUserServicesController);
+
 module.exports = router;

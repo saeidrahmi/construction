@@ -165,7 +165,6 @@ export class ApiService {
   }
 
   editUserProfile(data: FormData): Observable<UserApiResponseInterface> {
-    console.log(data, 'srvc');
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/edit-user-profile', data)
       .pipe(
@@ -195,7 +194,6 @@ export class ApiService {
       );
   }
   changePassword(data: any): Observable<any> {
-    console.log(data);
     data.userId = this.encryptionService.encryptItem(data.userId as string);
     data.password = this.encryptionService.encryptItem(data.password as string);
     data.currentPassword = this.encryptionService.encryptItem(
@@ -204,5 +202,56 @@ export class ApiService {
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/change-password', data)
       .pipe(take(1), timeout(this.apiTimeoutValue), delay(300));
+  }
+  getUserServices(userId: string): Observable<any> {
+    const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/list-user-services', {
+        userId: userIdEncrypted,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
+  }
+  addUserServices(
+    userId: string,
+    service: string
+  ): Observable<UserApiResponseInterface> {
+    const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    console.log('here', userId, service);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/add-user-services', {
+        userId: userIdEncrypted,
+        service: service,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
+  }
+  removeUserServices(
+    userId: string,
+    service: string
+  ): Observable<UserApiResponseInterface> {
+    const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/remove-user-services', {
+        userId: userIdEncrypted,
+        service: service,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
   }
 }

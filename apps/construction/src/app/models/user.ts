@@ -2,7 +2,7 @@ import { AddressInterface } from 'libs/common/src/models/address';
 
 export interface UserInterface {
   loggedIn?: boolean;
-  profileImage?: Blob;
+  profileImage?: { type: string; data: number[] };
   userId?: string;
   password?: string;
   purpose?: string;
@@ -11,6 +11,7 @@ export interface UserInterface {
   error?: string;
   firstName?: string;
   middleName?: string;
+  jobProfileDescription?: string;
   lastName?: string;
   registeredDate?: Date | null | undefined;
   active?: boolean;
@@ -23,4 +24,5 @@ export interface UserInterface {
   phone?: string;
   fax?: string;
   website?: string;
+  company?: string;
 }

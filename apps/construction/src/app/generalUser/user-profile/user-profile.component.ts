@@ -1,3 +1,4 @@
+import { ImageService } from './../../services/image-service';
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import {
   FormBuilder,
@@ -27,8 +28,10 @@ import { TitleCasePipe } from '@angular/common';
 import { CountryInterface } from '../../models/country';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../services/encryption-service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+
 @Component({
-  selector: 'app-user-profile',
+  selector: 'construction-app-user-profile',
   templateUrl: './user-profile.component.html',
   styleUrls: ['./user-profile.component.css'],
 })
@@ -56,7 +59,8 @@ export class UserProfileComponent {
   googleAddresses!: any;
   addressObject!: any;
   file: any;
-  constructor(private fb: FormBuilder) {
+  profileImageObjectUrl!: SafeUrl;
+  constructor(private fb: FormBuilder, public imageService: ImageService) {
     this.getCurrentLocation();
     this.form = this.fb.group({
       photo: new FormControl(),
@@ -69,6 +73,11 @@ export class UserProfileComponent {
       province: new FormControl('', []),
       city: new FormControl('', []),
       website: new FormControl(this.user()?.website, []),
+      company: new FormControl(this.user()?.company, []),
+      jobProfileDescription: new FormControl(
+        this.user()?.jobProfileDescription,
+        []
+      ),
       postalCode: new FormControl(
         this.user()?.postalCode?.toLocaleUpperCase(),
         []
@@ -87,30 +96,21 @@ export class UserProfileComponent {
         this.selectedProvince?.toLocaleLowerCase()
     );
     if (!!data && 'cities' in data) this.cities?.set(data.cities);
-    console.log('citi', data?.cities, this.canadaCountryInfo());
   }
 
-  bufferToBlob(buffer: any): Blob {
-    const uintArray = new Uint8Array(buffer?.data);
-    return new Blob([uintArray], { type: buffer.type });
-  }
-  getBlobDataUrl(blob: any): string {
-    if (blob) {
-      return URL.createObjectURL(blob);
-    }
-    return '';
-  }
   submit() {
     const currentFormValue = this.form.value;
     const hasChanged =
       JSON.stringify(currentFormValue) !==
       JSON.stringify(this.initialFormValue);
-
     this.updateCompleted = false;
     this.formErrors = [];
     this.serverUpdateError = '';
-
-    if (this.form.valid && hasChanged) {
+    if (this.form.invalid) {
+      this.formErrors = this.formService.getFormValidationErrorMessages(
+        this.form
+      );
+    } else if (this.form.valid && hasChanged) {
       this.initialFormValue = currentFormValue;
       this.storageService.updateIsLoading(true);
       const userId = this.storageService?.getUserId();
@@ -137,6 +137,16 @@ export class UserProfileComponent {
         this.commonUtility.trimString(this.form.get('phone')?.value)
       );
       formData.append(
+        'company',
+        this.commonUtility.trimString(this.form.get('company')?.value)
+      );
+      formData.append(
+        'jobProfileDescription',
+        this.commonUtility.trimString(
+          this.form.get('jobProfileDescription')?.value
+        )
+      );
+      formData.append(
         'website',
         this.commonUtility.trimString(this.form.get('website')?.value)
       );
@@ -158,17 +168,38 @@ export class UserProfileComponent {
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
-            this.updateCompleted = true;
+            this.toastService.success('Profile updated.', 'Update Successful', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
           }),
           catchError((err) => {
-            this.serverUpdateError = err;
+            this.toastService.error(
+              'Update failed due to server error. ' + err,
+              'No update',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
             return of(err);
           })
         )
         .subscribe();
     } else {
-      this.formErrors = this.formService.getFormValidationErrorMessages(
-        this.form
+      this.toastService.warning(
+        'No change to existing profile to update.',
+        'No update',
+        {
+          timeOut: 3000,
+          positionClass: 'toast-top-right',
+          closeButton: true,
+          progressBar: true,
+        }
       );
     }
   }
@@ -183,11 +214,11 @@ export class UserProfileComponent {
           this.getAddressFromCoordinates();
         },
         (error: any) => {
-          console.error('Error getting location:', error);
+          //    console.error('Error getting location:', error);
         }
       );
     } else {
-      console.error('Geolocation is not supported by this browser.');
+      // console.error('Geolocation is not supported by this browser.');
     }
   }
 
@@ -205,10 +236,10 @@ export class UserProfileComponent {
           this.address = results[0].formatted_address;
           this.addressObject = results[0];
         } else {
-          this.address = 'Address not found';
+          // this.address = 'Address not found';
         }
       } else {
-        console.error('Geocoder failed due to: ' + status);
+        // console.error('Geocoder failed due to: ' + status);
       }
     });
   }

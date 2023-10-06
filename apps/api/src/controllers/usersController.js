@@ -84,6 +84,8 @@ async function loginController(req, res) {
         role: rows[0].role,
         profileImage: rows[0].profileImage,
         firstName: rows[0].firstName,
+        company: rows[0].company,
+        jobProfileDescription: rows[0].jobProfileDescription,
         lastName: rows[0].lastName,
         middleName: rows[0].middleName,
         registeredDate: rows[0].registeredDate,
@@ -173,7 +175,9 @@ async function signupController(req, res) {
     } else {
       const query = `INSERT INTO users (userId, registeredDate,role, jwtToken, active, registered) VALUES ( ?,?, ?, ?, ?, ?)`;
       const values = [userId, new Date(), env.getRole().general, token, 0, 0];
+
       const result = await executeQuery(query, values);
+
       if (result.affectedRows > 0 || result.insertId) {
         try {
           await sendVerificationEmail(userId, token);
@@ -293,7 +297,7 @@ async function registerController(req, res) {
         encryptItem(password, dbSecretKey),
         userId,
       ];
-
+      console.log('here', query, values);
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(user);
@@ -332,6 +336,7 @@ async function checkUserTokenController(req, res) {
     return res.status(500).json();
   }
 }
+
 async function completeResetPasswordController(req, res) {
   try {
     let token = req.body.token;
@@ -367,8 +372,10 @@ async function editUserProfileController(req, res) {
       const image = req.file;
       const { originalname, buffer, mimetype } = image;
       const query =
-        'UPDATE  users SET profileImage = ?, firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
+        'UPDATE  users SET company = ?, jobProfileDescription = ?, profileImage = ?, firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
       const values = [
+        user.company,
+        user.jobProfileDescription,
         buffer,
         user.firstName,
         user.lastName,
@@ -394,8 +401,10 @@ async function editUserProfileController(req, res) {
       }
     } else {
       const query =
-        'UPDATE  users SET  firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
+        'UPDATE  users SET  company = ?, jobProfileDescription = ?,firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
       const values = [
+        user.company,
+        user.jobProfileDescription,
         user.firstName,
         user.lastName,
         user.phone,
@@ -451,6 +460,66 @@ async function changePasswordController(req, res) {
     return res.status(500).json({ errorMessage: 'Error resetting password.' });
   }
 }
+async function userServicesListController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const selectQuery = `SELECT service FROM userServices WHERE userId = ?`;
+    const selectResult = await executeQuery(selectQuery, [userId]);
+    const serviceNames = selectResult.map((row) => row.service);
+    return res.status(200).json(serviceNames);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user services.' });
+  }
+}
+async function addUserServicesController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const service = req.body.service;
+    const query = `INSERT INTO userServices (userId,  service) VALUES ( ?,?)`;
+    const values = [userId, service];
+    const result = await executeQuery(query, values);
+    if (result.affectedRows > 0 || result.insertId) {
+      return res.status(200).json();
+    } else {
+      return res
+        .status(500)
+        .json({ errorMessage: 'Error adding service to user' });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user services.' });
+  }
+}
+async function removeUserServicesController(req, res) {
+  try {
+    try {
+      const userId = decryptItem(req.body.userId, webSecretKey);
+      const service = req.body.service;
+      const query = `Delete from userServices WHERE userId = ? and  service=? `;
+      const values = [userId, service];
+      const result = await executeQuery(query, values);
+      if (result.affectedRows > 0 || result.insertId) {
+        return res.status(200).json();
+      } else {
+        return res
+          .status(500)
+          .json({ errorMessage: 'Error deleting service to user' });
+      }
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ errorMessage: 'Error deleting user services.' });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error deleting user services.' });
+  }
+}
+
 module.exports = {
   logoutController,
   loginController,
@@ -461,4 +530,7 @@ module.exports = {
   checkUserTokenController,
   editUserProfileController,
   changePasswordController,
+  userServicesListController,
+  addUserServicesController,
+  removeUserServicesController,
 };
