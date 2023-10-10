@@ -17,6 +17,8 @@ const {
   addUserServicesController,
   removeUserServicesController,
   UsersListController,
+  DeleteUserController,
+  UpdateUserActivationStatusController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -41,5 +43,11 @@ router.post('/list-user-services', verifyToken, userServicesListController);
 router.post('/add-user-services', verifyToken, addUserServicesController);
 router.post('/remove-user-services', verifyToken, removeUserServicesController);
 router.post('/users', verifyToken, UsersListController);
+router.post('/delete-user', verifyToken, DeleteUserController);
+router.post(
+  '/update-user-activation-status',
+  verifyToken,
+  UpdateUserActivationStatusController
+);
 
 module.exports = router;

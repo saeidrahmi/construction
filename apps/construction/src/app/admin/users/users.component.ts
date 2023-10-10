@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, ViewChild, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  DestroyRef,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -17,46 +23,45 @@ import { ImageService } from '../../services/image-service';
   styleUrls: ['./users.component.scss'],
 })
 export class UsersComponent {
-  displayedColumns: string[] = [];
+  displayedColumns: string[] = [
+    'action',
+    'profileImage',
+    'userId',
+    'role',
+    'loginCount',
+    'firstName',
+    'middleName',
+    'lastName',
+    'registeredDate',
+    'deleted',
+    'loggedIn',
+    'active',
+    'registered',
+    'lastLoginDate',
+    'phone',
+    'fax',
+    'address',
+    'city',
+    'province',
+    'postalCode',
+    'website',
+    'company',
+  ];
   dataSource!: MatTableDataSource<UserApiResponseInterface>;
   apiService = inject(ApiService);
   toastService = inject(ToastrService);
   storageService = inject(StorageService);
+  destroyRef = inject(DestroyRef);
   user = this.storageService.getUserId();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-
   constructor(public imageService: ImageService) {
     // Assign the data to the data source for the table to render
-
     this.apiService
-      .getUsers(this.user())
+      .getUsers(this.user(), false)
       .pipe(
         takeUntilDestroyed(),
         tap((users: UserApiResponseInterface[]) => {
-          this.displayedColumns = [
-            'profileImage',
-            'userId',
-            'loginCount',
-            'firstName',
-            'middleName',
-            'lastName',
-            'registeredDate',
-            'loggedIn',
-            'active',
-            'registered',
-            'lastLoginDate',
-            'phone',
-            'fax',
-            'address',
-            'city',
-            'province',
-            'postalCode',
-            'website',
-
-            'company',
-          ];
-
           this.dataSource = new MatTableDataSource(users);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
@@ -81,5 +86,72 @@ export class UsersComponent {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  deleteAccount(userId: string, flag: boolean) {
+    if (userId) {
+      this.apiService
+        .deleteUser(userId, flag, false)
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          tap((users: UserApiResponseInterface[]) => {
+            this.dataSource = new MatTableDataSource(users);
+            this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+            this.toastService.success('User updated.', 'Update Successful', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
+          }),
+          catchError((err) => {
+            this.toastService.error(
+              'User Deletion failed. ' + err,
+              'List failure',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
+            return of(err);
+          })
+        )
+        .subscribe();
+    }
+  }
+  changeAccountStatus(userId: string, activate: boolean) {
+    this.apiService
+      .updateUserActivationStatus(userId, activate, false)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((users: UserApiResponseInterface[]) => {
+          this.dataSource = new MatTableDataSource(users);
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+          this.toastService.success('User updated.', 'Update Successful', {
+            timeOut: 3000,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+        }),
+        catchError((err) => {
+          this.toastService.error(
+            'User update failed. ' + err,
+            'List failure',
+            {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(err);
+        })
+      )
+      .subscribe();
   }
 }

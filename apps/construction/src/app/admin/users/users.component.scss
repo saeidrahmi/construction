@@ -18,3 +18,12 @@ td img {
   display: block; /* Ensures margin: 0 auto; works */
   margin: 0 auto; /* Center horizontally */
 }
+.pointer {
+  cursor: pointer;
+}
+.bg-deleted {
+  background-color: rgb(177, 106, 106);
+}
+.bg-inactive {
+  background-color: rgb(213, 159, 88);
+}

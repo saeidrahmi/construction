@@ -19,6 +19,7 @@ export interface UserApiResponseInterface {
   lastName?: string;
   registeredDate?: Date | null | undefined;
   active?: boolean;
+  deleted?: boolean;
   loggedIn?: boolean;
   registered?: boolean;
   lastLoginDate?: Date | null | undefined;

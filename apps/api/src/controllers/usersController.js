@@ -522,8 +522,12 @@ async function removeUserServicesController(req, res) {
 async function UsersListController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
-    const selectQuery = `SELECT * FROM users`;
-    const selectResult = await executeQuery(selectQuery, [userId]);
+    const isSAdmin = req.body.isSAdmin;
+    let selectQuery;
+    if (isSAdmin) selectQuery = `SELECT * FROM users `;
+    else selectQuery = `SELECT * FROM users where role !='Admin' `;
+    const selectResult = await executeQuery(selectQuery, []);
+
     // const serviceNames = selectResult.map((row) => row.service);
     return res.status(200).json(selectResult);
   } catch (error) {
@@ -532,6 +536,45 @@ async function UsersListController(req, res) {
       .json({ errorMessage: 'Error getting user services.' });
   }
 }
+async function DeleteUserController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const flag = req.body.flag;
+    const isSAdmin = req.body.isSAdmin;
+    const updateQuery = `UPDATE  users SET  deleted = ? where userId=?`;
+    const updateResult = await executeQuery(updateQuery, [flag, userId]);
+    let selectQuery;
+    if (isSAdmin) selectQuery = `SELECT * FROM users `;
+    else selectQuery = `SELECT * FROM users where role !='Admin' `;
+    const selectResult = await executeQuery(selectQuery, []);
+    // const serviceNames = selectResult.map((row) => row.service);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user services.' });
+  }
+}
+async function UpdateUserActivationStatusController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const flag = req.body.flag;
+    const isSAdmin = req.body.isSAdmin;
+    const updateQuery = `UPDATE  users SET  active = ? where userId=?`;
+    const updateResult = await executeQuery(updateQuery, [flag, userId]);
+    let selectQuery;
+    if (isSAdmin) selectQuery = `SELECT * FROM users `;
+    else selectQuery = `SELECT * FROM users where role !='Admin' `;
+    const selectResult = await executeQuery(selectQuery, []);
+    // const serviceNames = selectResult.map((row) => row.service);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user services.' });
+  }
+}
+
 module.exports = {
   logoutController,
   loginController,
@@ -546,4 +589,6 @@ module.exports = {
   addUserServicesController,
   removeUserServicesController,
   UsersListController,
+  DeleteUserController,
+  UpdateUserActivationStatusController,
 };

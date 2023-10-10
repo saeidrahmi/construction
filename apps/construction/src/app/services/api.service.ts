@@ -254,12 +254,62 @@ export class ApiService {
         })
       );
   }
-  getUsers(userId: string): Observable<UserApiResponseInterface[]> {
+  getUsers(
+    userId: string,
+    isSAdmin: boolean
+  ): Observable<UserApiResponseInterface[]> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
     return this.httpClient
       .post<UserApiResponseInterface[]>(this.backendApiUrl + '/users/users', {
         userId: userIdEncrypted,
+        isSAdmin: isSAdmin,
       })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
+  }
+  deleteUser(
+    userId: string,
+    flag: boolean,
+    isSAdmin: boolean
+  ): Observable<UserApiResponseInterface[]> {
+    const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    return this.httpClient
+      .post<UserApiResponseInterface[]>(
+        this.backendApiUrl + '/users/delete-user',
+        {
+          userId: userIdEncrypted,
+          flag: flag,
+          isSAdmin: isSAdmin,
+        }
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
+  }
+  updateUserActivationStatus(
+    userId: string,
+    activate: boolean,
+    isSAdmin: boolean
+  ): Observable<UserApiResponseInterface[]> {
+    const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    return this.httpClient
+      .post<UserApiResponseInterface[]>(
+        this.backendApiUrl + '/users/update-user-activation-status',
+        {
+          userId: userIdEncrypted,
+          flag: activate,
+          isSAdmin: isSAdmin,
+        }
+      )
       .pipe(
         take(1),
         delay(300),
