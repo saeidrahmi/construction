@@ -254,4 +254,18 @@ export class ApiService {
         })
       );
   }
+  getUsers(userId: string): Observable<UserApiResponseInterface[]> {
+    const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    return this.httpClient
+      .post<UserApiResponseInterface[]>(this.backendApiUrl + '/users/users', {
+        userId: userIdEncrypted,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
+  }
 }

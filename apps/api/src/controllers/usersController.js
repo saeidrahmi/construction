@@ -519,7 +519,19 @@ async function removeUserServicesController(req, res) {
       .json({ errorMessage: 'Error deleting user services.' });
   }
 }
-
+async function UsersListController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const selectQuery = `SELECT * FROM users`;
+    const selectResult = await executeQuery(selectQuery, [userId]);
+    // const serviceNames = selectResult.map((row) => row.service);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user services.' });
+  }
+}
 module.exports = {
   logoutController,
   loginController,
@@ -533,4 +545,5 @@ module.exports = {
   userServicesListController,
   addUserServicesController,
   removeUserServicesController,
+  UsersListController,
 };
