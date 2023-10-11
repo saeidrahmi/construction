@@ -17,14 +17,20 @@ export class UserRoutingService {
     if (this.user()?.loggedIn) {
       if (
         this.user().role?.toLocaleLowerCase() ==
+        env.getRole()?.sAdmin?.toLocaleLowerCase()
+      ) {
+        this.router.navigate(['sadmin']);
+      } else if (
+        this.user().role?.toLocaleLowerCase() ==
         env.getRole()?.admin?.toLocaleLowerCase()
-      )
+      ) {
         this.router.navigate(['/admin']);
-      else if (
+      } else if (
         this.user().role?.toLocaleLowerCase() ==
         env.getRole()?.general?.toLocaleLowerCase()
-      )
+      ) {
         this.router.navigate(['/general']);
+      }
     } else this.router.navigate(['/']);
   }
 }

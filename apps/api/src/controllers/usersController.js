@@ -78,6 +78,10 @@ async function loginController(req, res) {
       return res.status(401).json({
         errorMessage: 'User is not active. Please call to activate your user.',
       });
+    } else if (rows[0].deleted) {
+      return res.status(401).json({
+        errorMessage: 'Account closed. Please call to activate your user.',
+      });
     } else {
       const user = {
         userId: rows[0].userId,

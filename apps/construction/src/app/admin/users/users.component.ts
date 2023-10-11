@@ -57,6 +57,7 @@ export class UsersComponent {
   @ViewChild(MatSort) sort!: MatSort;
   constructor(public imageService: ImageService) {
     // Assign the data to the data source for the table to render
+    this.storageService.updateIsLoading(true);
     this.apiService
       .getUsers(this.user(), false)
       .pipe(
@@ -90,6 +91,7 @@ export class UsersComponent {
 
   deleteAccount(userId: string, flag: boolean) {
     if (userId) {
+      this.storageService.updateIsLoading(true);
       this.apiService
         .deleteUser(userId, flag, false)
         .pipe(
@@ -123,6 +125,7 @@ export class UsersComponent {
     }
   }
   changeAccountStatus(userId: string, activate: boolean) {
+    this.storageService.updateIsLoading(true);
     this.apiService
       .updateUserActivationStatus(userId, activate, false)
       .pipe(

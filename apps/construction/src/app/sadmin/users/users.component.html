@@ -1,0 +1,196 @@
+<mat-form-field>
+  <mat-label>Filter</mat-label>
+  <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input />
+</mat-form-field>
+
+<div class="mat-elevation-z8 table-responsive">
+  <table mat-table [dataSource]="dataSource" matSort>
+    <ng-container matColumnDef="profileImage">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Profile Image</th>
+      <td mat-cell *matCellDef="let row" class="align-center">
+        <div *ngIf="row.profileImage; then yesSection; else noSection"></div>
+        <ng-template #yesSection>
+          <img
+            *ngIf="row.profileImage"
+            class="img-thumbnail rounded float-center"
+            width="40"
+            height="40"
+            [src]="imageService.bufferToSafeUrl(row.profileImage)"
+        /></ng-template>
+        <ng-template #noSection> <mat-icon>person</mat-icon></ng-template>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="userId">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>User Id</th>
+      <td mat-cell *matCellDef="let row">{{ row?.userId }}</td>
+    </ng-container>
+    <ng-container matColumnDef="role">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Role</th>
+      <td mat-cell *matCellDef="let row">{{ row?.role }}</td>
+    </ng-container>
+    <ng-container matColumnDef="firstName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>First Name</th>
+      <td mat-cell *matCellDef="let row">{{ row.firstName | titlecase }}</td>
+    </ng-container>
+    <ng-container matColumnDef="middleName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Middle Name</th>
+      <td mat-cell *matCellDef="let row">{{ row.middleName | titlecase }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="lastName">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Name</th>
+      <td mat-cell *matCellDef="let row">{{ row.lastName | titlecase }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="registeredDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Registered Date</th>
+      <td mat-cell *matCellDef="let row">{{ row.registeredDate | date }}</td>
+    </ng-container>
+    <ng-container matColumnDef="deleted">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Deleted</th>
+      <td mat-cell *matCellDef="let row">
+        <div *ngIf="row.deleted === 1; then yesSection; else noSection"></div>
+        <ng-template #yesSection> <mat-icon>check_box</mat-icon></ng-template>
+        <ng-template #noSection> <mat-icon>close</mat-icon></ng-template>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="loggedIn">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Logged In</th>
+      <td mat-cell *matCellDef="let row">
+        <div *ngIf="row.loggedIn === 1; then yesSection; else noSection"></div>
+        <ng-template #yesSection> <mat-icon>check_box</mat-icon></ng-template>
+        <ng-template #noSection> <mat-icon>close</mat-icon></ng-template>
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="active">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Active</th>
+      <td mat-cell *matCellDef="let row">
+        <div *ngIf="row.active === 1; then yesSection; else noSection"></div>
+        <ng-template #yesSection> <mat-icon>check_box</mat-icon></ng-template>
+        <ng-template #noSection> <mat-icon>close</mat-icon></ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="registered">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Registered</th>
+      <td mat-cell *matCellDef="let row">
+        <div
+          *ngIf="row.registered === 1; then yesSection; else noSection"
+        ></div>
+        <ng-template #yesSection> <mat-icon>check_box</mat-icon></ng-template>
+        <ng-template #noSection> <mat-icon>close</mat-icon></ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="lastLoginDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last Login Date</th>
+      <td mat-cell *matCellDef="let row">{{ row.lastLoginDate | date }}</td>
+    </ng-container>
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
+      <td mat-cell *matCellDef="let row">{{ row.phone }}</td>
+    </ng-container>
+    <ng-container matColumnDef="fax">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Fax</th>
+      <td mat-cell *matCellDef="let row">{{ row.fax }}</td>
+    </ng-container>
+    <ng-container matColumnDef="address">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Address</th>
+      <td mat-cell *matCellDef="let row">{{ row.address }}</td>
+    </ng-container>
+    <ng-container matColumnDef="city">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>City</th>
+      <td mat-cell *matCellDef="let row">{{ row.city }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="province">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Province</th>
+      <td mat-cell *matCellDef="let row">{{ row.province }}</td>
+    </ng-container>
+    <ng-container matColumnDef="postalCode">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Postal Code</th>
+      <td mat-cell *matCellDef="let row">{{ row.postalCode }}</td>
+    </ng-container>
+    <ng-container matColumnDef="website">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Website</th>
+      <td mat-cell *matCellDef="let row">{{ row.website }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="loginCount">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Login Count</th>
+      <td mat-cell *matCellDef="let row">{{ row.loginCount }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="company">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Company</th>
+      <td mat-cell *matCellDef="let row">{{ row.company | titlecase }}</td>
+    </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Action</th>
+      <td mat-cell *matCellDef="let row">
+        <div *ngIf="row.deleted === 1; then yesDelete; else noDelete"></div>
+        <ng-template #yesDelete>
+          <mat-icon
+            class="mat-18"
+            matTooltip="Delete account"
+            matTooltipPosition="above"
+            class="pointer"
+            (click)="deleteAccount(row.userId, false)"
+            >refresh</mat-icon
+          >
+        </ng-template>
+        <ng-template #noDelete>
+          <mat-icon
+            class="mat-18"
+            matTooltip="Delete account"
+            matTooltipPosition="above"
+            class="pointer"
+            (click)="deleteAccount(row.userId, true)"
+            >delete</mat-icon
+          ></ng-template
+        >
+
+        <div *ngIf="row.active === 1; then yesSection; else noSection"></div>
+        <ng-template #yesSection>
+          <mat-icon
+            matTooltip="Inactivate account"
+            matTooltipPosition="above"
+            class="pointer"
+            (click)="changeAccountStatus(row.userId, false)"
+            >close</mat-icon
+          ></ng-template
+        >
+        <ng-template #noSection>
+          <mat-icon
+            matTooltip="Activate account"
+            matTooltipPosition="above"
+            class="pointer"
+            (click)="changeAccountStatus(row.userId, true)"
+            >check_box</mat-icon
+          ></ng-template
+        >
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: displayedColumns"
+      ngClass="{{
+        row.deleted === 1 || row.active !== 1 ? 'bg-inactive' : 'bg-light'
+      }}"
+    ></tr>
+
+    <!-- Row shown when there is no matching data. -->
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" colspan="4">
+        No data matching the filter "{{ input.value }}"
+      </td>
+    </tr>
+  </table>
+
+  <mat-paginator
+    [pageSizeOptions]="[20, 50, 100]"
+    aria-label="Select page of users"
+  ></mat-paginator>
+</div>

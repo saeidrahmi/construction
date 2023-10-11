@@ -31,6 +31,22 @@ export const isUserAdmin: CanActivateFn = () => {
     return false;
   }
 };
+export const isUserSAdmin: CanActivateFn = () => {
+  const storageService = inject(StorageService);
+  const router = inject(Router);
+  const user = storageService.getUser();
+  if (
+    user() &&
+    user().loggedIn &&
+    user().role?.toLocaleLowerCase() ==
+      env.getRole()?.sAdmin?.toLocaleLowerCase()
+  )
+    return true;
+  else {
+    router.navigate(['/login']);
+    return false;
+  }
+};
 export const isGeneralUser: CanActivateFn = () => {
   const storageService = inject(StorageService);
   const router = inject(Router);

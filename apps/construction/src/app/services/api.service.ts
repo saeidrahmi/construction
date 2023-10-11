@@ -53,13 +53,6 @@ export class ApiService {
           this.storageService.updateIsLoading(false);
         }),
         tap((response: UserApiResponseInterface) => {
-          this.toastService.success('Login successfully!', 'Login Success', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          });
-
           this.storageService.updateStateLoginSuccessful(response);
           this.userRouting.navigateToUserMainPage();
         }),
