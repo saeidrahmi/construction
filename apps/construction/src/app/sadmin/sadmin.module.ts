@@ -16,6 +16,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListPlansComponent } from './plans/list-plans/list-plans.component';
 import { CreatePlanComponent } from './plans/createPlan/createPlan.component';
+import { FormErrorsComponent } from '../public/form-errors.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { CreatePlanComponent } from './plans/createPlan/createPlan.component';
     MatPaginatorModule,
     MatIconModule,
     MatTooltipModule,
+    FormErrorsComponent,
   ],
 })
 export class AdminModule {}

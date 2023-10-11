@@ -71,6 +71,26 @@ export class FormService {
       filedName: 'password',
       filedValue: 'Password',
     },
+    {
+      filedName: 'planName',
+      filedValue: 'Plan Name',
+    },
+    {
+      filedName: 'planType',
+      filedValue: 'Plan Type',
+    },
+    {
+      filedName: 'planDescription',
+      filedValue: 'Plan Description',
+    },
+    {
+      filedName: 'price',
+      filedValue: 'Price',
+    },
+    {
+      filedName: 'numberOfAdvertisements',
+      filedValue: 'Number Of Advertisements',
+    },
   ];
 
   getFormValidationErrorMessages(form: FormGroup): string[] {

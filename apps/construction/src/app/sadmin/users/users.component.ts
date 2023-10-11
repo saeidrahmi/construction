@@ -55,6 +55,7 @@ export class UsersComponent {
   user = this.storageService.getUserId();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+  profileImage: any;
   constructor(public imageService: ImageService) {
     // Assign the data to the data source for the table to render
     this.storageService.updateIsLoading(true);
@@ -156,5 +157,8 @@ export class UsersComponent {
         })
       )
       .subscribe();
+  }
+  setImage(image: any) {
+    this.profileImage = image;
   }
 }

@@ -10,13 +10,22 @@
       <td mat-cell *matCellDef="let row" class="align-center">
         <div *ngIf="row.profileImage; then yesSection; else noSection"></div>
         <ng-template #yesSection>
-          <img
-            *ngIf="row.profileImage"
-            class="img-thumbnail rounded float-center"
-            width="40"
-            height="40"
-            [src]="imageService.bufferToSafeUrl(row.profileImage)"
-        /></ng-template>
+          <button
+            type="button"
+            class="btn btn-light"
+            data-bs-toggle="modal"
+            data-bs-target="#imageModal"
+            (click)="setImage(row.profileImage)"
+          >
+            <img
+              *ngIf="row.profileImage"
+              class="img-thumbnail rounded float-center"
+              width="40"
+              height="40"
+              [src]="imageService.bufferToSafeUrl(row.profileImage)"
+            />
+          </button>
+        </ng-template>
         <ng-template #noSection> <mat-icon>person</mat-icon></ng-template>
       </td>
     </ng-container>
@@ -193,4 +202,41 @@
     [pageSizeOptions]="[20, 50, 100]"
     aria-label="Select page of users"
   ></mat-paginator>
+</div>
+<div
+  class="modal fade"
+  id="imageModal"
+  tabindex="-1"
+  aria-labelledby="imageModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="imageModalLabel">
+          User Profile Image
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <img
+          *ngIf="profileImage"
+          class="img-thumbnail rounded float-center"
+          width="400"
+          height="400"
+          [src]="imageService.bufferToSafeUrl(profileImage)"
+        />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
 </div>

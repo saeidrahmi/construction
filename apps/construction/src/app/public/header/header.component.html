@@ -69,12 +69,18 @@
         </li>
       </ul>
       <ng-container *ngIf="isLoggedIn()">
-        <img
-          class="img-thumbnail rounded float-end"
-          width="40"
-          height="40"
-          [src]="imageService.bufferToSafeUrl(user()?.profileImage)"
-      /></ng-container>
+        <div
+          *ngIf="user()?.profileImage; then yesSection; else noSection"
+        ></div>
+        <ng-template #yesSection>
+          <img
+            class="img-thumbnail rounded float-end"
+            width="40"
+            height="40"
+            [src]="imageService.bufferToSafeUrl(user()?.profileImage)"
+        /></ng-template>
+        <ng-template #noSection> <mat-icon>person</mat-icon></ng-template>
+      </ng-container>
 
       <span class="mx-2">{{ userName() | titlecase }}</span>
       <button class="btn btn-outline-primary" (click)="changeThemeMode()">

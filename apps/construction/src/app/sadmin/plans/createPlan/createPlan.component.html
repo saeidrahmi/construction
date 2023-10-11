@@ -1,3 +1,159 @@
-<p>
-  createPlan works!
-</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
+                <app-form-errors [formErrors]="formErrors"></app-form-errors>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <p class="h2 border-bottom">Create Plan</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-7">
+                <form [formGroup]="form">
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">Plan Name</div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter plan name..."
+                        formControlName="planName"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">Plan Type</div>
+                    <div class="col-md-8">
+                      <select
+                        formControlName="planType"
+                        class="form-select"
+                        aria-label="Default select province"
+                        [(ngModel)]="planType"
+                      >
+                        <option selected value="free">Trial free plan</option>
+                        <option value="monthly">Monthly plan</option>
+                        <option value="quarterly">Quarterly plan</option>
+                        <option value="yearly">Yearly plan</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">Price</div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter price..."
+                        formControlName="price"
+                        type="number"
+                        max="1000"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">
+                      Number of Advertisements
+                    </div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter Number of Advertisements..."
+                        formControlName="numberOfAdvertisements"
+                        type="number"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-2">Plan Description</div>
+                    <div class="col-md-8">
+                      <textarea
+                        class="form-control"
+                        placeholder="Enter description"
+                        formControlName="planDescription"
+                        maxlength="400"
+                        rows="5"
+                      ></textarea>
+                      <span class="text-danger">
+                        {{
+                          this.form?.get('planDescription')?.value?.length
+                            ? this.form?.get('planDescription')?.value?.length
+                            : 0
+                        }}</span
+                      >
+
+                      / 400
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="col-5 border-start">
+                <div class="container-fluid">
+                  <div class="row">
+                    <div class="col">
+                      <div class="card" aria-hidden="true">
+                        <div class="card-body">
+                          <h4 class="card-title text-center">
+                            {{ this.form?.get('planName')?.value }}
+                          </h4>
+                          <hr />
+                          <h5 class="card-title text-center">
+                            {{ getPlanTypeInfo() | titlecase }} /
+                            <span class="text-danger">
+                              {{
+                                this.form?.get('price')?.value | currency
+                              }}</span
+                            >
+                          </h5>
+                          <hr />
+                          <ul class="list-group">
+                            <li
+                              class="list-group-item d-flex justify-content-between align-items-center"
+                            >
+                              Number of Advertisements
+                              <span class="badge bg-primary rounded-pill">{{
+                                this.form?.get('numberOfAdvertisements')?.value
+                              }}</span>
+                            </li>
+                            <li
+                              class="list-group-item d-flex justify-content-between align-items-center"
+                            >
+                              A second list item
+                              <span class="badge bg-primary rounded-pill"
+                                >2</span
+                              >
+                            </li>
+                            <li
+                              class="list-group-item d-flex justify-content-between align-items-center"
+                            >
+                              {{ this.form?.get('planDescription')?.value }}
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-8">
+                <button class="submit-button my-2" (click)="submit()">
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

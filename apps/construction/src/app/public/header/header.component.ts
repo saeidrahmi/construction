@@ -14,6 +14,7 @@ import { ApiService } from '../../services/api.service';
 import { UserRoutingService } from '../../services/user-routing.service';
 import { CarouselHeaderComponent } from '../carousel-header/carousel-header.component';
 import { ImageService } from '../../services/image-service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'construction-header',
@@ -23,6 +24,7 @@ import { ImageService } from '../../services/image-service';
     RouterLink,
     RouterLinkActive,
     CarouselHeaderComponent,
+    MatIconModule,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
