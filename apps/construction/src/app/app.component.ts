@@ -18,6 +18,7 @@ import { EnvironmentInfo } from 'libs/common/src/models/common';
 import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ApiService } from './services/api.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgxSpinnerModule } from 'ngx-spinner';
 @Component({
   standalone: true,
   imports: [
@@ -26,6 +27,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
     FooterComponent,
     RouterOutlet,
     SpinnerComponent,
+    NgxSpinnerModule,
   ],
   selector: 'construction-root',
   templateUrl: './app.component.html',

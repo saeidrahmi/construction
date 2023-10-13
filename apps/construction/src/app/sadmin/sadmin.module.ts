@@ -17,7 +17,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListPlansComponent } from './plans/list-plans/list-plans.component';
 import { CreatePlanComponent } from './plans/createPlan/createPlan.component';
 import { FormErrorsComponent } from '../public/form-errors.component';
-
+import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -27,6 +29,7 @@ import { FormErrorsComponent } from '../public/form-errors.component';
     PlansComponent,
     ListPlansComponent,
     CreatePlanComponent,
+    AdminSettingsComponent,
   ],
   imports: [
     CommonModule,
@@ -40,6 +43,8 @@ import { FormErrorsComponent } from '../public/form-errors.component';
     MatIconModule,
     MatTooltipModule,
     FormErrorsComponent,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
 })
 export class AdminModule {}

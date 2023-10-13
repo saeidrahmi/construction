@@ -1,5 +1,3 @@
-import { AddressInterface } from './address';
-
 export interface UserApiResponseInterface {
   userId?: string;
   profileImage?: { type: string; data: number[] };

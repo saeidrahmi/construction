@@ -3,155 +3,277 @@
     <div class="col">
       <div class="card" aria-hidden="true">
         <div class="card-body">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col">
-                <app-form-errors [formErrors]="formErrors"></app-form-errors>
+          <div *ngIf="settingError; then showError; else noError"></div>
+          <ng-template #showError> Error getting settings </ng-template>
+          <ng-template #noError>
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col">
+                  <app-form-errors [formErrors]="formErrors"></app-form-errors>
+                </div>
               </div>
-            </div>
 
-            <div class="row">
-              <div class="col-12">
-                <p class="h2 border-bottom">Create Plan</p>
+              <div class="row">
+                <div class="col-12">
+                  <p class="h2 border-bottom">Create Plan</p>
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col-7">
-                <form [formGroup]="form">
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">Plan Name</div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter plan name..."
-                        formControlName="planName"
-                      />
+              <div class="row">
+                <div class="col-7">
+                  <form [formGroup]="form">
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Plan Name</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter plan name..."
+                          formControlName="planName"
+                          [(ngModel)]="plan.planName"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">Plan Type</div>
-                    <div class="col-md-8">
-                      <select
-                        formControlName="planType"
-                        class="form-select"
-                        aria-label="Default select province"
-                        [(ngModel)]="planType"
-                      >
-                        <option selected value="free">Trial free plan</option>
-                        <option value="monthly">Monthly plan</option>
-                        <option value="quarterly">Quarterly plan</option>
-                        <option value="yearly">Yearly plan</option>
-                      </select>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Plan Type</div>
+                      <div class="col-md-8">
+                        <select
+                          formControlName="planType"
+                          class="form-select"
+                          aria-label="Default select province"
+                          [(ngModel)]="plan.planType"
+                        >
+                          <option selected value="free">Trial free plan</option>
+                          <option value="monthly">Monthly plan</option>
+                          <option value="quarterly">Quarterly plan</option>
+                          <option value="semi">Semi Annual plan</option>
+                          <option value="yearly">Yearly plan</option>
+                        </select>
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">Price</div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter price..."
-                        formControlName="price"
-                        type="number"
-                        max="1000"
-                        min="0"
-                      />
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Price</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter price..."
+                          formControlName="priceAfterDiscount"
+                          type="number"
+                          max="1000"
+                          min="0"
+                          [(ngModel)]="plan.priceAfterDiscount"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Number of Advertisements
+                    <div class="row my-1">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Plan Effective Dates
+                      </div>
+                      <div class="col-md-8">
+                        <mat-form-field class="example-form-field">
+                          <mat-label>Effective Dates</mat-label>
+                          <mat-date-range-input
+                            [formGroup]="form"
+                            [rangePicker]="campaignOnePicker"
+                            [comparisonStart]="plan.startDate"
+                            [comparisonEnd]="plan.expiryDate"
+                          >
+                            <input
+                              matStartDate
+                              placeholder="Start date"
+                              formControlName="startDate"
+                              [(ngModel)]="plan.startDate"
+                            />
+                            <input
+                              matEndDate
+                              placeholder="End date"
+                              formControlName="endDate"
+                              [(ngModel)]="plan.expiryDate"
+                            />
+                          </mat-date-range-input>
+                          <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                          <mat-datepicker-toggle
+                            matIconSuffix
+                            [for]="campaignOnePicker"
+                          ></mat-datepicker-toggle>
+                          <mat-date-range-picker
+                            #campaignOnePicker
+                          ></mat-date-range-picker>
+                        </mat-form-field>
+                      </div>
                     </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter Number of Advertisements..."
-                        formControlName="numberOfAdvertisements"
-                        type="number"
-                      />
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Number of Advertisements
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter Number of Advertisements..."
+                          formControlName="numberOfAdvertisements"
+                          type="number"
+                          [(ngModel)]="plan.numberOfAdvertisements"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-2">Plan Description</div>
-                    <div class="col-md-8">
-                      <textarea
-                        class="form-control"
-                        placeholder="Enter description"
-                        formControlName="planDescription"
-                        maxlength="400"
-                        rows="5"
-                      ></textarea>
-                      <span class="text-danger">
-                        {{
-                          this.form?.get('planDescription')?.value?.length
-                            ? this.form?.get('planDescription')?.value?.length
-                            : 0
-                        }}</span
-                      >
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Website Included
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="websiteIncluded"
+                          [(ngModel)]="plan.websiteIncluded"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        View Bids Included
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="viewBidsIncluded"
+                          [(ngModel)]="plan.viewBidsIncluded"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-2">Plan Description</div>
+                      <div class="col-md-8">
+                        <textarea
+                          class="form-control"
+                          placeholder="Enter description"
+                          formControlName="planDescription"
+                          maxlength="400"
+                          rows="5"
+                          [(ngModel)]="plan.planDescription"
+                        ></textarea>
+                        <span class="text-danger">
+                          {{
+                            this.form?.get('planDescription')?.value?.length
+                              ? this.form?.get('planDescription')?.value?.length
+                              : 0
+                          }}</span
+                        >
 
-                      / 400
+                        / 400
+                      </div>
                     </div>
-                  </div>
-                </form>
-              </div>
-              <div class="col-5 border-start">
-                <div class="container-fluid">
-                  <div class="row">
-                    <div class="col">
-                      <div class="card" aria-hidden="true">
-                        <div class="card-body">
-                          <h4 class="card-title text-center">
-                            {{ this.form?.get('planName')?.value }}
-                          </h4>
-                          <hr />
-                          <h5 class="card-title text-center">
-                            {{ getPlanTypeInfo() | titlecase }} /
-                            <span class="text-danger">
-                              {{
-                                this.form?.get('price')?.value | currency
-                              }}</span
-                            >
-                          </h5>
-                          <hr />
-                          <ul class="list-group">
-                            <li
-                              class="list-group-item d-flex justify-content-between align-items-center"
-                            >
-                              Number of Advertisements
-                              <span class="badge bg-primary rounded-pill">{{
-                                this.form?.get('numberOfAdvertisements')?.value
-                              }}</span>
-                            </li>
-                            <li
-                              class="list-group-item d-flex justify-content-between align-items-center"
-                            >
-                              A second list item
-                              <span class="badge bg-primary rounded-pill"
-                                >2</span
+                  </form>
+                </div>
+                <div class="col-5 border-start">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col">
+                        <div class="card" aria-hidden="true">
+                          <div class="card-body">
+                            <h4 class="card-title text-center">
+                              {{ this.form?.get('planName')?.value }}
+                            </h4>
+                            <hr />
+                            <h5 class="card-title text-center">
+                              {{ getPlanTypeInfo() | titlecase }} /
+                              <span
+                                class="text-danger"
+                                *ngIf="
+                                  this.plan.originalPrice !==
+                                  this.plan.priceAfterDiscount
+                                "
                               >
-                            </li>
-                            <li
-                              class="list-group-item d-flex justify-content-between align-items-center"
-                            >
-                              {{ this.form?.get('planDescription')?.value }}
-                            </li>
-                          </ul>
+                                <del>
+                                  {{ this.plan.originalPrice | currency }}</del
+                                >
+                              </span>
+                              <span class="text-danger">
+                                {{ this.plan.priceAfterDiscount | currency }}
+                              </span>
+                            </h5>
+                            <hr />
+                            <ul class="list-group">
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                Number of Advertisements
+                                <span class="badge bg-primary rounded-pill">{{
+                                  this.form?.get('numberOfAdvertisements')
+                                    ?.value
+                                }}</span>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                Website Included
+
+                                <div
+                                  *ngIf="
+                                    this.form?.get('websiteIncluded')?.value;
+                                    then yesSection;
+                                    else noSection
+                                  "
+                                ></div>
+                                <ng-template #yesSection>
+                                  <span class="badge bg-primary rounded-pill">
+                                    <mat-icon>check_box</mat-icon></span
+                                  ></ng-template
+                                >
+
+                                <ng-template #noSection>
+                                  <span class="badge bg-primary rounded-pill">
+                                    <mat-icon>close</mat-icon></span
+                                  ></ng-template
+                                >
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                View Construction Bids
+
+                                <div
+                                  *ngIf="
+                                    this.form?.get('viewBidsIncluded')?.value;
+                                    then yesSection;
+                                    else noSection
+                                  "
+                                ></div>
+                                <ng-template #yesSection>
+                                  <span class="badge bg-primary rounded-pill">
+                                    <mat-icon>check_box</mat-icon></span
+                                  ></ng-template
+                                >
+
+                                <ng-template #noSection>
+                                  <span class="badge bg-primary rounded-pill">
+                                    <mat-icon>close</mat-icon></span
+                                  ></ng-template
+                                >
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                {{ this.form?.get('planDescription')?.value }}
+                              </li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div class="row">
-              <div class="col-md-2"></div>
-              <div class="col-md-8">
-                <button class="submit-button my-2" (click)="submit()">
-                  Submit
-                </button>
+              <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <button class="submit-button my-2" (click)="submit()">
+                    Submit
+                  </button>
+                </div>
               </div>
-            </div>
-          </div>
+            </div></ng-template
+          >
         </div>
       </div>
     </div>

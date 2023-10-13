@@ -24,7 +24,9 @@
           "apps/construction/src/styles.scss",
           "bootstrap/dist/css/bootstrap.min.css",
           "node_modules/ngx-toastr/toastr.css",
-          "bootstrap-icons/font/bootstrap-icons.css"
+          "bootstrap-icons/font/bootstrap-icons.css",
+
+          "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
         ],
         "scripts": [
           "bootstrap/dist/js/bootstrap.bundle.min.js",

@@ -10,6 +10,7 @@ const pool = require('./db');
 var logger = require('morgan');
 import { EnvironmentInfo } from '../../../libs/common/src/models/common';
 const usersRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
 
 const jwt = require('jsonwebtoken');
 const randtoken = require('rand-token');
@@ -45,6 +46,7 @@ import connectToDatabase from './db';
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.use('/users', usersRouter);
+app.use('/admin', adminRouter);
 
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to api!' });

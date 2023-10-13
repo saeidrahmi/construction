@@ -1,0 +1,134 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
+                <app-form-errors [formErrors]="formErrors"></app-form-errors>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <p class="h2 border-bottom">Admin Settings</p>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-7">
+                <form [formGroup]="form">
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">
+                      Free Trial Period Duration
+                    </div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter.."
+                        formControlName="freeTiralPeriod"
+                        type="number"
+                        [(ngModel)]="setting.freeTiralPeriod"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">Monthly Price</div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter ..."
+                        formControlName="monthlyPrice"
+                        type="number"
+                        max="1000"
+                        min="0"
+                        [(ngModel)]="setting.monthlyPrice"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">
+                      Monthly discount %
+                    </div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter ..."
+                        formControlName="monthlyDiscount"
+                        type="number"
+                        max="100"
+                        min="0"
+                        [(ngModel)]="setting.monthlyDiscount"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">
+                      Quarterly discount %
+                    </div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter ..."
+                        formControlName="quarterlyDiscount"
+                        type="number"
+                        max="100"
+                        min="0"
+                        [(ngModel)]="setting.quarterlyDiscount"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">
+                      Semi-Annual discount %
+                    </div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter ..."
+                        formControlName="semiAnualDiscount"
+                        type="number"
+                        max="100"
+                        min="0"
+                        [(ngModel)]="setting.semiAnualDiscount"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">Yearly discount %</div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter ..."
+                        formControlName="yearlyDiscount"
+                        type="number"
+                        [(ngModel)]="setting.yearlyDiscount"
+                      />
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="col-5 border-start"></div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-2"></div>
+              <div class="col-md-8">
+                <button class="submit-button my-2" (click)="submit()">
+                  Submit
+                </button>
+                <button
+                  class="submit-button my-2 mx-2"
+                  (click)="resetSetting()"
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

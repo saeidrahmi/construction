@@ -5,6 +5,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SAdminSideBarComponent } from './sadminSideBar/sadmin-side-bar.component';
 import { UsersComponent } from './users/users.component';
 import { PlansComponent } from './plans/plans.component';
+import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
 const routes: Routes = [
   {
     path: '',
@@ -25,6 +26,10 @@ const routes: Routes = [
       {
         path: 'plans',
         component: PlansComponent,
+      },
+      {
+        path: 'admin-settings',
+        component: AdminSettingsComponent,
       },
       {
         path: '',

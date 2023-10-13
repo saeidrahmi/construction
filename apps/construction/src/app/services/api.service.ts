@@ -21,6 +21,9 @@ import { Router } from '@angular/router';
 import { UserRoutingService } from './user-routing.service';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from './encryption-service';
+import { AdminSettingsInterface } from 'libs/common/src/models/admin-settings';
+import { PlanInterface } from '../models/plan';
+import { NgxSpinnerService } from 'ngx-spinner';
 @Injectable({
   providedIn: 'root',
 })
@@ -34,7 +37,10 @@ export class ApiService {
   router = inject(Router);
   userRouting = inject(UserRoutingService);
   backendApiUrl: string = `${this.env.apiUrl()}:${this.env.apiPort()}`;
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private spinner: NgxSpinnerService
+  ) {}
 
   login(credential: LoginCredential): Observable<UserApiResponseInterface> {
     const encryptedCredentials = this.encryptionService.encryptCredentials(
@@ -308,6 +314,64 @@ export class ApiService {
         delay(300),
         finalize(() => {
           this.storageService.updateIsLoading(false);
+        })
+      );
+  }
+  updateAdminSettings(
+    setting: AdminSettingsInterface
+  ): Observable<AdminSettingsInterface> {
+    return this.httpClient
+      .post<AdminSettingsInterface>(
+        this.backendApiUrl + '/admin/update-admin-settings',
+        {
+          setting: setting,
+        }
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.storageService.updateIsLoading(false);
+        })
+      );
+  }
+  getAdminSettings(): Observable<AdminSettingsInterface> {
+    // this.spinner.show();
+    return this.httpClient
+      .get<AdminSettingsInterface>(
+        this.backendApiUrl + '/admin/list-admin-settings'
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  createNewPlan(plan: PlanInterface): Observable<PlanInterface> {
+    this.spinner.show();
+    return this.httpClient
+      .post<PlanInterface>(this.backendApiUrl + '/admin/create-new-plan', {
+        plan: plan,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getAdminPlans(): Observable<any> {
+    //   this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/admin/list-plans')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
         })
       );
   }
