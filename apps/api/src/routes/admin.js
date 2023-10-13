@@ -6,6 +6,9 @@ const {
   updateAdminSettingsController,
   createNewPlanController,
   listPlansController,
+  updatePlanStatusController,
+  deletePlanController,
+  dashboardController,
 } = require('../controllers/adminController');
 const { verifyToken } = require('../controllers/utilityService');
 router.get('/list-admin-settings', verifyToken, listAdminSettingsController);
@@ -14,6 +17,11 @@ router.post(
   verifyToken,
   updateAdminSettingsController
 );
+
 router.post('/create-new-plan', verifyToken, createNewPlanController);
 router.get('/list-plans', verifyToken, listPlansController);
+router.post('/update-plan-status', verifyToken, updatePlanStatusController);
+router.post('/delete-plan', verifyToken, deletePlanController);
+router.get('/dashboard', verifyToken, dashboardController);
+
 module.exports = router;

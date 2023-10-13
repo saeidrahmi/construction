@@ -3,6 +3,7 @@ export interface PlanInterface {
   planType?: string;
   websiteIncluded?: boolean;
   active?: boolean;
+  deleted?: boolean;
   planDescription?: string;
   numberOfAdvertisements?: number;
   viewBidsIncluded?: boolean;

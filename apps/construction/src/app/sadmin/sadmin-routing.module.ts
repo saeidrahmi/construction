@@ -4,8 +4,10 @@ import { SAdminComponent } from './sadmin.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SAdminSideBarComponent } from './sadminSideBar/sadmin-side-bar.component';
 import { UsersComponent } from './users/users.component';
-import { PlansComponent } from './plans/plans.component';
+
 import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
+import { ListPlansComponent } from './plans/list-plans/list-plans.component';
+import { CreatePlanComponent } from './plans/createPlan/createPlan.component';
 const routes: Routes = [
   {
     path: '',
@@ -24,8 +26,12 @@ const routes: Routes = [
         component: UsersComponent,
       },
       {
-        path: 'plans',
-        component: PlansComponent,
+        path: 'list-plans',
+        component: ListPlansComponent,
+      },
+      {
+        path: 'create-plan',
+        component: CreatePlanComponent,
       },
       {
         path: 'admin-settings',

@@ -6,7 +6,7 @@ import { SAdminComponent } from './sadmin.component';
 import { SAdminSideBarComponent } from './sadminSideBar/sadmin-side-bar.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { UsersComponent } from './users/users.component';
-import { PlansComponent } from './plans/plans.component';
+
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
@@ -26,7 +26,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     SAdminSideBarComponent,
     DashboardComponent,
     UsersComponent,
-    PlansComponent,
+
     ListPlansComponent,
     CreatePlanComponent,
     AdminSettingsComponent,

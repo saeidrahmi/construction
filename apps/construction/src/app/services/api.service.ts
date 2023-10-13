@@ -56,7 +56,7 @@ export class ApiService {
         take(1),
         delay(400),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         }),
         tap((response: UserApiResponseInterface) => {
           this.storageService.updateStateLoginSuccessful(response);
@@ -75,7 +75,8 @@ export class ApiService {
       );
   }
   logout(): Observable<any> {
-    if (this.user()?.userId)
+    if (this.user()?.userId) {
+      this.spinner.show();
       return this.httpClient
         .post(this.backendApiUrl + '/users/logout', {
           userId: this.encryptionService.encryptItem(
@@ -86,12 +87,12 @@ export class ApiService {
           take(1),
           delay(400),
           finalize(() => {
-            this.storageService.updateIsLoading(false);
+            this.spinner.hide();
             this.storageService.updateStateLogoutSuccessful();
             this.router.navigate(['/login']);
           })
         );
-    else return of(null);
+    } else return of(null);
   }
   signup(userId: string): Observable<any> {
     return this.httpClient
@@ -106,7 +107,7 @@ export class ApiService {
         take(1),
         delay(600),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
@@ -132,7 +133,7 @@ export class ApiService {
       .pipe(
         take(1),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         }),
         delay(300)
       );
@@ -164,6 +165,7 @@ export class ApiService {
   }
 
   editUserProfile(data: FormData): Observable<UserApiResponseInterface> {
+    this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/edit-user-profile', data)
       .pipe(
@@ -171,7 +173,7 @@ export class ApiService {
         delay(300),
         timeout(5000),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         }),
         tap((response: UserApiResponseInterface) => {
           this.storageService.updateStateProfileSuccessful(response);
@@ -180,6 +182,7 @@ export class ApiService {
   }
   getUserProfile(userId: string): Observable<UserApiResponseInterface> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/get-user-profile', {
         userId: userIdEncrypted,
@@ -188,7 +191,7 @@ export class ApiService {
         take(1),
         delay(300),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
@@ -204,6 +207,7 @@ export class ApiService {
   }
   getUserServices(userId: string): Observable<any> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/list-user-services', {
         userId: userIdEncrypted,
@@ -212,7 +216,7 @@ export class ApiService {
         take(1),
         delay(300),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
@@ -221,7 +225,7 @@ export class ApiService {
     service: string
   ): Observable<UserApiResponseInterface> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
-    console.log('here', userId, service);
+    this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/add-user-services', {
         userId: userIdEncrypted,
@@ -231,7 +235,7 @@ export class ApiService {
         take(1),
         delay(300),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
@@ -240,6 +244,7 @@ export class ApiService {
     service: string
   ): Observable<UserApiResponseInterface> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/remove-user-services', {
         userId: userIdEncrypted,
@@ -249,7 +254,7 @@ export class ApiService {
         take(1),
         delay(300),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
@@ -258,6 +263,7 @@ export class ApiService {
     isSAdmin: boolean
   ): Observable<UserApiResponseInterface[]> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    this.spinner.show();
     return this.httpClient
       .post<UserApiResponseInterface[]>(this.backendApiUrl + '/users/users', {
         userId: userIdEncrypted,
@@ -267,7 +273,7 @@ export class ApiService {
         take(1),
         delay(300),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
@@ -277,6 +283,7 @@ export class ApiService {
     isSAdmin: boolean
   ): Observable<UserApiResponseInterface[]> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    this.spinner.show();
     return this.httpClient
       .post<UserApiResponseInterface[]>(
         this.backendApiUrl + '/users/delete-user',
@@ -290,7 +297,7 @@ export class ApiService {
         take(1),
         delay(300),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
@@ -300,6 +307,7 @@ export class ApiService {
     isSAdmin: boolean
   ): Observable<UserApiResponseInterface[]> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    this.spinner.show();
     return this.httpClient
       .post<UserApiResponseInterface[]>(
         this.backendApiUrl + '/users/update-user-activation-status',
@@ -313,13 +321,14 @@ export class ApiService {
         take(1),
         delay(300),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
   updateAdminSettings(
     setting: AdminSettingsInterface
   ): Observable<AdminSettingsInterface> {
+    this.spinner.show();
     return this.httpClient
       .post<AdminSettingsInterface>(
         this.backendApiUrl + '/admin/update-admin-settings',
@@ -331,12 +340,12 @@ export class ApiService {
         take(1),
         delay(300),
         finalize(() => {
-          this.storageService.updateIsLoading(false);
+          this.spinner.hide();
         })
       );
   }
   getAdminSettings(): Observable<AdminSettingsInterface> {
-    // this.spinner.show();
+    this.spinner.show();
     return this.httpClient
       .get<AdminSettingsInterface>(
         this.backendApiUrl + '/admin/list-admin-settings'
@@ -364,9 +373,53 @@ export class ApiService {
       );
   }
   getAdminPlans(): Observable<any> {
-    //   this.spinner.show();
+    this.spinner.show();
     return this.httpClient
       .get<any>(this.backendApiUrl + '/admin/list-plans')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  updatePlanActivationStatus(
+    planId: string,
+    activate: boolean
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/update-plan-status', {
+        planId: planId,
+        flag: activate,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  deletePlan(planId: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/delete-plan', {
+        planId: planId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getDashboardInfo(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/admin/dashboard')
       .pipe(
         take(1),
         delay(300),

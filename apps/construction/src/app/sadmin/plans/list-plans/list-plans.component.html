@@ -84,7 +84,22 @@
                   >
                 </td>
               </ng-container>
-
+              <ng-container matColumnDef="deleted">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Deleted
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <div
+                    *ngIf="row.deleted === 1; then yesSection; else noSection"
+                  ></div>
+                  <ng-template #yesSection>
+                    <mat-icon>check_box</mat-icon></ng-template
+                  >
+                  <ng-template #noSection>
+                    <mat-icon>close</mat-icon></ng-template
+                  >
+                </td>
+              </ng-container>
               <ng-container matColumnDef="duration">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
                   Duration
@@ -104,7 +119,7 @@
                   Discount Percentage
                 </th>
                 <td mat-cell *matCellDef="let row">
-                  {{ row.discountPercentage | percent }}
+                  {{ row.discountPercentage / 100 | percent }}
                 </td>
               </ng-container>
               <ng-container matColumnDef="priceAfterDiscount">
@@ -141,59 +156,45 @@
                 </td>
               </ng-container>
 
-              <!--
               <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
                   Action
                 </th>
                 <td mat-cell *matCellDef="let row">
                   <div
-                    *ngIf="row.deleted === 1; then yesDelete; else noDelete"
-                  ></div>
-                  <ng-template #yesDelete>
-                    <mat-icon
-                      class="mat-18"
-                      matTooltip="Delete account"
-                      matTooltipPosition="above"
-                      class="pointer"
-                      (click)="deleteAccount(row.userId, false)"
-                      >refresh</mat-icon
-                    >
-                  </ng-template>
-                  <ng-template #noDelete>
-                    <mat-icon
-                      class="mat-18"
-                      matTooltip="Delete account"
-                      matTooltipPosition="above"
-                      class="pointer"
-                      (click)="deleteAccount(row.userId, true)"
-                      >delete</mat-icon
-                    ></ng-template
-                  >
-
-                  <div
                     *ngIf="row.active === 1; then yesSection; else noSection"
                   ></div>
+                  <mat-icon
+                    *ngIf="row.deleted === 0"
+                    class="mat-18"
+                    matTooltip="Delete account"
+                    matTooltipPosition="above"
+                    class="pointer"
+                    (click)="deletePlan(row.planId)"
+                    >delete</mat-icon
+                  >
                   <ng-template #yesSection>
                     <mat-icon
-                      matTooltip="Inactivate account"
+                      *ngIf="row.deleted === 0"
+                      matTooltip="Inactivate plan"
                       matTooltipPosition="above"
                       class="pointer"
-                      (click)="changeAccountStatus(row.userId, false)"
+                      (click)="changePlanStatus(row.planId, false)"
                       >close</mat-icon
                     ></ng-template
                   >
                   <ng-template #noSection>
                     <mat-icon
-                      matTooltip="Activate account"
+                      *ngIf="row.deleted === 0"
+                      matTooltip="Activate plan"
                       matTooltipPosition="above"
                       class="pointer"
-                      (click)="changeAccountStatus(row.userId, true)"
+                      (click)="changePlanStatus(row.planId, true)"
                       >check_box</mat-icon
                     ></ng-template
                   >
                 </td>
-              </ng-container> -->
+              </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
               <tr

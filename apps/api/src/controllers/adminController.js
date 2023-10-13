@@ -92,7 +92,7 @@ async function createNewPlanController(req, res) {
 
     // No results
     const query = `INSERT INTO plans ( planName,planType,originalPrice,discountPercentage,priceAfterDiscount,startDate,expiryDate,numberOfAdvertisements,websiteIncluded,planDescription,dateCreated,duration,viewBidsIncluded,active) VALUES (?, ?,?,?,?, ?, ?,?,?, ?, ?,?, ?, ?)`;
-    console.log(values);
+
     const result = await executeQuery(query, values);
     if (result.affectedRows > 0 || result.insertId) {
       const plan = {
@@ -128,10 +128,62 @@ async function listPlansController(req, res) {
     return res.status(500).json({ errorMessage: 'Error getting settings.' });
   }
 }
+async function updatePlanStatusController(req, res) {
+  try {
+    const planId = req.body.planId;
+    const flag = req.body.flag;
+
+    // There are results
+    const query = `UPDATE plans SET active = ?  where planId = ?`;
+    const result = await executeQuery(query, [flag, planId]);
+    if (result.affectedRows > 0 || result.insertId) {
+      return res.status(200).json();
+    } else {
+      return res.status(500).json({ errorMessage: 'Error updating plan ' });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error updating plan .' });
+  }
+}
+async function deletePlanController(req, res) {
+  try {
+    const planId = req.body.planId;
+
+    // There are results
+    const query = `UPDATE plans SET deleted = 1  where planId = ?`;
+    const result = await executeQuery(query, [planId]);
+    if (result.affectedRows > 0 || result.insertId) {
+      return res.status(200).json();
+    } else {
+      return res.status(500).json({ errorMessage: 'Error deleting plan ' });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error deleting plan .' });
+  }
+}
+async function dashboardController(req, res) {
+  try {
+    const selectQuery = `SELECT COUNT(*) AS total_users,
+     SUM(CASE WHEN active = 1 THEN 1 ELSE 0 END) AS active_users,
+     SUM(CASE WHEN active = 0 THEN 1 ELSE 0 END) AS inactive_users,
+     SUM(CASE WHEN deleted = 1 THEN 1 ELSE 0 END) AS deleted_users,
+     SUM(CASE WHEN loggedIn = 1 THEN 1 ELSE 0 END) AS loggedIn_users
+
+     FROM users`;
+    const selectResult = await executeQuery(selectQuery, []);
+
+    return res.status(200).json(selectResult[0]);
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error getting dashboard.' });
+  }
+}
 
 module.exports = {
   listAdminSettingsController,
   updateAdminSettingsController,
   createNewPlanController,
   listPlansController,
+  updatePlanStatusController,
+  deletePlanController,
+  dashboardController,
 };
