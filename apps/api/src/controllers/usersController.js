@@ -6,6 +6,7 @@ const {
   verifyToken,
 } = require('./utilityService'); // Import necessary helper functions
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
+const connectToDatabase = require('../db');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
@@ -253,7 +254,7 @@ async function resetPasswordController(req, res) {
       .json({ errorMessage: 'Error: invalid request  resetting password' });
   }
 }
-async function registerController(req, res) {
+async function registerFreeUserController(req, res) {
   try {
     const user = req.body.user;
     const userSignupToken = req.body.userSignupToken;
@@ -270,43 +271,67 @@ async function registerController(req, res) {
         errorMessage: 'User not allowed to signup. Invalid request.',
       });
     } else {
-      const userObj = {
-        userId: userId,
-        role: user.role,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        registeredDate: new Date(),
-        loggedIn: 1,
-        active: 1,
-        registered: 1,
-        lastLoginDate: new Date(),
-      };
-      const payload = { subject: userObj };
-      const token = jwt.sign(payload, jwtSecretKey, {
-        expiresIn: env.userRegistrationTokenExpiry(),
-      });
+      const connection = await connectToDatabase();
+      try {
+        await connection.beginTransaction();
 
-      const query =
-        'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
-      const values = [
-        1,
-        userObj.registeredDate,
-        userObj.lastLoginDate,
-        token,
-        1,
-        1,
-        1,
-        userObj.firstName,
-        userObj.lastName,
-        encryptItem(password, dbSecretKey),
-        userId,
-      ];
-      console.log('here', query, values);
-      const result = await executeQuery(query, values);
-      if (result.affectedRows > 0 || result.insertId) {
-        return res.status(200).json(user);
-      } else {
-        return res.status(500).json({ errorMessage: 'Error updating user' });
+        const userObj = {
+          userId: userId,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          registeredDate: new Date(),
+          loggedIn: 1,
+          active: 1,
+          registered: 1,
+          lastLoginDate: new Date(),
+        };
+        const payload = { subject: userObj };
+        const token = jwt.sign(payload, jwtSecretKey, {
+          expiresIn: env.userRegistrationTokenExpiry(),
+        });
+
+        const query =
+          'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
+        const values = [
+          1,
+          userObj.registeredDate,
+          userObj.lastLoginDate,
+          token,
+          1,
+          1,
+          1,
+          userObj.firstName,
+          userObj.lastName,
+          encryptItem(password, dbSecretKey),
+          userId,
+        ];
+
+        const result = await executeQuery(query, values);
+        if (result.affectedRows > 0 || result.insertId) {
+          const plan = req.body.plan;
+          const values = [plan.planId, userId, new Date()];
+          const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate) VALUES (?, ?,?)`;
+
+          const result = await executeQuery(query, values);
+          if (result.affectedRows > 0 || result.insertId) {
+            await connection.commit();
+            return res.status(200).json(user);
+          } else {
+            await connection.rollback();
+            return res
+              .status(500)
+              .json({ errorMessage: 'Error updating user' });
+          }
+        } else {
+          await connection.rollback();
+          return res.status(500).json({ errorMessage: 'Error updating user' });
+        }
+      } catch (error) {
+        await connection.rollback(); // Rollback the transaction on error
+        return res.status(500).json({ errorMessage: 'Error registering user' });
+      } finally {
+        connection.end(); // Close the database connection
       }
     }
   } catch (error) {
@@ -583,7 +608,7 @@ module.exports = {
   logoutController,
   loginController,
   signupController,
-  registerController,
+  registerFreeUserController,
   resetPasswordController,
   completeResetPasswordController,
   checkUserTokenController,

@@ -120,14 +120,15 @@ export class ApiService {
   }
   register(
     user: UserInterface,
+    plan: PlanInterface,
     userSignupToken: string
   ): Observable<UserApiResponseInterface> {
     user.userId = this.encryptionService.encryptItem(user.userId as string);
     user.password = this.encryptionService.encryptItem(user.password as string);
-    const data = { user: user, userSignupToken: userSignupToken };
+    const data = { user: user, plan: plan, userSignupToken: userSignupToken };
     return this.httpClient
       .post<UserApiResponseInterface>(
-        this.backendApiUrl + '/users/register',
+        this.backendApiUrl + '/users/register-free',
         data
       )
       .pipe(
@@ -384,6 +385,18 @@ export class ApiService {
         })
       );
   }
+  getAllActivePlans(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/public/list-plans')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   updatePlanActivationStatus(
     planId: string,
     activate: boolean
@@ -420,6 +433,18 @@ export class ApiService {
     this.spinner.show();
     return this.httpClient
       .get<any>(this.backendApiUrl + '/admin/dashboard')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getFreeTrialInfo(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/public/get-free-trial-info')
       .pipe(
         take(1),
         delay(300),

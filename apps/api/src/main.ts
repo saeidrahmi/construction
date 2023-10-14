@@ -11,7 +11,7 @@ var logger = require('morgan');
 import { EnvironmentInfo } from '../../../libs/common/src/models/common';
 const usersRouter = require('./routes/users');
 const adminRouter = require('./routes/admin');
-
+const publicRouter = require('./routes/public');
 const jwt = require('jsonwebtoken');
 const randtoken = require('rand-token');
 const passport = require('passport');
@@ -47,12 +47,13 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
 app.use('/users', usersRouter);
 app.use('/admin', adminRouter);
+app.use('/public', publicRouter);
 
 app.get('/api', (req, res) => {
   res.send({ message: 'Welcome to api!' });
 });
 
-let env: EnvironmentInfo = new EnvironmentInfo();
+let env = new EnvironmentInfo();
 const port = env.apiPort();
 const url = env.apiUrl();
 const server = app.listen(port, () => {

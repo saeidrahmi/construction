@@ -32,6 +32,14 @@ import { FormService } from '../../services/form.service';
 import { StorageService } from '../../services/storage.service';
 import { UserRoutingService } from '../../services/user-routing.service';
 import { ValidatorsService } from '../../services/validators.service';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatStepper, MatStepperModule } from '@angular/material/stepper';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { ToastrService } from 'ngx-toastr';
+import { PlanInterface } from '../../models/plan';
 
 @Component({
   selector: 'construction-register',
@@ -46,6 +54,12 @@ import { ValidatorsService } from '../../services/validators.service';
     FormErrorsComponent,
     SpinnerComponent,
     NgbDropdownModule,
+    MatStepperModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatTooltipModule,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
@@ -59,7 +73,8 @@ export class RegisterComponent implements OnInit {
   serverError: string = '';
   formErrors: string[] = [];
   useCase: string = 'Personal purpose';
-  form!: FormGroup;
+  toastService = inject(ToastrService);
+  registerForm: FormGroup;
   destroyRef = inject(DestroyRef);
   validatorsService = inject(ValidatorsService);
   userRouting = inject(UserRoutingService);
@@ -68,7 +83,22 @@ export class RegisterComponent implements OnInit {
   tokenValid = signal<boolean>(false);
   token: string | null = '';
 
-  loading = this.storageService.isLoading();
+  getPlans$ = this.apiService.getAllActivePlans().pipe(
+    takeUntilDestroyed(),
+    tap((plans: any) => {
+      this.listPlans = plans;
+    }),
+    catchError((err) => {
+      this.toastService.error('Users list failed. ' + err, 'List failure', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        closeButton: true,
+        progressBar: true,
+      });
+      return of(err);
+    })
+  );
+  listPlans: any;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -107,71 +137,92 @@ export class RegisterComponent implements OnInit {
           .subscribe();
       } else this.tokenValid.set(false);
     } else this.tokenValid.set(false);
-  }
 
-  ngOnInit(): void {
-    this.form = this.fb.group({
-      useCase: new FormControl('', []),
-      userId: new FormControl({ value: '', disabled: true }, [
-        Validators.required,
-        Validators.email,
-      ]),
-      firstName: new FormControl('', [Validators.required]),
-      lastName: new FormControl('', [Validators.required]),
-      password: new FormControl('', {
-        validators: [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.maxLength(12),
-          Validators.pattern(this.commonUtility.passwordRuleRegExp()),
-        ],
-        updateOn: 'change',
-      }),
-      confirmPassword: new FormControl('', [Validators.required]),
-      confirmCheckbox: new FormControl('', [Validators.required]),
-    });
-    this.form.setValidators([this.validatorsService.matchPassword]);
-  }
-
-  register(): void {
-    if (this.form.valid) {
-      this.storageService.updateIsLoading(true);
-      this.serverError = '';
-      let user: UserInterface = {
-        userId: this.commonUtility.trimString(this.form.get('userId')?.value),
-        purpose: this.commonUtility.trimString(this.useCase),
-        active: true,
-        registeredDate: new Date(),
-        password: this.commonUtility.trimString(
-          this.form.get('password')?.value
-        ),
-        role: 'general',
-        firstName: this.commonUtility.trimString(
-          this.form.get('firstName')?.value
-        ),
-        lastName: this.commonUtility.trimString(
-          this.form.get('lastName')?.value
-        ),
-      };
-
-      this.apiService
-        .register(user, this.token as string)
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          finalize(() => this.storageService.updateIsLoading(false)),
-          tap((response) => {
-            this.storageService.updateStateLoginSuccessful(response);
-            this.userRouting.navigateToUserMainPage();
+    this.registerForm = this.fb.group({
+      formArray: this.fb.array([
+        this.fb.group({
+          useCase: new FormControl('', []),
+          userId: new FormControl({ value: '', disabled: true }, [
+            Validators.required,
+            Validators.email,
+          ]),
+          firstName: new FormControl('', [Validators.required]),
+          lastName: new FormControl('', [Validators.required]),
+          password: new FormControl('', {
+            validators: [
+              Validators.required,
+              Validators.minLength(8),
+              Validators.maxLength(12),
+              Validators.pattern(this.commonUtility.passwordRuleRegExp()),
+            ],
+            updateOn: 'change',
           }),
-          catchError((err) => {
-            this.serverError = err;
-            return of(err);
-          })
-        )
-        .subscribe();
+          confirmPassword: new FormControl('', [Validators.required]),
+          confirmCheckbox: new FormControl('', [Validators.required]),
+        }),
+      ]),
+    });
+    this.formArray
+      ?.get([0])
+      ?.setValidators([this.validatorsService.matchPassword]);
+    this.getPlans$.subscribe();
+  }
+  get formArray(): AbstractControl | null {
+    return this.registerForm?.get('formArray');
+  }
+
+  ngOnInit(): void {}
+
+  register(plan: PlanInterface, stepper: MatStepper) {
+    if (this.registerForm.valid) {
+      if (plan.planType === 'free') {
+        this.serverError = '';
+        const user: UserInterface = {
+          userId: this.commonUtility.trimString(
+            this.formArray?.get([0]).get('userId')?.value
+          ),
+          purpose: this.commonUtility.trimString(this.useCase),
+          active: true,
+          registeredDate: new Date(),
+          password: this.commonUtility.trimString(
+            this.formArray?.get([0]).get('password')?.value
+          ),
+          role: 'general',
+          firstName: this.commonUtility.trimString(
+            this.formArray?.get([0]).get('firstName')?.value
+          ),
+          lastName: this.commonUtility.trimString(
+            this.formArray?.get([0]).get('lastName')?.value
+          ),
+        };
+        this.apiService
+          .register(user, plan, this.token as string)
+          .pipe(
+            takeUntilDestroyed(this.destroyRef),
+            finalize(() => this.storageService.updateIsLoading(false)),
+            tap((response) => {
+              this.storageService.updateStateLoginSuccessful(response);
+              this.userRouting.navigateToUserMainPage();
+            }),
+            catchError((err) => {
+              this.serverError = err;
+              return of(err);
+            })
+          )
+          .subscribe();
+      } else stepper.next();
     } else {
       this.formErrors = this.formService.getFormValidationErrorMessages(
-        this.form
+        this.formArray?.get([0]) as FormGroup
+      );
+    }
+  }
+  goForward(stepper: MatStepper, index: number) {
+    if (this.formArray?.get([index])?.valid) {
+      stepper.next();
+    } else {
+      this.formErrors = this.formService.getFormValidationErrorMessages(
+        this.formArray?.get([index]) as FormGroup
       );
     }
   }

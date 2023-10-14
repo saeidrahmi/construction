@@ -7,7 +7,7 @@ const {
   logoutController,
   loginController,
   signupController,
-  registerController,
+  registerFreeUserController,
   resetPasswordController,
   completeResetPasswordController,
   checkUserTokenController,
@@ -25,7 +25,7 @@ router.post('/logout', logoutController);
 router.post('/checkUserToken', checkUserTokenController);
 router.post('/login', loginController);
 router.post('/signup', signupController);
-router.post('/register', registerController);
+router.post('/register-free', registerFreeUserController);
 router.post('/reset-password', resetPasswordController);
 router.post(
   '/edit-user-profile',

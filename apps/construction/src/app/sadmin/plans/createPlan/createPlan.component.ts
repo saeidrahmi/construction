@@ -35,7 +35,6 @@ export class CreatePlanComponent {
   setting: AdminSettingsInterface = {};
   settingError = false;
   constructor(private fb: FormBuilder) {
-    this.storageService.updateIsLoading(true);
     this.apiService
       .getAdminSettings()
       .pipe(

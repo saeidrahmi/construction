@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { tap, catchError, of } from 'rxjs';
+import { tap, catchError, of, take } from 'rxjs';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { CommonModule } from '@angular/common';
 import { FormService } from '../../services/form.service';
@@ -45,6 +45,7 @@ export class SignupComponent {
   apiService = inject(ApiService);
   destroyRef = inject(DestroyRef);
   serverError: any;
+  info!: any;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -66,6 +67,19 @@ export class SignupComponent {
         updateOn: 'blur',
       }),
     });
+    this.apiService
+      .getFreeTrialInfo()
+      .pipe(
+        takeUntilDestroyed(),
+        take(1),
+        tap((info: any) => {
+          this.info = info;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      )
+      .subscribe();
   }
 
   signup() {
