@@ -118,7 +118,7 @@ export class ApiService {
       })
       .pipe(take(1), delay(300));
   }
-  register(
+  registerFreePlan(
     user: UserInterface,
     plan: PlanInterface,
     userSignupToken: string
@@ -397,6 +397,18 @@ export class ApiService {
         })
       );
   }
+  getAllActiveNonFreePlans(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/public/list-paid-plans')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   updatePlanActivationStatus(
     planId: string,
     activate: boolean
@@ -445,6 +457,34 @@ export class ApiService {
     this.spinner.show();
     return this.httpClient
       .get<any>(this.backendApiUrl + '/public/get-free-trial-info')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  purchasePlan(
+    userId: string,
+    plan: PlanInterface,
+    payment: any
+  ): Observable<any> {
+    this.spinner.show();
+    const totalAmount =
+      (parseFloat(plan?.priceAfterDiscount.toString()) * 13) / 100 +
+      parseFloat(plan?.priceAfterDiscount.toString());
+    const tax = (parseFloat(plan?.priceAfterDiscount.toString()) * 13) / 100;
+
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/purchase-plan', {
+        plan: plan,
+        userId: userId,
+        paymentInfo: payment,
+        amount: plan.priceAfterDiscount,
+        tax: tax,
+        totalAmount: totalAmount,
+      })
       .pipe(
         take(1),
         delay(300),

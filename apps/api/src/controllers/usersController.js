@@ -603,7 +603,44 @@ async function UpdateUserActivationStatusController(req, res) {
       .json({ errorMessage: 'Error getting user services.' });
   }
 }
+async function purchasePlanController(req, res) {
+  const connection = await connectToDatabase();
+  try {
+    const plan = req.body.plan;
+    const payment = req.body.paymentInfo;
+    const amount = req.body.amount;
+    const tax = req.body.tax;
+    const totalAmount = req.body.totalAmount;
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    await connection.beginTransaction();
+    const values = [plan.planId, userId, new Date()];
+    const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate) VALUES (?, ?,?)`;
+    const result = await executeQuery(query, values);
 
+    if (result.affectedRows > 0 || result.insertId) {
+      const values = [result.insertId, payment, amount, tax, totalAmount];
+      const query = `INSERT INTO userPayments ( userPlanId ,paymentConfirmation ,paymentAmount,tax,totalPayment) VALUES (?, ?,?, ?,?)`;
+      console.log(query, values);
+      const resultPayment = await executeQuery(query, values);
+
+      if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
+        await connection.commit();
+        return res.status(200).json();
+      } else {
+        await connection.rollback();
+        return res.status(500).json({ errorMessage: 'Error updating Payment' });
+      }
+    } else {
+      await connection.rollback();
+      return res.status(500).json({ errorMessage: 'Error updating Plans' });
+    }
+  } catch (error) {
+    await connection.rollback(); // Rollback the transaction on error
+    return res.status(500).json({ errorMessage: 'Error  purchasing' });
+  } finally {
+    connection.end(); // Close the database connection
+  }
+}
 module.exports = {
   logoutController,
   loginController,
@@ -620,4 +657,5 @@ module.exports = {
   UsersListController,
   DeleteUserController,
   UpdateUserActivationStatusController,
+  purchasePlanController,
 };

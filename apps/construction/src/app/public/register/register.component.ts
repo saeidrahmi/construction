@@ -196,7 +196,7 @@ export class RegisterComponent implements OnInit {
           ),
         };
         this.apiService
-          .register(user, plan, this.token as string)
+          .registerFreePlan(user, plan, this.token as string)
           .pipe(
             takeUntilDestroyed(this.destroyRef),
             finalize(() => this.storageService.updateIsLoading(false)),

@@ -17,8 +17,18 @@ async function listPlansController(req, res) {
     return res.status(500).json({ errorMessage: 'Error getting settings.' });
   }
 }
+async function listPaidPlansController(req, res) {
+  try {
+    const selectQuery = `SELECT * FROM plans where planType !='free' AND active = 1 AND deleted=0 AND CURDATE() BETWEEN startDate AND expiryDate`;
+    const selectResult = await executeQuery(selectQuery, []);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+  }
+}
 
 module.exports = {
   freeTrialInfoController,
   listPlansController,
+  listPaidPlansController,
 };

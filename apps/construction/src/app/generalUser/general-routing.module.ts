@@ -6,6 +6,7 @@ import { GeneralSideBarComponent } from './generalSideBar/general-side-bar.compo
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
 import { UserServicesComponent } from './user-services/user-services.component';
+import { PurchasePlanComponent } from './purchase-plan/purchase-plan.component';
 const routes: Routes = [
   {
     path: '',
@@ -30,6 +31,10 @@ const routes: Routes = [
       {
         path: 'change-password',
         component: ChangePasswordComponent,
+      },
+      {
+        path: 'purchase-plan',
+        component: PurchasePlanComponent,
       },
       {
         path: '',

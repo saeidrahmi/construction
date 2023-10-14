@@ -19,6 +19,7 @@ const {
   UsersListController,
   DeleteUserController,
   UpdateUserActivationStatusController,
+  purchasePlanController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -49,5 +50,6 @@ router.post(
   verifyToken,
   UpdateUserActivationStatusController
 );
+router.post('/purchase-plan', verifyToken, purchasePlanController);
 
 module.exports = router;

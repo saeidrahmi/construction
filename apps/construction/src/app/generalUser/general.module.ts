@@ -15,6 +15,13 @@ import { UserServicesComponent } from './user-services/user-services.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { PurchasePlanComponent } from './purchase-plan/purchase-plan.component';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -22,6 +29,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     DashboardComponent,
     UserProfileComponent,
     UserServicesComponent,
+    PurchasePlanComponent,
   ],
   imports: [
     CommonModule,
@@ -36,8 +44,15 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     FormsModule,
     MatFormFieldModule,
     MatChipsModule,
-    MatIconModule,
+
     MatAutocompleteModule,
+    NgbDropdownModule,
+    MatStepperModule,
+    MatButtonModule,
+    MatRadioModule,
+    MatCheckboxModule,
+    MatIconModule,
+    MatTooltipModule,
   ],
   providers: [],
 })
