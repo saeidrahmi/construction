@@ -20,6 +20,7 @@ const {
   DeleteUserController,
   UpdateUserActivationStatusController,
   purchasePlanController,
+  registerPaidUserController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -27,6 +28,7 @@ router.post('/checkUserToken', checkUserTokenController);
 router.post('/login', loginController);
 router.post('/signup', signupController);
 router.post('/register-free', registerFreeUserController);
+router.post('/register-paid', registerPaidUserController);
 router.post('/reset-password', resetPasswordController);
 router.post(
   '/edit-user-profile',

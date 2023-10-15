@@ -4,6 +4,7 @@ const {
   encryptItem,
   decryptCredentials,
   verifyToken,
+  addDays,
 } = require('./utilityService'); // Import necessary helper functions
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
 const connectToDatabase = require('../db');
@@ -310,13 +311,132 @@ async function registerFreeUserController(req, res) {
         const result = await executeQuery(query, values);
         if (result.affectedRows > 0 || result.insertId) {
           const plan = req.body.plan;
-          const values = [plan.planId, userId, new Date()];
-          const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate) VALUES (?, ?,?)`;
-
+          const purchaseDate = new Date();
+          const values = [
+            plan.planId,
+            userId,
+            purchaseDate,
+            //new Date(purchaseDate.getTime() + plan.duration * 24 * 60 * 60 * 1000),
+            addDays(purchaseDate, plan.duration),
+            1,
+          ];
+          const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,expiryDate,active) VALUES (?, ?,?,?,?)`;
           const result = await executeQuery(query, values);
           if (result.affectedRows > 0 || result.insertId) {
             await connection.commit();
             return res.status(200).json(user);
+          } else {
+            await connection.rollback();
+            return res
+              .status(500)
+              .json({ errorMessage: 'Error updating user' });
+          }
+        } else {
+          await connection.rollback();
+          return res.status(500).json({ errorMessage: 'Error updating user' });
+        }
+      } catch (error) {
+        await connection.rollback(); // Rollback the transaction on error
+        return res.status(500).json({ errorMessage: 'Error registering user' });
+      } finally {
+        connection.end(); // Close the database connection
+      }
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error registering user' });
+  }
+}
+async function registerPaidUserController(req, res) {
+  try {
+    const user = req.body.user;
+    const userSignupToken = req.body.userSignupToken;
+    const userId = decryptItem(user.userId, webSecretKey);
+    const password = decryptItem(user.password, webSecretKey);
+    const payment = req.body.payment;
+    const amount = payment.amount;
+    const tax = payment.tax;
+    const totalAmount = payment.totalAmount;
+    const paymentConfirmation = payment.paymentConfirmation;
+
+    const existingUser = await executeQuery(
+      `SELECT userId FROM users WHERE userId = ? and jwtToken=? and registered=?`,
+      [userId, userSignupToken, 0]
+    );
+    if (existingUser.length === 0) {
+      // User does not exists,
+      return res.status(400).json({
+        errorMessage: 'User not allowed to signup. Invalid request.',
+      });
+    } else {
+      const connection = await connectToDatabase();
+      try {
+        await connection.beginTransaction();
+
+        const userObj = {
+          userId: userId,
+          role: user.role,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          registeredDate: new Date(),
+          loggedIn: 1,
+          active: 1,
+          registered: 1,
+          lastLoginDate: new Date(),
+        };
+        const payload = { subject: userObj };
+        const token = jwt.sign(payload, jwtSecretKey, {
+          expiresIn: env.userRegistrationTokenExpiry(),
+        });
+
+        const query =
+          'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
+        const values = [
+          1,
+          userObj.registeredDate,
+          userObj.lastLoginDate,
+          token,
+          1,
+          1,
+          1,
+          userObj.firstName,
+          userObj.lastName,
+          encryptItem(password, dbSecretKey),
+          userId,
+        ];
+
+        const result = await executeQuery(query, values);
+        if (result.affectedRows > 0 || result.insertId) {
+          const plan = req.body.plan;
+          const purchaseDate = new Date();
+          const values = [
+            plan.planId,
+            userId,
+            purchaseDate,
+            //new Date(purchaseDate.getTime() + plan.duration * 24 * 60 * 60 * 1000),
+            addDays(purchaseDate, plan.duration),
+            1,
+          ];
+          const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,expiryDate,active) VALUES (?, ?,?,?,?)`;
+          const result = await executeQuery(query, values);
+          if (result.affectedRows > 0 || result.insertId) {
+            const values = [
+              result.insertId,
+              paymentConfirmation,
+              amount,
+              tax,
+              totalAmount,
+            ];
+            const query = `INSERT INTO userPayments ( userPlanId ,paymentConfirmation ,paymentAmount,tax,totalPayment) VALUES (?, ?,?, ?,?)`;
+            const [resultPayment] = await connection.execute(query, values);
+            if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
+              await connection.commit();
+              return res.status(200).json(user);
+            } else {
+              await connection.rollback();
+              return res
+                .status(500)
+                .json({ errorMessage: 'Error updating Payments' });
+            }
           } else {
             await connection.rollback();
             return res
@@ -603,6 +723,10 @@ async function UpdateUserActivationStatusController(req, res) {
       .json({ errorMessage: 'Error getting user services.' });
   }
 }
+// purchasing a plan for a user:
+// make user previous plans inactive
+// update user plans and make the plan active
+// update user payments
 async function purchasePlanController(req, res) {
   const connection = await connectToDatabase();
   try {
@@ -613,26 +737,42 @@ async function purchasePlanController(req, res) {
     const totalAmount = req.body.totalAmount;
     const userId = decryptItem(req.body.userId, webSecretKey);
     await connection.beginTransaction();
-    const values = [plan.planId, userId, new Date()];
-    const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate) VALUES (?, ?,?)`;
-    const result = await executeQuery(query, values);
-
-    if (result.affectedRows > 0 || result.insertId) {
-      const values = [result.insertId, payment, amount, tax, totalAmount];
-      const query = `INSERT INTO userPayments ( userPlanId ,paymentConfirmation ,paymentAmount,tax,totalPayment) VALUES (?, ?,?, ?,?)`;
-      console.log(query, values);
-      const resultPayment = await executeQuery(query, values);
-
-      if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
-        await connection.commit();
-        return res.status(200).json();
+    const updateQuery = `UPDATE  userPlans JOIN plans ON userPlans.planId = plans.planId SET  userPlans.active = 0  WHERE userPlans.userId = ? AND plans.planType != 'free';`;
+    const updateResult = await executeQuery(updateQuery, [userId]);
+    if (updateResult.affectedRows > 0 || updateResult.insertId) {
+      const purchaseDate = new Date();
+      const values = [
+        plan.planId,
+        userId,
+        purchaseDate,
+        //new Date(purchaseDate.getTime() + plan.duration * 24 * 60 * 60 * 1000),
+        addDays(purchaseDate, plan.duration),
+        1,
+      ];
+      const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,expiryDate,active) VALUES (?, ?,?,?,?)`;
+      const [result] = await connection.execute(query, values);
+      if (result.affectedRows > 0 || result.insertId) {
+        const values = [result.insertId, payment, amount, tax, totalAmount];
+        const query = `INSERT INTO userPayments ( userPlanId ,paymentConfirmation ,paymentAmount,tax,totalPayment) VALUES (?, ?,?, ?,?)`;
+        const [resultPayment] = await connection.execute(query, values);
+        if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
+          await connection.commit();
+          return res.status(200).json();
+        } else {
+          await connection.rollback();
+          return res
+            .status(500)
+            .json({ errorMessage: 'Error updating Payment' });
+        }
       } else {
         await connection.rollback();
-        return res.status(500).json({ errorMessage: 'Error updating Payment' });
+        return res
+          .status(500)
+          .json({ errorMessage: 'Error updating userPlans setting inactive' });
       }
     } else {
       await connection.rollback();
-      return res.status(500).json({ errorMessage: 'Error updating Plans' });
+      return res.status(500).json({ errorMessage: 'Error updating Payment' });
     }
   } catch (error) {
     await connection.rollback(); // Rollback the transaction on error
@@ -658,4 +798,5 @@ module.exports = {
   DeleteUserController,
   UpdateUserActivationStatusController,
   purchasePlanController,
+  registerPaidUserController,
 };

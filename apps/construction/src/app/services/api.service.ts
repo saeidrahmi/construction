@@ -493,4 +493,33 @@ export class ApiService {
         })
       );
   }
+
+  registerPaidPlan(
+    user: UserInterface,
+    plan: PlanInterface,
+    payment: any,
+    userSignupToken: string
+  ): Observable<UserApiResponseInterface> {
+    this.spinner.show();
+    user.userId = this.encryptionService.encryptItem(user.userId as string);
+    user.password = this.encryptionService.encryptItem(user.password as string);
+    const data = {
+      user: user,
+      plan: plan,
+      userSignupToken: userSignupToken,
+      payment: payment,
+    };
+    return this.httpClient
+      .post<UserApiResponseInterface>(
+        this.backendApiUrl + '/users/register-paid',
+        data
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

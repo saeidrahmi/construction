@@ -44,6 +44,7 @@ export class PurchasePlanComponent {
     if (this.selectedPlan) {
       const payment = 'PAL-235894-CONFIRM';
       const userId = this.storageService?.getUserId();
+      console.log(this.selectedPlan);
       this.apiService
         .purchasePlan(
           this.encryptionService.encryptItem(userId()),

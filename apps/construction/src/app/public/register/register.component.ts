@@ -1,5 +1,5 @@
 import { UserInterface } from '../../models/user';
-import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
+import { Component, inject, DestroyRef, signal } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
@@ -64,7 +64,7 @@ import { PlanInterface } from '../../models/plan';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
-export class RegisterComponent implements OnInit {
+export class RegisterComponent {
   env: EnvironmentInfo = new EnvironmentInfo();
   userId: string = '';
 
@@ -99,6 +99,7 @@ export class RegisterComponent implements OnInit {
     })
   );
   listPlans: any;
+  selectedPlan: PlanInterface;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -170,47 +171,94 @@ export class RegisterComponent implements OnInit {
   get formArray(): AbstractControl | null {
     return this.registerForm?.get('formArray');
   }
-
-  ngOnInit(): void {}
-
-  register(plan: PlanInterface, stepper: MatStepper) {
+  processPlan(plan: PlanInterface, stepper: MatStepper) {
     if (this.registerForm.valid) {
       if (plan.planType === 'free') {
-        this.serverError = '';
-        const user: UserInterface = {
-          userId: this.commonUtility.trimString(
-            this.formArray?.get([0]).get('userId')?.value
-          ),
-          purpose: this.commonUtility.trimString(this.useCase),
-          active: true,
-          registeredDate: new Date(),
-          password: this.commonUtility.trimString(
-            this.formArray?.get([0]).get('password')?.value
-          ),
-          role: 'general',
-          firstName: this.commonUtility.trimString(
-            this.formArray?.get([0]).get('firstName')?.value
-          ),
-          lastName: this.commonUtility.trimString(
-            this.formArray?.get([0]).get('lastName')?.value
-          ),
-        };
-        this.apiService
-          .registerFreePlan(user, plan, this.token as string)
-          .pipe(
-            takeUntilDestroyed(this.destroyRef),
-            finalize(() => this.storageService.updateIsLoading(false)),
-            tap((response) => {
-              this.storageService.updateStateLoginSuccessful(response);
-              this.userRouting.navigateToUserMainPage();
-            }),
-            catchError((err) => {
-              this.serverError = err;
-              return of(err);
-            })
-          )
-          .subscribe();
-      } else stepper.next();
+        this.registerFreePlan(plan, stepper);
+      } else {
+        this.selectedPlan = plan;
+        stepper.next();
+      }
+    } else {
+      this.formErrors = this.formService.getFormValidationErrorMessages(
+        this.formArray?.get([0]) as FormGroup
+      );
+    }
+  }
+  getUserInfo(): UserInterface {
+    const user: UserInterface = {
+      userId: this.commonUtility.trimString(
+        this.formArray?.get([0]).get('userId')?.value
+      ),
+      purpose: this.commonUtility.trimString(this.useCase),
+      active: true,
+      registeredDate: new Date(),
+      password: this.commonUtility.trimString(
+        this.formArray?.get([0]).get('password')?.value
+      ),
+      role: 'general',
+      firstName: this.commonUtility.trimString(
+        this.formArray?.get([0]).get('firstName')?.value
+      ),
+      lastName: this.commonUtility.trimString(
+        this.formArray?.get([0]).get('lastName')?.value
+      ),
+    };
+    return user;
+  }
+  registerFreePlan(plan: PlanInterface, stepper: MatStepper) {
+    this.serverError = '';
+    const user = this.getUserInfo();
+    this.apiService
+      .registerFreePlan(user, plan, this.token as string)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.storageService.updateIsLoading(false)),
+        tap((response) => {
+          this.storageService.updateStateLoginSuccessful(response);
+          this.userRouting.navigateToUserMainPage();
+        }),
+        catchError((err) => {
+          this.serverError = err;
+          return of(err);
+        })
+      )
+      .subscribe();
+  }
+  registerPaidPlan() {
+    if (this.registerForm.valid) {
+      const user = this.getUserInfo();
+      const payment = {
+        amount: this.selectedPlan?.priceAfterDiscount,
+        totalAmount:
+          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) * 13) /
+            100 +
+          parseFloat(this.selectedPlan?.priceAfterDiscount.toString()),
+        tax:
+          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) * 13) /
+          100,
+        paymentConfirmation: 'Confirmed1234',
+      };
+      this.apiService
+        .registerPaidPlan(
+          user,
+          this.selectedPlan,
+          payment,
+          this.token as string
+        )
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          finalize(() => this.storageService.updateIsLoading(false)),
+          tap((response) => {
+            this.storageService.updateStateLoginSuccessful(response);
+            this.userRouting.navigateToUserMainPage();
+          }),
+          catchError((err) => {
+            this.serverError = err;
+            return of(err);
+          })
+        )
+        .subscribe();
     } else {
       this.formErrors = this.formService.getFormValidationErrorMessages(
         this.formArray?.get([0]) as FormGroup
