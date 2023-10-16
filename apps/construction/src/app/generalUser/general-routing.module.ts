@@ -7,6 +7,7 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
 import { UserServicesComponent } from './user-services/user-services.component';
 import { PurchasePlanComponent } from './purchase-plan/purchase-plan.component';
+import { UserAccountComponent } from './user-account/user-account.component';
 const routes: Routes = [
   {
     path: '',
@@ -35,6 +36,10 @@ const routes: Routes = [
       {
         path: 'purchase-plan',
         component: PurchasePlanComponent,
+      },
+      {
+        path: 'user-account',
+        component: UserAccountComponent,
       },
       {
         path: '',

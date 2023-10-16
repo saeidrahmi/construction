@@ -822,6 +822,17 @@ async function purchasePlanController(req, res) {
     connection.end(); // Close the database connection
   }
 }
+async function listUserPlansController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const selectQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userId=?  AND plans.planType != 'free' `;
+
+    const selectResult = await executeQuery(selectQuery, [userId]);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+  }
+}
 module.exports = {
   logoutController,
   loginController,
@@ -840,4 +851,5 @@ module.exports = {
   UpdateUserActivationStatusController,
   purchasePlanController,
   registerPaidUserController,
+  listUserPlansController,
 };

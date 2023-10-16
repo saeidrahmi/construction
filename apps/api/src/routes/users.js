@@ -21,6 +21,7 @@ const {
   UpdateUserActivationStatusController,
   purchasePlanController,
   registerPaidUserController,
+  listUserPlansController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -53,5 +54,6 @@ router.post(
   UpdateUserActivationStatusController
 );
 router.post('/purchase-plan', verifyToken, purchasePlanController);
+router.post('/list-user-plans', verifyToken, listUserPlansController);
 
 module.exports = router;

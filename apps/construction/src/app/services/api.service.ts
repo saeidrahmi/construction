@@ -527,4 +527,18 @@ export class ApiService {
         })
       );
   }
+  getUserPlans(userId: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/list-user-plans', {
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }
