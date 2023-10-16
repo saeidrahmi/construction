@@ -144,7 +144,19 @@
                   Website Included
                 </th>
                 <td mat-cell *matCellDef="let row">
-                  {{ row.websiteIncluded }}
+                  <div
+                    *ngIf="
+                      row.websiteIncluded === 1;
+                      then yesSection;
+                      else noSection
+                    "
+                  ></div>
+                  <ng-template #yesSection>
+                    <mat-icon>check_box</mat-icon></ng-template
+                  >
+                  <ng-template #noSection>
+                    <mat-icon>close</mat-icon></ng-template
+                  >
                 </td>
               </ng-container>
               <ng-container matColumnDef="viewBidsIncluded">
@@ -152,15 +164,55 @@
                   View Bids Included
                 </th>
                 <td mat-cell *matCellDef="let row">
-                  {{ row.viewBidsIncluded }}
+                  <div
+                    *ngIf="
+                      row.viewBidsIncluded === 1;
+                      then yesSection;
+                      else noSection
+                    "
+                  ></div>
+                  <ng-template #yesSection>
+                    <mat-icon>check_box</mat-icon></ng-template
+                  >
+                  <ng-template #noSection>
+                    <mat-icon>close</mat-icon></ng-template
+                  >
                 </td>
               </ng-container>
-
+              <ng-container matColumnDef="createBidsIncluded">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>
+                  Create Bids Included
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <div
+                    *ngIf="
+                      row.createBidsIncluded === 1;
+                      then yesSection;
+                      else noSection
+                    "
+                  ></div>
+                  <ng-template #yesSection>
+                    <mat-icon>check_box</mat-icon></ng-template
+                  >
+                  <ng-template #noSection>
+                    <mat-icon>close</mat-icon></ng-template
+                  >
+                </td>
+              </ng-container>
               <ng-container matColumnDef="action">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
                   Action
                 </th>
                 <td mat-cell *matCellDef="let row">
+                  <mat-icon
+                    class="mat-18"
+                    matTooltip="Delete account"
+                    matTooltipPosition="above"
+                    class="pointer"
+                    (click)="deletePlan(row.planId)"
+                    *ngIf="row.active === 1 && row.deleted === 0"
+                    >edit</mat-icon
+                  >
                   <div
                     *ngIf="row.active === 1; then yesSection; else noSection"
                   ></div>

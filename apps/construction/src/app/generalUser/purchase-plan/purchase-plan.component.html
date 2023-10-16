@@ -8,7 +8,7 @@
         <mat-step linear [optional]="false">
           <ng-template matStepLabel>Basic Information</ng-template>
           <div class="container-fluid">
-            <div class="row row-cols-3">
+            <div class="row row-cols-3 gy-2">
               <div class="col" *ngFor="let plan of listPlans">
                 <div class="card" aria-hidden="true">
                   <div class="card-body">
@@ -89,6 +89,31 @@
                           ></ng-template
                         >
                       </li>
+                      <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        Create Construction Bids
+
+                        <div
+                          *ngIf="
+                            this.plan.createBidsIncluded;
+                            then yesSection;
+                            else noSection
+                          "
+                        ></div>
+                        <ng-template #yesSection>
+                          <span class="badge bg-primary rounded-pill">
+                            <mat-icon>check_box</mat-icon></span
+                          ></ng-template
+                        >
+
+                        <ng-template #noSection>
+                          <span class="badge bg-primary rounded-pill">
+                            <mat-icon>close</mat-icon></span
+                          ></ng-template
+                        >
+                      </li>
+
                       <li
                         class="list-group-item d-flex justify-content-between align-items-center"
                       >

@@ -25,7 +25,6 @@ export class ListPlansComponent {
     'planName',
     'planType',
     'planDescription',
-
     'duration',
     'originalPrice',
     'discountPercentage',
@@ -33,6 +32,7 @@ export class ListPlansComponent {
     'numberOfAdvertisements',
     'websiteIncluded',
     'viewBidsIncluded',
+    'createBidsIncluded',
   ];
   dataSource!: MatTableDataSource<UserApiResponseInterface>;
   apiService = inject(ApiService);

@@ -1,0 +1,73 @@
+<div class="card" aria-hidden="true">
+  <div class="card-body">
+    <h4 class="card-title text-center">
+      {{ this.plan.planName | titlecase }}
+    </h4>
+    <hr />
+    <h5 class="card-title text-center">
+      {{ this.plan.planType | titlecase }} /
+      <span
+        class="text-danger"
+        *ngIf="this.plan.originalPrice !== this.plan.priceAfterDiscount"
+      >
+        <del> {{ this.plan.originalPrice | currency }}</del>
+      </span>
+      <span class="text-danger">
+        {{ this.plan.priceAfterDiscount | currency }}
+      </span>
+    </h5>
+    <hr />
+    <ul class="list-group">
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
+        Number of Advertisements
+        <span class="badge bg-primary rounded-pill">
+          {{ this.plan.numberOfAdvertisements }}
+        </span>
+      </li>
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
+        Website Included
+
+        <div
+          *ngIf="this.plan.websiteIncluded; then yesSection; else noSection"
+        ></div>
+        <ng-template #yesSection>
+          <span class="badge bg-primary rounded-pill"> Yes</span></ng-template
+        >
+
+        <ng-template #noSection>
+          <span class="badge bg-primary rounded-pill"> No</span></ng-template
+        >
+      </li>
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
+        View Construction Bids
+
+        <div
+          *ngIf="this.plan.viewBidsIncluded; then yesSection; else noSection"
+        ></div>
+        <ng-template #yesSection>
+          <span class="badge bg-primary rounded-pill"> Yes</span></ng-template
+        >
+
+        <ng-template #noSection>
+          <span class="badge bg-primary rounded-pill"> No</span></ng-template
+        >
+      </li>
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
+        {{ this.plan.planDescription }}
+      </li>
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
+        <button (click)="selectPlan(this.plan)">Select Plan</button>
+      </li>
+    </ul>
+  </div>
+</div>

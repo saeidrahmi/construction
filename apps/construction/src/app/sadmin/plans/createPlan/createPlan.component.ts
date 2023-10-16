@@ -67,6 +67,7 @@ export class CreatePlanComponent {
       endDate: new FormControl('', [Validators.required]),
       websiteIncluded: new FormControl('', []),
       viewBidsIncluded: new FormControl('', []),
+      createBidsIncluded: new FormControl('', []),
       planDescription: new FormControl('', [Validators.required]),
       priceAfterDiscount: new FormControl({ value: '', disabled: true }, [
         Validators.required,
