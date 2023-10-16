@@ -209,6 +209,7 @@ export class RegisterComponent {
   registerFreePlan(plan: PlanInterface, stepper: MatStepper) {
     this.serverError = '';
     const user = this.getUserInfo();
+
     this.apiService
       .registerFreePlan(user, plan, this.token as string)
       .pipe(

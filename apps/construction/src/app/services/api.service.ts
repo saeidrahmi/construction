@@ -471,19 +471,12 @@ export class ApiService {
     payment: any
   ): Observable<any> {
     this.spinner.show();
-    const totalAmount =
-      (parseFloat(plan?.priceAfterDiscount.toString()) * 13) / 100 +
-      parseFloat(plan?.priceAfterDiscount.toString());
-    const tax = (parseFloat(plan?.priceAfterDiscount.toString()) * 13) / 100;
 
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/purchase-plan', {
         plan: plan,
         userId: userId,
         paymentInfo: payment,
-        amount: plan.priceAfterDiscount,
-        tax: tax,
-        totalAmount: totalAmount,
       })
       .pipe(
         take(1),

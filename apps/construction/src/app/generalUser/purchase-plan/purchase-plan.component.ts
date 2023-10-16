@@ -42,9 +42,18 @@ export class PurchasePlanComponent {
 
   purchase() {
     if (this.selectedPlan) {
-      const payment = 'PAL-235894-CONFIRM';
       const userId = this.storageService?.getUserId();
-      console.log(this.selectedPlan);
+      const payment = {
+        amount: this.selectedPlan?.priceAfterDiscount,
+        totalAmount:
+          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) * 13) /
+            100 +
+          parseFloat(this.selectedPlan?.priceAfterDiscount.toString()),
+        tax:
+          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) * 13) /
+          100,
+        paymentConfirmation: 'PAL-235894-CONFIRM',
+      };
       this.apiService
         .purchasePlan(
           this.encryptionService.encryptItem(userId()),

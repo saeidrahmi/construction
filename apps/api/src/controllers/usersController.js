@@ -324,7 +324,22 @@ async function registerFreeUserController(req, res) {
           const result = await executeQuery(query, values);
           if (result.affectedRows > 0 || result.insertId) {
             await connection.commit();
-            return res.status(200).json(user);
+
+            const response = {
+              userId: userId,
+              jwtToken: token,
+              role: user.role,
+              firstName: user.firstName,
+              middleName: user.middleName,
+              lastName: user.lastName,
+              registeredDate: userObj.registeredDate,
+              lastLoginDate: userObj.lastLoginDate,
+              active: true,
+              deleted: false,
+              loggedIn: true,
+              registered: true,
+            };
+            return res.status(200).json(response);
           } else {
             await connection.rollback();
             return res
@@ -430,7 +445,22 @@ async function registerPaidUserController(req, res) {
             const [resultPayment] = await connection.execute(query, values);
             if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
               await connection.commit();
-              return res.status(200).json(user);
+
+              const response = {
+                userId: userId,
+                jwtToken: token,
+                role: user.role,
+                firstName: user.firstName,
+                middleName: user.middleName,
+                lastName: user.lastName,
+                registeredDate: userObj.registeredDate,
+                lastLoginDate: userObj.lastLoginDate,
+                active: true,
+                deleted: false,
+                loggedIn: true,
+                registered: true,
+              };
+              return res.status(200).json(response);
             } else {
               await connection.rollback();
               return res
@@ -732,14 +762,17 @@ async function purchasePlanController(req, res) {
   try {
     const plan = req.body.plan;
     const payment = req.body.paymentInfo;
-    const amount = req.body.amount;
-    const tax = req.body.tax;
-    const totalAmount = req.body.totalAmount;
+    const amount = payment.amount;
+    const tax = payment.tax;
+    const totalAmount = payment.totalAmount;
+    const paymentConfirmation = payment.paymentConfirmation;
+
     const userId = decryptItem(req.body.userId, webSecretKey);
     await connection.beginTransaction();
     const updateQuery = `UPDATE  userPlans JOIN plans ON userPlans.planId = plans.planId SET  userPlans.active = 0  WHERE userPlans.userId = ? AND plans.planType != 'free';`;
+
     const updateResult = await executeQuery(updateQuery, [userId]);
-    if (updateResult.affectedRows > 0 || updateResult.insertId) {
+    if (updateResult.affectedRows >= 0 || updateResult.insertId) {
       const purchaseDate = new Date();
       const values = [
         plan.planId,
@@ -750,10 +783,18 @@ async function purchasePlanController(req, res) {
         1,
       ];
       const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,expiryDate,active) VALUES (?, ?,?,?,?)`;
+
       const [result] = await connection.execute(query, values);
       if (result.affectedRows > 0 || result.insertId) {
-        const values = [result.insertId, payment, amount, tax, totalAmount];
+        const values = [
+          result.insertId,
+          paymentConfirmation,
+          amount,
+          tax,
+          totalAmount,
+        ];
         const query = `INSERT INTO userPayments ( userPlanId ,paymentConfirmation ,paymentAmount,tax,totalPayment) VALUES (?, ?,?, ?,?)`;
+
         const [resultPayment] = await connection.execute(query, values);
         if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
           await connection.commit();
