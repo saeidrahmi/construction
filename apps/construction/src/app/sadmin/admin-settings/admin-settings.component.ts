@@ -33,6 +33,7 @@ export class AdminSettingsComponent {
   initialSetting: AdminSettingsInterface = {};
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
+      tax: new FormControl('', [Validators.required]),
       freeTiralPeriod: new FormControl('', [Validators.required]),
       monthlyPrice: new FormControl('', [Validators.required]),
       monthlyDiscount: new FormControl('', [Validators.required]),
@@ -47,6 +48,7 @@ export class AdminSettingsComponent {
         takeUntilDestroyed(this.destroyRef),
         take(1),
         tap((setting: AdminSettingsInterface) => {
+          console.log(setting, 'seting');
           this.setting = setting;
           this.initialSetting = { ...setting };
         }),

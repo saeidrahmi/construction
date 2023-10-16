@@ -465,6 +465,18 @@ export class ApiService {
         })
       );
   }
+  getTax(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/public/get-tax')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   purchasePlan(
     userId: string,
     plan: PlanInterface,

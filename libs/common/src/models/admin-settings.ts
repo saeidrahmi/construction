@@ -5,4 +5,5 @@ export interface AdminSettingsInterface {
   quarterlyDiscount?: number;
   semiAnualDiscount?: number;
   yearlyDiscount?: number;
+  tax?: number;
 }

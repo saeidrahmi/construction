@@ -13,6 +13,7 @@ async function listAdminSettingsController(req, res) {
       quarterlyDiscount: selectResult[0].quarterlyDiscount,
       semiAnualDiscount: selectResult[0].semiAnualDiscount,
       yearlyDiscount: selectResult[0].yearlyDiscount,
+      tax: selectResult[0].tax,
     };
     return res.status(200).json(setting);
   } catch (error) {
@@ -29,8 +30,10 @@ async function updateAdminSettingsController(req, res) {
       quarterlyDiscount: info.quarterlyDiscount,
       yearlyDiscount: info.yearlyDiscount,
       semiAnualDiscount: info.semiAnualDiscount,
+      tax: info.tax,
     };
     const values = [
+      setting.tax,
       setting.freeTiralPeriod,
       setting.monthlyPrice,
       setting.monthlyDiscount,
@@ -43,7 +46,7 @@ async function updateAdminSettingsController(req, res) {
 
     if (selectResult.length > 0) {
       // There are results
-      const query = `UPDATE settings SET freeTiralPeriod = ?, monthlyPrice = ?,monthlyDiscount = ?, quarterlyDiscount = ?,semiAnualDiscount=?, yearlyDiscount=?`;
+      const query = `UPDATE settings SET tax =? , freeTiralPeriod = ?, monthlyPrice = ?,monthlyDiscount = ?, quarterlyDiscount = ?,semiAnualDiscount=?, yearlyDiscount=?`;
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(setting);

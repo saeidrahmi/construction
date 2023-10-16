@@ -2,7 +2,7 @@ import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of, finalize } from 'rxjs';
+import { tap, catchError, of, finalize, take } from 'rxjs';
 import { PlanInterface } from '../../models/plan';
 import { StorageService } from '../../services/storage.service';
 import { EncryptionService } from '../../services/encryption-service';
@@ -36,8 +36,22 @@ export class PurchasePlanComponent {
   );
   listPlans: any;
   selectedPlan: PlanInterface;
+  tax: any;
   constructor() {
     this.getPlans$.subscribe();
+    this.apiService
+      .getTax()
+      .pipe(
+        takeUntilDestroyed(),
+        take(1),
+        tap((info: any) => {
+          this.tax = info.tax;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      )
+      .subscribe();
   }
 
   purchase() {
@@ -46,11 +60,13 @@ export class PurchasePlanComponent {
       const payment = {
         amount: this.selectedPlan?.priceAfterDiscount,
         totalAmount:
-          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) * 13) /
+          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) *
+            parseFloat(this.tax)) /
             100 +
           parseFloat(this.selectedPlan?.priceAfterDiscount.toString()),
         tax:
-          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) * 13) /
+          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) *
+            parseFloat(this.tax)) /
           100,
         paymentConfirmation: 'PAL-235894-CONFIRM',
       };

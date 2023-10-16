@@ -18,7 +18,7 @@ import {
   RouterModule,
 } from '@angular/router';
 
-import { takeUntil, tap, catchError, of, finalize } from 'rxjs';
+import { takeUntil, tap, catchError, of, finalize, take } from 'rxjs';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
@@ -100,6 +100,7 @@ export class RegisterComponent {
   );
   listPlans: any;
   selectedPlan: PlanInterface;
+  tax: any;
   constructor(
     private route: ActivatedRoute,
     private fb: FormBuilder,
@@ -167,6 +168,19 @@ export class RegisterComponent {
       ?.get([0])
       ?.setValidators([this.validatorsService.matchPassword]);
     this.getPlans$.subscribe();
+    this.apiService
+      .getTax()
+      .pipe(
+        takeUntilDestroyed(),
+        take(1),
+        tap((info: any) => {
+          this.tax = info.tax;
+        }),
+        catchError((err) => {
+          return of(err);
+        })
+      )
+      .subscribe();
   }
   get formArray(): AbstractControl | null {
     return this.registerForm?.get('formArray');
@@ -232,11 +246,13 @@ export class RegisterComponent {
       const payment = {
         amount: this.selectedPlan?.priceAfterDiscount,
         totalAmount:
-          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) * 13) /
+          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) *
+            parseFloat(this.tax)) /
             100 +
           parseFloat(this.selectedPlan?.priceAfterDiscount.toString()),
         tax:
-          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) * 13) /
+          (parseFloat(this.selectedPlan?.priceAfterDiscount.toString()) *
+            parseFloat(this.tax)) /
           100,
         paymentConfirmation: 'Confirmed1234',
       };
