@@ -63,13 +63,27 @@
                         />
                       </div>
                     </div>
-                    <div class="row my-1">
+                    <div class="row my-2">
                       <div class="col-md-3 mt-1 form-labe">
                         Plan Effective Dates
                       </div>
                       <div class="col-md-8">
-                        <mat-form-field class="example-form-field">
-                          <mat-label>Effective Dates</mat-label>
+                        <mat-form-field
+                          appearance="outline"
+                          [ngStyle]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? { 'background-color': 'dark' }
+                              : { 'background-color': 'light' }
+                          "
+                        >
+                          <mat-label
+                            [class]="
+                              this.storageService.getTheme()() === 'dark'
+                                ? 'text-white'
+                                : ''
+                            "
+                            >Effective Dates</mat-label
+                          >
                           <mat-date-range-input
                             [formGroup]="form"
                             [rangePicker]="campaignOnePicker"
@@ -81,12 +95,22 @@
                               placeholder="Start date"
                               formControlName="startDate"
                               [(ngModel)]="plan.startDate"
+                              [class]="
+                                this.storageService.getTheme()() === 'dark'
+                                  ? 'text-white'
+                                  : ''
+                              "
                             />
                             <input
                               matEndDate
                               placeholder="End date"
                               formControlName="endDate"
                               [(ngModel)]="plan.expiryDate"
+                              [class]="
+                                this.storageService.getTheme()() === 'dark'
+                                  ? 'text-white'
+                                  : ''
+                              "
                             />
                           </mat-date-range-input>
                           <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
@@ -116,14 +140,14 @@
                     </div>
                     <div class="row">
                       <div class="col-md-3 mt-1 form-labe">
-                        Website Included
+                        Custom Profile Included
                       </div>
                       <div class="col-md-8">
                         <input
                           class="form-check-input"
                           type="checkbox"
-                          formControlName="websiteIncluded"
-                          [(ngModel)]="plan.websiteIncluded"
+                          formControlName="customProfileIncluded"
+                          [(ngModel)]="plan.customProfileIncluded"
                         />
                       </div>
                     </div>
@@ -218,11 +242,12 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                Website Included
+                                Custom Profile Included
 
                                 <div
                                   *ngIf="
-                                    this.form?.get('websiteIncluded')?.value;
+                                    this.form?.get('customProfileIncluded')
+                                      ?.value;
                                     then yesSection;
                                     else noSection
                                   "

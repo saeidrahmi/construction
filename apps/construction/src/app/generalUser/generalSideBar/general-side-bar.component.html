@@ -21,7 +21,7 @@
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/user-services']"
       >
-        <i class="bi bi-activity"><span class="mx-2">My Services</span></i>
+        <i class="bi bi-grid-3x2"><span class="mx-2">My Services</span></i>
       </a>
     </li>
     <li class="list-group-item">
@@ -29,7 +29,7 @@
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/user-account']"
       >
-        <i class="bi bi-activity"><span class="mx-2">My Account</span></i>
+        <i class="bi bi-person-add"><span class="mx-2">My Account</span></i>
       </a>
     </li>
     <li class="list-group-item">
@@ -37,7 +37,15 @@
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/purchase-plan']"
       >
-        <i class="bi bi-activity"><span class="mx-2">Purchase a Plan</span></i>
+        <i class="bi bi-basket"><span class="mx-2">Purchase a Plan</span></i>
+      </a>
+    </li>
+    <li class="list-group-item" *ngIf="plan()?.customProfileIncluded === 1">
+      <a
+        [routerLinkActive]="['active_section']"
+        [routerLink]="['/general/dashboard']"
+      >
+        <i class="bi bi-grid-1x2"><span class="mx-2">My Custom Page</span></i>
       </a>
     </li>
     <li class="list-group-item">

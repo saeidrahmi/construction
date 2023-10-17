@@ -65,7 +65,7 @@ export class CreatePlanComponent {
       planType: new FormControl('', [Validators.required]),
       startDate: new FormControl('', [Validators.required]),
       endDate: new FormControl('', [Validators.required]),
-      websiteIncluded: new FormControl('', []),
+      customProfileIncluded: new FormControl('', []),
       viewBidsIncluded: new FormControl('', []),
       createBidsIncluded: new FormControl('', []),
       planDescription: new FormControl('', [Validators.required]),
@@ -137,8 +137,8 @@ export class CreatePlanComponent {
       this.storageService.updateIsLoading(true);
       this.plan.active = true;
       this.plan.dateCreated = new Date();
-      if (!this.form?.get('websiteIncluded')?.value)
-        this.plan.websiteIncluded = false;
+      if (!this.form?.get('customProfileIncluded')?.value)
+        this.plan.customProfileIncluded = false;
 
       if (!this.form?.get('viewBidsIncluded')?.value)
         this.plan.viewBidsIncluded = false;

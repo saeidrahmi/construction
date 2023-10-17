@@ -25,6 +25,16 @@
               </span>
             </h5>
             <hr />
+            Days Left:
+            {{ getDaysRemaining(this.currentPlan?.userPlanExpiryDate) }}
+            <span class="text-danger fw-bolder"
+              >{{
+                getDaysRemaining(this.currentPlan?.userPlanExpiryDate) < 1
+                  ? 'Expired'
+                  : ''
+              }}
+            </span>
+            <hr />
             <ul class="list-group">
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
@@ -39,7 +49,7 @@
               >
                 Expiry Date
                 <span class="badge bg-primary rounded-pill">
-                  {{ this.currentPlan.expiryDate | date }}
+                  {{ this.currentPlan.userPlanExpiryDate | date }}
                 </span>
               </li>
               <li
@@ -53,11 +63,11 @@
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
               >
-                Website Included
+                Custom Profile Included
 
                 <div
                   *ngIf="
-                    this.currentPlan.websiteIncluded;
+                    this.currentPlan.customProfileIncluded;
                     then yesSection;
                     else noSection
                   "
@@ -171,7 +181,7 @@
             >
               Expiry Date
               <span class="badge bg-primary rounded-pill">
-                {{ this.plan.expiryDate | date }}
+                {{ this.plan.userPlanExpiryDate | date }}
               </span>
             </li>
 
@@ -186,11 +196,11 @@
             <li
               class="list-group-item d-flex justify-content-between align-items-center"
             >
-              Website Included
+              Custom Profile Included
 
               <div
                 *ngIf="
-                  this.plan.websiteIncluded;
+                  this.plan.customProfileIncluded;
                   then yesSection;
                   else noSection
                 "

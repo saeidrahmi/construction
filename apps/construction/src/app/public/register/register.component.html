@@ -20,6 +20,11 @@
             linear
             #stepper
             animationDuration="500"
+            [class]="
+              this.storageService.getTheme()() === 'dark'
+                ? 'bg-dark'
+                : 'bg-light'
+            "
           >
             <mat-step
               formGroupName="0"
@@ -27,7 +32,16 @@
               linear
               [optional]="false"
             >
-              <ng-template matStepLabel>Basic Information</ng-template>
+              <ng-template matStepLabel
+                ><span
+                  [class]="
+                    this.storageService.getTheme()() === 'dark'
+                      ? 'text-light'
+                      : ''
+                  "
+                  >Basic Information</span
+                ></ng-template
+              >
               <div class="container-fluid border border-black p-4">
                 <div class="row row-cols-1">
                   <div class="col-8 font-weight-bold border-bottom">
@@ -169,7 +183,16 @@
               </div>
             </mat-step>
             <mat-step formGroupName="1" linear [optional]="false">
-              <ng-template matStepLabel>Select Plan</ng-template>
+              <ng-template matStepLabel
+                ><span
+                  [class]="
+                    this.storageService.getTheme()() === 'dark'
+                      ? 'text-light'
+                      : ''
+                  "
+                  >Select Plan</span
+                ></ng-template
+              >
               <div class="container-fluid border border-black p-4">
                 <div class="row row-cols-1">
                   <div class="col-8 font-weight-bold border-bottom">
@@ -199,6 +222,10 @@
                             {{ this.plan.priceAfterDiscount | currency }}
                           </span>
                         </h5>
+                        <h6 class="card-title text-center">
+                          Plan Expiry Date: {{ this.plan.expiryDate | date }}
+                        </h6>
+                        <hr />
                         <hr />
                         <ul class="list-group">
                           <li
@@ -212,11 +239,11 @@
                           <li
                             class="list-group-item d-flex justify-content-between align-items-center"
                           >
-                            Website Included
+                            Custom Profile Included
 
                             <div
                               *ngIf="
-                                this.plan.websiteIncluded;
+                                this.plan.customProfileIncluded;
                                 then yesSection;
                                 else noSection
                               "
@@ -322,7 +349,16 @@
               </div>
             </mat-step>
             <mat-step formGroupName="2" linear [optional]="false">
-              <ng-template matStepLabel>Process Payment</ng-template>
+              <ng-template matStepLabel
+                ><span
+                  [class]="
+                    this.storageService.getTheme()() === 'dark'
+                      ? 'text-light'
+                      : ''
+                  "
+                  >Process Payment</span
+                ></ng-template
+              >
               <div class="container-fluid border border-black p-4">
                 <div class="row row-cols-1">
                   <div class="col-8 font-weight-bold border-bottom">

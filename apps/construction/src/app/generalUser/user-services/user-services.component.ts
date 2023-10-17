@@ -1,3 +1,5 @@
+import { HttpClient } from '@angular/common/http';
+import { SubHeaderComponent } from './../../public/sub-header/sub-header.component';
 import { UserService } from './../../services/user-service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
@@ -10,12 +12,30 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, startWith, map, catchError, of, tap, first } from 'rxjs';
+import {
+  Observable,
+  startWith,
+  map,
+  catchError,
+  of,
+  tap,
+  first,
+  take,
+} from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
+import { CommonUtilityService } from '../../services/common-utility.service';
+import { ThemePalette } from '@angular/material/core';
+import { CountryInterface } from '../../models/country';
+export interface Task {
+  name: string;
+  completed: boolean;
+  color: ThemePalette;
+  subtasks?: Task[];
+}
 @Component({
   selector: 'construction-user-services',
   templateUrl: './user-services.component.html',
@@ -23,18 +43,23 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class UserServicesComponent {
   separatorKeysCodes: number[] = [ENTER, COMMA];
+  storageService = inject(StorageService);
   serviceCtrl = new FormControl('');
   filteredServices: Observable<string[]>;
   myServices: string[] = [];
   destroyRef = inject(DestroyRef);
+  commonUtility = inject(CommonUtilityService);
   toastService = inject(ToastrService);
   constructionServices: string[] = [];
   @ViewChild('serviceInput') serviceInput!: ElementRef<HTMLInputElement>;
   announcer = inject(LiveAnnouncer);
+
+  canadaInfo: CountryInterface[] = [];
+
   constructor(
     private userService: UserService,
     private apiService: ApiService,
-    private storageService: StorageService
+    private http: HttpClient
   ) {
     this.constructionServices = this.userService.getConstructionServices();
     this.apiService

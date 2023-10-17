@@ -1,7 +1,7 @@
 export interface PlanInterface {
   planName?: string;
   planType?: string;
-  websiteIncluded?: boolean;
+  customProfileIncluded?: boolean;
   active?: boolean;
   deleted?: boolean;
   planDescription?: string;

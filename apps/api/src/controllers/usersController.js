@@ -126,10 +126,16 @@ async function loginController(req, res) {
         return res
           .status(401)
           .json({ errorMessage: 'Login Update operation failed.' });
-      }
+      } else {
+        const selectPlansQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userPlans.userId=? AND  userPlans.userPlanActive=1 `;
+        const updateResult = await executeQuery(selectPlansQuery, [userId]);
 
-      // Send the user details and token
-      return res.status(200).json(user);
+        const response = {
+          user: user,
+          plan: updateResult[0],
+        };
+        return res.status(200).json(response);
+      }
     }
   } catch (error) {
     res.status(500).json({ errorMessage: 'Internal Server Error' });
@@ -308,36 +314,46 @@ async function registerFreeUserController(req, res) {
           userId,
         ];
 
-        const result = await executeQuery(query, values);
+        const [result] = await connection.execute(query, values);
         if (result.affectedRows > 0 || result.insertId) {
           const plan = req.body.plan;
+
           const purchaseDate = new Date();
           const values = [
             plan.planId,
             userId,
             purchaseDate,
-            //new Date(purchaseDate.getTime() + plan.duration * 24 * 60 * 60 * 1000),
             addDays(purchaseDate, plan.duration),
             1,
+            //new Date(purchaseDate.getTime() + plan.duration * 24 * 60 * 60 * 1000),
           ];
-          const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,expiryDate,active) VALUES (?, ?,?,?,?)`;
-          const result = await executeQuery(query, values);
+          const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,userPlanExpiryDate,userPlanActive) VALUES (?, ?,?,?,?)`;
+          const [result] = await connection.execute(query, values);
           if (result.affectedRows > 0 || result.insertId) {
             await connection.commit();
 
             const response = {
-              userId: userId,
-              jwtToken: token,
-              role: user.role,
-              firstName: user.firstName,
-              middleName: user.middleName,
-              lastName: user.lastName,
-              registeredDate: userObj.registeredDate,
-              lastLoginDate: userObj.lastLoginDate,
-              active: true,
-              deleted: false,
-              loggedIn: true,
-              registered: true,
+              user: {
+                userId: userId,
+                jwtToken: token,
+                role: user.role,
+                firstName: user.firstName,
+                middleName: user.middleName,
+                lastName: user.lastName,
+                registeredDate: userObj.registeredDate,
+                lastLoginDate: userObj.lastLoginDate,
+                active: true,
+                deleted: false,
+                loggedIn: true,
+                registered: true,
+              },
+              plan: {
+                ...plan,
+                userPlanId: result.insertId,
+                purchasedDate: purchaseDate,
+                userPlanExpiryDate: addDays(purchaseDate, plan.duration),
+                userPlanActive: 1,
+              },
             };
             return res.status(200).json(response);
           } else {
@@ -419,20 +435,22 @@ async function registerPaidUserController(req, res) {
           userId,
         ];
 
-        const result = await executeQuery(query, values);
+        const [result] = await connection.execute(query, values);
         if (result.affectedRows > 0 || result.insertId) {
           const plan = req.body.plan;
+
           const purchaseDate = new Date();
           const values = [
             plan.planId,
             userId,
             purchaseDate,
-            //new Date(purchaseDate.getTime() + plan.duration * 24 * 60 * 60 * 1000),
             addDays(purchaseDate, plan.duration),
+            //new Date(purchaseDate.getTime() + plan.duration * 24 * 60 * 60 * 1000),
             1,
           ];
-          const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,expiryDate,active) VALUES (?, ?,?,?,?)`;
-          const result = await executeQuery(query, values);
+          const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,userPlanExpiryDate,userPlanActive) VALUES (?, ?,?,?,?)`;
+          console.log(values, query);
+          const [result] = await connection.execute(query, values);
           if (result.affectedRows > 0 || result.insertId) {
             const values = [
               result.insertId,
@@ -447,18 +465,27 @@ async function registerPaidUserController(req, res) {
               await connection.commit();
 
               const response = {
-                userId: userId,
-                jwtToken: token,
-                role: user.role,
-                firstName: user.firstName,
-                middleName: user.middleName,
-                lastName: user.lastName,
-                registeredDate: userObj.registeredDate,
-                lastLoginDate: userObj.lastLoginDate,
-                active: true,
-                deleted: false,
-                loggedIn: true,
-                registered: true,
+                user: {
+                  userId: userId,
+                  jwtToken: token,
+                  role: user.role,
+                  firstName: user.firstName,
+                  middleName: user.middleName,
+                  lastName: user.lastName,
+                  registeredDate: userObj.registeredDate,
+                  lastLoginDate: userObj.lastLoginDate,
+                  active: true,
+                  deleted: false,
+                  loggedIn: true,
+                  registered: true,
+                },
+                plan: {
+                  ...plan,
+                  userPlanId: result.insertId,
+                  purchasedDate: purchaseDate,
+                  userPlanExpiryDate: addDays(purchaseDate, plan.duration),
+                  userPlanActive: 1,
+                },
               };
               return res.status(200).json(response);
             } else {
@@ -574,7 +601,7 @@ async function editUserProfileController(req, res) {
         const selectResult = await executeQuery(selectQuery, [userId]);
         let userObject = selectResult[0];
         delete userObject.password;
-        return res.status(200).json(userObject);
+        return res.status(200).json({ user: userObject });
       } else {
         return res.status(500).json({ errorMessage: 'Error updating user' });
       }
@@ -602,7 +629,7 @@ async function editUserProfileController(req, res) {
         const selectResult = await executeQuery(selectQuery, [userId]);
         let userObject = selectResult[0];
         delete userObject.password;
-        return res.status(200).json(userObject);
+        return res.status(200).json({ user: userObject });
       } else {
         return res.status(500).json({ errorMessage: 'Error updating user' });
       }
@@ -769,9 +796,10 @@ async function purchasePlanController(req, res) {
 
     const userId = decryptItem(req.body.userId, webSecretKey);
     await connection.beginTransaction();
-    const updateQuery = `UPDATE  userPlans JOIN plans ON userPlans.planId = plans.planId SET  userPlans.active = 0  WHERE userPlans.userId = ? AND plans.planType != 'free';`;
+    //  const updateQuery = `UPDATE  userPlans JOIN plans ON userPlans.planId = plans.planId SET  userPlans.userPlanActive = 0  WHERE userPlans.userId = ? AND plans.planType != 'free';`;
+    const updateQuery = `UPDATE  userPlans   SET  userPlans.userPlanActive = 0  WHERE  userId = ?`;
 
-    const updateResult = await executeQuery(updateQuery, [userId]);
+    const [updateResult] = await connection.execute(updateQuery, [userId]);
     if (updateResult.affectedRows >= 0 || updateResult.insertId) {
       const purchaseDate = new Date();
       const values = [
@@ -782,7 +810,7 @@ async function purchasePlanController(req, res) {
         addDays(purchaseDate, plan.duration),
         1,
       ];
-      const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,expiryDate,active) VALUES (?, ?,?,?,?)`;
+      const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,userPlanExpiryDate,userPlanActive) VALUES (?, ?,?,?,?)`;
 
       const [result] = await connection.execute(query, values);
       if (result.affectedRows > 0 || result.insertId) {
@@ -798,7 +826,12 @@ async function purchasePlanController(req, res) {
         const [resultPayment] = await connection.execute(query, values);
         if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
           await connection.commit();
-          return res.status(200).json();
+          const selectPlansQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userPlans.userId=? AND  userPlans.userPlanActive=1 `;
+          const selectPlanResult = await executeQuery(selectPlansQuery, [
+            userId,
+          ]);
+
+          return res.status(200).json({ plan: selectPlanResult[0] });
         } else {
           await connection.rollback();
           return res

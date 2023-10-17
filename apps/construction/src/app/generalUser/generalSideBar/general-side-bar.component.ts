@@ -12,6 +12,7 @@ export class GeneralSideBarComponent {
   apiService = inject(ApiService);
   storageService = inject(StorageService);
   destroyRef = inject(DestroyRef);
+  plan = this.storageService.getPlan();
   logout() {
     this.storageService.updateIsLoading(true);
     this.apiService

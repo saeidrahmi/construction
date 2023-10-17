@@ -53,6 +53,9 @@ export class StorageService {
   getUserId(): Signal<string> {
     return computed(() => this.store()?.user?.userId as string);
   }
+  getPlan(): Signal<any> {
+    return computed(() => this.store()?.plan);
+  }
   saveStore() {
     sessionStorage.setItem(this.stateSessionItem, JSON.stringify(this.store()));
   }
@@ -97,30 +100,30 @@ export class StorageService {
   updateStateLoginSuccessful(response: UserApiResponseInterface) {
     const user: UserInterface = {
       loggedIn: true,
-      userId: response?.userId,
-      profileImage: response?.profileImage,
-      jwtToken: response?.jwtToken,
-      role: response?.role,
-      phone: response?.phone,
-      fax: response?.fax,
-      address: response?.address,
-      city: response?.city,
-      website: response?.website,
-      jobProfileDescription: response?.jobProfileDescription,
-      company: response?.company,
-      province: response?.province,
-      postalCode: response?.postalCode,
+      userId: response?.user?.userId,
+      profileImage: response?.user?.profileImage,
+      jwtToken: response?.user?.jwtToken,
+      role: response?.user?.role,
+      phone: response?.user?.phone,
+      fax: response?.user?.fax,
+      address: response?.user?.address,
+      city: response?.user?.city,
+      website: response?.user?.website,
+      jobProfileDescription: response?.user?.jobProfileDescription,
+      company: response?.user?.company,
+      province: response?.user?.province,
+      postalCode: response?.user?.postalCode,
       error: '',
-      firstName: response?.firstName,
-      lastName: response?.lastName,
-      middleName: response?.middleName,
-      registeredDate: response?.registeredDate,
-      active: response?.active,
-      registered: response?.registered,
-      lastLoginDate: response?.lastLoginDate,
+      firstName: response?.user?.firstName,
+      lastName: response?.user?.lastName,
+      middleName: response?.user?.middleName,
+      registeredDate: response?.user?.registeredDate,
+      active: response?.user?.active,
+      registered: response?.user?.registered,
+      lastLoginDate: response?.user?.lastLoginDate,
     };
     this.store.update((state) => {
-      return { ...state, user: user };
+      return { ...state, user: user, plan: response?.plan };
     });
   }
   updateStateProfileSuccessful(response: UserApiResponseInterface) {
@@ -129,20 +132,28 @@ export class StorageService {
         ...state,
         user: {
           ...state.user,
-          profileImage: response?.profileImage,
-          firstName: response?.firstName,
-          lastName: response?.lastName,
-          middleName: response?.middleName,
-          website: response?.website,
-          jobProfileDescription: response?.jobProfileDescription,
-          company: response?.company,
-          phone: response?.phone,
-          fax: response?.fax,
-          address: response?.address,
-          city: response?.city,
-          province: response?.province,
-          postalCode: response?.postalCode,
+          profileImage: response?.user?.profileImage,
+          firstName: response?.user?.firstName,
+          lastName: response?.user?.lastName,
+          middleName: response?.user?.middleName,
+          website: response?.user?.website,
+          jobProfileDescription: response?.user?.jobProfileDescription,
+          company: response?.user?.company,
+          phone: response?.user?.phone,
+          fax: response?.user?.fax,
+          address: response?.user?.address,
+          city: response?.user?.city,
+          province: response?.user?.province,
+          postalCode: response?.user?.postalCode,
         },
+      };
+    });
+  }
+  updatePlan(plan: any) {
+    this.store.update((state) => {
+      return {
+        ...state,
+        plan: plan,
       };
     });
   }
@@ -171,6 +182,7 @@ export class StorageService {
   initializeStore(): StoreInterface {
     return {
       general: { theme: 'dark' },
+      plan: null,
       user: {
         loggedIn: false,
         userId: '',

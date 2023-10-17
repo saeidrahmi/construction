@@ -30,7 +30,7 @@ export class ListPlansComponent {
     'discountPercentage',
     'priceAfterDiscount',
     'numberOfAdvertisements',
-    'websiteIncluded',
+    'customProfileIncluded',
     'viewBidsIncluded',
     'createBidsIncluded',
   ];

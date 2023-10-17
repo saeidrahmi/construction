@@ -75,7 +75,7 @@ async function createNewPlanController(req, res) {
   try {
     const createBidsIncluded = req.body.plan.createBidsIncluded ? 1 : 0;
     const viewBidsIncluded = req.body.plan.viewBidsIncluded ? 1 : 0;
-    const websiteIncluded = req.body.plan.websiteIncluded ? 1 : 0;
+    const customProfileIncluded = req.body.plan.customProfileIncluded ? 1 : 0;
     const planActive = req.body.plan.active ? 1 : 0;
     const values = [
       req.body.plan.planName,
@@ -86,7 +86,7 @@ async function createNewPlanController(req, res) {
       new Date(req.body.plan.startDate),
       new Date(req.body.plan.expiryDate),
       req.body.plan.numberOfAdvertisements,
-      websiteIncluded,
+      customProfileIncluded,
       req.body.plan.planDescription,
       new Date(req.body.plan.dateCreated),
       req.body.plan.duration,
@@ -96,7 +96,7 @@ async function createNewPlanController(req, res) {
     ];
 
     // No results
-    const query = `INSERT INTO plans ( planName,planType,originalPrice,discountPercentage,priceAfterDiscount,startDate,expiryDate,numberOfAdvertisements,websiteIncluded,planDescription,dateCreated,duration,viewBidsIncluded,active,createBidsIncluded) VALUES (?, ?,?,?,?, ?, ?,?,?, ?, ?,?, ?, ?,?)`;
+    const query = `INSERT INTO plans ( planName,planType,originalPrice,discountPercentage,priceAfterDiscount,startDate,expiryDate,numberOfAdvertisements,customProfileIncluded,planDescription,dateCreated,duration,viewBidsIncluded,active,createBidsIncluded) VALUES (?, ?,?,?,?, ?, ?,?,?, ?, ?,?, ?, ?,?)`;
 
     const result = await executeQuery(query, values);
     if (result.affectedRows > 0 || result.insertId) {
@@ -109,7 +109,7 @@ async function createNewPlanController(req, res) {
         startDate: req.body.plan.startDate,
         expiryDate: req.body.plan.expiryDate,
         numberOfAdvertisements: req.body.plan.numberOfAdvertisements,
-        websiteIncluded: req.body.plan.websiteIncluded,
+        customProfileIncluded: req.body.plan.customProfileIncluded,
         planDescription: req.body.plan.planDescription,
         dateCreated: req.body.plan.dateCreated,
         duration: req.body.plan.duration,

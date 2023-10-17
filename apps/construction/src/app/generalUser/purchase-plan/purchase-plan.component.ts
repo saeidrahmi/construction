@@ -79,6 +79,7 @@ export class PurchasePlanComponent {
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap((response) => {
+            this.storageService.updatePlan(response?.plan);
             this.toastService.success('Plan purchased. ', 'Success', {
               timeOut: 3000,
               positionClass: 'toast-top-right',

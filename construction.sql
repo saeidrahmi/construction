@@ -33,7 +33,7 @@ CREATE TABLE `plans` (
   `planType` varchar(20) NOT NULL,
   `viewBidsIncluded` tinyint(1) NOT NULL,
   `createBidsIncluded` tinyint(1) DEFAULT NULL,
-  `websiteIncluded` tinyint(1) NOT NULL,
+  `customProfileIncluded` tinyint(1) NOT NULL,
   `dateCreated` timestamp NOT NULL,
   `startDate` timestamp NOT NULL,
   `expiryDate` timestamp NULL DEFAULT NULL,

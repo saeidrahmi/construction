@@ -26,8 +26,10 @@ export class UserAccountComponent {
       .pipe(
         takeUntilDestroyed(),
         tap((plans: any) => {
-          this.listPlans = plans;
-          this.currentPlan = plans.filter((plan) => plan.active)[0];
+          this.listPlans = plans.filter((plan) => plan.userPlanActive === 0);
+          this.currentPlan = plans.filter(
+            (plan) => plan.userPlanActive === 1
+          )[0];
           console.log(plans);
         }),
         catchError((err) => {
@@ -41,5 +43,13 @@ export class UserAccountComponent {
         })
       )
       .subscribe();
+  }
+  getDaysRemaining(expiryDate: any): number {
+    const currentDate = new Date();
+    const expiryDateTime = new Date(expiryDate).getTime();
+    const currentTime = currentDate.getTime();
+    const timeDifference = expiryDateTime - currentTime;
+    const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+    return daysRemaining;
   }
 }
