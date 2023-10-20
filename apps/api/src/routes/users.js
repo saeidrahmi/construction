@@ -22,6 +22,9 @@ const {
   purchasePlanController,
   registerPaidUserController,
   listUserPlansController,
+  updateUserServiceLocationTypeController,
+  updateUserServiceProvincesController,
+  updateUserServiceCitiesController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -55,5 +58,19 @@ router.post(
 );
 router.post('/purchase-plan', verifyToken, purchasePlanController);
 router.post('/list-user-plans', verifyToken, listUserPlansController);
-
+router.post(
+  '/update-user-service-location-type',
+  verifyToken,
+  updateUserServiceLocationTypeController
+);
+router.post(
+  '/update-user-service-provinces',
+  verifyToken,
+  updateUserServiceProvincesController
+);
+router.post(
+  '/update-user-service-cities',
+  verifyToken,
+  updateUserServiceCitiesController
+);
 module.exports = router;

@@ -541,4 +541,57 @@ export class ApiService {
         })
       );
   }
+  updateUserServiceLocationType(userId: string, type: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/users/update-user-service-location-type',
+        {
+          userId: userId,
+          type: type,
+        }
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  updateUserServiceProvinces(
+    userId: string,
+    provinces: string[]
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/update-user-service-provinces', {
+        userId: userId,
+        provinces: provinces,
+        type: 'province',
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  updateUserServiceCities(userId: string, locations: any[]): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/update-user-service-cities', {
+        userId: userId,
+        locations: locations,
+        type: 'city',
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

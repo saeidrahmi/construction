@@ -866,6 +866,114 @@ async function listUserPlansController(req, res) {
     return res.status(500).json({ errorMessage: 'Error getting settings.' });
   }
 }
+async function updateUserServiceLocationTypeController(req, res) {
+  const connection = await connectToDatabase();
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const type = req.body.type;
+    const updateQuery = `UPDATE  users   SET serviceCoverageType = ?  WHERE  userId = ?`;
+
+    const [result] = await connection.execute(updateQuery, [type, userId]);
+    if (result.affectedRows > 0 || result.insertId) {
+      const deleteQuery = 'DELETE FROM userProvinces WHERE userId = ?';
+      const deleteResult = await connection.execute(deleteQuery, [userId]);
+      const deleteQueryCity = 'DELETE FROM userServiceCities WHERE userId = ?';
+      const [deleteResultCity] = await connection.execute(deleteQueryCity, [
+        userId,
+      ]);
+      await connection.commit();
+      return res.status(200).json();
+    } else {
+      await connection.rollback();
+      return res.status(500).json({ errorMessage: 'Error update users.' });
+    }
+  } catch (error) {
+    await connection.rollback(); // Rollback the transaction on error
+    return res.status(500).json({ errorMessage: 'Error  updating users' });
+  } finally {
+    connection.end(); // Close the database connection
+  }
+}
+async function updateUserServiceProvincesController(req, res) {
+  const connection = await connectToDatabase();
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const type = req.body.type;
+    const provinces = req.body.provinces;
+    const updateQuery = `UPDATE  users   SET serviceCoverageType = ?  WHERE  userId = ?`;
+
+    const [result] = await connection.execute(updateQuery, [type, userId]);
+    if (result.affectedRows > 0 || result.insertId) {
+      const deleteQuery = 'DELETE FROM userProvinces WHERE userId = ?';
+      const deleteResult = await connection.execute(deleteQuery, [userId]);
+      const deleteQueryCity = 'DELETE FROM userServiceCities WHERE userId = ?';
+      const [deleteResultCity] = await connection.execute(deleteQueryCity, [
+        userId,
+      ]);
+      for (const province of provinces) {
+        const query = `INSERT INTO userProvinces (userId, province) VALUES (?, ?)`;
+        const [resultPayment] = await connection.execute(query, [
+          userId,
+          province,
+        ]);
+      }
+
+      await connection.commit();
+      return res.status(200).json();
+    } else {
+      await connection.rollback();
+      return res.status(500).json({ errorMessage: 'Error update users.' });
+    }
+  } catch (error) {
+    await connection.rollback(); // Rollback the transaction on error
+    return res.status(500).json({ errorMessage: 'Error  updating users' });
+  } finally {
+    connection.end(); // Close the database connection
+  }
+}
+async function updateUserServiceCitiesController(req, res) {
+  const connection = await connectToDatabase();
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const type = req.body.type;
+    const locations = req.body.locations;
+    console.log(locations);
+    const updateQuery = `UPDATE  users   SET serviceCoverageType = ?  WHERE  userId = ?`;
+
+    const [result] = await connection.execute(updateQuery, [type, userId]);
+    if (result.affectedRows > 0 || result.insertId) {
+      const deleteQueryProv = 'DELETE FROM userProvinces WHERE userId = ?';
+      const [deleteResultProv] = await connection.execute(deleteQueryProv, [
+        userId,
+      ]);
+      const deleteQueryCity = 'DELETE FROM userServiceCities WHERE userId = ?';
+      const [deleteResultCity] = await connection.execute(deleteQueryCity, [
+        userId,
+      ]);
+
+      for (const item of locations) {
+        const query = `INSERT INTO userServiceCities (userId, province,city) VALUES (?, ?,?)`;
+        console.log(query, [userId, item.province, item.city]);
+        const [resultPayment] = await connection.execute(query, [
+          userId,
+          item.province,
+          item.city,
+        ]);
+      }
+
+      await connection.commit();
+      return res.status(200).json();
+    } else {
+      await connection.rollback();
+      return res.status(500).json({ errorMessage: 'Error update users.' });
+    }
+  } catch (error) {
+    await connection.rollback(); // Rollback the transaction on error
+    return res.status(500).json({ errorMessage: 'Error  updating users' });
+  } finally {
+    connection.end(); // Close the database connection
+  }
+}
 module.exports = {
   logoutController,
   loginController,
@@ -885,4 +993,7 @@ module.exports = {
   purchasePlanController,
   registerPaidUserController,
   listUserPlansController,
+  updateUserServiceLocationTypeController,
+  updateUserServiceProvincesController,
+  updateUserServiceCitiesController,
 };

@@ -23,6 +23,8 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserAccountComponent } from './user-account/user-account.component';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -46,7 +48,9 @@ import { UserAccountComponent } from './user-account/user-account.component';
     FormsModule,
     MatFormFieldModule,
     MatChipsModule,
-
+    MatSelectModule,
+    MatButtonModule,
+    MatButtonToggleModule,
     MatAutocompleteModule,
     NgbDropdownModule,
     MatStepperModule,

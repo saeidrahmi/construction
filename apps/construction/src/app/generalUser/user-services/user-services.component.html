@@ -10,7 +10,7 @@
               <mat-chip-grid #chipGrid aria-label="Service selection">
                 <mat-chip-row
                   *ngFor="let service of myServices"
-                  (removed)="remove(service)"
+                  (removed)="removeService(service)"
                 >
                   <span class="text-primary">{{ service }}</span>
                   <button matChipRemove [attr.aria-label]="'remove ' + service">
@@ -25,11 +25,11 @@
                 [matChipInputFor]="chipGrid"
                 [matAutocomplete]="auto"
                 [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                (matChipInputTokenEnd)="add($event)"
+                (matChipInputTokenEnd)="addService($event)"
               />
               <mat-autocomplete
                 #auto="matAutocomplete"
-                (optionSelected)="selected($event)"
+                (optionSelected)="selectedService($event)"
               >
                 <mat-option
                   *ngFor="let service of filteredServices | async"
@@ -49,6 +49,175 @@
       <div class="card" aria-hidden="true">
         <div class="card-body">
           <h2>Service coverages</h2>
+
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-md-7">
+                <div class="row">
+                  <div class="col-md-3 mt-1 form-labe">Type of location</div>
+                  <div class="col-md-8">
+                    <section>
+                      <mat-button-toggle-group
+                        [(ngModel)]="locationType"
+                        aria-label="Font Style"
+                      >
+                        <mat-button-toggle value="country"
+                          >Country-wide</mat-button-toggle
+                        >
+                        <mat-button-toggle value="province"
+                          >Province-wide</mat-button-toggle
+                        >
+                        <mat-button-toggle value="city"
+                          >City-wide</mat-button-toggle
+                        >
+                      </mat-button-toggle-group>
+                    </section>
+                  </div>
+                </div>
+                <div
+                  class="row border border-1 p-2 my-2"
+                  *ngIf="locationType.includes('country')"
+                >
+                  <div class="col-12 my-1">
+                    If your services covers the whole country, click submit
+                  </div>
+                  <div class="col-">
+                    <button mat-raised-button (click)="submitCountryWide()">
+                      Submit
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  class="row border border-1 p-2 my-2"
+                  *ngIf="locationType.includes('province')"
+                >
+                  <div class="col-12 my-1">
+                    Select all provinces if you cover entire province
+                  </div>
+                  <div class="col-md-3 mt-1 form-labe">Provinces</div>
+                  <!-- <div class="col-md-8">
+                    <mat-form-field style="width: 400px">
+                      <mat-label>Select provinces</mat-label>
+                      <mat-select multiple [(ngModel)]="selectedProvinces">
+                        <mat-option
+                          [value]="item.province"
+                          *ngFor="let item of this.canadaCountryInfo()"
+                          >{{ item.province }}</mat-option
+                        >
+                      </mat-select>
+                    </mat-form-field>
+                  </div> -->
+                  <div class="col-md-12">
+                    <mat-form-field class="chip-list">
+                      <mat-label>Covered Provinces</mat-label>
+                      <mat-chip-grid #chipGrid3 aria-label="Service selection">
+                        <mat-chip-row
+                          *ngFor="let province of myProvinces"
+                          (removed)="removeProvince(province)"
+                        >
+                          <span class="text-primary">{{ province }}</span>
+                          <button
+                            matChipRemove
+                            [attr.aria-label]="'remove ' + province"
+                          >
+                            <mat-icon>cancel</mat-icon>
+                          </button>
+                        </mat-chip-row>
+                      </mat-chip-grid>
+                      <input
+                        [disabled]="countryWide"
+                        placeholder="New Province..."
+                        #provinceInput
+                        [formControl]="provinceCtrl"
+                        [matChipInputFor]="chipGrid3"
+                        [matAutocomplete]="auto3"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        (matChipInputTokenEnd)="addProvince($event)"
+                      />
+                      <mat-autocomplete
+                        #auto3="matAutocomplete"
+                        (optionSelected)="selectProvince($event)"
+                      >
+                        <mat-option
+                          *ngFor="let province of filteredProvinces | async"
+                          [value]="province"
+                        >
+                          <span class="">{{ province }}</span>
+                        </mat-option>
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-">
+                    <button mat-raised-button (click)="submitProvinceWide()">
+                      Submit
+                    </button>
+                  </div>
+                </div>
+                <div
+                  class="row border border-1 p-2 my-2"
+                  *ngIf="locationType === 'city'"
+                >
+                  <div class="col-12 my-1">Select all Cites.</div>
+
+                  <div class="col-md-12">
+                    <mat-form-field class="chip-list">
+                      <mat-label>Covered Cites</mat-label>
+                      <mat-chip-grid #chipGrid2 aria-label="Service selection">
+                        <mat-chip-row
+                          *ngFor="let city of myCites"
+                          (removed)="removeCity(city)"
+                        >
+                          <span class="text-primary">{{ city }}</span>
+                          <button
+                            matChipRemove
+                            [attr.aria-label]="'remove ' + city"
+                          >
+                            <mat-icon>cancel</mat-icon>
+                          </button>
+                        </mat-chip-row>
+                      </mat-chip-grid>
+                      <input
+                        [disabled]="countryWide"
+                        placeholder="New City..."
+                        #cityInput
+                        [formControl]="cityCtrl"
+                        [matChipInputFor]="chipGrid2"
+                        [matAutocomplete]="auto2"
+                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                        (matChipInputTokenEnd)="addCity($event)"
+                      />
+                      <mat-autocomplete
+                        #auto2="matAutocomplete"
+                        (optionSelected)="selectCity($event)"
+                      >
+                        <mat-option
+                          *ngFor="let city of filteredCities | async"
+                          [value]="city"
+                        >
+                          <span class="">{{ city }}</span>
+                        </mat-option>
+                      </mat-autocomplete>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-">
+                    <button mat-raised-button (click)="submitCities()">
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5 border-start">
+                <img
+                  src="../../../assets/images/Canada_provinces_and_territories.svg"
+                  class=""
+                  width="400px"
+                  height="400px"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
