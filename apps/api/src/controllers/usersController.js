@@ -953,7 +953,7 @@ async function updateUserServiceCitiesController(req, res) {
 
       for (const item of locations) {
         const query = `INSERT INTO userServiceCities (userId, province,city) VALUES (?, ?,?)`;
-        console.log(query, [userId, item.province, item.city]);
+
         const [resultPayment] = await connection.execute(query, [
           userId,
           item.province,
@@ -974,6 +974,36 @@ async function updateUserServiceCitiesController(req, res) {
     connection.end(); // Close the database connection
   }
 }
+async function listUserServiceLocationController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const selectQuery = `SELECT serviceCoverageType FROM users WHERE  userId = ?  `;
+    const selectResult = await executeQuery(selectQuery, [userId]);
+
+    if (selectResult[0].serviceCoverageType === 'country')
+      return res.status(200).json(selectResult[0]);
+    else if (selectResult[0].serviceCoverageType === 'province') {
+      const selectQueryProv = `SELECT province FROM userProvinces WHERE  userId = ?  `;
+      const selectResultProv = await executeQuery(selectQueryProv, [userId]);
+      return res.status(200).json({
+        serviceCoverageType: selectResult[0].serviceCoverageType,
+        provinces: selectResultProv.map((item) => item.province),
+      });
+    } else if (selectResult[0].serviceCoverageType === 'city') {
+      const selectQueryCity = `SELECT province,city FROM userServiceCities WHERE  userId = ?  `;
+      const selectResultCity = await executeQuery(selectQueryCity, [userId]);
+      return res.status(200).json({
+        serviceCoverageType: selectResult[0].serviceCoverageType,
+        cities: selectResultCity.map(
+          (item) => `${item.city} (${item.province})`
+        ),
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+  }
+}
+
 module.exports = {
   logoutController,
   loginController,
@@ -996,4 +1026,5 @@ module.exports = {
   updateUserServiceLocationTypeController,
   updateUserServiceProvincesController,
   updateUserServiceCitiesController,
+  listUserServiceLocationController,
 };

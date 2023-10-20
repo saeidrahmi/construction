@@ -25,6 +25,7 @@ const {
   updateUserServiceLocationTypeController,
   updateUserServiceProvincesController,
   updateUserServiceCitiesController,
+  listUserServiceLocationController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -72,5 +73,10 @@ router.post(
   '/update-user-service-cities',
   verifyToken,
   updateUserServiceCitiesController
+);
+router.post(
+  '/list-user-service-location',
+  verifyToken,
+  listUserServiceLocationController
 );
 module.exports = router;

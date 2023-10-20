@@ -594,4 +594,19 @@ export class ApiService {
         })
       );
   }
+  getUserServiceLocations(userId: string): Observable<any> {
+    const userIdEncrypted = this.encryptionService.encryptItem(userId);
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/list-user-service-location', {
+        userId: userIdEncrypted,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

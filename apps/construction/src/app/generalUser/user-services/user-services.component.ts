@@ -109,6 +109,34 @@ export class UserServicesComponent {
           return of(err);
         }
       );
+    this.apiService
+      .getUserServiceLocations(this.storageService?.getUserId()())
+      .pipe(first())
+      .subscribe(
+        (info: any) => {
+          this.locationType = info.serviceCoverageType;
+          if (this.locationType === 'province') {
+            this.myProvinces = info.provinces;
+          }
+          if (this.locationType === 'city') {
+            console.log(info.cities);
+            this.myCites = info.cities;
+          }
+        },
+        (err) => {
+          this.toastService.error(
+            'Failed getting user servcies location due to server error. ' + err,
+            'No update',
+            {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(err);
+        }
+      );
     this.filteredServices = this.serviceCtrl.valueChanges.pipe(
       startWith(null),
       map((item: string | null) =>
