@@ -33,6 +33,7 @@ export class ListPlansComponent {
     'customProfileIncluded',
     'viewBidsIncluded',
     'createBidsIncluded',
+    'onlineSupportIncluded',
   ];
   dataSource!: MatTableDataSource<UserApiResponseInterface>;
   apiService = inject(ApiService);

@@ -20,6 +20,7 @@ import { FormErrorsComponent } from '../public/form-errors.component';
 import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { PlanComponent } from '../common-components/plan/plan.component';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -45,6 +46,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     FormErrorsComponent,
     MatDatepickerModule,
     MatNativeDateModule,
+    PlanComponent,
   ],
 })
 export class AdminModule {}

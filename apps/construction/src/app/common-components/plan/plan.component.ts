@@ -12,5 +12,4 @@ import { PlanInterface } from '../../models/plan';
 export class PlanComponent {
   @Input('plan') plan: PlanInterface = {};
   constructor() {}
-  selectPlan(plan: PlanInterface) {}
 }

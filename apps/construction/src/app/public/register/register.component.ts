@@ -40,6 +40,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ToastrService } from 'ngx-toastr';
 import { PlanInterface } from '../../models/plan';
+import { PlanComponent } from '../../common-components/plan/plan.component';
 
 @Component({
   selector: 'construction-register',
@@ -60,6 +61,7 @@ import { PlanInterface } from '../../models/plan';
     MatCheckboxModule,
     MatIconModule,
     MatTooltipModule,
+    PlanComponent,
   ],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],

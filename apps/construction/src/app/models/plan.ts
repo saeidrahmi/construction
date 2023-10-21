@@ -8,6 +8,7 @@ export interface PlanInterface {
   numberOfAdvertisements?: number;
   viewBidsIncluded?: boolean;
   createBidsIncluded?: boolean;
+  onlineSupportIncluded?: boolean;
   originalPrice?: number;
   priceAfterDiscount?: number;
   discountPercentage?: number;

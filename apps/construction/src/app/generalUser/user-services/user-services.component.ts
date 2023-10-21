@@ -307,55 +307,56 @@ export class UserServicesComponent {
   }
 
   addCity(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value && this.myCites.includes(value)) {
-      this.toastService.error('Service already added. ', 'No update', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-        closeButton: true,
-        progressBar: true,
-      });
-    }
-    // Add service
-    else {
-      this.myCites.push(value);
-      // this.apiService
-      //   .addUserServices(this.storageService?.getUserId()(), value)
-      //   .pipe(
-      //     takeUntilDestroyed(this.destroyRef),
-      //     tap(() => {
-      //       this.toastService.success(
-      //         'Services updated.',
-      //         'Update Successful',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //     }),
-      //     catchError((err) => {
-      //       this.toastService.error(
-      //         'Update failed due to server error. ' + err,
-      //         'No update',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //       return of(err);
-      //     })
-      //   )
-      //   .subscribe();
-    }
-
-    // Clear the input value
+    alert('Adding city not allowed. Please select from the list.');
     event.chipInput!.clear();
-
     this.cityCtrl.setValue(null);
+    // const value = (event.value || '').trim();
+    // if (value && this.myCites.includes(value)) {
+    //   this.toastService.error('Service already added. ', 'No update', {
+    //     timeOut: 3000,
+    //     positionClass: 'toast-top-right',
+    //     closeButton: true,
+    //     progressBar: true,
+    //   });
+    // }
+    // // Add service
+    // else {
+    //   this.myCites.push(value);
+    //   // this.apiService
+    //   //   .addUserServices(this.storageService?.getUserId()(), value)
+    //   //   .pipe(
+    //   //     takeUntilDestroyed(this.destroyRef),
+    //   //     tap(() => {
+    //   //       this.toastService.success(
+    //   //         'Services updated.',
+    //   //         'Update Successful',
+    //   //         {
+    //   //           timeOut: 3000,
+    //   //           positionClass: 'toast-top-right',
+    //   //           closeButton: true,
+    //   //           progressBar: true,
+    //   //         }
+    //   //       );
+    //   //     }),
+    //   //     catchError((err) => {
+    //   //       this.toastService.error(
+    //   //         'Update failed due to server error. ' + err,
+    //   //         'No update',
+    //   //         {
+    //   //           timeOut: 3000,
+    //   //           positionClass: 'toast-top-right',
+    //   //           closeButton: true,
+    //   //           progressBar: true,
+    //   //         }
+    //   //       );
+    //   //       return of(err);
+    //   //     })
+    //   //   )
+    //   //   .subscribe();
+    // }
+    // // Clear the input value
+    // event.chipInput!.clear();
+    // this.cityCtrl.setValue(null);
   }
 
   removeCity(item: string): void {
@@ -447,55 +448,56 @@ export class UserServicesComponent {
     this.cityCtrl.setValue(null);
   }
   addProvince(event: MatChipInputEvent): void {
-    const value = (event.value || '').trim();
-    if (value && this.myProvinces.includes(value)) {
-      this.toastService.error('Service already added. ', 'No update', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-        closeButton: true,
-        progressBar: true,
-      });
-    }
-    // Add service
-    else {
-      this.myProvinces.push(value);
-      // this.apiService
-      //   .addUserServices(this.storageService?.getUserId()(), value)
-      //   .pipe(
-      //     takeUntilDestroyed(this.destroyRef),
-      //     tap(() => {
-      //       this.toastService.success(
-      //         'Services updated.',
-      //         'Update Successful',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //     }),
-      //     catchError((err) => {
-      //       this.toastService.error(
-      //         'Update failed due to server error. ' + err,
-      //         'No update',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //       return of(err);
-      //     })
-      //   )
-      //   .subscribe();
-    }
-
-    // Clear the input value
+    alert('Adding new province not allowed. Please select from the list.');
     event.chipInput!.clear();
-
     this.provinceCtrl.setValue(null);
+    // const value = (event.value || '').trim();
+    // if (value && this.myProvinces.includes(value)) {
+    //   this.toastService.error('Service already added. ', 'No update', {
+    //     timeOut: 3000,
+    //     positionClass: 'toast-top-right',
+    //     closeButton: true,
+    //     progressBar: true,
+    //   });
+    // }
+    // // Add service
+    // else {
+    //   this.myProvinces.push(value);
+    //   // this.apiService
+    //   //   .addUserServices(this.storageService?.getUserId()(), value)
+    //   //   .pipe(
+    //   //     takeUntilDestroyed(this.destroyRef),
+    //   //     tap(() => {
+    //   //       this.toastService.success(
+    //   //         'Services updated.',
+    //   //         'Update Successful',
+    //   //         {
+    //   //           timeOut: 3000,
+    //   //           positionClass: 'toast-top-right',
+    //   //           closeButton: true,
+    //   //           progressBar: true,
+    //   //         }
+    //   //       );
+    //   //     }),
+    //   //     catchError((err) => {
+    //   //       this.toastService.error(
+    //   //         'Update failed due to server error. ' + err,
+    //   //         'No update',
+    //   //         {
+    //   //           timeOut: 3000,
+    //   //           positionClass: 'toast-top-right',
+    //   //           closeButton: true,
+    //   //           progressBar: true,
+    //   //         }
+    //   //       );
+    //   //       return of(err);
+    //   //     })
+    //   //   )
+    //   //   .subscribe();
+    // }
+    // // Clear the input value
+    // event.chipInput!.clear();
+    // this.provinceCtrl.setValue(null);
   }
 
   removeProvince(item: string): void {

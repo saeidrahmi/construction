@@ -142,7 +142,9 @@ async function loginController(req, res) {
   }
 }
 async function signupController(req, res) {
+  const connection = await connectToDatabase();
   try {
+    await connection.beginTransaction();
     const userId = decryptItem(req.body.userId, webSecretKey);
     const user = {
       userId: userId,
@@ -151,7 +153,7 @@ async function signupController(req, res) {
     const token = jwt.sign(payload, jwtSecretKey, {
       expiresIn: env.userRegistrationTokenExpiry(),
     });
-    const existingUser = await executeQuery(
+    const [existingUser] = await connection.execute(
       `SELECT * FROM users WHERE userId = ? `,
       [userId]
     );
@@ -162,22 +164,25 @@ async function signupController(req, res) {
       const query = 'UPDATE  users SET  jwtToken = ?  WHERE userId = ? ';
       const values = [token, userId];
 
-      const result = await executeQuery(query, values);
+      const [result] = await connection.execute(query, values);
 
       if (result.affectedRows > 0 || result.insertId) {
         try {
           await sendVerificationEmail(userId, token);
+          await connection.commit();
           return res.status(200).json({
             message:
               'Signup operation completed successfully. Please check your email.',
           });
         } catch (error) {
+          await connection.rollback();
           return res.status(500).json({
             errorMessage:
               'Failed to send verification email. Please try again later.',
           });
         }
       } else {
+        await connection.rollback();
         return res.status(500).json({ errorMessage: 'Error updating user' });
       }
     } else if (existingUser.length > 0 && existingUser[0].registered == 1) {
@@ -188,27 +193,36 @@ async function signupController(req, res) {
       const query = `INSERT INTO users (userId, registeredDate,role, jwtToken, active, registered) VALUES ( ?,?, ?, ?, ?, ?)`;
       const values = [userId, new Date(), env.getRole().general, token, 0, 0];
 
-      const result = await executeQuery(query, values);
+      const [result] = await connection.execute(query, values);
 
       if (result.affectedRows > 0 || result.insertId) {
         try {
           await sendVerificationEmail(userId, token);
+          console.log('succuesfull');
+          await connection.commit();
           return res.status(200).json({
             message:
               'Signup operation completed successfully. Please check your email.',
           });
         } catch (error) {
+          await connection.rollback();
+          console.log('failed');
+
           return res.status(500).json({
             errorMessage:
               'Failed to send verification email. Please try again later.',
           });
         }
       } else {
+        await connection.rollback();
         return res.status(500).json({ errorMessage: 'Error updating user' });
       }
     }
   } catch (error) {
+    await connection.rollback();
     return res.status(500).json({ errorMessage: 'Error updating user' });
+  } finally {
+    await connection.end();
   }
 }
 async function resetPasswordController(req, res) {

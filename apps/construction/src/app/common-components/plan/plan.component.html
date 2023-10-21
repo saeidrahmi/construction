@@ -1,4 +1,4 @@
-<div class="card" aria-hidden="true">
+<div class="card" aria-hidden="true" *ngIf="plan">
   <div class="card-body">
     <h4 class="card-title text-center">
       {{ this.plan.planName | titlecase }}
@@ -16,6 +16,10 @@
         {{ this.plan.priceAfterDiscount | currency }}
       </span>
     </h5>
+    <h6 class="card-title text-center">
+      Plan Expiry Date: {{ this.plan.expiryDate | date }}
+    </h6>
+    <hr />
     <hr />
     <ul class="list-group">
       <li
@@ -49,6 +53,27 @@
       <li
         class="list-group-item d-flex justify-content-between align-items-center"
       >
+        Online Support Included
+
+        <div
+          *ngIf="
+            this.plan.onlineSupportIncluded;
+            then yesSection;
+            else noSection
+          "
+        ></div>
+        <ng-template #yesSection>
+          <span class="badge bg-primary rounded-pill"> Yes</span></ng-template
+        >
+
+        <ng-template #noSection>
+          <span class="badge bg-primary rounded-pill"> No</span></ng-template
+        >
+      </li>
+
+      <li
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
         View Construction Bids
 
         <div
@@ -65,12 +90,28 @@
       <li
         class="list-group-item d-flex justify-content-between align-items-center"
       >
-        {{ this.plan.planDescription }}
+        Create Construction Bids
+
+        <div
+          *ngIf="this.plan.createBidsIncluded; then yesSection; else noSection"
+        ></div>
+        <ng-template #yesSection>
+          <span class="badge bg-primary rounded-pill">
+            <mat-icon>check_box</mat-icon></span
+          ></ng-template
+        >
+
+        <ng-template #noSection>
+          <span class="badge bg-primary rounded-pill">
+            <mat-icon>close</mat-icon></span
+          ></ng-template
+        >
       </li>
+
       <li
         class="list-group-item d-flex justify-content-between align-items-center"
       >
-        <button (click)="selectPlan(this.plan)">Select Plan</button>
+        {{ this.plan.planDescription }}
       </li>
     </ul>
   </div>

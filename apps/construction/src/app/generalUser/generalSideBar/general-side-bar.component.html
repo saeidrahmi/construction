@@ -43,7 +43,7 @@
     <li class="list-group-item" *ngIf="plan()?.customProfileIncluded === 1">
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/general/dashboard']"
+        [routerLink]="['/general/custom-page']"
       >
         <i class="bi bi-grid-1x2"><span class="mx-2">My Custom Page</span></i>
       </a>
@@ -51,10 +51,30 @@
     <li class="list-group-item">
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/general/dashboard']"
+        [routerLink]="['/general/user-advertisements']"
       >
         <i class="bi bi-badge-ad"
           ><span class="mx-2">My Advertisements</span></i
+        >
+      </a>
+    </li>
+    <li class="list-group-item">
+      <a
+        [routerLinkActive]="['active_section']"
+        [routerLink]="['/general/new-advertisement']"
+      >
+        <i class="bi bi-badge-ad"
+          ><span class="mx-2">Create Advertisement</span></i
+        >
+      </a>
+    </li>
+    <li class="list-group-item" *ngIf="plan()?.onlineSupportIncluded === 1">
+      <a
+        [routerLinkActive]="['active_section']"
+        [routerLink]="['/general/request-support']"
+      >
+        <i class="bi bi-question-diamond"
+          ><span class="mx-2">Request Support</span></i
         >
       </a>
     </li>
@@ -66,7 +86,11 @@
         <i class="bi bi-key"><span class="mx-2">Change Password</span></i>
       </a>
     </li>
-
+    <li class="list-group-item">
+      <a (click)="logout()" class="text-primary">
+        <i class="bi bi-box-arrow-in-right"><span class="mx-2">Logout</span></i>
+      </a>
+    </li>
     <li
       class="list-group-item d-flex justify-content-between align-items-center"
     >
@@ -78,17 +102,6 @@
     >
       <i class="bi bi-chat-heart"><span class="mx-2">Notifications</span></i>
       <span class="badge bg-primary rounded-pill">14</span>
-    </li>
-    <li
-      class="list-group-item d-flex justify-content-between align-items-center"
-    >
-      <i class="bi bi-info-circle"><span class="mx-2">Request Support</span></i>
-      <span class="badge bg-primary rounded-pill">14</span>
-    </li>
-    <li class="list-group-item">
-      <a (click)="logout()">
-        <i class="bi bi-box-arrow-in-right"><span class="mx-2">Logout</span></i>
-      </a>
     </li>
   </ul>
 </div>

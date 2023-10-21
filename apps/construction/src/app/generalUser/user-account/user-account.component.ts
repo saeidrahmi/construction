@@ -44,12 +44,4 @@ export class UserAccountComponent {
       )
       .subscribe();
   }
-  getDaysRemaining(expiryDate: any): number {
-    const currentDate = new Date();
-    const expiryDateTime = new Date(expiryDate).getTime();
-    const currentTime = currentDate.getTime();
-    const timeDifference = expiryDateTime - currentTime;
-    const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
-    return daysRemaining;
-  }
 }

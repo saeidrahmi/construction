@@ -31,7 +31,7 @@
             />
           </mat-form-field>
 
-          <div class="mat-elevation-z8 table-responsive">
+          <div class="table-responsive">
             <table
               mat-table
               [dataSource]="dataSource"
@@ -373,6 +373,43 @@
                   <div
                     *ngIf="
                       row.createBidsIncluded === 1;
+                      then yesSection;
+                      else noSection
+                    "
+                  ></div>
+                  <ng-template #yesSection>
+                    <mat-icon>check_box</mat-icon></ng-template
+                  >
+                  <ng-template #noSection>
+                    <mat-icon>close</mat-icon></ng-template
+                  >
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="onlineSupportIncluded">
+                <th
+                  mat-header-cell
+                  [class]="
+                    this.storageService.getTheme()() === 'dark'
+                      ? 'bg-dark text-light'
+                      : 'bg-light'
+                  "
+                  *matHeaderCellDef
+                  mat-sort-header
+                >
+                  Online Support Included
+                </th>
+                <td
+                  mat-cell
+                  [class]="
+                    this.storageService.getTheme()() === 'dark'
+                      ? 'bg-dark text-light'
+                      : 'bg-light'
+                  "
+                  *matCellDef="let row"
+                >
+                  <div
+                    *ngIf="
+                      row.onlineSupportIncluded === 1;
                       then yesSection;
                       else noSection
                     "

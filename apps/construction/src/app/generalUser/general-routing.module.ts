@@ -8,6 +8,13 @@ import { ChangePasswordComponent } from '../common-components/change-password/ch
 import { UserServicesComponent } from './user-services/user-services.component';
 import { PurchasePlanComponent } from './purchase-plan/purchase-plan.component';
 import { UserAccountComponent } from './user-account/user-account.component';
+import { AdvertisementsComponent } from './advertisements/advertisements.component';
+import { NewAdvertisementComponent } from './advertisements/new-Advertisement/new-Advertisement.component';
+import { EditAdvertisementComponent } from './advertisements/edit-advertisement/edit-advertisement.component';
+import { SupportComponent } from './support/support.component';
+import { NewSupportComponent } from './support/new-support/new-support.component';
+import { CustomPageComponent } from './custom-page/custom-page.component';
+import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-custom-page.component';
 const routes: Routes = [
   {
     path: '',
@@ -40,6 +47,34 @@ const routes: Routes = [
       {
         path: 'user-account',
         component: UserAccountComponent,
+      },
+      {
+        path: 'user-advertisements',
+        component: AdvertisementsComponent,
+      },
+      {
+        path: 'new-advertisement',
+        component: NewAdvertisementComponent,
+      },
+      {
+        path: 'edit-advertisement/:id',
+        component: EditAdvertisementComponent,
+      },
+      {
+        path: 'request-support',
+        component: SupportComponent,
+      },
+      {
+        path: 'new-support',
+        component: NewSupportComponent,
+      },
+      {
+        path: 'custom-page',
+        component: CustomPageComponent,
+      },
+      {
+        path: 'edit-custom-page',
+        component: EditCustomPageComponent,
       },
       {
         path: '',

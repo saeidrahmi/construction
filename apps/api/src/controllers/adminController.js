@@ -75,6 +75,7 @@ async function createNewPlanController(req, res) {
   try {
     const createBidsIncluded = req.body.plan.createBidsIncluded ? 1 : 0;
     const viewBidsIncluded = req.body.plan.viewBidsIncluded ? 1 : 0;
+    const onlineSupportIncluded = req.body.plan.onlineSupportIncluded ? 1 : 0;
     const customProfileIncluded = req.body.plan.customProfileIncluded ? 1 : 0;
     const planActive = req.body.plan.active ? 1 : 0;
     const values = [
@@ -93,10 +94,11 @@ async function createNewPlanController(req, res) {
       viewBidsIncluded,
       planActive,
       createBidsIncluded,
+      onlineSupportIncluded,
     ];
 
     // No results
-    const query = `INSERT INTO plans ( planName,planType,originalPrice,discountPercentage,priceAfterDiscount,startDate,expiryDate,numberOfAdvertisements,customProfileIncluded,planDescription,dateCreated,duration,viewBidsIncluded,active,createBidsIncluded) VALUES (?, ?,?,?,?, ?, ?,?,?, ?, ?,?, ?, ?,?)`;
+    const query = `INSERT INTO plans ( planName,planType,originalPrice,discountPercentage,priceAfterDiscount,startDate,expiryDate,numberOfAdvertisements,customProfileIncluded,planDescription,dateCreated,duration,viewBidsIncluded,active,createBidsIncluded,onlineSupportIncluded) VALUES (?, ?,?,?,?, ?, ?,?,?, ?, ?,?, ?, ?,?,?)`;
 
     const result = await executeQuery(query, values);
     if (result.affectedRows > 0 || result.insertId) {
@@ -116,6 +118,7 @@ async function createNewPlanController(req, res) {
         viewBidsIncluded: req.body.plan.viewBidsIncluded,
         active: req.body.plan.active,
         createBidsIncluded: req.body.plan.createBidsIncluded,
+        onlineSupportIncluded: req.body.plan.onlineSupportIncluded,
       };
       return res.status(200).json(plan);
     } else {

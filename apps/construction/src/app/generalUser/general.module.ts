@@ -25,6 +25,15 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { UserAccountComponent } from './user-account/user-account.component';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { AdvertisementsComponent } from './advertisements/advertisements.component';
+import { NewAdvertisementComponent } from './advertisements/new-Advertisement/new-Advertisement.component';
+import { EditAdvertisementComponent } from './advertisements/edit-advertisement/edit-advertisement.component';
+import { SupportComponent } from './support/support.component';
+import { NewSupportComponent } from './support/new-support/new-support.component';
+import { PlanComponent } from '../common-components/plan/plan.component';
+import { MyPlansComponent } from '../common-components/my-plans/myplans.component';
+import { CustomPageComponent } from './custom-page/custom-page.component';
+import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-custom-page.component';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -34,6 +43,13 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     UserServicesComponent,
     PurchasePlanComponent,
     UserAccountComponent,
+    AdvertisementsComponent,
+    NewAdvertisementComponent,
+    EditAdvertisementComponent,
+    SupportComponent,
+    NewSupportComponent,
+    CustomPageComponent,
+    EditCustomPageComponent,
   ],
   imports: [
     CommonModule,
@@ -59,6 +75,8 @@ import { MatButtonToggleModule } from '@angular/material/button-toggle';
     MatCheckboxModule,
     MatIconModule,
     MatTooltipModule,
+    PlanComponent,
+    MyPlansComponent,
   ],
   providers: [],
 })

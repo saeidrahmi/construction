@@ -68,6 +68,8 @@ export class CreatePlanComponent {
       customProfileIncluded: new FormControl('', []),
       viewBidsIncluded: new FormControl('', []),
       createBidsIncluded: new FormControl('', []),
+      onlineSupportIncluded: new FormControl('', []),
+
       planDescription: new FormControl('', [Validators.required]),
       priceAfterDiscount: new FormControl({ value: '', disabled: true }, [
         Validators.required,
