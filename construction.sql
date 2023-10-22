@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 16, 2023 at 07:38 PM
+-- Generation Time: Oct 22, 2023 at 11:15 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -34,6 +34,7 @@ CREATE TABLE `plans` (
   `viewBidsIncluded` tinyint(1) NOT NULL,
   `createBidsIncluded` tinyint(1) DEFAULT NULL,
   `customProfileIncluded` tinyint(1) NOT NULL,
+  `onlineSupportIncluded` tinyint(1) DEFAULT NULL,
   `dateCreated` timestamp NOT NULL,
   `startDate` timestamp NOT NULL,
   `expiryDate` timestamp NULL DEFAULT NULL,
@@ -104,9 +105,20 @@ CREATE TABLE `userPlans` (
   `userId` varchar(80) NOT NULL,
   `planId` bigint UNSIGNED DEFAULT NULL,
   `purchasedDate` timestamp NOT NULL,
-  `expiryDate` timestamp NULL DEFAULT NULL,
-  `active` tinyint(1) DEFAULT '1',
+  `userPlanExpiryDate` timestamp NULL DEFAULT NULL,
+  `userPlanActive` tinyint(1) DEFAULT '1',
   `inactiveReason` varchar(80) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userProvinces`
+--
+
+CREATE TABLE `userProvinces` (
+  `userId` varchar(80) NOT NULL,
+  `province` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -116,6 +128,7 @@ CREATE TABLE `userPlans` (
 --
 
 CREATE TABLE `users` (
+  `id` bigint UNSIGNED NOT NULL,
   `userId` varchar(80) NOT NULL,
   `role` varchar(20) NOT NULL,
   `firstName` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
@@ -134,12 +147,26 @@ CREATE TABLE `users` (
   `website` varchar(80) DEFAULT NULL,
   `middleName` varchar(80) DEFAULT NULL,
   `profileImage` longblob,
+  `logoImage` longblob,
   `jwtToken` varchar(500) DEFAULT NULL,
   `loginCount` int DEFAULT NULL,
   `password` varchar(200) DEFAULT NULL,
   `company` varchar(80) DEFAULT NULL,
   `jobProfileDescription` varchar(400) DEFAULT NULL,
-  `deleted` tinyint(1) DEFAULT '0'
+  `deleted` tinyint(1) DEFAULT '0',
+  `serviceCoverageType` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userServiceCities`
+--
+
+CREATE TABLE `userServiceCities` (
+  `userId` varchar(80) NOT NULL,
+  `province` varchar(30) NOT NULL,
+  `city` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -187,10 +214,23 @@ ALTER TABLE `userPlans`
   ADD KEY `f_planId` (`planId`);
 
 --
+-- Indexes for table `userProvinces`
+--
+ALTER TABLE `userProvinces`
+  ADD PRIMARY KEY (`userId`,`province`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`userId`);
+  ADD PRIMARY KEY (`userId`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- Indexes for table `userServiceCities`
+--
+ALTER TABLE `userServiceCities`
+  ADD PRIMARY KEY (`userId`,`province`,`city`);
 
 --
 -- Indexes for table `userServices`
@@ -221,6 +261,12 @@ ALTER TABLE `userPlans`
   MODIFY `userPlanId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- Constraints for dumped tables
 --
 
@@ -242,6 +288,18 @@ ALTER TABLE `userPayments`
 ALTER TABLE `userPlans`
   ADD CONSTRAINT `f_planId` FOREIGN KEY (`planId`) REFERENCES `plans` (`planId`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `f_userId` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userProvinces`
+--
+ALTER TABLE `userProvinces`
+  ADD CONSTRAINT `userId_province` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userServiceCities`
+--
+ALTER TABLE `userServiceCities`
+  ADD CONSTRAINT `userId_city` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `userServices`

@@ -89,6 +89,7 @@ async function loginController(req, res) {
         userId: rows[0].userId,
         role: rows[0].role,
         profileImage: rows[0].profileImage,
+        logoImage: rows[0].logoImage,
         firstName: rows[0].firstName,
         company: rows[0].company,
         jobProfileDescription: rows[0].jobProfileDescription,
@@ -588,27 +589,80 @@ async function editUserProfileController(req, res) {
     const user = req.body;
     const userId = decryptItem(user.userId, webSecretKey);
 
-    if (req.file) {
-      const image = req.file;
-      const { originalname, buffer, mimetype } = image;
-      const query =
-        'UPDATE  users SET company = ?, jobProfileDescription = ?, profileImage = ?, firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
-      const values = [
-        user.company,
-        user.jobProfileDescription,
-        buffer,
-        user.firstName,
-        user.lastName,
-        user.phone,
-        user.fax,
-        user.address,
-        user.city,
-        user.province,
-        user.postalCode,
-        user.website,
-        user.middleName,
-        userId,
-      ];
+    if (req.files['profileImage'] || req.files['logoImage']) {
+      //const image = req.file;
+      let query = '';
+      let values = '';
+
+      if (req.files['profileImage'] && !req.files['logoImage']) {
+        const profileImage = req.files['profileImage'][0];
+        const { originalname, buffer, mimetype } = profileImage;
+        query =
+          'UPDATE  users SET company = ?, jobProfileDescription = ?, profileImage = ?, firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
+        values = [
+          user.company,
+          user.jobProfileDescription,
+          buffer,
+          user.firstName,
+          user.lastName,
+          user.phone,
+          user.fax,
+          user.address,
+          user.city,
+          user.province,
+          user.postalCode,
+          user.website,
+          user.middleName,
+          userId,
+        ];
+      } else if (!req.files['profileImage'] && req.files['logoImage']) {
+        const logoImage = req.files['logoImage'][0];
+        const { originalname, buffer, mimetype } = logoImage;
+        query =
+          'UPDATE  users SET company = ?, jobProfileDescription = ?, logoImage = ?, firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
+        values = [
+          user.company,
+          user.jobProfileDescription,
+          buffer,
+          user.firstName,
+          user.lastName,
+          user.phone,
+          user.fax,
+          user.address,
+          user.city,
+          user.province,
+          user.postalCode,
+          user.website,
+          user.middleName,
+          userId,
+        ];
+      } else if (req.files['profileImage'] && req.files['logoImage']) {
+        const logoImage = req.files['logoImage'][0];
+        const profileImage = req.files['profileImage'][0];
+        const profileImagebuffer = profileImage.buffer;
+        const logoImagebuffer = logoImage.buffer;
+
+        query =
+          'UPDATE  users SET company = ?, jobProfileDescription = ?,  profileImage = ?,logoImage = ?, firstName= ?,lastName = ?, phone = ?, fax = ?, address = ?, city = ?, province = ?,postalCode = ?, website = ? , middleName = ?  WHERE userId = ? ';
+        values = [
+          user.company,
+          user.jobProfileDescription,
+          profileImagebuffer,
+          logoImagebuffer,
+          user.firstName,
+          user.lastName,
+          user.phone,
+          user.fax,
+          user.address,
+          user.city,
+          user.province,
+          user.postalCode,
+          user.website,
+          user.middleName,
+          userId,
+        ];
+      }
+
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         const selectQuery = `SELECT * FROM users WHERE userId = ?`;
@@ -637,6 +691,7 @@ async function editUserProfileController(req, res) {
         user.middleName,
         userId,
       ];
+      console.log(query, values);
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         const selectQuery = `SELECT * FROM users WHERE userId = ?`;

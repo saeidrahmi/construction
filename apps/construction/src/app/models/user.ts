@@ -3,6 +3,7 @@ import { AddressInterface } from 'libs/common/src/models/address';
 export interface UserInterface {
   loggedIn?: boolean;
   profileImage?: { type: string; data: number[] };
+  logoImage?: { type: string; data: number[] };
   userId?: string;
   password?: string;
   purpose?: string;

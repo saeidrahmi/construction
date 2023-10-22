@@ -12,6 +12,8 @@ import { CountryInterface } from '../models/country';
 export class CommonUtilityService {
   _profilePhotoMaxSize = 1 * 1024 * 1024;
   _profileImageMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
+  _companyLogoMaxSize = 100 * 1024; // 100 KB
+  _companyLogoMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
 
   constructor() {}
 

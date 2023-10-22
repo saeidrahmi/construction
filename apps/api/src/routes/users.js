@@ -38,7 +38,12 @@ router.post('/reset-password', resetPasswordController);
 router.post(
   '/edit-user-profile',
   verifyToken,
-  upload.single('profileImage'),
+  // upload.single('profileImage'),
+  upload.fields([
+    { name: 'profileImage', maxCount: 1 },
+    { name: 'logoImage', maxCount: 1 },
+  ]),
+
   editUserProfileController
 );
 router.post(

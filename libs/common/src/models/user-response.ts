@@ -2,6 +2,7 @@ export interface UserApiResponseInterface {
   user: {
     userId?: string;
     profileImage?: { type: string; data: number[] };
+    logoImage?: { type: string; data: number[] };
     jwtToken?: string;
     role?: string;
     address?: string;

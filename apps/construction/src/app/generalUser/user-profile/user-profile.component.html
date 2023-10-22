@@ -22,7 +22,7 @@
               formControlName="photo"
               accept="image/*"
               aria-describedby="fileHelpBlock"
-              (change)="fileBrowseHandler($event)"
+              (change)="profileImageHandler($event)"
             />
             <div id="fileHelpBlock" class="form-text">
               <span class="small-text">
@@ -157,7 +157,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-2 mt-2">website</div>
+          <div class="col-md-2 mt-2">Website</div>
           <div class="col-md-8">
             <input
               class="form-control"
@@ -168,13 +168,34 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-2 mt-2">company</div>
+          <div class="col-md-2 mt-2">Company Name</div>
           <div class="col-md-8">
             <input
               class="form-control"
               placeholder="Enter company"
               formControlName="company"
             />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe form-label" for="formFile">
+            Company Logo
+          </div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              type="file"
+              formControlName="companyLogo"
+              accept="image/*"
+              aria-describedby="companyLogo"
+              (change)="companyLogoHandler($event)"
+            />
+            <div id="fileHelpBlock" class="form-text">
+              <span class="small-text">
+                Max image size for profile pictures is 180 by 180 pixels with a
+                maximum file size of 100 KB (kilobyte).</span
+              >
+            </div>
           </div>
         </div>
         <div class="row">
@@ -201,12 +222,23 @@
       </form>
     </div>
     <div class="col-5 border-start">
+      <h3>Profile Image</h3>
       <img
         #imageElement
         [src]="imageService.bufferToSafeUrl(user()?.profileImage)"
         alt="Image"
         width="200px"
         height="200px"
+      />
+      <br />
+      <br />
+      <h3>Company Logo</h3>
+      <img
+        #imageElement
+        [src]="imageService.bufferToSafeUrl(user()?.logoImage)"
+        alt="Image"
+        width="80px"
+        height="80px"
       />
     </div>
   </div>
