@@ -8,10 +8,34 @@
     </div>
   </div>
   <hr />
-  <h2>Previous Plans</h2>
-  <div class="row row-cols-3 gy-3">
-    <div class="col" *ngFor="let plan of listPlans">
-      <app-myplans [plan]="plan" [currentPlan]="false"></app-myplans>
+
+  <div class="accordion" id="previousPlan">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button
+          class="accordion-button"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseOne"
+          aria-expanded="true"
+          aria-controls="collapseOne"
+        >
+          Previous Plans
+        </button>
+      </h2>
+      <div
+        id="collapseOne"
+        class="accordion-collapse collapse"
+        data-bs-parent="#previousPlan"
+      >
+        <div class="accordion-body">
+          <div class="row row-cols-3 gy-3">
+            <div class="col" *ngFor="let plan of listPlans">
+              <app-myplans [plan]="plan" [currentPlan]="false"></app-myplans>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

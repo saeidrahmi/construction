@@ -56,6 +56,18 @@ export class FormService {
       filedValue: 'Address',
     },
     {
+      filedName: 'address',
+      filedValue: 'Address',
+    },
+    {
+      filedName: 'postalCode',
+      filedValue: 'Postal Code',
+    },
+    {
+      filedName: 'province',
+      filedValue: 'Province',
+    },
+    {
       filedName: 'zip',
       filedValue: 'Zip Code',
     },

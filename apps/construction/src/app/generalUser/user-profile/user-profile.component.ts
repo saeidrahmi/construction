@@ -68,10 +68,10 @@ export class UserProfileComponent {
       middleName: new FormControl(this.user()?.middleName, []),
       lastName: new FormControl(this.user()?.lastName, [Validators.required]),
       address: new FormControl(this.user()?.address, [Validators.required]),
-      phone: new FormControl(this.user()?.phone, []),
+      phone: new FormControl(this.user()?.phone, [Validators.required]),
       fax: new FormControl(this.user()?.fax, []),
-      province: new FormControl('', []),
-      city: new FormControl('', []),
+      province: new FormControl('', [Validators.required]),
+      city: new FormControl('', [Validators.required]),
       website: new FormControl(this.user()?.website, []),
       company: new FormControl(this.user()?.company, []),
       jobProfileDescription: new FormControl(
@@ -80,7 +80,7 @@ export class UserProfileComponent {
       ),
       postalCode: new FormControl(
         this.user()?.postalCode?.toLocaleUpperCase(),
-        []
+        [Validators.required]
       ),
     });
     this.selectedProvince = this.user()?.province as string;
