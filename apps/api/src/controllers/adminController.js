@@ -186,6 +186,67 @@ async function dashboardController(req, res) {
     return res.status(500).json({ errorMessage: 'Error getting dashboard.' });
   }
 }
+async function getPlanInfoController(req, res) {
+  try {
+    const selectQuery = `SELECT *
+     FROM plans where planId = ?`;
+    const selectResult = await executeQuery(selectQuery, [req.body.planId]);
+    if (selectResult?.length > 0) return res.status(200).json(selectResult[0]);
+    else return res.status(500).json({ errorMessage: 'Plan does not exist.' });
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error getting dashboard.' });
+  }
+}
+async function updatePlanController(req, res) {
+  try {
+    const createBidsIncluded = req.body.plan.createBidsIncluded ? 1 : 0;
+    const viewBidsIncluded = req.body.plan.viewBidsIncluded ? 1 : 0;
+    const onlineSupportIncluded = req.body.plan.onlineSupportIncluded ? 1 : 0;
+    const customProfileIncluded = req.body.plan.customProfileIncluded ? 1 : 0;
+    const values = [
+      req.body.plan.planName,
+      new Date(req.body.plan.startDate),
+      new Date(req.body.plan.expiryDate),
+      req.body.plan.numberOfAdvertisements,
+      customProfileIncluded,
+      req.body.plan.planDescription,
+      viewBidsIncluded,
+      createBidsIncluded,
+      onlineSupportIncluded,
+      req.body.planId,
+    ];
+
+    // No results
+    const query = `update plans set planName=?,startDate=?,expiryDate=?,numberOfAdvertisements=?,customProfileIncluded=?,planDescription=?,viewBidsIncluded=?,createBidsIncluded=?,onlineSupportIncluded=? where planId = ? `;
+
+    const result = await executeQuery(query, values);
+    if (result.affectedRows > 0 || result.insertId) {
+      const plan = {
+        planName: req.body.plan.planName,
+        planType: req.body.plan.planType,
+        originalPrice: req.body.plan.originalPrice,
+        discountPercentage: req.body.plan.discountPercentage,
+        priceAfterDiscount: req.body.plan.priceAfterDiscount,
+        startDate: req.body.plan.startDate,
+        expiryDate: req.body.plan.expiryDate,
+        numberOfAdvertisements: req.body.plan.numberOfAdvertisements,
+        customProfileIncluded: req.body.plan.customProfileIncluded,
+        planDescription: req.body.plan.planDescription,
+        dateCreated: req.body.plan.dateCreated,
+        duration: req.body.plan.duration,
+        viewBidsIncluded: req.body.plan.viewBidsIncluded,
+        active: req.body.plan.active,
+        createBidsIncluded: req.body.plan.createBidsIncluded,
+        onlineSupportIncluded: req.body.plan.onlineSupportIncluded,
+      };
+      return res.status(200).json(plan);
+    } else {
+      return res.status(500).json({ errorMessage: 'Error updating plan ' });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error updating plan.' });
+  }
+}
 
 module.exports = {
   listAdminSettingsController,
@@ -195,4 +256,6 @@ module.exports = {
   updatePlanStatusController,
   deletePlanController,
   dashboardController,
+  getPlanInfoController,
+  updatePlanController,
 };

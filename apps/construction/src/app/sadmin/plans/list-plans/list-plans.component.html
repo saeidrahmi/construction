@@ -438,10 +438,10 @@
                 <td mat-cell *matCellDef="let row">
                   <mat-icon
                     class="mat-18"
-                    matTooltip="Delete account"
+                    matTooltip="Edit plan"
                     matTooltipPosition="above"
                     class="pointer"
-                    (click)="deletePlan(row.planId)"
+                    (click)="editPlan(row.planId)"
                     *ngIf="row.active === 1 && row.deleted === 0"
                     >edit</mat-icon
                   >

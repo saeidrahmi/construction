@@ -21,6 +21,7 @@ import { AdminSettingsComponent } from './admin-settings/admin-settings.componen
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { PlanComponent } from '../common-components/plan/plan.component';
+import { EditPlanComponent } from './plans/edit-plan/edit-plan.component';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -31,6 +32,7 @@ import { PlanComponent } from '../common-components/plan/plan.component';
     ListPlansComponent,
     CreatePlanComponent,
     AdminSettingsComponent,
+    EditPlanComponent,
   ],
   imports: [
     CommonModule,

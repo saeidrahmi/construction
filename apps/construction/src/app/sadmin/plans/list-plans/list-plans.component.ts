@@ -8,6 +8,7 @@ import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { StorageService } from '../../../services/storage.service';
 import { UserApiResponseInterface } from 'libs/common/src/models/user-response';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-list-plans',
@@ -38,6 +39,7 @@ export class ListPlansComponent {
   dataSource!: MatTableDataSource<UserApiResponseInterface>;
   apiService = inject(ApiService);
   toastService = inject(ToastrService);
+  router = inject(Router);
   storageService = inject(StorageService);
   destroyRef = inject(DestroyRef);
   user = this.storageService.getUserId();
@@ -126,5 +128,8 @@ export class ListPlansComponent {
         })
       )
       .subscribe();
+  }
+  editPlan(planId: string) {
+    this.router.navigate(['/sadmin/edit-plan', planId]);
   }
 }

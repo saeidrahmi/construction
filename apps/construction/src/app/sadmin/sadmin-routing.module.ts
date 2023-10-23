@@ -8,6 +8,7 @@ import { UsersComponent } from './users/users.component';
 import { AdminSettingsComponent } from './admin-settings/admin-settings.component';
 import { ListPlansComponent } from './plans/list-plans/list-plans.component';
 import { CreatePlanComponent } from './plans/createPlan/createPlan.component';
+import { EditPlanComponent } from './plans/edit-plan/edit-plan.component';
 const routes: Routes = [
   {
     path: '',
@@ -36,6 +37,10 @@ const routes: Routes = [
       {
         path: 'admin-settings',
         component: AdminSettingsComponent,
+      },
+      {
+        path: 'edit-plan/:id',
+        component: EditPlanComponent,
       },
       {
         path: '',

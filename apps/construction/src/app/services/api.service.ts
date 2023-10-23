@@ -609,4 +609,34 @@ export class ApiService {
         })
       );
   }
+
+  getPlanInfo(planId: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/plan-info', {
+        planId: planId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  updatePlan(plan: any, planId: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/update-plan', {
+        plan: plan,
+        planId: planId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }
