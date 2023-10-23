@@ -639,4 +639,18 @@ export class ApiService {
         })
       );
   }
+  canUserAdvertise(userId: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/can-user-advertise', {
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

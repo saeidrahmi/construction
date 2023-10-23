@@ -1072,7 +1072,48 @@ async function listUserServiceLocationController(req, res) {
     return res.status(500).json({ errorMessage: 'Error getting settings.' });
   }
 }
-
+async function canUserAdvertiseController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const selectQuery1 = `SELECT userPlans.userPlanId,plans.numberOfAdvertisements FROM userPlans JOIN plans ON userPlans.planId  = plans.planId  WHERE  userPlans.userId = ? and userPlans.userPlanActive=1  `;
+    const selectResult1 = await executeQuery(selectQuery1, [userId]);
+    console.log(selectQuery1, userId);
+    if (selectResult1?.length > 0) {
+      console.log(selectResult1[0]?.userPlanId);
+      const selectQuery = `select count(*) as count from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId  where userAdvertisements.userPlanId=? `;
+      const selectResult = await executeQuery(selectQuery, [
+        selectResult1[0]?.userPlanId,
+      ]);
+      console.log(
+        selectResult1[0]?.userPlanId,
+        selectResult[0]?.count,
+        selectResult1[0]?.numberOfAdvertisements
+      );
+      if (selectResult[0]?.count >= selectResult1[0]?.numberOfAdvertisements)
+        return res.status(200).json({
+          result: false,
+          usedAdvertisements: selectResult[0]?.count,
+          allowedOriginalAdvertisements:
+            selectResult1[0]?.numberOfAdvertisements,
+          remainedAdvertisements:
+            selectResult1[0]?.numberOfAdvertisements - selectResult[0]?.count,
+        });
+      else
+        return res.status(200).json({
+          result: true,
+          usedAdvertisements: selectResult[0]?.count,
+          allowedOriginalAdvertisements:
+            selectResult1[0]?.numberOfAdvertisements,
+          remainedAdvertisements:
+            selectResult1[0]?.numberOfAdvertisements - selectResult[0]?.count,
+        });
+    } else {
+      return res.status(500).json({ errorMessage: 'Error getting info.' });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error getting info.' });
+  }
+}
 module.exports = {
   logoutController,
   loginController,
@@ -1096,4 +1137,5 @@ module.exports = {
   updateUserServiceProvincesController,
   updateUserServiceCitiesController,
   listUserServiceLocationController,
+  canUserAdvertiseController,
 };

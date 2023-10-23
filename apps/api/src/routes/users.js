@@ -26,6 +26,7 @@ const {
   updateUserServiceProvincesController,
   updateUserServiceCitiesController,
   listUserServiceLocationController,
+  canUserAdvertiseController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -84,4 +85,5 @@ router.post(
   verifyToken,
   listUserServiceLocationController
 );
+router.post('/can-user-advertise', verifyToken, canUserAdvertiseController);
 module.exports = router;

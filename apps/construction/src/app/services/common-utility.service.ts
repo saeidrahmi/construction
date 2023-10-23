@@ -14,6 +14,8 @@ export class CommonUtilityService {
   _profileImageMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
   _companyLogoMaxSize = 100 * 1024; // 100 KB
   _companyLogoMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
+  _advertisementHeaderMaxSize = 100 * 1024; // 100 KB
+  _advertisementHeaderMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
 
   constructor() {}
 

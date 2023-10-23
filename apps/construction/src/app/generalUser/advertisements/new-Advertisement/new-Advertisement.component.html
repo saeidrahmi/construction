@@ -6,6 +6,160 @@
           <h2 class="card-title">
             <span class="col-12">New Advertisement</span>
           </h2>
+
+          <div class="container">
+            <div class="row">
+              <div class="col-3">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body text-center">
+                    <h6 class="card-title">
+                      <span class="col-12">Purchased Plan Advertisements</span>
+                    </h6>
+                    <hr />
+                    <h4>{{ generalInfo.allowedOriginalAdvertisements }}</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body text-center">
+                    <h6 class="card-title">
+                      <span class="col-12">Used Advertisements</span>
+                    </h6>
+                    <hr />
+                    <h4>{{ generalInfo.usedAdvertisements }}</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body text-center">
+                    <h6 class="card-title">
+                      <span class="col-12">Remained Advertisements</span>
+                    </h6>
+                    <hr />
+                    <h4
+                      [ngClass]="
+                        generalInfo.remainedAdvertisements > 0
+                          ? 'text-success'
+                          : 'text-danger'
+                      "
+                    >
+                      {{ generalInfo.remainedAdvertisements }}
+                    </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            *ngIf="canAdvertise; then canAdvertiseSection; else noAdvertise"
+          ></div>
+          <ng-template #noAdvertise>
+            <h5>
+              You can not create Advertisement. please recharge your account by
+              purchasing a plan.
+            </h5>
+
+            <a
+              class="nav-link text-success"
+              [routerLink]="'/general/purchase-plan'"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              >Purchase a new Account</a
+            >
+          </ng-template>
+          <ng-template #canAdvertiseSection>
+            <div class="container-fluid my-3 border border-1 p-2">
+              <div class="row">
+                <div class="col">
+                  <button button type="button" class="btn btn-secondary">
+                    View Sample
+                  </button>
+                </div>
+              </div>
+              <div class="row p-2">
+                <div class="col-6">
+                  <form [formGroup]="form">
+                    <div class="row">
+                      <div
+                        class="col-md-3 mt-1 form-labe form-label"
+                        for="formFile"
+                      >
+                        Header image
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          type="file"
+                          formControlName="headerImage"
+                          accept="image/*"
+                          aria-describedby="fileHelpBlock"
+                          (change)="headerImageHandler($event)"
+                        />
+                        <div id="fileHelpBlock" class="form-text">
+                          <span class="small-text">
+                            Max image size for profile pictures is 180 by 180
+                            pixels with a maximum file size of 1 MB
+                            (megabyte).</span
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Title</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter title..."
+                          formControlName="title"
+                          [(ngModel)]="advertisement.title"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-3 mt-2">Description</div>
+                      <div class="col-md-8">
+                        <textarea
+                          class="form-control"
+                          placeholder="Enter description"
+                          formControlName="description"
+                          maxlength="400"
+                          rows="5"
+                          [(ngModel)]="advertisement.description"
+                        ></textarea>
+                        <span class="text-danger">
+                          {{
+                            advertisement.description?.length
+                              ? advertisement.description?.length
+                              : 0
+                          }}</span
+                        >
+
+                        / 400
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-6 border-start">
+                  <h3>Preview</h3>
+                  <app-advertisement
+                    [advertisement]="advertisement"
+                  ></app-advertisement>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-8">
+                  <button class="submit-button my-2" (click)="submit()">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>

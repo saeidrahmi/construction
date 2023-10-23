@@ -34,6 +34,7 @@ import { PlanComponent } from '../common-components/plan/plan.component';
 import { MyPlansComponent } from '../common-components/my-plans/myplans.component';
 import { CustomPageComponent } from './custom-page/custom-page.component';
 import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-custom-page.component';
+import { AdvertisementComponent } from '../common-components/advertisement/advertisement.component';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -77,6 +78,7 @@ import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-cus
     MatTooltipModule,
     PlanComponent,
     MyPlansComponent,
+    AdvertisementComponent,
   ],
   providers: [],
 })
