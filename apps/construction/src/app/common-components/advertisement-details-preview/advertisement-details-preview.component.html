@@ -1,7 +1,62 @@
 <div class="container-fluid">
+  <div class="row"></div>
   <div class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2">
+    <div class="col-12" *ngIf="advertisement?.sliderImages?.length > 0">
+      <div
+        style="width: 100%"
+        id="carouselExampleIndicators"
+        class="carousel carousel-dark slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-indicators">
+          <button
+            *ngFor="let imageUrl of advertisement.sliderImages; let i = index"
+            type="button"
+            [attr.data-bs-target]="'#carouselExampleIndicators'"
+            [attr.data-bs-slide-to]="i"
+            [class.active]="i === 0"
+            [attr.aria-current]="i === 0 ? 'true' : null"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          ></button>
+        </div>
+        <div class="carousel-inner">
+          <div
+            *ngFor="let imageUrl of advertisement.sliderImages; let i = index"
+            class="carousel-item"
+            [class.active]="i === 0"
+            [attr.data-bs-interval]="8000"
+          >
+            <img
+              [src]="imageUrl"
+              style="height: 250px"
+              class="d-block w-100 rounded opacity-50"
+              alt="..."
+            />
+            <!-- Your content goes here for each slide -->
+          </div>
+        </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          [attr.data-bs-target]="'#carouselExampleIndicators'"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          [attr.data-bs-target]="'#carouselExampleIndicators'"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
     <div
-      class="col-2 align-middle background-container rounded-1 border border-1"
+      class="col-2 align-middle background-container rounded-1 border border-1 my-2"
       [style.backgroundImage]="advertisement.headerImage"
     ></div>
     <div class="col-10">

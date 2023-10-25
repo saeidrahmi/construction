@@ -13,4 +13,10 @@ export interface AdvertisementInterface {
   showEmail?: boolean;
   showPicture?: boolean;
   showChat?: boolean;
+  // sliderImages?: {
+  //   imageTitle: string;
+  //   imageDescription: string;
+  //   sliderImage: { type: string; data: number[] };
+  // }[];
+  sliderImages?: string[];
 }

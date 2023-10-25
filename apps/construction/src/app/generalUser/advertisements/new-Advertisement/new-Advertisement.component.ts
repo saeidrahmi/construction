@@ -6,6 +6,7 @@ import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
 import {
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -38,7 +39,7 @@ export class NewAdvertisementComponent {
   headerImageFile: any;
   constructor() {
     this.advertisement.dateCreated = new Date();
-
+    this.advertisement.sliderImages = [];
     this.advertisementCommunicationService.message$
       .pipe(first())
       .subscribe((message) => {
@@ -87,7 +88,25 @@ export class NewAdvertisementComponent {
       showEmail: new FormControl('', []),
       showPicture: new FormControl('', []),
       showChat: new FormControl('', []),
+      sliderImages: new FormArray([]),
     });
+  }
+  getClienttFormArrayControls() {
+    return (this.form.get('sliderImages') as FormArray).controls;
+  }
+  removeClientFormGroup(index: number) {
+    (this.form.get('sliderImages') as FormArray).removeAt(index);
+    this.advertisement.sliderImages?.splice(index, 1);
+    console.log(this.advertisement.sliderImages);
+  }
+  addClientFormControl() {
+    (this.form.get('sliderImages') as FormArray).push(
+      new FormGroup({
+        sliderImage: new FormControl('', [Validators.required]),
+        sliderTitle: new FormControl('', [Validators.required]),
+        sliderDescription: new FormControl('', [Validators.required]),
+      })
+    );
   }
   preview() {
     this.advertisementCommunicationService.sendMessage(this.advertisement);
@@ -98,7 +117,7 @@ export class NewAdvertisementComponent {
     const imageUrl = URL.createObjectURL(this.headerImageFile);
     this.advertisement.headerImage = `url(${imageUrl})`;
     const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
-    const allowedFileTypes = this.commonUtility._advertisementHeaderMimeTypes;
+    const allowedFileTypes = this.commonUtility._imageMimeTypes;
     if (this.headerImageFile) {
       const fileType = this.headerImageFile?.name
         ?.split('.')
@@ -135,6 +154,53 @@ export class NewAdvertisementComponent {
         );
         this.form.get('headerImage')?.setValue('');
         this.headerImageFile = null;
+      } else {
+        // file ok
+      }
+    }
+  }
+  sliderImageHandler(event: any, index: number) {
+    const headerImageFile = event?.target?.files[0];
+    if (!headerImageFile) this.advertisement.sliderImages[index] = '';
+    else {
+      const imageUrl = URL.createObjectURL(headerImageFile);
+      this.advertisement.sliderImages[index] = `${imageUrl}`;
+    }
+
+    console.log(this.advertisement.sliderImages);
+
+    const maxFileSize = this.commonUtility._sliderPhotoMaxSize;
+    const allowedFileTypes = this.commonUtility._imageMimeTypes;
+    if (headerImageFile) {
+      const fileType = headerImageFile?.name?.split('.')?.pop()?.toLowerCase();
+      if (fileType && !allowedFileTypes?.includes(fileType)) {
+        this.toastService.error(
+          'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+            allowedFileTypes.join(', '),
+          'Wrong File Type',
+          {
+            timeOut: 3000,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          }
+        );
+        // this.form.get('photo')?.setValue('');
+        // this.headerImageFile = null;
+      }
+      if (headerImageFile?.size == 0 || headerImageFile?.size > maxFileSize) {
+        this.toastService.error(
+          'File size can not be empty and can not exceeds the maximum limit of 1 MB',
+          'Wrong File Size',
+          {
+            timeOut: 3000,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          }
+        );
+        //this.form.get('headerImage')?.setValue('');
+        //this.headerImageFile = null;
       } else {
         // file ok
       }

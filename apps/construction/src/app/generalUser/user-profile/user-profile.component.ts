@@ -261,7 +261,7 @@ export class UserProfileComponent {
   profileImageHandler(event: any) {
     this.profileImageFile = event?.target?.files[0];
     const maxFileSize = this.commonUtility._profilePhotoMaxSize;
-    const allowedFileTypes = this.commonUtility._profileImageMimeTypes;
+    const allowedFileTypes = this.commonUtility._imageMimeTypes;
     if (this.profileImageFile) {
       const fileType = this.profileImageFile?.name
         ?.split('.')
@@ -306,7 +306,7 @@ export class UserProfileComponent {
   companyLogoHandler(event: any) {
     this.logoImageFile = event?.target?.files[0];
     const maxFileSize = this.commonUtility._companyLogoMaxSize;
-    const allowedFileTypes = this.commonUtility._companyLogoMimeTypes;
+    const allowedFileTypes = this.commonUtility._imageMimeTypes;
     if (this.logoImageFile) {
       const fileType = this.logoImageFile?.name
         ?.split('.')

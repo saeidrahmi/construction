@@ -10,12 +10,11 @@ import { CountryInterface } from '../models/country';
   providedIn: 'root',
 })
 export class CommonUtilityService {
-  _profilePhotoMaxSize = 1 * 1024 * 1024;
-  _profileImageMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
+  _imageMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
   _companyLogoMaxSize = 100 * 1024; // 100 KB
-  _companyLogoMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
   _advertisementHeaderMaxSize = 100 * 1024; // 100 KB
-  _advertisementHeaderMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
+  _profilePhotoMaxSize = 1 * 1024 * 1024;
+  _sliderPhotoMaxSize = 1 * 1024 * 1024;
 
   constructor() {}
 
