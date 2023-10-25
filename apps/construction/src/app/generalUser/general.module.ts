@@ -34,7 +34,9 @@ import { PlanComponent } from '../common-components/plan/plan.component';
 import { MyPlansComponent } from '../common-components/my-plans/myplans.component';
 import { CustomPageComponent } from './custom-page/custom-page.component';
 import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-custom-page.component';
-import { AdvertisementComponent } from '../common-components/advertisement/advertisement.component';
+import { AdvertisementPreviewComponent } from '../common-components/advertisement-preview/advertisement-preview.component';
+import { PreviewAdvertisementComponent } from './advertisements/preview-advertisement/preview-advertisement.component';
+import { AdvertisementDetailsPreviewComponent } from '../common-components/advertisement-details-preview/advertisement-details-preview.component';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -51,6 +53,7 @@ import { AdvertisementComponent } from '../common-components/advertisement/adver
     NewSupportComponent,
     CustomPageComponent,
     EditCustomPageComponent,
+    PreviewAdvertisementComponent,
   ],
   imports: [
     CommonModule,
@@ -78,7 +81,8 @@ import { AdvertisementComponent } from '../common-components/advertisement/adver
     MatTooltipModule,
     PlanComponent,
     MyPlansComponent,
-    AdvertisementComponent,
+    AdvertisementDetailsPreviewComponent,
+    AdvertisementPreviewComponent,
   ],
   providers: [],
 })

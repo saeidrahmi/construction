@@ -1,7 +1,7 @@
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of } from 'rxjs';
+import { tap, catchError, of, first } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
@@ -13,6 +13,8 @@ import {
 } from '@angular/forms';
 import { AdvertisementInterface } from '../../../models/advertisement';
 import { CommonUtilityService } from '../../../services/common-utility.service';
+import { Router } from '@angular/router';
+import { AdvertisementCommunicationService } from '../../../services/advertisementServcie';
 
 @Component({
   selector: 'app-new-Advertisement',
@@ -25,7 +27,9 @@ export class NewAdvertisementComponent {
   fb = inject(FormBuilder);
   form: FormGroup;
   encryptionService = inject(EncryptionService);
+  router = inject(Router);
   storageService = inject(StorageService);
+  advertisementCommunicationService = inject(AdvertisementCommunicationService);
   commonUtility = inject(CommonUtilityService);
   destroyRef = inject(DestroyRef);
   canAdvertise: boolean;
@@ -33,6 +37,19 @@ export class NewAdvertisementComponent {
   advertisement: AdvertisementInterface = {};
   headerImageFile: any;
   constructor() {
+    this.advertisement.dateCreated = new Date();
+
+    this.advertisementCommunicationService.message$
+      .pipe(first())
+      .subscribe((message) => {
+        const isEmpty = Object.keys(message).length === 0;
+        if (!isEmpty) this.advertisement = message;
+      });
+    // const newDate = new Date(
+    //   this.advertisement.dateCreated.getTime() - 5 * 24 * 60 * 60 * 1000
+    // );
+    // this.advertisement.dateCreated = newDate;
+
     const userId = this.storageService?.getUserId();
     this.apiService
       .canUserAdvertise(this.encryptionService.encryptItem(userId()))
@@ -64,11 +81,22 @@ export class NewAdvertisementComponent {
       title: new FormControl('', [Validators.required]),
       description: new FormControl('', [Validators.required]),
       headerImage: new FormControl('', []),
+      topAdvertisement: new FormControl('', []),
+      showPhone: new FormControl('', []),
+      showAddress: new FormControl('', []),
+      showEmail: new FormControl('', []),
+      showPicture: new FormControl('', []),
+      showChat: new FormControl('', []),
     });
   }
-
+  preview() {
+    this.advertisementCommunicationService.sendMessage(this.advertisement);
+    this.router.navigate(['/general/preview-advertisement']);
+  }
   headerImageHandler(event: any) {
     this.headerImageFile = event?.target?.files[0];
+    const imageUrl = URL.createObjectURL(this.headerImageFile);
+    this.advertisement.headerImage = `url(${imageUrl})`;
     const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
     const allowedFileTypes = this.commonUtility._advertisementHeaderMimeTypes;
     if (this.headerImageFile) {

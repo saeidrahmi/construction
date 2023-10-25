@@ -16,7 +16,7 @@
                       <span class="col-12">Purchased Plan Advertisements</span>
                     </h6>
                     <hr />
-                    <h4>{{ generalInfo.allowedOriginalAdvertisements }}</h4>
+                    <h4>{{ generalInfo?.allowedOriginalAdvertisements }}</h4>
                   </div>
                 </div>
               </div>
@@ -27,7 +27,7 @@
                       <span class="col-12">Used Advertisements</span>
                     </h6>
                     <hr />
-                    <h4>{{ generalInfo.usedAdvertisements }}</h4>
+                    <h4>{{ generalInfo?.usedAdvertisements }}</h4>
                   </div>
                 </div>
               </div>
@@ -40,12 +40,12 @@
                     <hr />
                     <h4
                       [ngClass]="
-                        generalInfo.remainedAdvertisements > 0
+                        generalInfo?.remainedAdvertisements > 0
                           ? 'text-success'
                           : 'text-danger'
                       "
                     >
-                      {{ generalInfo.remainedAdvertisements }}
+                      {{ generalInfo?.remainedAdvertisements }}
                     </h4>
                   </div>
                 </div>
@@ -76,10 +76,18 @@
                   <button button type="button" class="btn btn-secondary">
                     View Sample
                   </button>
+                  <button
+                    button
+                    type="button"
+                    class="mx-1 btn btn-secondary"
+                    (click)="preview()"
+                  >
+                    Preview
+                  </button>
                 </div>
               </div>
               <div class="row p-2">
-                <div class="col-6">
+                <div class="col">
                   <form [formGroup]="form">
                     <div class="row">
                       <div
@@ -140,13 +148,75 @@
                         / 400
                       </div>
                     </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Top Advertisement
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="topAdvertisement"
+                          [(ngModel)]="advertisement.topAdvertisement"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Show Picture</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="showPicture"
+                          [(ngModel)]="advertisement.showPicture"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Show My Phone</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="showPhone"
+                          [(ngModel)]="advertisement.showPhone"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Show Address</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="showAddress"
+                          [(ngModel)]="advertisement.showAddress"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Show Chat</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="showChat"
+                          [(ngModel)]="advertisement.showChat"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Show Email</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="showEmail"
+                          [(ngModel)]="advertisement.showEmail"
+                        />
+                      </div>
+                    </div>
                   </form>
-                </div>
-                <div class="col-6 border-start">
-                  <h3>Preview</h3>
-                  <app-advertisement
-                    [advertisement]="advertisement"
-                  ></app-advertisement>
                 </div>
               </div>
 

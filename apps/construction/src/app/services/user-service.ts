@@ -231,4 +231,35 @@ export class UserService {
   getAdvertisementHeaders(): string[] {
     return this.advertisementHeaders;
   }
+  formatTimeDifference(dateCreated: Date): string {
+    const currentDate = new Date();
+    const timeDifference = currentDate.getTime() - dateCreated?.getTime();
+    const minutes = Math.floor(timeDifference / 60000); // 1 minute = 60000 milliseconds
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+    const months = Math.floor(days / 30);
+    if (minutes < 1) {
+      return `Now`;
+    } else if (minutes === 30) {
+      return `Half an hour ago`;
+    } else if (minutes < 60) {
+      return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+    } else if (hours < 24) {
+      return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+    } else if (days < 7) {
+      return `${days} day${days === 1 ? '' : 's'} ago`;
+    } else if (days === 7) {
+      return '1 week ago';
+    } else if (days === 14) {
+      return '2 week ago';
+    } else if (days === 21) {
+      return '3 week ago';
+    } else if (days === 28) {
+      return '4 week ago';
+    } else if (days >= 1 && days != 30 && days != 60 && days != 90) {
+      return `${days} day${days === 1 ? '' : 's'} ago`;
+    } else {
+      return `${months} month${months === 1 ? '' : 's'} ago`;
+    }
+  }
 }

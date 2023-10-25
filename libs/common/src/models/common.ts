@@ -18,6 +18,7 @@ export class EnvironmentInfo {
   private _dbPort: number = 3306;
   private _dbUserName: string = 'construction_user';
   private _dbPassword: string = 'saeid';
+  private _systemName: string = 'Ontsoft';
   private _dbDatabaseName: string = 'construction';
   private _roles = { general: 'General', admin: 'Admin', sAdmin: 'SAdmin' };
   constructor() {}
@@ -29,6 +30,9 @@ export class EnvironmentInfo {
   }
   getRole() {
     return this._roles;
+  }
+  getSystemName() {
+    return this._systemName;
   }
   userSessionTokenExpiry() {
     return this._userSessionTokenExpiry;
