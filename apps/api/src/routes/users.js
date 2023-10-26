@@ -27,6 +27,12 @@ const {
   updateUserServiceCitiesController,
   listUserServiceLocationController,
   canUserAdvertiseController,
+  getApplicationSettingsController,
+  getPreNewAdInfoController,
+  saveUserRegularAdController,
+  updateUserAdvertisementActivateStatusController,
+  getUserAdvertisementsController,
+  updateUserAdvertisementDeleteStatusController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -86,4 +92,35 @@ router.post(
   listUserServiceLocationController
 );
 router.post('/can-user-advertise', verifyToken, canUserAdvertiseController);
+router.get(
+  '/get-application-settings',
+  verifyToken,
+  getApplicationSettingsController
+);
+router.post('/get-pre-new-ad-info', verifyToken, getPreNewAdInfoController);
+router.post(
+  '/save-user-regular-ad',
+  verifyToken,
+  upload.fields([
+    { name: 'headerImage', maxCount: 1 },
+    { name: 'sliderImages', maxCount: 30 }, // You can adjust the number of allowed files
+  ]),
+  saveUserRegularAdController
+);
+
+router.post(
+  '/get-user-advertisements',
+  verifyToken,
+  getUserAdvertisementsController
+);
+router.post(
+  '/updateAd-active-status',
+  verifyToken,
+  updateUserAdvertisementActivateStatusController
+);
+router.post(
+  '/updateAd-delete-status',
+  verifyToken,
+  updateUserAdvertisementDeleteStatusController
+);
 module.exports = router;

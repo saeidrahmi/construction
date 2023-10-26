@@ -6,4 +6,7 @@ export interface AdminSettingsInterface {
   semiAnualDiscount?: number;
   yearlyDiscount?: number;
   tax?: number;
+  topAdvertisementPrice?: number;
+  maxAdvertisementSliderImage?: number;
+  userAdvertisementDuration?: number;
 }

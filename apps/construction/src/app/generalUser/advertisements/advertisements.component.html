@@ -4,9 +4,9 @@
       <div class="card" aria-hidden="true">
         <div class="card-body">
           <h2 class="card-title">
-            <span class="col-12">Advertisements</span>
+            <span class="col-12">My Advertisements</span>
           </h2>
-          <div class="border border-1 p-2">
+          <div class="border border-1 p-2 rounded">
             <a
               mat-raised-button
               color="primary"
@@ -14,6 +14,105 @@
             >
               Create New Advertisement
             </a>
+          </div>
+          <div class="border border-1 p-2 rounded my-2">
+            <ng-container *ngFor="let advertisement of advertisements">
+              <div class="container">
+                <div class="row">
+                  <div class="col-3 border border-1 p-2">
+                    <h6 class="text-info">
+                      Purchased Date: {{ advertisement?.dateCreated | date }}
+                    </h6>
+                    <h6 class="text-info">
+                      Expiry Date: {{ advertisement?.expiryDate | date }}
+                    </h6>
+                  </div>
+                  <div
+                    class="col-2 border border-1 p-2 text-info"
+                    *ngIf="
+                      userService.getDaysRemaining(advertisement?.expiryDate) <
+                      1
+                    "
+                  >
+                    <h6>
+                      {{
+                        userService.getDaysRemaining(
+                          advertisement?.expiryDate
+                        ) < 1
+                          ? 'Expired'
+                          : ''
+                      }}
+                    </h6>
+                  </div>
+                  <div class="col-2 border border-1 p-2">
+                    <h6 class="text-info">
+                      {{
+                        advertisement?.active === 1
+                          ? 'Active Advertisement'
+                          : 'Inactive Advertisement'
+                      }}
+                    </h6>
+                  </div>
+                  <div class="col-5 border border-1 p-2">
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      class="mx-4"
+                      (click)="
+                        activateAd(true, advertisement?.userAdvertisementId)
+                      "
+                      *ngIf="
+                        userService.getDaysRemaining(
+                          advertisement?.expiryDate
+                        ) >= 1 && advertisement?.active === 0
+                      "
+                    >
+                      Activate
+                    </button>
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      class="mx-4"
+                      (click)="
+                        activateAd(false, advertisement?.userAdvertisementId)
+                      "
+                      *ngIf="
+                        userService.getDaysRemaining(
+                          advertisement?.expiryDate
+                        ) >= 1 && advertisement?.active === 1
+                      "
+                    >
+                      Pause
+                    </button>
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      class="mx-4"
+                      (click)="deleteAd(advertisement?.userAdvertisementId)"
+                    >
+                      Delete
+                    </button>
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      class="mx-4"
+                      click=""
+                      *ngIf="
+                        userService.getDaysRemaining(
+                          advertisement?.expiryDate
+                        ) >= 1 && advertisement?.active === 1
+                      "
+                    >
+                      Edit
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <app-advertisement-preview
+                [advertisement]="advertisement"
+              ></app-advertisement-preview
+            ></ng-container>
           </div>
         </div>
       </div>

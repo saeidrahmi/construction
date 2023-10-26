@@ -233,33 +233,43 @@ export class UserService {
   }
   formatTimeDifference(dateCreated: Date): string {
     const currentDate = new Date();
-    const timeDifference = currentDate.getTime() - dateCreated?.getTime();
+    const timeDifference =
+      currentDate.getTime() - new Date(dateCreated)?.getTime();
     const minutes = Math.floor(timeDifference / 60000); // 1 minute = 60000 milliseconds
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
     const months = Math.floor(days / 30);
+    const year = Math.floor(days / 365);
     if (minutes < 1) {
       return `Now`;
     } else if (minutes === 30) {
-      return `Half an hour ago`;
+      return `Half an hour`;
     } else if (minutes < 60) {
-      return `${minutes} minute${minutes === 1 ? '' : 's'} ago`;
+      return `${minutes} minute${minutes === 1 ? '' : 's'}`;
     } else if (hours < 24) {
-      return `${hours} hour${hours === 1 ? '' : 's'} ago`;
+      return `${hours} hour${hours === 1 ? '' : 's'}`;
     } else if (days < 7) {
-      return `${days} day${days === 1 ? '' : 's'} ago`;
+      return `${days} day${days === 1 ? '' : 's'}`;
     } else if (days === 7) {
-      return '1 week ago';
+      return '1 week';
     } else if (days === 14) {
-      return '2 week ago';
+      return '2 week';
     } else if (days === 21) {
-      return '3 week ago';
+      return '3 week';
     } else if (days === 28) {
-      return '4 week ago';
+      return '4 week';
     } else if (days >= 1 && days != 30 && days != 60 && days != 90) {
-      return `${days} day${days === 1 ? '' : 's'} ago`;
+      return `${days} day${days === 1 ? '' : 's'}`;
     } else {
-      return `${months} month${months === 1 ? '' : 's'} ago`;
+      return `${months} month${months === 1 ? '' : 's'}`;
     }
+  }
+  getDaysRemaining(expiryDate: any): number {
+    const currentDate = new Date();
+    const expiryDateTime = new Date(expiryDate).getTime();
+    const currentTime = currentDate.getTime();
+    const timeDifference = expiryDateTime - currentTime;
+    const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+    return daysRemaining;
   }
 }

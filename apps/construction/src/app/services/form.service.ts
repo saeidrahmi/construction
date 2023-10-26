@@ -103,6 +103,14 @@ export class FormService {
       filedName: 'numberOfAdvertisements',
       filedValue: 'Number Of Advertisements',
     },
+    {
+      filedName: 'title',
+      filedValue: 'Title',
+    },
+    {
+      filedName: 'description',
+      filedValue: 'Description ',
+    },
   ];
 
   getFormValidationErrorMessages(form: FormGroup): string[] {

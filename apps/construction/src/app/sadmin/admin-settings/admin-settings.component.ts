@@ -40,6 +40,9 @@ export class AdminSettingsComponent {
       quarterlyDiscount: new FormControl('', [Validators.required]),
       semiAnualDiscount: new FormControl('', [Validators.required]),
       yearlyDiscount: new FormControl('', [Validators.required]),
+      topAdvertisementPrice: new FormControl('', [Validators.required]),
+      maxAdvertisementSliderImage: new FormControl('', [Validators.required]),
+      userAdvertisementDuration: new FormControl('', [Validators.required]),
     });
     this.storageService.updateIsLoading(true);
     this.apiService

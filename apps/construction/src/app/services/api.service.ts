@@ -24,6 +24,8 @@ import { EncryptionService } from './encryption-service';
 import { AdminSettingsInterface } from 'libs/common/src/models/admin-settings';
 import { PlanInterface } from '../models/plan';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { AdvertisementInterface } from '../models/advertisement';
+import { O } from '@angular/cdk/keycodes';
 @Injectable({
   providedIn: 'root',
 })
@@ -465,6 +467,44 @@ export class ApiService {
         })
       );
   }
+  getTopAdInfo(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/public/get-top-ad-info')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getApplicationSetting(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/users/get-application-settings')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getPreNewAdInfo(userId: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-pre-new-ad-info', {
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   getTax(): Observable<any> {
     this.spinner.show();
     return this.httpClient
@@ -644,6 +684,75 @@ export class ApiService {
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/can-user-advertise', {
         userId: userId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  saveUserRegularAd(data: FormData): Observable<any> {
+    console.log('here');
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/save-user-regular-ad', data)
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getUserAdvertisements(userId: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-user-advertisements', {
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  updateUserAdvertisementActiveStatus(
+    userId: string,
+    active: boolean,
+    userAdvertisementId: any
+  ): Observable<any> {
+    this.spinner.show();
+    console.log(userId, active, userAdvertisementId);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/updateAd-active-status', {
+        userId: userId,
+        active: active,
+        userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  updateUserAdvertisementDeleteStatus(
+    userId: string,
+
+    userAdvertisementId: any
+  ): Observable<any> {
+    this.spinner.show();
+
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/updateAd-delete-status', {
+        userId: userId,
+        deleted: true,
+        userAdvertisementId: userAdvertisementId,
       })
       .pipe(
         take(1),

@@ -19,7 +19,14 @@
           <div class="row">
             <div class="col">
               {{ user().city }} |
-              {{ userService.formatTimeDifference(advertisement?.dateCreated) }}
+              {{
+                userService.formatTimeDifference(advertisement?.dateCreated) ===
+                'Now'
+                  ? 'Now'
+                  : userService.formatTimeDifference(
+                      advertisement?.dateCreated
+                    ) + ' ago'
+              }}
             </div>
           </div>
 
@@ -33,15 +40,7 @@
               >
             </div>
           </div>
-          <div class="row">
-            <div class="col">
-              <rating
-                [(ngModel)]="rate"
-                [max]="max"
-                [readonly]="isReadonly"
-              ></rating>
-            </div>
-          </div>
+
           <div class="row">
             <div class="col">
               <button type="button" class="btn btn-outline-secondary">
