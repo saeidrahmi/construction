@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, inject } from '@angular/core';
 import { PlanInterface } from '../../models/plan';
+import { UserService } from '../../services/user-service';
 
 @Component({
   selector: 'app-myplans',
@@ -12,14 +13,8 @@ import { PlanInterface } from '../../models/plan';
 export class MyPlansComponent {
   @Input('plan') plan: any = {};
   @Input('currentPlan') currentPlan: boolean = false;
+  userService = inject(UserService);
+  currentDate = new Date();
 
   constructor() {}
-  getDaysRemaining(expiryDate: any): number {
-    const currentDate = new Date();
-    const expiryDateTime = new Date(expiryDate).getTime();
-    const currentTime = currentDate.getTime();
-    const timeDifference = expiryDateTime - currentTime;
-    const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
-    return daysRemaining;
-  }
 }

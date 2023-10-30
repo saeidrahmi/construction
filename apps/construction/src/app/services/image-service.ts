@@ -16,6 +16,7 @@ export class ImageService {
       const imageObjectUrl = this.sanitizer.bypassSecurityTrustUrl(
         URL.createObjectURL(blob)
       );
+
       return imageObjectUrl;
     }
   }

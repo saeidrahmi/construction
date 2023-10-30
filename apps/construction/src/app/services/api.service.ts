@@ -762,4 +762,30 @@ export class ApiService {
         })
       );
   }
+  getAdvertisementDetails(userAdvertisementId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-advertisement-details', {
+        userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getAllAdvertisements(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/public/list-advertisements')
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

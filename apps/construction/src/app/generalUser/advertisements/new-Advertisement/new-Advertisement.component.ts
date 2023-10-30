@@ -175,7 +175,8 @@ export class NewAdvertisementComponent {
   headerImageHandler(event: any) {
     const headerImageFile = event?.target?.files[0];
     const imageUrl = URL.createObjectURL(headerImageFile);
-    this.advertisement.headerImage = `url(${imageUrl})`;
+    this.advertisement.headerImageUrl = `url(${imageUrl})`;
+    this.advertisement.headerImage = imageUrl;
     const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
 
     const allowedFileTypes = this.commonUtility._imageMimeTypes;

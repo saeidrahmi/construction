@@ -1193,6 +1193,110 @@ async function getPreNewAdInfoController(req, res) {
     return res.status(500).json({ errorMessage: 'Error getting settings.' });
   }
 }
+
+async function getAdvertisementDetailsController(req, res) {
+  try {
+    let userAdvertisementId = req.body.userAdvertisementId;
+
+    // get userId
+    const selectUserQuery = `select userId from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.userAdvertisementId=?;`;
+    const selectUserResult = await executeQuery(selectUserQuery, [
+      userAdvertisementId,
+    ]);
+
+    const userId = selectUserResult[0].userId;
+
+    // get user general info
+    const selectUserInfoQuery = `select userId,firstName,lastName,registeredDate,phone,fax,address, city, province, postalCode, website,  profileImage from  users where userId=?`;
+
+    const selectUserInfoResult = await executeQuery(selectUserInfoQuery, [
+      userId,
+    ]);
+
+    // update visits
+    const updateQuery = `update  userAdvertisements set numberOfVisits=numberOfVisits+1  where userAdvertisementId=?`;
+    const updateResult = await executeQuery(updateQuery, [userAdvertisementId]);
+
+    // get Ad details
+
+    const selectAdQuery = `SELECT userAdvertisements.*, userAdvertisementImages.userAdvertisementImage
+                          FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          LEFT JOIN userAdvertisementImages ON userAdvertisements.userAdvertisementId = userAdvertisementImages.userAdvertisementId
+                          WHERE userAdvertisements.userAdvertisementId=? and userAdvertisements.deleted = 0 and userAdvertisements.active = 1  and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE() `;
+    const selectAdResult = await executeQuery(selectAdQuery, [
+      userAdvertisementId,
+    ]);
+
+    // get user registered date
+    const selectRegDateQuery = `SELECT registeredDate FROM users where userId=?`;
+    const selectRegDateResult = await executeQuery(selectRegDateQuery, [
+      userId,
+    ]);
+    // get user rating
+    const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
+    const selectRatingResult = await executeQuery(selectRatingQuery, [userId]);
+    // get number of active ads
+    const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
+    const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
+      userId,
+    ]);
+    // get settings
+    const selectSettingQuery = `SELECT * FROM settings`;
+    const selectSettingResult = await executeQuery(selectSettingQuery, []);
+    // get services
+
+    const selectServicesQuery = `SELECT service FROM userServices WHERE userId = ?`;
+    const selectServicesResult = await executeQuery(selectServicesQuery, [
+      userId,
+    ]);
+    const serviceNames = selectServicesResult.map((row) => row.service);
+    // get locations
+
+    const selectLocationsQuery = `SELECT serviceCoverageType FROM users WHERE  userId = ?  `;
+    const selectLocationsResult = await executeQuery(selectLocationsQuery, [
+      userId,
+    ]);
+    let serviceLocationInfo;
+    if (selectLocationsResult[0].serviceCoverageType === 'country') {
+      serviceLocationInfo = {
+        serviceCoverageType: 'country',
+      };
+    } else if (selectLocationsResult[0].serviceCoverageType === 'province') {
+      const selectQueryProv = `SELECT province FROM userProvinces WHERE  userId = ?  `;
+      const selectResultProv = await executeQuery(selectQueryProv, [userId]);
+      serviceLocationInfo = {
+        serviceCoverageType: selectLocationsResult[0].serviceCoverageType,
+        provinces: selectResultProv.map((item) => item.province),
+      };
+    } else if (selectLocationsResult[0].serviceCoverageType === 'city') {
+      const selectQueryCity = `SELECT province,city FROM userServiceCities WHERE  userId = ?  `;
+      const selectResultCity = await executeQuery(selectQueryCity, [userId]);
+      serviceLocationInfo = {
+        serviceCoverageType: selectLocationsResult[0].serviceCoverageType,
+        cities: selectResultCity.map(
+          (item) => `${item.city} (${item.province})`
+        ),
+      };
+    }
+
+    // info
+    const info = {
+      registeredDate: selectRegDateResult[0].registeredDate,
+      acitveAds: selectActiveAdsResult[0].countAds,
+      userRate: selectRatingResult[0].average_rating,
+      appSettings: selectSettingResult[0],
+      services: serviceNames,
+      locations: serviceLocationInfo,
+      selectAdResult: selectAdResult,
+      userInfo: selectUserInfoResult[0],
+    };
+    return res.status(200).json(info);
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+  }
+}
+
 function canUserCreateAdvertisementController(userId) {
   return new Promise(async (resolve, reject) => {
     try {
@@ -1217,108 +1321,6 @@ function canUserCreateAdvertisementController(userId) {
   });
 }
 
-// async function saveUserRegularAdController(req, res) {
-//   const connection = await connectToDatabase();
-//   try {
-//     await connection.beginTransaction();
-//     const info = req.body;
-//     const userId = decryptItem(info.userId, webSecretKey);
-//     const title = info.title;
-//     const description = info.description;
-//     const topAdvertisement = info.topAdvertisement;
-//     const showPhone = info.showPhone;
-//     const showAddress = info.showAddress;
-//     const showEmail = info.showEmail;
-//     const showPicture = info.showPicture;
-//     const showChat = info.showChat;
-//     const active = info.active;
-//     const userAdvertisementDuration = info.userAdvertisementDuration;
-//     const dateCreated = new Date(); // Create a JavaScript Date object representing the current date and time
-//     const expiryDate = addDays(dateCreated, userAdvertisementDuration);
-//     // console.log(dateCreated, 'dateCreated');
-//     // const formattedCreatedDate = dateCreated
-//     //   .toISOString()
-//     //   .slice(0, 19)
-//     //   .replace('T', ' ');
-//     // console.log(formattedCreatedDate); // 'YYYY-MM-DD HH:MM:SS'
-
-//     // console.log(expiryDate, 'exp');
-//     // const formattedExpiryDate = expiryDate
-//     //   .toISOString()
-//     //   .slice(0, 19)
-//     //   .replace('T', ' ');
-//     // console.log(formattedExpiryDate); // 'YYYY-MM-DD HH:MM:SS'
-//     const numberOfVisits = info.numberOfVisits;
-//     const approvedByAdmin = info.approvedByAdmin;
-//     const userPlanId = info.userPlanId;
-
-//     const canCreate = await canUserCreateAdvertisementController(userId);
-
-//     if (canCreate) {
-//       // insert new into userAdvertisements
-//       const selectQuery = `INSERT INTO userAdvertisements (userPlanId, dateCreated, expiryDate, title, description, active,approvedByAdmin, topAdvertisement, showPhone, showAddress, showEmail, showPicture, showChat, numberOfVisits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
-//       const values = [
-//         userPlanId,
-//         dateCreated,
-//         expiryDate,
-//         title,
-//         description,
-//         active,
-//         approvedByAdmin,
-//         topAdvertisement,
-//         showPhone,
-//         showAddress,
-//         showEmail,
-//         showPicture,
-//         showChat,
-//         numberOfVisits,
-//       ];
-
-//       const [insertResult] = await connection.execute(selectQuery, values);
-//       if (insertResult.affectedRows > 0 || insertResult.insertId) {
-//         if (req.files['headerImage']) {
-//           const image = req.files['headerImage'][0];
-//           const { originalname, buffer, mimetype } = image;
-//           const insertImageQuery =
-//             'update userAdvertisements set headerImage=?   where userAdvertisementId =?';
-//           const [insertImageResult] = await connection.execute(
-//             insertImageQuery,
-//             [buffer, insertResult.insertId]
-//           );
-//           if (
-//             insertImageResult.affectedRows > 0 ||
-//             insertImageResult.insertId
-//           ) {
-//             await connection.commit();
-//             return res.status(200).json(true);
-//           } else {
-//             await connection.rollback();
-//             return res
-//               .status(500)
-//               .json({ errorMessage: 'Error getting settings.' });
-//           }
-//         } else {
-//           await connection.commit();
-//           return res.status(200).json(true);
-//         }
-//       } else {
-//         await connection.rollback();
-//         return res
-//           .status(500)
-//           .json({ errorMessage: 'Error getting settings.' });
-//       }
-//     } else {
-//       await connection.rollback();
-//       return res.status(500).json({ errorMessage: 'Error getting settings.' });
-//     }
-//     //return res.status(200).json(selectResult[0]);
-//   } catch (error) {
-//     await connection.rollback();
-//     return res.status(500).json({ errorMessage: 'Error getting settings.' });
-//   } finally {
-//     await connection.end();
-//   }
-// }
 async function saveUserRegularAdController(req, res) {
   let connection;
   try {
@@ -1391,20 +1393,25 @@ async function saveUserRegularAdController(req, res) {
         }
       }
     }
-    const insertPaymentResult = await insertUserTopAdvertisementPayment(
-      connection,
-      {
-        userAdvertisementId: insertResult.insertId,
-        paymentConfirmation: info.paymentConfirmation,
-        paymentAmount: info.paymentAmount,
-        tax: info.tax,
-        totalPayment: info.totalPayment,
-      }
-    );
 
-    if (!insertPaymentResult) {
-      await connection.rollback();
-      return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    if (info.topAdvertisement == '1') {
+      const insertPaymentResult = await insertUserTopAdvertisementPayment(
+        connection,
+        {
+          userAdvertisementId: insertResult.insertId,
+          paymentConfirmation: info.paymentConfirmation,
+          paymentAmount: info.paymentAmount,
+          tax: info.tax,
+          totalPayment: info.totalPayment,
+        }
+      );
+
+      if (!insertPaymentResult) {
+        await connection.rollback();
+        return res
+          .status(500)
+          .json({ errorMessage: 'Error getting settings.' });
+      }
     }
 
     await connection.commit();
@@ -1580,4 +1587,5 @@ module.exports = {
   updateUserAdvertisementDeleteStatusController,
   getUserAdvertisementsController,
   updateUserAdvertisementActivateStatusController,
+  getAdvertisementDetailsController,
 };

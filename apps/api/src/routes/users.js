@@ -33,6 +33,7 @@ const {
   updateUserAdvertisementActivateStatusController,
   getUserAdvertisementsController,
   updateUserAdvertisementDeleteStatusController,
+  getAdvertisementDetailsController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -122,5 +123,10 @@ router.post(
   '/updateAd-delete-status',
   verifyToken,
   updateUserAdvertisementDeleteStatusController
+);
+router.post(
+  '/get-advertisement-details',
+
+  getAdvertisementDetailsController
 );
 module.exports = router;

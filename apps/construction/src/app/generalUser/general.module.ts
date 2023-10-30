@@ -37,6 +37,7 @@ import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-cus
 import { AdvertisementPreviewComponent } from '../common-components/advertisement-preview/advertisement-preview.component';
 import { PreviewAdvertisementComponent } from './advertisements/preview-advertisement/preview-advertisement.component';
 import { AdvertisementDetailsPreviewComponent } from '../common-components/advertisement-details-preview/advertisement-details-preview.component';
+import { AdvertisementViewComponent } from '../common-components/advertisement-view/advertisement-view.component';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -83,6 +84,7 @@ import { AdvertisementDetailsPreviewComponent } from '../common-components/adver
     MyPlansComponent,
     AdvertisementDetailsPreviewComponent,
     AdvertisementPreviewComponent,
+    AdvertisementViewComponent,
   ],
   providers: [],
 })

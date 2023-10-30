@@ -18,11 +18,23 @@
     </h5>
     <ng-container *ngIf="currentPlan">
       <hr />
-      Days Left:
-      {{ getDaysRemaining(this.plan?.userPlanExpiryDate) }}
+      <h6 class="text-center">
+        Days Left:
+        {{
+          userService.getDaysRemaining(
+            currentDate,
+            this.plan?.userPlanExpiryDate
+          )
+        }}
+      </h6>
       <span class="text-danger fw-bolder"
         >{{
-          getDaysRemaining(this.plan?.userPlanExpiryDate) < 1 ? 'Expired' : ''
+          userService.getDaysRemaining(
+            currentDate,
+            this.plan?.userPlanExpiryDate
+          ) < 1
+            ? 'Expired'
+            : ''
         }}
       </span>
     </ng-container>

@@ -44,6 +44,21 @@ async function listPaidPlansController(req, res) {
     return res.status(500).json({ errorMessage: 'Error getting settings.' });
   }
 }
+async function listAdvertisementsController(req, res) {
+  try {
+    const selectAdQuery = `SELECT userAdvertisements.*, users.city
+                          FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          JOIN users ON userPlans.userId = users.userId
+                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1  and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE() `;
+
+    const selectResult = await executeQuery(selectAdQuery, []);
+
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+  }
+}
 
 module.exports = {
   freeTrialInfoController,
@@ -51,4 +66,5 @@ module.exports = {
   listPaidPlansController,
   getTaxController,
   getTopAdInfoController,
+  listAdvertisementsController,
 };

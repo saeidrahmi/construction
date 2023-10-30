@@ -16,27 +16,30 @@
             </a>
           </div>
           <div class="border border-1 p-2 rounded my-2">
-            <ng-container *ngFor="let advertisement of advertisements">
+            <ng-container *ngFor="let advertisement of uniqueAdvertisements">
               <div class="container">
                 <div class="row">
                   <div class="col-3 border border-1 p-2">
-                    <h6 class="text-info">
+                    <h6 class="text-primary">
                       Purchased Date: {{ advertisement?.dateCreated | date }}
                     </h6>
-                    <h6 class="text-info">
+                    <h6 class="text-primary">
                       Expiry Date: {{ advertisement?.expiryDate | date }}
                     </h6>
                   </div>
                   <div
-                    class="col-2 border border-1 p-2 text-info"
+                    class="col-1 border border-1 pt-3 text-primary"
                     *ngIf="
-                      userService.getDaysRemaining(advertisement?.expiryDate) <
-                      1
+                      userService.getDaysRemaining(
+                        currentDate,
+                        advertisement?.expiryDate
+                      ) < 1
                     "
                   >
                     <h6>
                       {{
                         userService.getDaysRemaining(
+                          currentDate,
                           advertisement?.expiryDate
                         ) < 1
                           ? 'Expired'
@@ -44,12 +47,37 @@
                       }}
                     </h6>
                   </div>
-                  <div class="col-2 border border-1 p-2">
-                    <h6 class="text-info">
+                  <div
+                    class="col-1 border border-1 p-2 text-primary pt-3"
+                    *ngIf="
+                      userService.getDaysRemaining(
+                        currentDate,
+                        advertisement?.expiryDate
+                      ) >= 1
+                    "
+                  >
+                    <h6 class="">
+                      Expires in
                       {{
-                        advertisement?.active === 1
-                          ? 'Active Advertisement'
-                          : 'Inactive Advertisement'
+                        userService.getDaysRemaining(
+                          currentDate,
+                          advertisement?.expiryDate
+                        )
+                      }}
+                      days
+                    </h6>
+                  </div>
+                  <div class="col-1 border border-1 pt-3">
+                    <h6 class="text-primary">
+                      {{ advertisement?.active === 1 ? 'Active' : 'Paused' }}
+                    </h6>
+                  </div>
+                  <div class="col-2 border border-1 pt-3">
+                    <h6 class="text-primary">
+                      {{
+                        advertisement?.approvedByAdmin === 1
+                          ? 'Approved'
+                          : 'Pending Approval'
                       }}
                     </h6>
                   </div>
@@ -57,12 +85,13 @@
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-4"
+                      class="mx-2"
                       (click)="
                         activateAd(true, advertisement?.userAdvertisementId)
                       "
                       *ngIf="
                         userService.getDaysRemaining(
+                          currentDate,
                           advertisement?.expiryDate
                         ) >= 1 && advertisement?.active === 0
                       "
@@ -72,12 +101,13 @@
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-4"
+                      class="mx-2"
                       (click)="
                         activateAd(false, advertisement?.userAdvertisementId)
                       "
                       *ngIf="
                         userService.getDaysRemaining(
+                          currentDate,
                           advertisement?.expiryDate
                         ) >= 1 && advertisement?.active === 1
                       "
@@ -87,7 +117,7 @@
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-4"
+                      class="mx-2"
                       (click)="deleteAd(advertisement?.userAdvertisementId)"
                     >
                       Delete
@@ -95,23 +125,36 @@
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-4"
+                      class="mx-2"
                       click=""
                       *ngIf="
                         userService.getDaysRemaining(
+                          currentDate,
                           advertisement?.expiryDate
                         ) >= 1 && advertisement?.active === 1
                       "
                     >
                       Edit
                     </button>
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      class="mx-2"
+                      click=""
+                      *ngIf="
+                        advertisement?.active === 1 &&
+                        advertisement?.approvedByAdmin === 1
+                      "
+                    >
+                      Renew
+                    </button>
                   </div>
                 </div>
               </div>
 
-              <app-advertisement-preview
+              <app-advertisement-view
                 [advertisement]="advertisement"
-              ></app-advertisement-preview
+              ></app-advertisement-view
             ></ng-container>
           </div>
         </div>

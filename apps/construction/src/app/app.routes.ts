@@ -51,6 +51,21 @@ export const appRoutes: Route[] = [
       ).then((com) => com.CompleteResetPasswordComponent),
   },
 
+  {
+    path: 'advertisements',
+    loadComponent: () =>
+      import(
+        './common-components/advertisements-list/advertisements-list.component'
+      ).then((com) => com.AdvertisementsListComponent),
+  },
+  {
+    path: 'view-advertisement-details/:id',
+    loadComponent: () =>
+      import(
+        './common-components/advertisement-details-view/advertisement-details-view.component'
+      ).then((com) => com.AdvertisementDetailsViewComponent),
+  },
+
   // {
   //   path: 'change-password',
   //   canActivate: [isUserLoggedIn],

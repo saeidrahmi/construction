@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { take, tap, catchError, of } from 'rxjs';
+import { take, tap, catchError, of, switchMap } from 'rxjs';
 import { AdvertisementInterface } from '../../models/advertisement';
 import { AdvertisementCommunicationService } from '../../services/advertisementServcie';
 import { CommonUtilityService } from '../../services/common-utility.service';
@@ -30,50 +30,49 @@ export class AdvertisementsComponent {
   advertisementCommunicationService = inject(AdvertisementCommunicationService);
   commonUtility = inject(CommonUtilityService);
   destroyRef = inject(DestroyRef);
-  advertisements: any[] = [];
+  allAdvertisements: any[] = [];
+  uniqueAdvertisements: any[] = [];
   userId = this.storageService?.getUserId();
   user = this.storageService?.getUser();
+  currentDate = new Date();
+  getAds$ = this.apiService
+    .getUserAdvertisements(this.encryptionService.encryptItem(this.userId()))
+    .pipe(
+      takeUntilDestroyed(),
+      take(1),
+      tap((list: any) => {
+        this.allAdvertisements = list;
+        const uniqueIds = new Set();
+        this.uniqueAdvertisements = this.allAdvertisements.filter((obj) => {
+          if (uniqueIds.has(obj.userAdvertisementId)) {
+            return false;
+          } else {
+            uniqueIds.add(obj.userAdvertisementId);
+            return true;
+          }
+        });
 
+        this.uniqueAdvertisements = this.uniqueAdvertisements.map((obj) => {
+          if (
+            obj?.headerImage &&
+            obj.headerImage.type === 'Buffer' &&
+            Array.isArray(obj.headerImage.data)
+          ) {
+            const blob = new Blob([new Uint8Array(obj.headerImage.data)], {
+              type: 'image/jpeg',
+            }); // Adjust 'image/jpeg' to the correct image MIME type
+            const imageUrl = URL.createObjectURL(blob);
+            return { ...obj, headerImage: `url(${imageUrl})` };
+          }
+          return obj;
+        });
+      }),
+      catchError((err) => {
+        return of(err);
+      })
+    );
   constructor() {
-    this.apiService
-      .getUserAdvertisements(this.encryptionService.encryptItem(this.userId()))
-      .pipe(
-        takeUntilDestroyed(),
-        take(1),
-        tap((list: any) => {
-          this.advertisements = list;
-          const uniqueIds = new Set();
-          this.advertisements = this.advertisements.filter((obj) => {
-            if (uniqueIds.has(obj.userAdvertisementId)) {
-              return false;
-            } else {
-              uniqueIds.add(obj.userAdvertisementId);
-              return true;
-            }
-          });
-
-          this.advertisements = this.advertisements.map((obj) => {
-            if (
-              obj?.headerImage &&
-              obj.headerImage.type === 'Buffer' &&
-              Array.isArray(obj.headerImage.data)
-            ) {
-              const blob = new Blob([new Uint8Array(obj.headerImage.data)], {
-                type: 'image/jpeg',
-              }); // Adjust 'image/jpeg' to the correct image MIME type
-              const imageUrl = URL.createObjectURL(blob);
-              return { ...obj, headerImage: `url(${imageUrl})` };
-            }
-            return obj;
-          });
-
-          console.log(this.advertisements, 'here');
-        }),
-        catchError((err) => {
-          return of(err);
-        })
-      )
-      .subscribe();
+    this.getAds$.subscribe();
   }
   activateAd(flag: boolean, adId: any) {
     this.apiService
@@ -102,7 +101,8 @@ export class AdvertisementsComponent {
             progressBar: true,
           });
           return of(err);
-        })
+        }),
+        switchMap(() => this.getAds$)
       )
       .subscribe();
   }
@@ -132,7 +132,8 @@ export class AdvertisementsComponent {
             progressBar: true,
           });
           return of(err);
-        })
+        }),
+        switchMap(() => this.getAds$)
       )
       .subscribe();
   }

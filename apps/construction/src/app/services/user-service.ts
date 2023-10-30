@@ -231,7 +231,7 @@ export class UserService {
   getAdvertisementHeaders(): string[] {
     return this.advertisementHeaders;
   }
-  formatTimeDifference(dateCreated: Date): string {
+  formatTimeDifference(dateCreated: any): string {
     const currentDate = new Date();
     const timeDifference =
       currentDate.getTime() - new Date(dateCreated)?.getTime();
@@ -264,12 +264,14 @@ export class UserService {
       return `${months} month${months === 1 ? '' : 's'}`;
     }
   }
-  getDaysRemaining(expiryDate: any): number {
-    const currentDate = new Date();
-    const expiryDateTime = new Date(expiryDate).getTime();
-    const currentTime = currentDate.getTime();
-    const timeDifference = expiryDateTime - currentTime;
-    const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
-    return daysRemaining;
+  getDaysRemaining(currentDate: any, expiryDate: any): number {
+    console.log(currentDate, 'exp', expiryDate);
+    if (currentDate && expiryDate) {
+      const expiryDateTime = new Date(expiryDate)?.getTime();
+      const currentTime = new Date(currentDate)?.getTime();
+      const timeDifference = expiryDateTime - currentTime;
+      const daysRemaining = Math.ceil(timeDifference / (1000 * 3600 * 24));
+      return daysRemaining;
+    } else return null;
   }
 }

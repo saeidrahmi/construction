@@ -124,6 +124,12 @@ export class AdvertisementDetailsPreviewComponent {
   }
   goToUrl() {
     // window.open('http://' + this.user().website, '_blank');
-    window.open('http://' + this.user().website, '_blank');
+    if (
+      this.user().website &&
+      (!this.user().website.includes('http://') ||
+        !this.user().website.includes('https://'))
+    )
+      window.open('http://' + this.user().website, '_blank');
+    else window.open(this.user().website, '_blank');
   }
 }
