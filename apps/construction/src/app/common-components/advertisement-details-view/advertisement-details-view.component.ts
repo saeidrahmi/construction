@@ -1,6 +1,7 @@
+import { isUserLoggedIn } from './../../services/user-gaurds';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { Component, Input, inject } from '@angular/core';
+import { Component, DestroyRef, Input, inject } from '@angular/core';
 import { AdvertisementInterface } from '../../models/advertisement';
 import { StorageService } from '../../services/storage.service';
 import { UserService } from '../../services/user-service';
@@ -31,13 +32,16 @@ export class AdvertisementDetailsViewComponent {
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   route = inject(ActivatedRoute);
-
+  destroyRef = inject(DestroyRef);
   encryptionService = inject(EncryptionService);
+  isLoggedIn = this.storageService.isUserLoggedIn();
+
   user = this.storageService.getUser();
   message = '';
   max = 10;
   rate: number;
   isReadonly = false;
+  heartColor = '';
   myServices: string[] = [];
   locationType: any;
   myLocations: string[] = [];
@@ -48,6 +52,7 @@ export class AdvertisementDetailsViewComponent {
   userInfo: any;
   headerImage: any;
   sliderImages: any[];
+
   constructor(private sanitizer: DomSanitizer) {
     this.route.params
       .pipe(
@@ -91,10 +96,70 @@ export class AdvertisementDetailsViewComponent {
               return of(err);
             })
           );
+        }),
+        switchMap((info) => {
+          if (this.isLoggedIn())
+            return this.apiService
+              .isUserFavoriteAd(
+                info?.selectAdResult[0]?.userAdvertisementId,
+                this.encryptionService.encryptItem(this.userId())
+              )
+              .pipe(
+                take(1),
+                tap((isFavorite) => {
+                  if (isFavorite) this.heartColor = 'red';
+                  else this.heartColor = '';
+                })
+              );
+          else return of(null);
         })
       )
 
       .subscribe();
+  }
+  confirmSelection(event: KeyboardEvent) {
+    if (this.isLoggedIn())
+      this.apiService
+        .addUserRating(
+          this.userRate,
+          this.encryptionService.encryptItem(this.userInfo?.userId),
+          this.encryptionService.encryptItem(this.userId())
+        )
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          take(1),
+          tap((info: any) => {
+            this.rate = info;
+            this.toastService.success('success', 'success', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
+          }),
+          catchError((err) => {
+            this.heartColor = '';
+            this.toastService.error('Adding failed', 'Failed', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
+            return of(err);
+          })
+        )
+
+        .subscribe();
+    else
+      this.toastService.error('Please login first', 'Failed', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        closeButton: true,
+        progressBar: true,
+      });
+  }
+  userRate(userRate: any, arg1: string, arg2: string) {
+    throw new Error('Method not implemented.');
   }
   goToUrl() {
     // window.open('http://' + this.user().website, '_blank');
@@ -111,5 +176,47 @@ export class AdvertisementDetailsViewComponent {
     const addressString = `${address}, ${city}, ${province}, ${postalCode}`;
     const encodedAddress = encodeURIComponent(addressString);
     return `https://www.google.com/maps/place/${encodedAddress}`;
+  }
+
+  addFavoriteAd(id: any) {
+    if (this.isLoggedIn())
+      this.apiService
+        .addFavoriteAdvertisement(
+          id,
+          this.encryptionService.encryptItem(this.userId())
+        )
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+          take(1),
+          tap((info: any) => {
+            if (info === 'inserted') this.heartColor = 'red';
+            else this.heartColor = '';
+            this.toastService.success(info + ' success', 'success', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
+          }),
+          catchError((err) => {
+            this.heartColor = '';
+            this.toastService.error('Adding failed', 'Failed', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
+            return of(err);
+          })
+        )
+
+        .subscribe();
+    else
+      this.toastService.error('Please login first', 'Failed', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        closeButton: true,
+        progressBar: true,
+      });
   }
 }

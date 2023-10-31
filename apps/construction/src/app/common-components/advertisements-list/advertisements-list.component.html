@@ -1,0 +1,24 @@
+<div class="container-fluid my-3">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6">Advertisements</span>
+          </h2>
+          <hr />
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
+                <app-advertisement-view
+                  *ngFor="let advertisement of allAdvertisements"
+                  [advertisement]="advertisement"
+                ></app-advertisement-view>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

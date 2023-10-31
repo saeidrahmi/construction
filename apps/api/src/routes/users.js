@@ -34,6 +34,10 @@ const {
   getUserAdvertisementsController,
   updateUserAdvertisementDeleteStatusController,
   getAdvertisementDetailsController,
+  deleteFavoriteAdvertisementsController,
+  addFavoriteAdvertisementsController,
+  addUserRatingController,
+  isUserFavoriteAdController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -129,4 +133,16 @@ router.post(
 
   getAdvertisementDetailsController
 );
+router.post(
+  '/add-favorite-advertisement',
+  verifyToken,
+  addFavoriteAdvertisementsController
+);
+router.post(
+  '/delete-favorite-advertisement',
+  verifyToken,
+  deleteFavoriteAdvertisementsController
+);
+router.post('/add-user-rating', verifyToken, addUserRatingController);
+router.post('/is-user-favorite-ad', verifyToken, isUserFavoriteAdController);
 module.exports = router;

@@ -788,4 +788,72 @@ export class ApiService {
         })
       );
   }
+  addFavoriteAdvertisement(
+    userAdvertisementId: any,
+    userId: any
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/add-favorite-advertisement', {
+        userAdvertisementId: userAdvertisementId,
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  deleteFavoriteAdvertisement(
+    userAdvertisementId: any,
+    userId: any
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/delete-favorite-advertisement', {
+        userAdvertisementId: userAdvertisementId,
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  addUserRating(rate: any, userId: any, ratedBy: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/add-user-rating', {
+        rate: rate,
+        userId: userId,
+        ratedBy: ratedBy,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+
+  isUserFavoriteAd(userAdvertisementId: any, userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/is-user-favorite-ad', {
+        userAdvertisementId: userAdvertisementId,
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

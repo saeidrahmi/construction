@@ -77,7 +77,11 @@
               <h5>{{ advertisement.title }}</h5>
             </div>
             <div class="col-1">
-              <i class="bi bi-heart"></i>
+              <i
+                class="bi bi-heart-fill cursor"
+                [ngStyle]="{ 'font-size': '2rem', color: heartColor }"
+                (click)="addFavoriteAd(advertisement?.userAdvertisementId)"
+              ></i>
             </div>
           </div>
           <div class="row my-2">
@@ -170,7 +174,14 @@
                 <hr />
                 <div class="row m-2">
                   <div class="col">
-                    <i class="bi bi-heart"></i><i class="bi bi-flag mx-3"></i
+                    <i
+                      class="bi bi-heart-fill cursor"
+                      [ngStyle]="{ color: heartColor }"
+                      (click)="
+                        addFavoriteAd(advertisement?.userAdvertisementId)
+                      "
+                    ></i
+                    ><i class="bi bi-flag mx-3"></i
                     ><i class="bi bi-facebook mx-3"></i>
                     <i class="bi bi-twitter mx-3"></i>
                     <i class="bi bi-pinterest mx-3"></i
@@ -216,7 +227,20 @@
                         <rating
                           [(ngModel)]="rate"
                           [max]="max"
-                          [readonly]="isReadonly"
+                          [readonly]="true"
+                        ></rating>
+                      </li>
+                      <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <i class="bi bi-hand-index"
+                          ><span class="mx-2">Rate it</span></i
+                        >
+                        <rating
+                          [(ngModel)]="userRate"
+                          [max]="max"
+                          [readonly]="false"
+                          (click)="confirmSelection($event)"
                         ></rating>
                       </li>
                       <li class="list-group-item">

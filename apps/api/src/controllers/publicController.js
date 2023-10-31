@@ -1,4 +1,10 @@
-const { executeQuery } = require('./utilityService');
+const { decryptItem, executeQuery } = require('./utilityService'); // Import necessary helper functions
+
+import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
+
+const env = new EnvironmentInfo();
+const webSecretKey = env.webSecretKey();
+
 async function freeTrialInfoController(req, res) {
   try {
     const selectQuery = `SELECT freeTiralPeriod FROM settings`;

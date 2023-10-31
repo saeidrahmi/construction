@@ -1557,7 +1557,89 @@ async function updateUserAdvertisementDeleteStatusController(req, res) {
     return res.status(500).json({ errorMessage: 'Error  updating users' });
   }
 }
+async function addFavoriteAdvertisementsController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+
+    const values = [userId, req.body.userAdvertisementId];
+    const selectQuery = `select * from userFavoriteAdvertisements  where userId=? and userAdvertisementId=?`;
+    const selectResult = await executeQuery(selectQuery, values);
+
+    let result = '';
+    if (selectResult?.length === 0) {
+      const insertQuery = `INSERT INTO userFavoriteAdvertisements (userId,userAdvertisementId) VALUES (?,?)`;
+      const insertResult = await executeQuery(insertQuery, values);
+      result = 'inserted';
+    } else {
+      const deleteQuery = `delete from userFavoriteAdvertisements where userId=? and userAdvertisementId=? `;
+      const deleteResult = await executeQuery(deleteQuery, values);
+      result = 'deleted';
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
+async function deleteFavoriteAdvertisementsController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId, req.body.userAdvertisementId];
+    const selectQuery = `delete from userFavoriteAdvertisements where userId=? and userAdvertisementId=? `;
+    const selectResult = await executeQuery(selectQuery, values);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
+async function addUserRatingController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    let ratedBy = decryptItem(req.body.ratedBy, webSecretKey);
+    const rate = req.body.rate;
+    const values = [userId, ratedBy, rate];
+    const insertQuery = `INSERT INTO userRatings (userId,ratedBy,rate) VALUES (?,?,?)`;
+    const insertResult = await executeQuery(insertQuery, values);
+    if (insertResult.insertId || insertResult.affectedRows > 0) {
+      // get user rating
+      const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
+      const selectRatingResult = await executeQuery(selectRatingQuery, [
+        userId,
+      ]);
+      return res.status(200).json(selectRatingResult[0].average_rating);
+    } else return res.status(200).json(rate);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
+async function isUserFavoriteAdController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId, req.body.userAdvertisementId];
+    const selectQuery = `select * from userFavoriteAdvertisements where userId=? and userAdvertisementId=? `;
+    const selectResult = await executeQuery(selectQuery, values);
+    const result = selectResult?.length > 0 ? true : false;
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
 module.exports = {
+  isUserFavoriteAdController,
+  deleteFavoriteAdvertisementsController,
+  addFavoriteAdvertisementsController,
   logoutController,
   loginController,
   signupController,
@@ -1588,4 +1670,5 @@ module.exports = {
   getUserAdvertisementsController,
   updateUserAdvertisementActivateStatusController,
   getAdvertisementDetailsController,
+  addUserRatingController,
 };
