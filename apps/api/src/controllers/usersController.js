@@ -1692,8 +1692,39 @@ async function deleteAdvertisementMessageController(req, res) {
     });
   }
 }
+async function getFavoriteAdvertisementsController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId];
+    const selectQuery = `select * from userFavoriteAdvertisements where userId=?`;
+    const selectResult = await executeQuery(selectQuery, values);
+
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
+async function deleteFavoriteAdvertisementController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId, req.body.userAdvertisementId];
+    const selectQuery = `delete from userFavoriteAdvertisements where userId=? and userAdvertisementId =? `;
+    const selectResult = await executeQuery(selectQuery, values);
+    return res.status(200).json();
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
 
 module.exports = {
+  getFavoriteAdvertisementsController,
+  deleteFavoriteAdvertisementController,
   deleteAdvertisementMessageController,
   getAdvertisementMessageController,
   postAdvertisementMessageController,

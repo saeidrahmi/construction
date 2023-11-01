@@ -41,6 +41,8 @@ const {
   postAdvertisementMessageController,
   getAdvertisementMessageController,
   deleteAdvertisementMessageController,
+  getFavoriteAdvertisementsController,
+  deleteFavoriteAdvertisementController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -162,5 +164,15 @@ router.post(
   '/delete-user-advertisement-messages',
   verifyToken,
   deleteAdvertisementMessageController
+);
+router.post(
+  '/get-user-favorite-advertisements',
+  verifyToken,
+  getFavoriteAdvertisementsController
+);
+router.post(
+  '/delete-user-favorite-advertisement',
+  verifyToken,
+  deleteFavoriteAdvertisementController
 );
 module.exports = router;

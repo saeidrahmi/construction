@@ -1,0 +1,157 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6">Favorite Advertisements</span>
+          </h2>
+          <hr />
+          <div class="container-fluid">
+            <!-- <div class="row">
+              <div class="col">
+                <mat-form-field
+                  class="col-4"
+                  appearance="outline"
+                  [ngStyle]="
+                    this.storageService.getTheme()() === 'dark'
+                      ? { 'background-color': 'dark' }
+                      : { 'background-color': 'light' }
+                  "
+                >
+                  <mat-label
+                    [class]="
+                      this.storageService.getTheme()() === 'dark'
+                        ? 'text-light'
+                        : ''
+                    "
+                    >Filter</mat-label
+                  >
+                  <input
+                    matInput
+                    (keyup)="applyFilter($event)"
+                    placeholder="Ex. Mia"
+                    #input
+                    [class]="
+                      this.storageService.getTheme()() === 'dark'
+                        ? 'text-light'
+                        : ''
+                    "
+                  />
+                </mat-form-field>
+              </div>
+            </div> -->
+            <div class="row">
+              <div class="col">
+                <div class="mat-elevation-z8 table-responsive">
+                  <table
+                    mat-table
+                    [dataSource]="dataSource"
+                    matSort
+                    [class]="
+                      this.storageService.getTheme()() === 'dark'
+                        ? 'table table-dark table-striped'
+                        : 'table table-light table-striped'
+                    "
+                  >
+                    <ng-container matColumnDef="userAdvertisementId">
+                      <th
+                        mat-header-cell
+                        [class]="
+                          this.storageService.getTheme()() === 'dark'
+                            ? 'bg-dark text-light'
+                            : 'bg-light'
+                        "
+                        *matHeaderCellDef
+                        mat-sort-header
+                      >
+                        Advertisement
+                      </th>
+                      <th
+                        mat-header-cell
+                        [class]="
+                          this.storageService.getTheme()() === 'dark'
+                            ? 'bg-dark text-light'
+                            : 'bg-light'
+                        "
+                        *matCellDef="let row"
+                      >
+                        <a
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          [routerLink]="[
+                            '/view-advertisement-details',
+                            row?.userAdvertisementId
+                          ]"
+                          routerLinkActive="router-link-active"
+                        >
+                          View Advertisement
+                        </a>
+                      </th>
+                    </ng-container>
+
+                    <ng-container matColumnDef="action">
+                      <th
+                        mat-header-cell
+                        [class]="
+                          this.storageService.getTheme()() === 'dark'
+                            ? 'bg-dark text-light'
+                            : 'bg-light'
+                        "
+                        *matHeaderCellDef
+                        mat-sort-header
+                      >
+                        Action
+                      </th>
+                      <th
+                        mat-header-cell
+                        [class]="
+                          this.storageService.getTheme()() === 'dark'
+                            ? 'bg-dark text-light'
+                            : 'bg-light'
+                        "
+                        *matCellDef="let row"
+                      >
+                        <mat-icon
+                          class="mat-18"
+                          matTooltip="Delete account"
+                          matTooltipPosition="above"
+                          class="pointer"
+                          (click)="deleteMessage(row.userAdvertisementId)"
+                          >delete</mat-icon
+                        >
+                      </th>
+                    </ng-container>
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr
+                      mat-row
+                      *matRowDef="let row; columns: displayedColumns"
+                      ngClass="{{
+                        row.deleted === 1 || row.active !== 1
+                          ? 'bg-inactive'
+                          : 'bg-light'
+                      }}"
+                    ></tr>
+
+                    <!-- Row shown when there is no matching data. -->
+                    <tr class="mat-row" *matNoDataRow>
+                      <td class="mat-cell" colspan="22">
+                        No data matching the filter "{{ input.value }}"
+                      </td>
+                    </tr>
+                  </table>
+
+                  <mat-paginator
+                    [pageSizeOptions]="[20, 50, 100]"
+                    aria-label="Select page of users"
+                  ></mat-paginator>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

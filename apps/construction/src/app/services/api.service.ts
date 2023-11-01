@@ -913,4 +913,42 @@ export class ApiService {
         })
       );
   }
+  getFavoriteAdvertisements(userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/users/get-user-favorite-advertisements',
+        {
+          userId: userId,
+        }
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  deleteUserFavoriteAdvertisement(
+    userId: any,
+    userAdvertisementId: any
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/users/delete-user-favorite-advertisement',
+        {
+          userId: userId,
+          userAdvertisementId: userAdvertisementId,
+        }
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

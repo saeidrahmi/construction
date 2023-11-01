@@ -43,6 +43,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
+import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-favorite-ads.component';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -61,6 +62,7 @@ import { MatInputModule } from '@angular/material/input';
     EditCustomPageComponent,
     PreviewAdvertisementComponent,
     UserMessagesComponent,
+    UserFavoriteAdvertisementsComponent,
   ],
   imports: [
     CommonModule,

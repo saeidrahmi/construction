@@ -76,7 +76,17 @@
                         "
                         *matCellDef="let row"
                       >
-                        {{ row?.advertisementId }}
+                        <a
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          [routerLink]="[
+                            '/view-advertisement-details',
+                            row?.advertisementId
+                          ]"
+                          routerLinkActive="router-link-active"
+                        >
+                          View Advertisement
+                        </a>
                       </th>
                     </ng-container>
                     <ng-container matColumnDef="message">

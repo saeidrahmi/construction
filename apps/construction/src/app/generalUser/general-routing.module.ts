@@ -17,6 +17,7 @@ import { CustomPageComponent } from './custom-page/custom-page.component';
 import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-custom-page.component';
 import { PreviewAdvertisementComponent } from './advertisements/preview-advertisement/preview-advertisement.component';
 import { UserMessagesComponent } from './user-messages/user-messages.component';
+import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-favorite-ads.component';
 const routes: Routes = [
   {
     path: '',
@@ -86,6 +87,11 @@ const routes: Routes = [
         path: 'user-messages',
         component: UserMessagesComponent,
       },
+      {
+        path: 'user-favorites',
+        component: UserFavoriteAdvertisementsComponent,
+      },
+
       {
         path: '',
         outlet: 'general-outlet',
