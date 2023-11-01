@@ -6,7 +6,14 @@ import { AdvertisementInterface } from '../../models/advertisement';
 import { StorageService } from '../../services/storage.service';
 import { UserService } from '../../services/user-service';
 import { RatingModule } from 'ngx-bootstrap/rating';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { EnvironmentInfo } from 'libs/common/src/models/common';
 import { ImageService } from '../../services/image-service';
 import { ApiService } from '../../services/api.service';
@@ -15,13 +22,21 @@ import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
+import { FormService } from '../../services/form.service';
+import { FormErrorsComponent } from '../../public/form-errors.component';
 
 @Component({
   selector: 'app-advertisement-details-view',
   templateUrl: './advertisement-details-view.component.html',
   styleUrls: ['./advertisement-details-view.component.css'],
   standalone: true,
-  imports: [CommonModule, RatingModule, FormsModule],
+  imports: [
+    CommonModule,
+    RatingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    FormErrorsComponent,
+  ],
 })
 export class AdvertisementDetailsViewComponent {
   advertisement: AdvertisementInterface = {};
@@ -32,10 +47,12 @@ export class AdvertisementDetailsViewComponent {
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   route = inject(ActivatedRoute);
+  formService = inject(FormService);
   destroyRef = inject(DestroyRef);
   encryptionService = inject(EncryptionService);
+  fb = inject(FormBuilder);
   isLoggedIn = this.storageService.isUserLoggedIn();
-
+  messageForm: FormGroup;
   user = this.storageService.getUser();
   message = '';
   max = 10;
@@ -52,6 +69,7 @@ export class AdvertisementDetailsViewComponent {
   userInfo: any;
   headerImage: any;
   sliderImages: any[];
+  formErrors: string[] = [];
 
   constructor(private sanitizer: DomSanitizer) {
     this.route.params
@@ -116,6 +134,9 @@ export class AdvertisementDetailsViewComponent {
       )
 
       .subscribe();
+    this.messageForm = this.fb.group({
+      message: new FormControl('', [Validators.required]),
+    });
   }
   confirmSelection(event: KeyboardEvent) {
     if (this.isLoggedIn())
@@ -218,5 +239,51 @@ export class AdvertisementDetailsViewComponent {
         closeButton: true,
         progressBar: true,
       });
+  }
+  sendMessage() {
+    this.formErrors = [];
+    if (this.messageForm.valid) {
+      if (this.isLoggedIn())
+        this.apiService
+          .sendAdvertisementMessage(
+            this.encryptionService.encryptItem(this.userInfo?.userId),
+            this.encryptionService.encryptItem(this.userId()),
+            this.advertisement?.userAdvertisementId,
+            this.message
+          )
+          .pipe(
+            takeUntilDestroyed(this.destroyRef),
+            take(1),
+            tap((info: any) => {
+              this.toastService.success('success', 'success', {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              });
+            }),
+            catchError((err) => {
+              this.toastService.error('Adding failed', 'Failed', {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              });
+              return of(err);
+            })
+          )
+
+          .subscribe();
+      else
+        this.toastService.error('Please login first', 'Failed', {
+          timeOut: 3000,
+          positionClass: 'toast-top-right',
+          closeButton: true,
+          progressBar: true,
+        });
+    } else
+      this.formErrors = this.formService.getFormValidationErrorMessages(
+        this.messageForm
+      );
   }
 }

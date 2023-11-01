@@ -38,6 +38,9 @@ const {
   addFavoriteAdvertisementsController,
   addUserRatingController,
   isUserFavoriteAdController,
+  postAdvertisementMessageController,
+  getAdvertisementMessageController,
+  deleteAdvertisementMessageController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -145,4 +148,19 @@ router.post(
 );
 router.post('/add-user-rating', verifyToken, addUserRatingController);
 router.post('/is-user-favorite-ad', verifyToken, isUserFavoriteAdController);
+router.post(
+  '/post-advertisement-message',
+  verifyToken,
+  postAdvertisementMessageController
+);
+router.post(
+  '/get-user-advertisement-messages',
+  verifyToken,
+  getAdvertisementMessageController
+);
+router.post(
+  '/delete-user-advertisement-messages',
+  verifyToken,
+  deleteAdvertisementMessageController
+);
 module.exports = router;

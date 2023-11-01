@@ -16,6 +16,7 @@ import { NewSupportComponent } from './support/new-support/new-support.component
 import { CustomPageComponent } from './custom-page/custom-page.component';
 import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-custom-page.component';
 import { PreviewAdvertisementComponent } from './advertisements/preview-advertisement/preview-advertisement.component';
+import { UserMessagesComponent } from './user-messages/user-messages.component';
 const routes: Routes = [
   {
     path: '',
@@ -80,6 +81,10 @@ const routes: Routes = [
       {
         path: 'preview-advertisement',
         component: PreviewAdvertisementComponent,
+      },
+      {
+        path: 'user-messages',
+        component: UserMessagesComponent,
       },
       {
         path: '',

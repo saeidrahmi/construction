@@ -38,6 +38,11 @@ import { AdvertisementPreviewComponent } from '../common-components/advertisemen
 import { PreviewAdvertisementComponent } from './advertisements/preview-advertisement/preview-advertisement.component';
 import { AdvertisementDetailsPreviewComponent } from '../common-components/advertisement-details-preview/advertisement-details-preview.component';
 import { AdvertisementViewComponent } from '../common-components/advertisement-view/advertisement-view.component';
+import { UserMessagesComponent } from './user-messages/user-messages.component';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -55,6 +60,7 @@ import { AdvertisementViewComponent } from '../common-components/advertisement-v
     CustomPageComponent,
     EditCustomPageComponent,
     PreviewAdvertisementComponent,
+    UserMessagesComponent,
   ],
   imports: [
     CommonModule,
@@ -85,6 +91,10 @@ import { AdvertisementViewComponent } from '../common-components/advertisement-v
     AdvertisementDetailsPreviewComponent,
     AdvertisementPreviewComponent,
     AdvertisementViewComponent,
+    MatTableModule,
+    MatSortModule,
+    MatPaginatorModule,
+    MatInputModule,
   ],
   providers: [],
 })

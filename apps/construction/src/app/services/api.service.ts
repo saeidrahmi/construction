@@ -856,4 +856,61 @@ export class ApiService {
         })
       );
   }
+  sendAdvertisementMessage(
+    userId: any,
+    messageBy: any,
+    userAdvertisementId: any,
+    message: any
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/post-advertisement-message', {
+        message: message,
+        userId: userId,
+        messageBy: messageBy,
+        userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getUserAdvertisementMessages(userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/users/get-user-advertisement-messages',
+        {
+          userId: userId,
+        }
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  deleteUserAdvertisementMessage(userId: any, messageId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/users/delete-user-advertisement-messages',
+        {
+          userId: userId,
+          messageId: messageId,
+        }
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

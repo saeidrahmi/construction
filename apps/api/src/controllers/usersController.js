@@ -1636,7 +1636,67 @@ async function isUserFavoriteAdController(req, res) {
     });
   }
 }
+async function postAdvertisementMessageController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    let messageBy = decryptItem(req.body.messageBy, webSecretKey);
+    const message = req.body.message;
+    const userAdvertisementId = req.body.userAdvertisementId;
+    const values = [
+      userId,
+      messageBy,
+      userAdvertisementId,
+      message,
+      new Date(),
+    ];
+    const insertQuery = `INSERT INTO userAdvertisementsMessages (userId,fromUserId,advertisementId,message,dateCreated) VALUES (?,?,?,?,?)`;
+    const insertResult = await executeQuery(insertQuery, values);
+    if (insertResult.insertId || insertResult.affectedRows > 0) {
+      return res.status(200).json();
+    } else
+      res.status(500).json({
+        errorMessage: 'Error adding message',
+      });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Error adding message',
+    });
+  }
+}
+async function getAdvertisementMessageController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId];
+    const selectQuery = `select * from userAdvertisementsMessages where userId=?   `;
+    const selectResult = await executeQuery(selectQuery, values);
+
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
+async function deleteAdvertisementMessageController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId, req.body.messageId];
+    const selectQuery = `delete from userAdvertisementsMessages where userId=? and messageId=? `;
+    const selectResult = await executeQuery(selectQuery, values);
+    return res.status(200).json();
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
+
 module.exports = {
+  deleteAdvertisementMessageController,
+  getAdvertisementMessageController,
+  postAdvertisementMessageController,
   isUserFavoriteAdController,
   deleteFavoriteAdvertisementsController,
   addFavoriteAdvertisementsController,
