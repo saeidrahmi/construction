@@ -44,6 +44,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-favorite-ads.component';
+import { UserMessagesDetailsComponent } from './user-messages/user-messages-details/user-messages-details.component';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -63,6 +64,7 @@ import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-fa
     PreviewAdvertisementComponent,
     UserMessagesComponent,
     UserFavoriteAdvertisementsComponent,
+    UserMessagesDetailsComponent,
   ],
   imports: [
     CommonModule,

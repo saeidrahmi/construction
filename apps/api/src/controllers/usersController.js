@@ -1667,7 +1667,7 @@ async function getAdvertisementMessageController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const values = [userId];
-    const selectQuery = `select * from userAdvertisementsMessages where userId=?   `;
+    const selectQuery = `select * from userAdvertisementsMessages where userId=?   ORDER BY dateCreated desc `;
     const selectResult = await executeQuery(selectQuery, values);
 
     return res.status(200).json(selectResult);
@@ -1682,7 +1682,7 @@ async function deleteAdvertisementMessageController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const values = [userId, req.body.messageId];
-    const selectQuery = `delete from userAdvertisementsMessages where userId=? and messageId=? `;
+    const selectQuery = `delete from userAdvertisementsMessages where userId=? and messageId=?`;
     const selectResult = await executeQuery(selectQuery, values);
     return res.status(200).json();
   } catch (error) {
@@ -1721,8 +1721,51 @@ async function deleteFavoriteAdvertisementController(req, res) {
     });
   }
 }
+async function getAdvertisementMessageThreadsController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    let fromUserId = decryptItem(req.body.fromUserId, webSecretKey);
+    const values = [
+      userId,
+      fromUserId,
+      fromUserId,
+      userId,
+      req.body.userAdvertisementId,
+    ];
+    console.log('info', values)
+    const selectQuery = `select * from userAdvertisementsMessages where ((userId=? and fromUserId=?) or (userId=? and fromUserId=?)) and advertisementId =? ORDER BY dateCreated asc `;
+    const selectResult = await executeQuery(selectQuery, values);
 
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
+async function getMessageInfoController(req, res) {
+  try {
+    const values = [req.body.messageId];
+
+    const selectQuery = `select * from userAdvertisementsMessages where  messageId=? `;
+    const selectResult = await executeQuery(selectQuery, values);
+    if (selectResult?.length > 0) return res.status(200).json(selectResult[0]);
+    else
+      return res.status(500).json({
+        errorMessage:
+          'Error adding favorite ad. This is already your favorite ad',
+      });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
 module.exports = {
+  getMessageInfoController,
+  getAdvertisementMessageThreadsController,
   getFavoriteAdvertisementsController,
   deleteFavoriteAdvertisementController,
   deleteAdvertisementMessageController,

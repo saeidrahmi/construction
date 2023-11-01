@@ -951,4 +951,41 @@ export class ApiService {
         })
       );
   }
+  getAdvertisementMessageThreads(
+    userId: any,
+    fromUserId: any,
+    userAdvertisementId: any
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/users/get-user-advertisement-message-threads',
+        {
+          userId: userId,
+          fromUserId: fromUserId,
+          userAdvertisementId: userAdvertisementId,
+        }
+      )
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getUserMessageInfo(messageId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-user-message-info', {
+        messageId: messageId,
+      })
+      .pipe(
+        take(1),
+        delay(300),
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

@@ -1,0 +1,68 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6">Message Details</span>
+          </h2>
+          <hr />
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
+                <div
+                  class="alert alert-success"
+                  role="alert"
+                  *ngFor="let item of messageList"
+                >
+                  <h4 class="alert-heading">
+                    {{ item.dateCreated | date : 'medium' }}
+                  </h4>
+
+                  <hr />
+                  <p class="mb-0">
+                    <i class="bi bi-question"></i> {{ item.message }}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="row border rounded p-2">
+              <form [formGroup]="messageForm">
+                <div class="col">
+                  <h5 class=" ">Contact me</h5>
+                  <p class="font-sm">
+                    To deter and identify potential fraud, spam or suspicious
+                    behavior, we anonymize your email address (as applicable)
+                    and reserve the right to monitor conversations. By sending
+                    the message you agree to our Terms of Use and Privacy
+                    Policy.
+                  </p>
+                  <app-form-errors [formErrors]="formErrors"></app-form-errors>
+                  <textarea
+                    class="form-control"
+                    placeholder="Enter message"
+                    [(ngModel)]="message"
+                    maxlength="400"
+                    formControlName="message"
+                    rows="5"
+                    minlength="10"
+                    maxlength="1000"
+                  ></textarea>
+                  {{ message?.length }}/1000
+                  <br />
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary my-1 text-center"
+                    (click)="sendMessage()"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

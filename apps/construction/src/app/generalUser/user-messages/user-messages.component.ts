@@ -1,5 +1,5 @@
 import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../../services/api.service';
 import { EncryptionService } from '../../services/encryption-service';
@@ -21,7 +21,7 @@ export class UserMessagesComponent {
   toastService = inject(ToastrService);
   storageService = inject(StorageService);
   apiService = inject(ApiService);
-  route = inject(ActivatedRoute);
+  router = inject(Router);
   formService = inject(FormService);
   destroyRef = inject(DestroyRef);
   encryptionService = inject(EncryptionService);
@@ -30,6 +30,7 @@ export class UserMessagesComponent {
   userId = this.storageService?.getUserId();
   displayedColumns: string[] = [
     'dateCreated',
+    'messageId',
     'advertisementId',
     'message',
     'viewed',
@@ -107,6 +108,10 @@ export class UserMessagesComponent {
         .subscribe();
     }
   }
+  viewMessage(messageId: any) {
+    this.router.navigate(['/general/message-details', messageId]);
+  }
+
   // changeAccountStatus(userId: string, activate: boolean) {
   //   this.storageService.updateIsLoading(true);
   //   this.apiService

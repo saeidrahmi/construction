@@ -1,3 +1,6 @@
 .pointer {
   cursor: pointer;
 }
+.bg-inactive {
+  background-color: rgb(213, 159, 88);
+}

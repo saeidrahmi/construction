@@ -4,7 +4,7 @@
       <div class="card" aria-hidden="true">
         <div class="card-body">
           <h2 class="card-title">
-            <span class="col-6">Dashboard</span>
+            <span class="col-6">Messages</span>
           </h2>
           <hr />
           <div class="container-fluid">
@@ -54,6 +54,41 @@
                         : 'table table-light table-striped'
                     "
                   >
+                    <ng-container matColumnDef="messageId">
+                      <th
+                        mat-header-cell
+                        [class]="
+                          this.storageService.getTheme()() === 'dark'
+                            ? 'bg-dark text-light'
+                            : 'bg-light'
+                        "
+                        *matHeaderCellDef
+                        mat-sort-header
+                      >
+                        View Message
+                      </th>
+                      <th
+                        mat-header-cell
+                        [class]="
+                          this.storageService.getTheme()() === 'dark'
+                            ? 'bg-dark text-light'
+                            : 'bg-light'
+                        "
+                        *matCellDef="let row"
+                      >
+                        <a
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          [routerLink]="[
+                            '/general/message-details',
+                            row?.messageId
+                          ]"
+                          routerLinkActive="router-link-active"
+                        >
+                          View Message
+                        </a>
+                      </th>
+                    </ng-container>
                     <ng-container matColumnDef="advertisementId">
                       <th
                         mat-header-cell
@@ -138,7 +173,7 @@
                         "
                         *matCellDef="let row"
                       >
-                        {{ row.dateCreated | date }}
+                        {{ row.dateCreated | date : 'medium' }}
                       </th>
                     </ng-container>
                     <ng-container matColumnDef="viewed">
@@ -203,11 +238,19 @@
                       >
                         <mat-icon
                           class="mat-18"
-                          matTooltip="Delete account"
+                          matTooltip="Delete message"
                           matTooltipPosition="above"
                           class="pointer"
                           (click)="deleteMessage(row.messageId)"
                           >delete</mat-icon
+                        >
+                        <mat-icon
+                          class="mat-18"
+                          matTooltip="view message"
+                          matTooltipPosition="above"
+                          class="pointer"
+                          (click)="viewMessage(row.messageId)"
+                          >info</mat-icon
                         >
                       </th>
                     </ng-container>
@@ -217,9 +260,7 @@
                       mat-row
                       *matRowDef="let row; columns: displayedColumns"
                       ngClass="{{
-                        row.deleted === 1 || row.active !== 1
-                          ? 'bg-inactive'
-                          : 'bg-light'
+                        row.viewed === 1 ? 'bg-inactive' : 'bg-light'
                       }}"
                     ></tr>
 

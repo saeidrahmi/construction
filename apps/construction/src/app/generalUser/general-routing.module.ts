@@ -18,6 +18,7 @@ import { EditCustomPageComponent } from './custom-page/edit-custom-page/edit-cus
 import { PreviewAdvertisementComponent } from './advertisements/preview-advertisement/preview-advertisement.component';
 import { UserMessagesComponent } from './user-messages/user-messages.component';
 import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-favorite-ads.component';
+import { UserMessagesDetailsComponent } from './user-messages/user-messages-details/user-messages-details.component';
 const routes: Routes = [
   {
     path: '',
@@ -90,6 +91,10 @@ const routes: Routes = [
       {
         path: 'user-favorites',
         component: UserFavoriteAdvertisementsComponent,
+      },
+      {
+        path: 'message-details/:id',
+        component: UserMessagesDetailsComponent,
       },
 
       {

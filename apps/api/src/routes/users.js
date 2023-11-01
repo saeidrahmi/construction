@@ -41,8 +41,10 @@ const {
   postAdvertisementMessageController,
   getAdvertisementMessageController,
   deleteAdvertisementMessageController,
+  getAdvertisementMessageThreadsController,
   getFavoriteAdvertisementsController,
   deleteFavoriteAdvertisementController,
+  getMessageInfoController,
 } = require('../controllers/usersController');
 const { verifyToken } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
@@ -175,4 +177,11 @@ router.post(
   verifyToken,
   deleteFavoriteAdvertisementController
 );
+router.post(
+  '/get-user-advertisement-message-threads',
+  verifyToken,
+  getAdvertisementMessageThreadsController
+);
+router.post('/get-user-message-info', verifyToken, getMessageInfoController);
+
 module.exports = router;
