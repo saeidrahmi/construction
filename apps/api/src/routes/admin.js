@@ -12,19 +12,29 @@ const {
   getPlanInfoController,
   updatePlanController,
 } = require('../controllers/adminController');
-const { verifyToken } = require('../controllers/utilityService');
-router.get('/list-admin-settings', verifyToken, listAdminSettingsController);
+const {
+  verifySAdminToken,
+  verifyAdminToken,
+  verifyGeneralToken,
+  verifyAdminAndSAdminToken,
+  verifyAllToken,
+} = require('../controllers/utilityService');
+router.get('/list-admin-settings', verifyAllToken, listAdminSettingsController);
 router.post(
   '/update-admin-settings',
-  verifyToken,
+  verifySAdminToken,
+
   updateAdminSettingsController
 );
-
-router.post('/create-new-plan', verifyToken, createNewPlanController);
-router.get('/list-plans', verifyToken, listPlansController);
-router.post('/update-plan-status', verifyToken, updatePlanStatusController);
-router.post('/delete-plan', verifyToken, deletePlanController);
-router.get('/dashboard', verifyToken, dashboardController);
-router.post('/plan-info', verifyToken, getPlanInfoController);
-router.post('/update-plan', verifyToken, updatePlanController);
+router.post('/create-new-plan', verifySAdminToken, createNewPlanController);
+router.get('/list-plans', verifyAdminAndSAdminToken, listPlansController);
+router.post(
+  '/update-plan-status',
+  verifySAdminToken,
+  updatePlanStatusController
+);
+router.post('/delete-plan', verifySAdminToken, deletePlanController);
+router.get('/dashboard', verifySAdminToken, dashboardController);
+router.post('/plan-info', verifyAdminAndSAdminToken, getPlanInfoController);
+router.post('/update-plan', verifySAdminToken, updatePlanController);
 module.exports = router;

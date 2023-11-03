@@ -57,8 +57,8 @@ export class LoginComponent {
     });
   }
   login() {
+    this.formErrors = [];
     if (this.loginForm.valid) {
-      this.storageService.updateIsLoading(true);
       this.apiService
         .login(this.loginForm.value)
         .pipe(takeUntilDestroyed(this.destroyRef))

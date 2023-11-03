@@ -11,7 +11,11 @@ async function freeTrialInfoController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult[0]);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res
+      .status(500)
+      .json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
   }
 }
 async function getTaxController(req, res) {
@@ -20,7 +24,11 @@ async function getTaxController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult[0]);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res
+      .status(500)
+      .json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
   }
 }
 async function getTopAdInfoController(req, res) {
@@ -29,7 +37,11 @@ async function getTopAdInfoController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult[0]);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res
+      .status(500)
+      .json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
   }
 }
 async function listPlansController(req, res) {
@@ -38,7 +50,11 @@ async function listPlansController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res
+      .status(500)
+      .json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
   }
 }
 async function listPaidPlansController(req, res) {
@@ -47,7 +63,11 @@ async function listPaidPlansController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res
+      .status(500)
+      .json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
   }
 }
 async function listAdvertisementsController(req, res) {
@@ -62,7 +82,11 @@ async function listAdvertisementsController(req, res) {
 
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res
+      .status(500)
+      .json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
   }
 }
 

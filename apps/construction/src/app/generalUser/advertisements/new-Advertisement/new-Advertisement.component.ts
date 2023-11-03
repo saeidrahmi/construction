@@ -157,7 +157,6 @@ export class NewAdvertisementComponent {
     (this.formArray?.get([2]).get('sliderImages') as FormArray).removeAt(index);
     this.advertisement.sliderImages?.splice(index, 1);
     this.sliderImages?.splice(index, 1);
-    console.log(this.advertisement.sliderImages);
   }
   addClientFormControl() {
     (this.formArray?.get([2]).get('sliderImages') as FormArray).push(

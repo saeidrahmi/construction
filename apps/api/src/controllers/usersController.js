@@ -44,12 +44,16 @@ async function logoutController(req, res) {
       ['', 0, userId]
     );
     if (result.affectedRows === 0) {
-      return res.status(401).json({ errorMessage: 'Logout operation failed.' });
+      return res.status(401).json({
+        errorMessage: 'Failed to complete logout. Please try again.',
+      });
     } else {
       return res.status(200).json();
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error updating user' });
+    return res
+      .status(500)
+      .json({ errorMessage: 'Failed to complete logout. Please try again.' });
   }
 }
 async function loginController(req, res) {
@@ -68,31 +72,39 @@ async function loginController(req, res) {
     if (rows.length === 0) {
       await connection.rollback();
       // User not found or incorrect credentials
-      return res
-        .status(401)
-        .json({ errorMessage: 'Invalid userId or password' });
+      return res.status(401).json({
+        errorMessage:
+          'The provided user ID or password is incorrect. Please double-check your credentials and try again.',
+      });
     } else if (password != decryptItem(rows[0].password, dbSecretKey)) {
       await connection.rollback();
-      return res
-        .status(401)
-        .json({ errorMessage: 'Invalid userId or password.' });
+      return res.status(401).json({
+        errorMessage:
+          'The provided user ID or password is incorrect. Please double-check your credentials and try again.',
+      });
     } else if (env.multiLoginAllowed() == false && rows[0].loggedIn) {
       await connection.rollback();
-      return res
-        .status(401)
-        .json({ errorMessage: 'User is already logged-in.' });
+      return res.status(401).json({
+        errorMessage:
+          'User is already logged in. Please log out from other sessions or contact support for assistance.',
+      });
     } else if (!rows[0].registered) {
       await connection.rollback();
-      return res.status(401).json({ errorMessage: 'User is not registered.' });
+      return res.status(401).json({
+        errorMessage:
+          'User is not registered. Please sign up to create an account.',
+      });
     } else if (!rows[0].active) {
       await connection.rollback();
       return res.status(401).json({
-        errorMessage: 'User is not active. Please call to activate your user.',
+        errorMessage:
+          'User account is currently inactive. Please contact support to activate your account.',
       });
     } else if (rows[0].deleted) {
       await connection.rollback();
       return res.status(401).json({
-        errorMessage: 'Account closed. Please call to activate your user.',
+        errorMessage:
+          'User account is currently closed. Please contact support to activate your account.',
       });
     } else {
       const user = {
@@ -136,9 +148,9 @@ async function loginController(req, res) {
       if (updateResult.affectedRows === 0) {
         await connection.rollback();
         // User not found or update operation failed
-        return res
-          .status(401)
-          .json({ errorMessage: 'Login Update operation failed.' });
+        return res.status(401).json({
+          errorMessage: 'Failed to login. Please try again.',
+        });
       } else {
         const selectPlansQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userPlans.userId=? AND  userPlans.userPlanActive=1 `;
         const [updateResult] = await connection.execute(selectPlansQuery, [
@@ -162,7 +174,7 @@ async function loginController(req, res) {
     }
   } catch (error) {
     await connection.rollback();
-    res.status(500).json({ errorMessage: 'Internal Server Error' });
+    res.status(500).json({ errorMessage: 'Failed to login. Please try again' });
   } finally {
     await connection.end();
   }
@@ -225,7 +237,7 @@ async function signupController(req, res) {
       if (result.affectedRows > 0 || result.insertId) {
         try {
           await sendVerificationEmail(userId, token);
-          console.log('succuesfull');
+
           await connection.commit();
           return res.status(200).json({
             message:
@@ -233,7 +245,6 @@ async function signupController(req, res) {
           });
         } catch (error) {
           await connection.rollback();
-          console.log('failed');
 
           return res.status(500).json({
             errorMessage:
@@ -282,24 +293,26 @@ async function resetPasswordController(req, res) {
           await sendPasswordResetEmail(userId, token);
           return res.status(200).json({
             message:
-              'Password Reset operation completed successfully. Please check your email.',
+              'Password reset completed successfully. Please check your email for further instructions.',
           });
         } catch (error) {
           return res.status(500).json({
-            errorMessage: 'Failed to send email. Please try again later.',
+            errorMessage: 'Failed to update information. Please try again.',
           });
         }
       } else {
-        return res.status(500).json({ errorMessage: 'Error updating user' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       }
     } else
-      return res
-        .status(500)
-        .json({ errorMessage: 'Error: invalid request resetting password' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ errorMessage: 'Error: invalid request  resetting password' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 async function registerFreeUserController(req, res) {
@@ -316,7 +329,7 @@ async function registerFreeUserController(req, res) {
     if (existingUser.length === 0) {
       // User does not exists,
       return res.status(400).json({
-        errorMessage: 'User not allowed to signup. Invalid request.',
+        errorMessage: 'Failed to retrieve information. Please try again later.',
       });
     } else {
       const connection = await connectToDatabase();
@@ -399,23 +412,29 @@ async function registerFreeUserController(req, res) {
             return res.status(200).json(response);
           } else {
             await connection.rollback();
-            return res
-              .status(500)
-              .json({ errorMessage: 'Error updating user' });
+            return res.status(500).json({
+              errorMessage: 'Failed to update information. Please try again.',
+            });
           }
         } else {
           await connection.rollback();
-          return res.status(500).json({ errorMessage: 'Error updating user' });
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
         }
       } catch (error) {
         await connection.rollback(); // Rollback the transaction on error
-        return res.status(500).json({ errorMessage: 'Error registering user' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       } finally {
         connection.end(); // Close the database connection
       }
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error registering user' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 async function registerPaidUserController(req, res) {
@@ -437,7 +456,8 @@ async function registerPaidUserController(req, res) {
     if (existingUser.length === 0) {
       // User does not exists,
       return res.status(400).json({
-        errorMessage: 'User not allowed to signup. Invalid request.',
+        errorMessage:
+          'Failed to retrieve information. Please try again later..',
       });
     } else {
       const connection = await connectToDatabase();
@@ -490,7 +510,7 @@ async function registerPaidUserController(req, res) {
             1,
           ];
           const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,userPlanExpiryDate,userPlanActive) VALUES (?, ?,?,?,?)`;
-          console.log(values, query);
+
           const [result] = await connection.execute(query, values);
           if (result.affectedRows > 0 || result.insertId) {
             const values = [
@@ -531,29 +551,35 @@ async function registerPaidUserController(req, res) {
               return res.status(200).json(response);
             } else {
               await connection.rollback();
-              return res
-                .status(500)
-                .json({ errorMessage: 'Error updating Payments' });
+              return res.status(500).json({
+                errorMessage: 'Failed to update information. Please try again.',
+              });
             }
           } else {
             await connection.rollback();
-            return res
-              .status(500)
-              .json({ errorMessage: 'Error updating user' });
+            return res.status(500).json({
+              errorMessage: 'Failed to update information. Please try again.',
+            });
           }
         } else {
           await connection.rollback();
-          return res.status(500).json({ errorMessage: 'Error updating user' });
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
         }
       } catch (error) {
         await connection.rollback(); // Rollback the transaction on error
-        return res.status(500).json({ errorMessage: 'Error registering user' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       } finally {
         connection.end(); // Close the database connection
       }
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error registering user' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 
@@ -604,10 +630,14 @@ async function completeResetPasswordController(req, res) {
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json(true);
     } else {
-      return res.status(500).json({ errorMessage: 'Error updating user' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error resetting password.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again..',
+    });
   }
 }
 async function editUserProfileController(req, res) {
@@ -697,7 +727,9 @@ async function editUserProfileController(req, res) {
         delete userObject.password;
         return res.status(200).json({ user: userObject });
       } else {
-        return res.status(500).json({ errorMessage: 'Error updating user' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       }
     } else {
       const query =
@@ -717,7 +749,7 @@ async function editUserProfileController(req, res) {
         user.middleName,
         userId,
       ];
-      console.log(query, values);
+
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         const selectQuery = `SELECT * FROM users WHERE userId = ?`;
@@ -726,11 +758,15 @@ async function editUserProfileController(req, res) {
         delete userObject.password;
         return res.status(200).json({ user: userObject });
       } else {
-        return res.status(500).json({ errorMessage: 'Error updating user' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       }
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error updating password.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 
@@ -754,11 +790,18 @@ async function changePasswordController(req, res) {
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(true);
       } else {
-        return res.status(500).json({ errorMessage: 'Error updating user' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       }
-    } else return res.status(400).json({ errorMessage: 'Wrong password' });
+    } else
+      return res.status(400).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error resetting password.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 async function userServicesListController(req, res) {
@@ -769,9 +812,9 @@ async function userServicesListController(req, res) {
     const serviceNames = selectResult.map((row) => row.service);
     return res.status(200).json(serviceNames);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ errorMessage: 'Error getting user services.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function addUserServicesController(req, res) {
@@ -784,14 +827,14 @@ async function addUserServicesController(req, res) {
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json();
     } else {
-      return res
-        .status(500)
-        .json({ errorMessage: 'Error adding service to user' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
-    return res
-      .status(500)
-      .json({ errorMessage: 'Error getting user services.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 async function removeUserServicesController(req, res) {
@@ -805,19 +848,19 @@ async function removeUserServicesController(req, res) {
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json();
       } else {
-        return res
-          .status(500)
-          .json({ errorMessage: 'Error deleting service to user' });
+        return res.status(500).json({
+          errorMessage: 'Failed to delete the information. Please try again.',
+        });
       }
     } catch (error) {
-      return res
-        .status(500)
-        .json({ errorMessage: 'Error deleting user services.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to delete the information. Please try again.',
+      });
     }
   } catch (error) {
-    return res
-      .status(500)
-      .json({ errorMessage: 'Error deleting user services.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to delete the information. Please try again.',
+    });
   }
 }
 async function UsersListController(req, res) {
@@ -832,9 +875,9 @@ async function UsersListController(req, res) {
     // const serviceNames = selectResult.map((row) => row.service);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ errorMessage: 'Error getting user services.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function DeleteUserController(req, res) {
@@ -851,9 +894,9 @@ async function DeleteUserController(req, res) {
     // const serviceNames = selectResult.map((row) => row.service);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ errorMessage: 'Error getting user services.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to delete the information. Please try again.',
+    });
   }
 }
 async function UpdateUserActivationStatusController(req, res) {
@@ -870,9 +913,9 @@ async function UpdateUserActivationStatusController(req, res) {
     // const serviceNames = selectResult.map((row) => row.service);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res
-      .status(500)
-      .json({ errorMessage: 'Error getting user services.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 // purchasing a plan for a user:
@@ -929,23 +972,27 @@ async function purchasePlanController(req, res) {
           return res.status(200).json({ plan: selectPlanResult[0] });
         } else {
           await connection.rollback();
-          return res
-            .status(500)
-            .json({ errorMessage: 'Error updating Payment' });
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
         }
       } else {
         await connection.rollback();
-        return res
-          .status(500)
-          .json({ errorMessage: 'Error updating userPlans setting inactive' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       }
     } else {
       await connection.rollback();
-      return res.status(500).json({ errorMessage: 'Error updating Payment' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
     await connection.rollback(); // Rollback the transaction on error
-    return res.status(500).json({ errorMessage: 'Error  purchasing' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   } finally {
     connection.end(); // Close the database connection
   }
@@ -958,7 +1005,9 @@ async function listUserPlansController(req, res) {
     const selectResult = await executeQuery(selectQuery, [userId]);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function updateUserServiceLocationTypeController(req, res) {
@@ -980,11 +1029,15 @@ async function updateUserServiceLocationTypeController(req, res) {
       return res.status(200).json();
     } else {
       await connection.rollback();
-      return res.status(500).json({ errorMessage: 'Error update users.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
     await connection.rollback(); // Rollback the transaction on error
-    return res.status(500).json({ errorMessage: 'Error  updating users' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   } finally {
     connection.end(); // Close the database connection
   }
@@ -1017,11 +1070,15 @@ async function updateUserServiceProvincesController(req, res) {
       return res.status(200).json();
     } else {
       await connection.rollback();
-      return res.status(500).json({ errorMessage: 'Error update users.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
     await connection.rollback(); // Rollback the transaction on error
-    return res.status(500).json({ errorMessage: 'Error  updating users' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   } finally {
     connection.end(); // Close the database connection
   }
@@ -1032,7 +1089,7 @@ async function updateUserServiceCitiesController(req, res) {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const type = req.body.type;
     const locations = req.body.locations;
-    console.log(locations);
+
     const updateQuery = `UPDATE  users   SET serviceCoverageType = ?  WHERE  userId = ?`;
 
     const [result] = await connection.execute(updateQuery, [type, userId]);
@@ -1060,11 +1117,15 @@ async function updateUserServiceCitiesController(req, res) {
       return res.status(200).json();
     } else {
       await connection.rollback();
-      return res.status(500).json({ errorMessage: 'Error update users.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
     await connection.rollback(); // Rollback the transaction on error
-    return res.status(500).json({ errorMessage: 'Error  updating users' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   } finally {
     connection.end(); // Close the database connection
   }
@@ -1095,7 +1156,9 @@ async function listUserServiceLocationController(req, res) {
       });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 async function canUserAdvertiseController(req, res) {
@@ -1103,18 +1166,13 @@ async function canUserAdvertiseController(req, res) {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const selectQuery1 = `SELECT userPlans.userPlanId,plans.numberOfAdvertisements FROM userPlans JOIN plans ON userPlans.planId  = plans.planId  WHERE  userPlans.userId = ? and userPlans.userPlanActive=1  `;
     const selectResult1 = await executeQuery(selectQuery1, [userId]);
-    console.log(selectQuery1, userId);
+
     if (selectResult1?.length > 0) {
-      console.log(selectResult1[0]?.userPlanId);
       const selectQuery = `select count(*) as count from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId  where userAdvertisements.userPlanId=? `;
       const selectResult = await executeQuery(selectQuery, [
         selectResult1[0]?.userPlanId,
       ]);
-      console.log(
-        selectResult1[0]?.userPlanId,
-        selectResult[0]?.count,
-        selectResult1[0]?.numberOfAdvertisements
-      );
+
       if (selectResult[0]?.count >= selectResult1[0]?.numberOfAdvertisements)
         return res.status(200).json({
           result: false,
@@ -1134,10 +1192,14 @@ async function canUserAdvertiseController(req, res) {
             selectResult1[0]?.numberOfAdvertisements - selectResult[0]?.count,
         });
     } else {
-      return res.status(500).json({ errorMessage: 'Error getting info.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting info.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function getApplicationSettingsController(req, res) {
@@ -1146,7 +1208,9 @@ async function getApplicationSettingsController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult[0]);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function getPreNewAdInfoController(req, res) {
@@ -1318,7 +1382,9 @@ async function getAdvertisementDetailsController(req, res) {
     };
     return res.status(200).json(info);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 
@@ -1356,7 +1422,9 @@ async function saveUserRegularAdController(req, res) {
     const canCreate = await canUserCreateAdvertisementController(userId);
 
     if (!canCreate) {
-      return res.status(500).json({ errorMessage: 'Error getting settings.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
 
     connection = await connectToDatabase();
@@ -1381,7 +1449,9 @@ async function saveUserRegularAdController(req, res) {
 
     if (!insertResult) {
       await connection.rollback();
-      return res.status(500).json({ errorMessage: 'Error getting settings.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
 
     if (req.files['headerImage']) {
@@ -1395,13 +1465,12 @@ async function saveUserRegularAdController(req, res) {
 
       if (!insertImageResult) {
         await connection.rollback();
-        return res
-          .status(500)
-          .json({ errorMessage: 'Error getting settings.' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       }
     }
     if (req.files['sliderImages']) {
-      console.log(req.files['sliderImages']?.length, 'length');
       for (const file of req.files['sliderImages']) {
         const { buffer } = file;
         const insertSliderImageResult =
@@ -1412,9 +1481,9 @@ async function saveUserRegularAdController(req, res) {
 
         if (!insertSliderImageResult) {
           await connection.rollback();
-          return res
-            .status(500)
-            .json({ errorMessage: 'Error getting settings.' });
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
         }
       }
     }
@@ -1433,9 +1502,9 @@ async function saveUserRegularAdController(req, res) {
 
       if (!insertPaymentResult) {
         await connection.rollback();
-        return res
-          .status(500)
-          .json({ errorMessage: 'Error getting settings.' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
       }
     }
 
@@ -1449,7 +1518,9 @@ async function saveUserRegularAdController(req, res) {
         console.error('Error closing database connection:', error);
       }
     }
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   } finally {
     if (connection) {
       try {
@@ -1513,7 +1584,7 @@ async function insertUserTopAdvertisementPayment(connection, data) {
     data.tax,
     data.totalPayment,
   ];
-  console.log(selectQuery, values);
+
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId
     ? insertResult
@@ -1532,18 +1603,19 @@ WHERE userPlans.userId= ? and   userAdvertisements.deleted = 0 ORDER BY userAdve
 
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 
 async function updateUserAdvertisementActivateStatusController(req, res) {
   try {
-    console.log(req.body);
     let userId = decryptItem(req.body.userId, webSecretKey);
     const userAdvertisementId = req.body.userAdvertisementId;
     const active = req.body.active ? '1' : '0';
     const updateQuery = `UPDATE  userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId  SET userAdvertisements.active = ?  WHERE  userPlans.userId= ? and userAdvertisements.userAdvertisementId = ?`;
-    console.log(updateQuery, userId, userAdvertisementId, active);
+
     const result = await executeQuery(updateQuery, [
       active,
       userId,
@@ -1553,20 +1625,23 @@ async function updateUserAdvertisementActivateStatusController(req, res) {
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json();
     } else {
-      return res.status(500).json({ errorMessage: 'Error update users.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error  updating users' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 async function updateUserAdvertisementDeleteStatusController(req, res) {
   try {
-    console.log(req.body);
     let userId = decryptItem(req.body.userId, webSecretKey);
     const userAdvertisementId = req.body.userAdvertisementId;
     const deleted = req.body.deleted ? '1' : '0';
     const updateQuery = `UPDATE  userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId  SET userAdvertisements.deleted = ?  WHERE  userPlans.userId= ? and userAdvertisements.userAdvertisementId = ?`;
-    console.log(updateQuery, userId, userAdvertisementId, deleted);
+
     const result = await executeQuery(updateQuery, [
       deleted,
       userId,
@@ -1576,10 +1651,14 @@ async function updateUserAdvertisementDeleteStatusController(req, res) {
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json();
     } else {
-      return res.status(500).json({ errorMessage: 'Error update users.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error  updating users' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 async function addFavoriteAdvertisementsController(req, res) {
@@ -1604,8 +1683,7 @@ async function addFavoriteAdvertisementsController(req, res) {
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to update information. Please try again.',
     });
   }
 }
@@ -1618,8 +1696,7 @@ async function deleteFavoriteAdvertisementsController(req, res) {
     return res.status(200).json(selectResult);
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to delete the information. Please try again.',
     });
   }
 }
@@ -1641,8 +1718,7 @@ async function addUserRatingController(req, res) {
     } else return res.status(200).json(rate);
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to update information. Please try again.',
     });
   }
 }
@@ -1656,8 +1732,7 @@ async function isUserFavoriteAdController(req, res) {
     return res.status(200).json(result);
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to retrieve information. Please try again later.',
     });
   }
 }
@@ -1680,11 +1755,11 @@ async function postAdvertisementMessageController(req, res) {
       return res.status(200).json();
     } else
       res.status(500).json({
-        errorMessage: 'Error adding message',
+        errorMessage: 'Failed to update information. Please try again.',
       });
   } catch (error) {
     return res.status(500).json({
-      errorMessage: 'Error adding message',
+      errorMessage: 'Failed to update information. Please try again.',
     });
   }
 }
@@ -1698,8 +1773,7 @@ async function getAdvertisementMessageController(req, res) {
     return res.status(200).json(selectResult);
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to retrieve information. Please try again later.',
     });
   }
 }
@@ -1712,8 +1786,7 @@ async function deleteAdvertisementMessageController(req, res) {
     return res.status(200).json();
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to delete the information. Please try again.',
     });
   }
 }
@@ -1727,8 +1800,7 @@ async function getFavoriteAdvertisementsController(req, res) {
     return res.status(200).json(selectResult);
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to retrieve information. Please try again later.',
     });
   }
 }
@@ -1741,8 +1813,7 @@ async function deleteFavoriteAdvertisementController(req, res) {
     return res.status(200).json();
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to delete the information. Please try again.',
     });
   }
 }
@@ -1757,15 +1828,14 @@ async function getAdvertisementMessageThreadsController(req, res) {
       userId,
       req.body.userAdvertisementId,
     ];
-    console.log('info', values);
+
     const selectQuery = `select * from userAdvertisementsMessages where ((userId=? and fromUserId=?) or (userId=? and fromUserId=?)) and advertisementId =? ORDER BY dateCreated asc `;
     const selectResult = await executeQuery(selectQuery, values);
 
     return res.status(200).json(selectResult);
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to retrieve information. Please try again later.',
     });
   }
 }
@@ -1778,13 +1848,11 @@ async function getMessageInfoController(req, res) {
     if (selectResult?.length > 0) return res.status(200).json(selectResult[0]);
     else
       return res.status(500).json({
-        errorMessage:
-          'Error adding favorite ad. This is already your favorite ad',
+        errorMessage: 'Failed to retrieve information. Please try again later.',
       });
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to retrieve information. Please try again later.',
     });
   }
 }
@@ -1797,10 +1865,14 @@ async function updateUserMessageViewController(req, res) {
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json(messageId);
     } else {
-      return res.status(500).json({ errorMessage: 'Error update users.' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error  updating users' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
   }
 }
 async function deleteAllUserMessagesController(req, res) {
@@ -1812,8 +1884,7 @@ async function deleteAllUserMessagesController(req, res) {
     return res.status(200).json();
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to delete the information. Please try again.',
     });
   }
 }
@@ -1835,8 +1906,7 @@ async function getUserNumberOfNewMessagesController(req, res) {
     return res.status(200).json(userMessagesResult);
   } catch (error) {
     return res.status(500).json({
-      errorMessage:
-        'Error adding favorite ad. This is already your favorite ad',
+      errorMessage: 'Failed to retrieve information. Please try again later.',
     });
   } finally {
     await connection.end();

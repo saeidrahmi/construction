@@ -177,7 +177,7 @@ export class EditPlanComponent {
         this.plan.customProfileIncluded = false;
       if (!this.form?.get('viewBidsIncluded')?.value)
         this.plan.viewBidsIncluded = false;
-      console.log(this.plan);
+
       this.apiService
         .updatePlan(this.plan, this.planId)
         .pipe(

@@ -45,6 +45,7 @@ export class ApiService {
   ) {}
 
   login(credential: LoginCredential): Observable<UserApiResponseInterface> {
+    this.spinner.show();
     const encryptedCredentials = this.encryptionService.encryptCredentials(
       credential?.userId,
       credential?.password
@@ -66,7 +67,7 @@ export class ApiService {
         }),
         catchError((error) => {
           this.toastService.error(error.message, 'Login Failed', {
-            timeOut: 3000,
+            timeOut: 8000,
             positionClass: 'toast-top-right',
             closeButton: true,
             progressBar: true,
@@ -694,7 +695,6 @@ export class ApiService {
       );
   }
   saveUserRegularAd(data: FormData): Observable<any> {
-    console.log('here');
     this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/save-user-regular-ad', data)
@@ -726,7 +726,7 @@ export class ApiService {
     userAdvertisementId: any
   ): Observable<any> {
     this.spinner.show();
-    console.log(userId, active, userAdvertisementId);
+
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/updateAd-active-status', {
         userId: userId,

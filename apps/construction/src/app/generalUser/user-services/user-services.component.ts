@@ -93,7 +93,6 @@ export class UserServicesComponent {
       .subscribe(
         (list: string[]) => {
           this.myServices = list;
-          console.log(list, 'list');
         },
         (err) => {
           this.toastService.error(
@@ -119,7 +118,6 @@ export class UserServicesComponent {
             this.myProvinces = info.provinces;
           }
           if (this.locationType === 'city') {
-            console.log(info.cities);
             this.myCites = info.cities;
           }
         },
@@ -679,12 +677,10 @@ export class UserServicesComponent {
       .subscribe();
   }
   submitCities(): void {
-    console.log(this.myCites);
     const outputArray = this.myCites.map((item) => {
       const [city, province] = item.match(/^(.*?)\s+\((.*?)\)$/).slice(1);
       return { city, province };
     });
-    console.log(outputArray);
 
     this.apiService
       .updateUserServiceCities(

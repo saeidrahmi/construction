@@ -224,7 +224,7 @@ async function signupController(req, res) {
       if (result.affectedRows > 0 || result.insertId) {
         try {
           await sendVerificationEmail(userId, token);
-          console.log('succuesfull');
+
           await connection.commit();
           return res.status(200).json({
             message:
@@ -232,7 +232,6 @@ async function signupController(req, res) {
           });
         } catch (error) {
           await connection.rollback();
-          console.log('failed');
 
           return res.status(500).json({
             errorMessage:
@@ -489,7 +488,7 @@ async function registerPaidUserController(req, res) {
             1,
           ];
           const query = `INSERT INTO userPlans ( planId,userId ,purchasedDate,userPlanExpiryDate,userPlanActive) VALUES (?, ?,?,?,?)`;
-          console.log(values, query);
+
           const [result] = await connection.execute(query, values);
           if (result.affectedRows > 0 || result.insertId) {
             const values = [
@@ -716,7 +715,7 @@ async function editUserProfileController(req, res) {
         user.middleName,
         userId,
       ];
-      console.log(query, values);
+
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         const selectQuery = `SELECT * FROM users WHERE userId = ?`;
@@ -1031,7 +1030,7 @@ async function updateUserServiceCitiesController(req, res) {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const type = req.body.type;
     const locations = req.body.locations;
-    console.log(locations);
+
     const updateQuery = `UPDATE  users   SET serviceCoverageType = ?  WHERE  userId = ?`;
 
     const [result] = await connection.execute(updateQuery, [type, userId]);
@@ -1102,18 +1101,13 @@ async function canUserAdvertiseController(req, res) {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const selectQuery1 = `SELECT userPlans.userPlanId,plans.numberOfAdvertisements FROM userPlans JOIN plans ON userPlans.planId  = plans.planId  WHERE  userPlans.userId = ? and userPlans.userPlanActive=1  `;
     const selectResult1 = await executeQuery(selectQuery1, [userId]);
-    console.log(selectQuery1, userId);
+
     if (selectResult1?.length > 0) {
-      console.log(selectResult1[0]?.userPlanId);
       const selectQuery = `select count(*) as count from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId  where userAdvertisements.userPlanId=? `;
       const selectResult = await executeQuery(selectQuery, [
         selectResult1[0]?.userPlanId,
       ]);
-      console.log(
-        selectResult1[0]?.userPlanId,
-        selectResult[0]?.count,
-        selectResult1[0]?.numberOfAdvertisements
-      );
+
       if (selectResult[0]?.count >= selectResult1[0]?.numberOfAdvertisements)
         return res.status(200).json({
           result: false,
@@ -1400,7 +1394,6 @@ async function saveUserRegularAdController(req, res) {
       }
     }
     if (req.files['sliderImages']) {
-      console.log(req.files['sliderImages']?.length, 'length');
       for (const file of req.files['sliderImages']) {
         const { buffer } = file;
         const insertSliderImageResult =
@@ -1512,7 +1505,7 @@ async function insertUserTopAdvertisementPayment(connection, data) {
     data.tax,
     data.totalPayment,
   ];
-  console.log(selectQuery, values);
+
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId
     ? insertResult
@@ -1537,12 +1530,11 @@ WHERE userPlans.userId= ? and   userAdvertisements.deleted = 0 ORDER BY userAdve
 
 async function updateUserAdvertisementActivateStatusController(req, res) {
   try {
-    console.log(req.body);
     let userId = decryptItem(req.body.userId, webSecretKey);
     const userAdvertisementId = req.body.userAdvertisementId;
     const active = req.body.active ? '1' : '0';
     const updateQuery = `UPDATE  userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId  SET userAdvertisements.active = ?  WHERE  userPlans.userId= ? and userAdvertisements.userAdvertisementId = ?`;
-    console.log(updateQuery, userId, userAdvertisementId, active);
+
     const result = await executeQuery(updateQuery, [
       active,
       userId,
@@ -1560,12 +1552,11 @@ async function updateUserAdvertisementActivateStatusController(req, res) {
 }
 async function updateUserAdvertisementDeleteStatusController(req, res) {
   try {
-    console.log(req.body);
     let userId = decryptItem(req.body.userId, webSecretKey);
     const userAdvertisementId = req.body.userAdvertisementId;
     const deleted = req.body.deleted ? '1' : '0';
     const updateQuery = `UPDATE  userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId  SET userAdvertisements.deleted = ?  WHERE  userPlans.userId= ? and userAdvertisements.userAdvertisementId = ?`;
-    console.log(updateQuery, userId, userAdvertisementId, deleted);
+
     const result = await executeQuery(updateQuery, [
       deleted,
       userId,
@@ -1756,7 +1747,7 @@ async function getAdvertisementMessageThreadsController(req, res) {
       userId,
       req.body.userAdvertisementId,
     ];
-    console.log('info', values);
+
     const selectQuery = `select * from userAdvertisementsMessages where ((userId=? and fromUserId=?) or (userId=? and fromUserId=?)) and advertisementId =? ORDER BY dateCreated asc `;
     const selectResult = await executeQuery(selectQuery, values);
 

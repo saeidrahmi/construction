@@ -34,7 +34,7 @@ export const httpInterceptor: HttpInterceptorFn = (
         errorMessage = getErrorMessage(error);
         if (error.status == 401) apiService.logout().subscribe();
       }
-      console.log('interceptor error', errorMessage);
+
       return throwError(() => new Error(errorMessage));
     })
   );
@@ -48,38 +48,35 @@ const getErrorMessage = (error: HttpErrorResponse): string => {
       );
     }
     case 401: {
-      return (
-        'Unauthorized/unauthenticated access to server. ' +
-        error.error.errorMessage
-      );
+      return 'Unauthorized access. ' + error.error.errorMessage;
     }
     case 402: {
       return 'Request Failed: The parameters were valid but the request failed. ';
     }
     case 403: {
-      return 'Forbiden access to resource: the API key does not have permissions to perform the request. ';
+      return 'Forbidden access to resource: the API key does not have permissions to perform the request. ';
     }
     case 404: {
       return 'Resource not found.';
     }
     case 408: {
-      return 'Request timed out ';
+      return 'Request timed out. ';
     }
     case 429: {
-      return 'Too Many Request by user';
+      return 'Too Many Request by user.';
     }
     case 431: {
-      return 'Request Header Fields Too Large ';
+      return 'Request Header Fields Too Large. ';
     }
 
     case 500: {
-      return 'Internal server error/exception ';
+      return 'Internal server error/exception. ';
     }
     case 503: {
-      return 'Service Unavailable ';
+      return 'Service is Unavailable. ';
     }
     default: {
-      return 'Unknown error ';
+      return 'Unknown error. ';
     }
   }
 };

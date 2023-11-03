@@ -18,9 +18,7 @@ export class UserService {
         tokenValid.mutate(
           toSignal(
             this.apiService.checkUserToken(token).pipe(
-              tap((response) => {
-                console.log('res', response);
-              }),
+              tap((response) => {}),
               catchError((err) => {
                 tokenValid.set(false);
                 return of(false);
@@ -265,7 +263,6 @@ export class UserService {
     }
   }
   getDaysRemaining(currentDate: any, expiryDate: any): number {
-    console.log(currentDate, 'exp', expiryDate);
     if (currentDate && expiryDate) {
       const expiryDateTime = new Date(expiryDate)?.getTime();
       const currentTime = new Date(currentDate)?.getTime();

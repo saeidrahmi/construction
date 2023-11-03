@@ -4,38 +4,75 @@ const jwt = require('jsonwebtoken');
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
 const env = new EnvironmentInfo();
 const jwtSecretKey = env.jwtSecretKey();
-function verifyToken(req, res, next) {
-  if (!req.headers.authorization) {
-    return res.status(401).send({ errorMessage: 'Unauthorized request' });
-  }
-  let token = req.headers.authorization.split(' ')[1];
-  if (token === 'null') {
-    return res.status(401).send({ errorMessage: 'Unauthorized request' });
-  }
-  jwt.verify(token, jwtSecretKey, async function (err, decoded) {
-    if (!decoded) {
+function verifyToken(allowedRoles) {
+  return async function (req, res, next) {
+    if (!req.headers.authorization) {
       return res.status(401).send({ errorMessage: 'Unauthorized request' });
     }
-    if (err) {
-      res.status(401).send({
-        errorMessage: 'Unauthorized! Access Token was expired!',
-      });
-    } else {
-      let userId = decoded.subject.userId;
-      const existingUser = await executeQuery(
-        `SELECT * FROM users WHERE userId = ? and jwtToken= ?`,
-        [userId, token]
-      );
 
-      if (existingUser.length > 0) {
-        next();
-      } else
-        return res
-          .status(401)
-          .json({ errorMessage: 'Error resetting password.' });
+    let token = req.headers.authorization.split(' ')[1];
+    if (token === 'null') {
+      return res.status(401).send({ errorMessage: 'Unauthorized request' });
     }
-  });
+
+    jwt.verify(token, jwtSecretKey, async function (err, decoded) {
+      if (!decoded) {
+        return res.status(401).send({ errorMessage: 'Unauthorized request' });
+      }
+
+      if (err) {
+        res
+          .status(401)
+          .send({ errorMessage: 'Unauthorized! Access Token was expired!' });
+      } else {
+        let userId = decoded.subject.userId;
+        let userRole = decoded.subject.role;
+
+        const existingUser = await executeQuery(
+          `SELECT * FROM users WHERE userId = ? and jwtToken= ?`,
+          [userId, token]
+        );
+
+        if (existingUser.length > 0) {
+          if (roleCheck(allowedRoles, userRole)) {
+            next();
+          } else {
+            return res
+              .status(401)
+              .json({ errorMessage: 'Unauthorized. No Access.' });
+          }
+        } else {
+          return res
+            .status(401)
+            .json({ errorMessage: 'Error resetting password.' });
+        }
+      }
+    });
+  };
 }
+
+function roleCheck(allowedRoles, userRole) {
+  const userRoleLower = userRole?.toLocaleLowerCase();
+  const allowedRolesLower = allowedRoles.map((role) =>
+    role?.toLocaleLowerCase()
+  );
+
+  return allowedRolesLower.includes(userRoleLower);
+}
+
+const verifyAllToken = verifyToken([
+  env.getRole().general,
+  env.getRole().admin,
+  env.getRole().sAdmin,
+]);
+const verifyGeneralToken = verifyToken([env.getRole().general]);
+const verifyAdminToken = verifyToken([env.getRole().admin]);
+const verifySAdminToken = verifyToken([env.getRole().sAdmin]);
+const verifyAdminAndSAdminToken = verifyToken([
+  env.getRole().admin,
+  env.getRole().sAdmin,
+]);
+
 function decryptCredentials(encryptedCredentials, secretKey) {
   // Decode the Base64 encoded encrypted credentials
   // const encodedCredentials = Buffer.from(
@@ -80,7 +117,7 @@ const executeQuery = async (query, params = []) => {
   } catch (error) {
     throw error;
   } finally {
-    connection.end();
+    if (connection) connection.end();
   }
 };
 function addDays(date, days) {
@@ -94,4 +131,9 @@ module.exports = {
   decryptCredentials,
   verifyToken,
   addDays,
+  verifySAdminToken,
+  verifyAdminToken,
+  verifyGeneralToken,
+  verifyAdminAndSAdminToken,
+  verifyAllToken,
 };

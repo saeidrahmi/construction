@@ -50,7 +50,6 @@ export class AdvertisementDetailsPreviewComponent {
         takeUntilDestroyed(),
         take(1),
         tap((info: any) => {
-          console.log(info, 'info info');
           this.registeredDate = new Date(info?.registeredDate);
           this.acitveAds = info.acitveAds;
           this.rate = info.userRate;
@@ -70,57 +69,6 @@ export class AdvertisementDetailsPreviewComponent {
         })
       )
       .subscribe();
-
-    // this.apiService
-    //   .getUserServices(this.storageService?.getUserId()())
-    //   .pipe(first())
-    //   .subscribe(
-    //     (list: string[]) => {
-    //       this.myServices = list;
-    //       console.log(list, 'list asdfasd');
-    //     },
-    //     (err) => {
-    //       this.toastService.error(
-    //         'Failed getting user servcies due to server error. ' + err,
-    //         'No update',
-    //         {
-    //           timeOut: 3000,
-    //           positionClass: 'toast-top-right',
-    //           closeButton: true,
-    //           progressBar: true,
-    //         }
-    //       );
-    //       return of(err);
-    //     }
-    //   );
-    // this.apiService
-    //   .getUserServiceLocations(this.storageService?.getUserId()())
-    //   .pipe(first())
-    //   .subscribe(
-    //     (info: any) => {
-    //       this.locationType = info.serviceCoverageType;
-    //       if (this.locationType === 'province') {
-    //         this.myLocations = info.provinces;
-    //       } else if (this.locationType === 'city') {
-    //         this.myLocations = info.cities;
-    //       } else if (this.locationType === 'country') {
-    //         this.myLocations = ['All over Canada'];
-    //       }
-    //     },
-    //     (err) => {
-    //       this.toastService.error(
-    //         'Failed getting user servcies location due to server error. ' + err,
-    //         'No update',
-    //         {
-    //           timeOut: 3000,
-    //           positionClass: 'toast-top-right',
-    //           closeButton: true,
-    //           progressBar: true,
-    //         }
-    //       );
-    //       return of(err);
-    //     }
-    //   );
   }
   goToUrl() {
     // window.open('http://' + this.user().website, '_blank');

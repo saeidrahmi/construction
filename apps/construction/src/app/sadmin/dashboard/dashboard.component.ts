@@ -19,7 +19,6 @@ export class DashboardComponent {
     takeUntilDestroyed(this.destroyRef),
     take(1),
     tap((data: any) => {
-      console.log('data', data);
       this.dashboard = data;
     }),
     catchError((err) => {

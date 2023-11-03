@@ -11,7 +11,7 @@ async function connectToDatabase() {
       password: env.dbPassword(),
       database: env.dbName(),
     });
-    //console.log('Connected to the database');
+
     return connection;
   } catch (error) {
     // console.error('Error connecting to the database:', error);

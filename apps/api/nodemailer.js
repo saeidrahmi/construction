@@ -39,11 +39,9 @@ function sendVerificationEmail(userId, token) {
     transporter
       .sendMail(mailOptions)
       .then((info) => {
-        console.log('sent email');
         resolve();
       })
       .catch((error) => {
-        console.log('failed email');
         reject(error);
       });
   });

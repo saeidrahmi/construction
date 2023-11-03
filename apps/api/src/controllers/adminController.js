@@ -20,7 +20,9 @@ async function listAdminSettingsController(req, res) {
     };
     return res.status(200).json(setting);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function updateAdminSettingsController(req, res) {
@@ -60,9 +62,9 @@ async function updateAdminSettingsController(req, res) {
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(setting);
       } else {
-        return res
-          .status(500)
-          .json({ errorMessage: 'Error updating settings ' });
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again. ',
+        });
       }
     } else {
       // No results
@@ -71,13 +73,16 @@ async function updateAdminSettingsController(req, res) {
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(setting);
       } else {
-        return res
-          .status(500)
-          .json({ errorMessage: 'Error updating settings ' });
+        return res.status(500).json({
+          errorMessage:
+            'Failed to retrieve information. Please try again later. ',
+        });
       }
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error updating settings .' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later. .',
+    });
   }
 }
 async function createNewPlanController(req, res) {
@@ -131,10 +136,14 @@ async function createNewPlanController(req, res) {
       };
       return res.status(200).json(plan);
     } else {
-      return res.status(500).json({ errorMessage: 'Error creating plan ' });
+      return res
+        .status(500)
+        .json({ errorMessage: 'Error creating plan. Please try again.' });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error creating plan.' });
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error creating plan. Please try again.' });
   }
 }
 async function listPlansController(req, res) {
@@ -143,7 +152,11 @@ async function listPlansController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting settings.' });
+    return res
+      .status(500)
+      .json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
   }
 }
 async function updatePlanStatusController(req, res) {
@@ -157,10 +170,14 @@ async function updatePlanStatusController(req, res) {
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json();
     } else {
-      return res.status(500).json({ errorMessage: 'Error updating plan ' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error updating plan .' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again. .',
+    });
   }
 }
 async function deletePlanController(req, res) {
@@ -173,10 +190,16 @@ async function deletePlanController(req, res) {
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json();
     } else {
-      return res.status(500).json({ errorMessage: 'Error deleting plan ' });
+      return res
+        .status(500)
+        .json({
+          errorMessage: 'Failed to delete the information. Please try again',
+        });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error deleting plan .' });
+    return res.status(500).json({
+      errorMessage: 'Failed to delete the information. Please try again.',
+    });
   }
 }
 async function dashboardController(req, res) {
@@ -192,7 +215,9 @@ async function dashboardController(req, res) {
 
     return res.status(200).json(selectResult[0]);
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting dashboard.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function getPlanInfoController(req, res) {
@@ -203,7 +228,9 @@ async function getPlanInfoController(req, res) {
     if (selectResult?.length > 0) return res.status(200).json(selectResult[0]);
     else return res.status(500).json({ errorMessage: 'Plan does not exist.' });
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error getting dashboard.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function updatePlanController(req, res) {
@@ -250,10 +277,14 @@ async function updatePlanController(req, res) {
       };
       return res.status(200).json(plan);
     } else {
-      return res.status(500).json({ errorMessage: 'Error updating plan ' });
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
     }
   } catch (error) {
-    return res.status(500).json({ errorMessage: 'Error updating plan.' });
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again..',
+    });
   }
 }
 

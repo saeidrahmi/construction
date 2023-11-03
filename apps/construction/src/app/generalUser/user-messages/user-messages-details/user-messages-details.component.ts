@@ -52,7 +52,6 @@ export class UserMessagesDetailsComponent {
 
         switchMap((id) => this.apiService.getUserMessageInfo(id)),
         switchMap((info) => {
-          console.log(info, 'message info');
           this.messageInfo = info;
           return this.apiService
             .getAdvertisementMessageThreads(

@@ -2,7 +2,7 @@
   <h2>Login</h2>
   <hr />
   <app-form-errors [formErrors]="formErrors"></app-form-errors>
-  <api-server-error *ngIf="loginError()" [error]="loginError()" />
+  <!-- <api-server-error *ngIf="loginError()" [error]="loginError()" /> -->
   <form [formGroup]="loginForm">
     <label for="userId form-label">User ID</label>
     <div class="input-group flex-nowrap">

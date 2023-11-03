@@ -132,7 +132,7 @@ export class CommonUtilityService {
   decodeStringJWTTokenInfo(token: string, info: string) {
     if (token) {
       let decodedJWT: any = jwt_decode(token);
-      console.log(decodedJWT, decodedJWT.subject[info]);
+
       return decodedJWT.subject[info];
     } else return null;
   }

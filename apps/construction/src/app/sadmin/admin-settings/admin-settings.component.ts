@@ -51,7 +51,6 @@ export class AdminSettingsComponent {
         takeUntilDestroyed(this.destroyRef),
         take(1),
         tap((setting: AdminSettingsInterface) => {
-          console.log(setting, 'seting');
           this.setting = setting;
           this.initialSetting = { ...setting };
         }),

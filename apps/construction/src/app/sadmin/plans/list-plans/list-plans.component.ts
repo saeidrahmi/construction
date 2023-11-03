@@ -49,7 +49,6 @@ export class ListPlansComponent {
   getPlans$ = this.apiService.getAdminPlans().pipe(
     takeUntilDestroyed(),
     tap((plans: any) => {
-      console.log(plans);
       this.dataSource = new MatTableDataSource(plans);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

@@ -145,7 +145,6 @@ export class CreatePlanComponent {
       if (!this.form?.get('viewBidsIncluded')?.value)
         this.plan.viewBidsIncluded = false;
 
-      console.log(this.plan);
       this.apiService
         .createNewPlan(this.plan)
         .pipe(

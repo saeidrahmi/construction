@@ -20,7 +20,6 @@ export class PreviewAdvertisementComponent {
         const isEmpty = Object.keys(message).length === 0;
         if (isEmpty) this.router.navigate(['/general/new-advertisement']);
         else this.advertisement = message;
-        console.log(this.advertisement, 'advert');
       });
   }
 

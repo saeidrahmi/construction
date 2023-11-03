@@ -30,7 +30,6 @@ export class UserAccountComponent {
           this.currentPlan = plans.filter(
             (plan) => plan.userPlanActive === 1
           )[0];
-          console.log(plans);
         }),
         catchError((err) => {
           this.toastService.error('Plan list failed. ' + err, 'Plan failure', {
