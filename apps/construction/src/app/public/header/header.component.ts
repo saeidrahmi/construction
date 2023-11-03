@@ -40,7 +40,7 @@ export class HeaderComponent {
 
   storageService = inject(StorageService);
   isLoggedIn = this.storageService.isUserLoggedIn();
-  userName = this.storageService.getUserName();
+  userName = this.storageService.getUserfirstName();
   user = this.storageService.getUser();
   theme = this.storageService.getTheme();
   apiService = inject(ApiService);

@@ -59,7 +59,12 @@ export class UserMessagesComponent {
           progressBar: true,
         });
         return of(err);
-      })
+      }),
+      switchMap(() =>
+        this.apiService.getUserNumberOfNewMessages(
+          this.encryptionService.encryptItem(this.userId())
+        )
+      )
     );
   constructor() {
     this.getAdvertisementMessges$.subscribe();

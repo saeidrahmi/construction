@@ -167,6 +167,7 @@ async function loginController(req, res) {
     await connection.end();
   }
 }
+
 async function signupController(req, res) {
   const connection = await connectToDatabase();
   try {

@@ -46,6 +46,9 @@ export class StorageService {
       () => this.store()?.user?.firstName + ' ' + this.store()?.user?.lastName
     );
   }
+  getUserfirstName(): Signal<string | undefined> {
+    return computed(() => this.store()?.user?.firstName);
+  }
   loginError(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.error);
   }
