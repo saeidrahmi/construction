@@ -29,6 +29,9 @@ export class StorageService {
     //   return null;
     // }
   }
+  getUserNewMessagesNbr(): Signal<number | undefined> {
+    return computed(() => this.store()?.general?.newMessagesNbr);
+  }
   isUserLoggedIn(): Signal<boolean | undefined> {
     return computed(() => this.store()?.user?.loggedIn);
   }
@@ -58,6 +61,11 @@ export class StorageService {
   }
   saveStore() {
     sessionStorage.setItem(this.stateSessionItem, JSON.stringify(this.store()));
+  }
+  updateUserNewMessagesNbr(nbr: number) {
+    this.store.update((state) => {
+      return { ...state, general: { ...state.general, newMessagesNbr: nbr } };
+    });
   }
   updateIsLoading(flag: boolean) {
     this.store.update((state) => {
@@ -95,7 +103,11 @@ export class StorageService {
       lastLoginDate: null,
     };
     this.store.update((state) => {
-      return { ...state, user: user };
+      return {
+        ...state,
+        user: user,
+        general: { ...state.general, newMessagesNbr: null },
+      };
     });
   }
   updateStateLoginSuccessful(response: UserApiResponseInterface) {
@@ -124,8 +136,14 @@ export class StorageService {
       registered: response?.user?.registered,
       lastLoginDate: response?.user?.lastLoginDate,
     };
+
     this.store.update((state) => {
-      return { ...state, user: user, plan: response?.plan };
+      return {
+        ...state,
+        user: user,
+        plan: response?.plan,
+        general: { ...state.general, newMessagesNbr: response?.newMessagesNbr },
+      };
     });
   }
   updateStateProfileSuccessful(response: UserApiResponseInterface) {
@@ -179,7 +197,11 @@ export class StorageService {
       lastLoginDate: null,
     };
     this.store.update((state) => {
-      return { ...state, user: user };
+      return {
+        ...state,
+        user: user,
+        general: { ...state.general, newMessagesNbr: null },
+      };
     });
   }
   initializeStore(): StoreInterface {

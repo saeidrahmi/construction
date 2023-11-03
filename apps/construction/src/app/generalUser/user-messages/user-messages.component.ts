@@ -111,6 +111,26 @@ export class UserMessagesComponent {
   viewMessage(messageId: any) {
     this.router.navigate(['/general/message-details', messageId]);
   }
+  deleteAllMessages() {
+    this.apiService
+      .deleteUserAllMessages(this.encryptionService.encryptItem(this.userId()))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        take(1),
+
+        catchError((err) => {
+          this.toastService.error('Adding failed', 'Failed', {
+            timeOut: 3000,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(err);
+        }),
+        switchMap(() => this.getAdvertisementMessges$)
+      )
+      .subscribe();
+  }
 
   // changeAccountStatus(userId: string, activate: boolean) {
   //   this.storageService.updateIsLoading(true);

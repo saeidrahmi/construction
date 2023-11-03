@@ -25,4 +25,5 @@ export interface UserApiResponseInterface {
     lastLoginDate?: Date | null | undefined;
   };
   plan?: any;
+  newMessagesNbr?: number;
 }

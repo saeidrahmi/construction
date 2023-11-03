@@ -26,7 +26,11 @@
               <div class="col" *ngFor="let plan of listPlans">
                 <app-plan [plan]="plan"></app-plan>
                 <div>
-                  <button (click)="goForward(stepper, this.plan)">
+                  <button
+                    (click)="goForward(stepper, this.plan)"
+                    class="submit-button my-2 mx-5"
+                    (click)="deleteAllMessages()"
+                  >
                     Select Plan
                   </button>
                 </div>

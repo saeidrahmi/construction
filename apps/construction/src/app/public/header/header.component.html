@@ -87,7 +87,16 @@
         <ng-template #noSection> <mat-icon>person</mat-icon></ng-template>
       </ng-container>
 
-      <span class="mx-2">{{ userName() | titlecase }}</span>
+      <span class="mx-2">
+        <a
+          class="nav-link"
+          aria-current="page"
+          (click)="navigateHomePage()"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >{{ userName() | titlecase }}</a
+        >
+      </span>
       <button class="btn btn-outline-primary" (click)="changeThemeMode()">
         <i
           [ngClass]="

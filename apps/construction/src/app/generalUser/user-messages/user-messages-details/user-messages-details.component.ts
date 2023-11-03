@@ -47,7 +47,9 @@ export class UserMessagesDetailsComponent {
     this.route.params
       .pipe(
         map((param) => param['id']),
+        switchMap((id) => this.apiService.updateUserMessageView(id)),
         tap((id) => (this.messageId = id)),
+
         switchMap((id) => this.apiService.getUserMessageInfo(id)),
         switchMap((info) => {
           console.log(info, 'message info');
@@ -74,7 +76,12 @@ export class UserMessagesDetailsComponent {
                 return of(err);
               })
             );
-        })
+        }),
+        switchMap(() =>
+          this.apiService.getUserNumberOfNewMessages(
+            this.encryptionService.encryptItem(this.userId())
+          )
+        )
       )
       .subscribe();
   }

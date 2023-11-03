@@ -53,35 +53,44 @@ async function logoutController(req, res) {
   }
 }
 async function loginController(req, res) {
+  const connection = await connectToDatabase();
   try {
+    await connection.beginTransaction();
     const { credentials } = req.body;
     // Decrypt credentials
     const { userId, password } = decryptCredentials(credentials, webSecretKey);
     // Execute the select query
-    const rows = await executeQuery('SELECT * FROM users WHERE userId = ? ', [
-      userId,
-    ]);
+    const [rows] = await connection.execute(
+      'SELECT * FROM users WHERE userId = ? ',
+      [userId]
+    );
 
     if (rows.length === 0) {
+      await connection.rollback();
       // User not found or incorrect credentials
       return res
         .status(401)
         .json({ errorMessage: 'Invalid userId or password' });
     } else if (password != decryptItem(rows[0].password, dbSecretKey)) {
+      await connection.rollback();
       return res
         .status(401)
         .json({ errorMessage: 'Invalid userId or password.' });
     } else if (env.multiLoginAllowed() == false && rows[0].loggedIn) {
+      await connection.rollback();
       return res
         .status(401)
         .json({ errorMessage: 'User is already logged-in.' });
     } else if (!rows[0].registered) {
+      await connection.rollback();
       return res.status(401).json({ errorMessage: 'User is not registered.' });
     } else if (!rows[0].active) {
+      await connection.rollback();
       return res.status(401).json({
         errorMessage: 'User is not active. Please call to activate your user.',
       });
     } else if (rows[0].deleted) {
+      await connection.rollback();
       return res.status(401).json({
         errorMessage: 'Account closed. Please call to activate your user.',
       });
@@ -111,6 +120,7 @@ async function loginController(req, res) {
       };
       const jwtUser = {
         userId: rows[0].userId,
+        role: rows[0].role,
       };
       const payload = { subject: jwtUser };
       const token = jwt.sign(payload, jwtSecretKey, {
@@ -119,28 +129,42 @@ async function loginController(req, res) {
       Object.assign(user, { jwtToken: token });
 
       // Update user login info
-      const updateResult = await executeQuery(
+      const [updateResult] = await connection.execute(
         'UPDATE users SET loginCount = loginCount + 1, jwtToken = ?, loggedIn = ?, lastLoginDate = ? WHERE userId = ?',
         [token, 1, new Date(), userId]
       );
       if (updateResult.affectedRows === 0) {
+        await connection.rollback();
         // User not found or update operation failed
         return res
           .status(401)
           .json({ errorMessage: 'Login Update operation failed.' });
       } else {
         const selectPlansQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userPlans.userId=? AND  userPlans.userPlanActive=1 `;
-        const updateResult = await executeQuery(selectPlansQuery, [userId]);
+        const [updateResult] = await connection.execute(selectPlansQuery, [
+          userId,
+        ]);
+        const userMessagesResult = await getUserNumberOfNewMessages(
+          connection,
+          {
+            userId: userId,
+          }
+        );
 
         const response = {
+          newMessagesNbr: userMessagesResult,
           user: user,
           plan: updateResult[0],
         };
+        await connection.commit();
         return res.status(200).json(response);
       }
     }
   } catch (error) {
+    await connection.rollback();
     res.status(500).json({ errorMessage: 'Internal Server Error' });
+  } finally {
+    await connection.end();
   }
 }
 async function signupController(req, res) {
@@ -1732,7 +1756,7 @@ async function getAdvertisementMessageThreadsController(req, res) {
       userId,
       req.body.userAdvertisementId,
     ];
-    console.log('info', values)
+    console.log('info', values);
     const selectQuery = `select * from userAdvertisementsMessages where ((userId=? and fromUserId=?) or (userId=? and fromUserId=?)) and advertisementId =? ORDER BY dateCreated asc `;
     const selectResult = await executeQuery(selectQuery, values);
 
@@ -1763,7 +1787,65 @@ async function getMessageInfoController(req, res) {
     });
   }
 }
+async function updateUserMessageViewController(req, res) {
+  try {
+    const messageId = req.body.messageId;
+    const updateQuery = `UPDATE  userAdvertisementsMessages set viewed=1 WHERE messageId = ?`;
+    const result = await executeQuery(updateQuery, [messageId]);
+
+    if (result.affectedRows > 0 || result.insertId) {
+      return res.status(200).json(messageId);
+    } else {
+      return res.status(500).json({ errorMessage: 'Error update users.' });
+    }
+  } catch (error) {
+    return res.status(500).json({ errorMessage: 'Error  updating users' });
+  }
+}
+async function deleteAllUserMessagesController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId];
+    const selectQuery = `delete from userAdvertisementsMessages where userId=?`;
+    const selectResult = await executeQuery(selectQuery, values);
+    return res.status(200).json();
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  }
+}
+
+async function getUserNumberOfNewMessages(connection, data) {
+  const selectQuery = `select count(*) as nbr_messages  from userAdvertisementsMessages where userId=? and viewed=0`;
+  const values = [data.userId];
+  const [result] = await connection.execute(selectQuery, values);
+  return result?.length > 0 ? result[0].nbr_messages : 0;
+}
+async function getUserNumberOfNewMessagesController(req, res) {
+  const connection = await connectToDatabase();
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+
+    const userMessagesResult = await getUserNumberOfNewMessages(connection, {
+      userId: userId,
+    });
+    return res.status(200).json(userMessagesResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
+    });
+  } finally {
+    await connection.end();
+  }
+}
+
 module.exports = {
+  getUserNumberOfNewMessagesController,
+  deleteAllUserMessagesController,
+  updateUserMessageViewController,
   getMessageInfoController,
   getAdvertisementMessageThreadsController,
   getFavoriteAdvertisementsController,

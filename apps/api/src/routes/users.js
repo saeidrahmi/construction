@@ -4,6 +4,9 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
 const {
+  updateUserMessageViewController,
+  getUserNumberOfNewMessagesController,
+  deleteAllUserMessagesController,
   logoutController,
   loginController,
   signupController,
@@ -183,5 +186,21 @@ router.post(
   getAdvertisementMessageThreadsController
 );
 router.post('/get-user-message-info', verifyToken, getMessageInfoController);
+router.post(
+  '/delete-user-messages',
+  verifyToken,
+  deleteAllUserMessagesController
+);
+router.post(
+  '/update-user-message-view',
+  verifyToken,
+  updateUserMessageViewController
+);
+
+router.post(
+  '/get-user-new-message-nbr',
+  verifyToken,
+  getUserNumberOfNewMessagesController
+);
 
 module.exports = router;
