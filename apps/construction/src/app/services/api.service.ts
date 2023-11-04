@@ -36,6 +36,7 @@ export class ApiService {
   toastService = inject(ToastrService);
   encryptionService = inject(EncryptionService);
   user = this.storageService.getUser();
+  jwtRefreshToken = this.storageService.getRefreshToken();
   router = inject(Router);
   userRouting = inject(UserRoutingService);
   backendApiUrl: string = `${this.env.apiUrl()}:${this.env.apiPort()}`;
@@ -43,6 +44,22 @@ export class ApiService {
     private httpClient: HttpClient,
     private spinner: NgxSpinnerService
   ) {}
+  // Function to refresh the access token using the refresh token
+  refreshToken() {
+    return this.httpClient.post(this.backendApiUrl + '/users/token', {
+      refreshToken: this.jwtRefreshToken(),
+    });
+    // .subscribe(
+    //   (response: any) => {
+    //     this.storageService.updateJwtToken(response.accessToken);
+    //   },
+    //   (error) => {
+    //     // Handle error, e.g., logout user
+    //     console.error('Token refresh failed:', error);
+    //     this.logout();
+    //   }
+    // );
+  }
 
   login(credential: LoginCredential): Observable<UserApiResponseInterface> {
     this.spinner.show();

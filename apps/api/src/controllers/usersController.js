@@ -9,14 +9,15 @@ const {
 import { throwError } from 'rxjs';
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
 const connectToDatabase = require('../db');
-const randToken = require('rand-token');
 const passport = require('passport');
+const jwtPromisify = require('jsonwebtoken-promisified');
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const env = new EnvironmentInfo();
 const webSecretKey = env.webSecretKey();
 const dbSecretKey = env.dbSecretKey();
+const refreshSecretKey = env.refreshSecretKey();
 const jwtSecretKey = env.jwtSecretKey();
 const {
   sendVerificationEmail,
@@ -35,6 +36,24 @@ passport.use(
     done(null, jwtPayload);
   })
 );
+
+// Generate Access and Refresh Tokens
+
+const generateAccessToken = (userId, role) => {
+  return jwt.sign({ subject: { userId: userId, role: role } }, jwtSecretKey, {
+    expiresIn: env.userSessionTokenExpiry(),
+  });
+};
+
+const generateRefreshToken = (userId, role) => {
+  return jwt.sign(
+    { subject: { userId: userId, role: role } },
+    refreshSecretKey,
+    {
+      expiresIn: env.userSessionRefreshTokenExpiry(),
+    }
+  );
+};
 
 // Logout controller function
 async function logoutController(req, res) {
@@ -135,14 +154,17 @@ async function loginController(req, res) {
         userId: rows[0].userId,
         role: rows[0].role,
       };
-      const payload = { subject: jwtUser };
-      const token = jwt.sign(payload, jwtSecretKey, {
-        expiresIn: env.userSessionTokenExpiry(),
-      });
+      // const payload = { subject: jwtUser };
+      const token = generateAccessToken(jwtUser.userId, jwtUser.role);
+      const refreshToken = generateRefreshToken(jwtUser.userId, jwtUser.role);
 
-      Object.assign(user, { jwtToken: token });
-      const refreshToken = randToken.uid(256);
-      Object.assign(user, { refreshToken: refreshToken });
+      // const token = jwt.sign(payload, jwtSecretKey, {
+      //   expiresIn: env.userSessionTokenExpiry(),
+      // });
+
+      Object.assign(user, { jwtToken: token, refreshToken: refreshToken });
+
+      //Object.assign(user, { refreshToken: refreshToken });
 
       // Update user login info
       const [updateResult] = await connection.execute(
@@ -351,10 +373,12 @@ async function registerFreeUserController(req, res) {
           registered: 1,
           lastLoginDate: new Date(),
         };
-        const payload = { subject: userObj };
-        const token = jwt.sign(payload, jwtSecretKey, {
-          expiresIn: env.userRegistrationTokenExpiry(),
-        });
+        // const payload = { subject: userObj };
+        // const token = jwt.sign(payload, jwtSecretKey, {
+        //   expiresIn: env.userRegistrationTokenExpiry(),
+        // });
+        const token = generateAccessToken(userObj.userId, userObj.role);
+        const refreshToken = generateRefreshToken(userObj.userId, userObj.role);
 
         const query =
           'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
@@ -389,7 +413,6 @@ async function registerFreeUserController(req, res) {
           const [result] = await connection.execute(query, values);
           if (result.affectedRows > 0 || result.insertId) {
             await connection.commit();
-            const refreshToken = randToken.uid(256);
 
             const response = {
               user: {
@@ -443,6 +466,65 @@ async function registerFreeUserController(req, res) {
     });
   }
 }
+// Route to refresh the access token using the refresh token
+// async function refreshTokenController(req, res) {
+//   const refreshToken = req.body.refreshToken;
+
+//   if (refreshToken == null) {
+//     return res.status(401);
+//   }
+
+//   try {
+//     const user = await verify(refreshToken, refreshSecretKey);
+
+//     const accessToken = generateAccessToken(
+//       user.subject.userId,
+//       user.subject.role
+//     );
+
+//     const updateResult = await executeQuery(
+//       'UPDATE users SET jwtToken = ? where userId = ?',
+//       [accessToken, user.subject.userId]
+//     );
+
+//     if (updateResult.affectedRows > 0 || updateResult.insertId) {
+//       return res.status(200).json(accessToken);
+//     } else {
+//       return res.status(403);
+//     }
+//   } catch (error) {
+//     return res.status(403);
+//   }
+// }
+async function refreshTokenController(req, res) {
+  const refreshToken = req.body.refreshToken;
+
+  if (refreshToken == null) {
+    return res.status(401).send('Refresh token not provided');
+  }
+
+  try {
+    const user = await jwtPromisify.verify(refreshToken, refreshSecretKey);
+
+    const accessToken = generateAccessToken(
+      user.subject.userId,
+      user.subject.role
+    );
+
+    const updateResult = await executeQuery(
+      'UPDATE users SET jwtToken = ? where userId = ?',
+      [accessToken, user.subject.userId]
+    );
+
+    if (updateResult.affectedRows > 0 || updateResult.insertId) {
+      return res.status(200).json(accessToken);
+    } else {
+      return res.status(403).send('Failed to update token');
+    }
+  } catch (error) {
+    return res.status(403).send('Invalid or expired refresh token');
+  }
+}
 async function registerPaidUserController(req, res) {
   try {
     const user = req.body.user;
@@ -481,10 +563,12 @@ async function registerPaidUserController(req, res) {
           registered: 1,
           lastLoginDate: new Date(),
         };
-        const payload = { subject: userObj };
-        const token = jwt.sign(payload, jwtSecretKey, {
-          expiresIn: env.userRegistrationTokenExpiry(),
-        });
+        // const payload = { subject: userObj };
+        // const token = jwt.sign(payload, jwtSecretKey, {
+        //   expiresIn: env.userRegistrationTokenExpiry(),
+        // });
+        const token = generateAccessToken(userObj.userId, userObj.role);
+        const refreshToken = generateRefreshToken(userObj.userId, userObj.role);
 
         const query =
           'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
@@ -530,7 +614,6 @@ async function registerPaidUserController(req, res) {
             const [resultPayment] = await connection.execute(query, values);
             if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
               await connection.commit();
-              const refreshToken = randToken.uid(256);
 
               const response = {
                 user: {
@@ -1966,4 +2049,5 @@ module.exports = {
   updateUserAdvertisementActivateStatusController,
   getAdvertisementDetailsController,
   addUserRatingController,
+  refreshTokenController,
 };

@@ -83,6 +83,11 @@ export class StorageService {
       return { ...state, user: { ...state.user, error: '' } };
     });
   }
+  updateJwtToken(token: string) {
+    this.store.update((state) => {
+      return { ...state, user: { ...state.user, jwtToken: token } };
+    });
+  }
   updateTheme(theme: string) {
     this.store.update((state) => {
       return { ...state, general: { ...state.general, theme: theme } };

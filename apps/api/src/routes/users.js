@@ -4,6 +4,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
 const {
+  refreshTokenController,
   updateUserMessageViewController,
   getUserNumberOfNewMessagesController,
   deleteAllUserMessagesController,
@@ -79,6 +80,7 @@ router.post(
   verifyAllToken,
   completeResetPasswordController
 );
+router.post('/token', refreshTokenController);
 router.post('/change-password', verifyAllToken, changePasswordController);
 router.post(
   '/list-user-services',
