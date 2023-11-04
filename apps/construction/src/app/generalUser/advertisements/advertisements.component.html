@@ -72,7 +72,7 @@
                       {{ advertisement?.active === 1 ? 'Active' : 'Paused' }}
                     </h6>
                   </div>
-                  <div class="col-2 border border-1 pt-3">
+                  <div class="col-1 border border-1 pt-3">
                     <h6 class="text-primary">
                       {{
                         advertisement?.approvedByAdmin === 1
@@ -81,11 +81,11 @@
                       }}
                     </h6>
                   </div>
-                  <div class="col-5 border border-1 p-2">
+                  <div class="col-6 border border-1 p-2">
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-2"
+                      class="mx-1"
                       (click)="
                         activateAd(true, advertisement?.userAdvertisementId)
                       "
@@ -101,7 +101,7 @@
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-2"
+                      class="mx-1"
                       (click)="
                         activateAd(false, advertisement?.userAdvertisementId)
                       "
@@ -117,7 +117,7 @@
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-2"
+                      class="mx-1"
                       (click)="deleteAd(advertisement?.userAdvertisementId)"
                     >
                       Delete
@@ -125,7 +125,7 @@
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-2"
+                      class="mx-1"
                       click=""
                       *ngIf="
                         userService.getDaysRemaining(
@@ -139,14 +139,30 @@
                     <button
                       mat-stroked-button
                       color="primary"
-                      class="mx-2"
+                      class="mx-1"
                       click=""
                       *ngIf="
                         advertisement?.active === 1 &&
                         advertisement?.approvedByAdmin === 1
                       "
                     >
-                      Renew
+                      Re-post
+                    </button>
+                    <button
+                      mat-stroked-button
+                      color="primary"
+                      class="mx-1"
+                      click=""
+                      *ngIf="
+                        userService.getDaysRemaining(
+                          currentDate,
+                          advertisement?.expiryDate
+                        ) >= 1 &&
+                        advertisement?.active === 1 &&
+                        advertisement?.topAdvertisement === 0
+                      "
+                    >
+                      Promote Ad (TOP)
                     </button>
                   </div>
                 </div>

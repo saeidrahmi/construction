@@ -9,6 +9,7 @@ const {
 import { throwError } from 'rxjs';
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
 const connectToDatabase = require('../db');
+const randToken = require('rand-token');
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const JwtStrategy = require('passport-jwt').Strategy;
@@ -138,7 +139,10 @@ async function loginController(req, res) {
       const token = jwt.sign(payload, jwtSecretKey, {
         expiresIn: env.userSessionTokenExpiry(),
       });
+
       Object.assign(user, { jwtToken: token });
+      const refreshToken = randToken.uid(256);
+      Object.assign(user, { refreshToken: refreshToken });
 
       // Update user login info
       const [updateResult] = await connection.execute(
@@ -385,11 +389,13 @@ async function registerFreeUserController(req, res) {
           const [result] = await connection.execute(query, values);
           if (result.affectedRows > 0 || result.insertId) {
             await connection.commit();
+            const refreshToken = randToken.uid(256);
 
             const response = {
               user: {
                 userId: userId,
                 jwtToken: token,
+                refreshToken: refreshToken,
                 role: user.role,
                 firstName: user.firstName,
                 middleName: user.middleName,
@@ -524,11 +530,13 @@ async function registerPaidUserController(req, res) {
             const [resultPayment] = await connection.execute(query, values);
             if (resultPayment.affectedRows > 0 || resultPayment.insertId) {
               await connection.commit();
+              const refreshToken = randToken.uid(256);
 
               const response = {
                 user: {
                   userId: userId,
                   jwtToken: token,
+                  refreshToken: refreshToken,
                   role: user.role,
                   firstName: user.firstName,
                   middleName: user.middleName,

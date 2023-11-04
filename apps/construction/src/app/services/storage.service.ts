@@ -41,6 +41,9 @@ export class StorageService {
   getJwtToken(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.jwtToken);
   }
+  getRefreshToken(): Signal<string | undefined> {
+    return computed(() => this.store()?.user?.refreshToken);
+  }
   getUserName(): Signal<string | undefined> {
     return computed(
       () => this.store()?.user?.firstName + ' ' + this.store()?.user?.lastName
@@ -90,6 +93,7 @@ export class StorageService {
       loggedIn: false,
       userId: '',
       jwtToken: '',
+      refreshToken: '',
       role: '',
       error: '',
       firstName: '',
@@ -120,6 +124,8 @@ export class StorageService {
       profileImage: response?.user?.profileImage,
       logoImage: response?.user?.logoImage,
       jwtToken: response?.user?.jwtToken,
+      refreshToken: response?.user?.refreshToken,
+
       role: response?.user?.role,
       phone: response?.user?.phone,
       fax: response?.user?.fax,
@@ -186,6 +192,7 @@ export class StorageService {
       loggedIn: false,
       userId: '',
       jwtToken: '',
+      refreshToken: '',
       role: '',
       error: error,
       firstName: '',
@@ -215,6 +222,7 @@ export class StorageService {
         loggedIn: false,
         userId: '',
         jwtToken: '',
+        refreshToken: '',
         role: '',
         error: '',
         firstName: '',

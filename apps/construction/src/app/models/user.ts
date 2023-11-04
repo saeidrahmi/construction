@@ -8,6 +8,7 @@ export interface UserInterface {
   password?: string;
   purpose?: string;
   jwtToken?: string;
+  refreshToken?: string;
   role?: string;
   error?: string;
   firstName?: string;

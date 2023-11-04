@@ -4,6 +4,7 @@ export interface UserApiResponseInterface {
     profileImage?: { type: string; data: number[] };
     logoImage?: { type: string; data: number[] };
     jwtToken?: string;
+    refreshToken?: string;
     role?: string;
     address?: string;
     city?: string;
