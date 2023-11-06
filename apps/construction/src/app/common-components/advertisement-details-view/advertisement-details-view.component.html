@@ -60,7 +60,6 @@
       </div>
       <div
         class="col-2 align-middle background-container rounded-1 border border-1"
-        [style.backgroundImage]="imageService.bufferToSafeUrl(headerImage)"
       ></div>
       <div class="col-10">
         <div class="continer-fluid">
@@ -70,7 +69,7 @@
                 class="img-thumbnail rounded"
                 width="200"
                 height="200"
-                [src]="imageService.bufferToSafeUrl(userInfo?.profileImage)"
+                [src]="imageService.bufferToSafeUrl(headerImage)"
               />
             </div>
             <div class="col-8">
@@ -197,13 +196,14 @@
                   <div class="col">
                     <div
                       *ngIf="
-                        advertisement?.showPicture;
+                        advertisement?.showPicture && userInfo?.profileImage;
                         then showPic;
                         else noShow
                       "
                     ></div>
                     <ng-template #showPic>
                       <img
+                        *ngIf="expression"
                         class="img-thumbnail rounded"
                         width="100"
                         height="100"

@@ -1,3 +1,4 @@
+import { AdvertisementStateInterface } from './advertisement-state';
 import { GeneralInfoInterface } from './general';
 import { UserInterface } from './user';
 
@@ -6,4 +7,5 @@ export interface StoreInterface {
   user: UserInterface;
   plan: any;
   isLoading?: boolean;
+  advertisement?: AdvertisementStateInterface;
 }

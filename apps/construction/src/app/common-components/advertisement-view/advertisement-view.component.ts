@@ -1,4 +1,4 @@
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, Input, inject } from '@angular/core';
 import { AdvertisementInterface } from '../../models/advertisement';
@@ -19,8 +19,17 @@ export class AdvertisementViewComponent {
 
   storageService = inject(StorageService);
   userService = inject(UserService);
+  router = inject(Router);
   user = this.storageService.getUser();
   isUserLoggedIn = this.storageService.isUserLoggedIn();
 
   constructor() {}
+  navigateDetails(advertisement, userAdvertisementId) {
+    this.storageService.updateAdvertisementState(
+      advertisement,
+      userAdvertisementId,
+      'view'
+    );
+    this.router.navigate(['/view-advertisement-details']);
+  }
 }

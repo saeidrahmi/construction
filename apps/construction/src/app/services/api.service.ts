@@ -523,6 +523,24 @@ export class ApiService {
         })
       );
   }
+  getAdvertisementEditInfo(
+    advertisementId: any,
+    userId: string
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/users/advertisement-general-edit-info',
+        { advertisementId: advertisementId, userId: userId }
+      )
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   getTax(): Observable<any> {
     this.spinner.show();
     return this.httpClient
@@ -711,10 +729,40 @@ export class ApiService {
         })
       );
   }
+  canUserEditAdvertisement(
+    advertisementId: string,
+    userId: string
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/can-user-edit-advertisement', {
+        userId: userId,
+        advertisementId: advertisementId,
+      })
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   saveUserRegularAd(data: FormData): Observable<any> {
     this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/save-user-regular-ad', data)
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  editAdvertisement(data: FormData): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/edit-advertisement', data)
       .pipe(
         take(1),
 
@@ -793,6 +841,25 @@ export class ApiService {
         })
       );
   }
+  getUserAdvertisementDetails(
+    userAdvertisementId: any,
+    userId: any
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-user-advertisement-details', {
+        userAdvertisementId: userAdvertisementId,
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+
   getAllAdvertisements(): Observable<any> {
     this.spinner.show();
     return this.httpClient

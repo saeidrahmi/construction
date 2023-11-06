@@ -59,7 +59,7 @@ export const appRoutes: Route[] = [
       ).then((com) => com.AdvertisementsListComponent),
   },
   {
-    path: 'view-advertisement-details/:id',
+    path: 'view-advertisement-details',
     loadComponent: () =>
       import(
         './common-components/advertisement-details-view/advertisement-details-view.component'

@@ -14,11 +14,10 @@ import { FormsModule } from '@angular/forms';
   imports: [CommonModule, RatingModule, FormsModule],
 })
 export class AdvertisementPreviewComponent {
-  @Input('advertisement') advertisement: AdvertisementInterface = {};
-
   storageService = inject(StorageService);
   userService = inject(UserService);
   user = this.storageService.getUser();
+  advertisement = this.storageService?.getSelectedAdvertisement();
   max = 10;
   rate = 7;
   isReadonly = true;

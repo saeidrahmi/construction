@@ -135,7 +135,7 @@ export class AppHttpInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     let token = this.storageService.getJwtToken();
-    console.log('token', token());
+
     if (token) {
       req = req.clone({
         setHeaders: {
@@ -162,7 +162,6 @@ export class AppHttpInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<any>> {
     return this.apiService.refreshToken().pipe(
       switchMap((response: any) => {
-        console.log('response', response);
         const newAccessToken = response;
         this.storageService.updateJwtToken(newAccessToken); // Set the new access token
 

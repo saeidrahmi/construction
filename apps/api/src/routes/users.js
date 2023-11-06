@@ -4,6 +4,8 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
 const {
+  getUserAdvertisementDetailsController,
+  getAdvertisementEditInfoController,
   refreshTokenController,
   updateUserMessageViewController,
   getUserNumberOfNewMessagesController,
@@ -49,6 +51,8 @@ const {
   getFavoriteAdvertisementsController,
   deleteFavoriteAdvertisementController,
   getMessageInfoController,
+  canUserEditAdvertisementController,
+  editAdvertisementController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -172,6 +176,11 @@ router.post(
   getAdvertisementDetailsController
 );
 router.post(
+  '/get-user-advertisement-details',
+  verifyGeneralToken,
+  getUserAdvertisementDetailsController
+);
+router.post(
   '/add-favorite-advertisement',
   verifyGeneralToken,
   addFavoriteAdvertisementsController
@@ -237,6 +246,21 @@ router.post(
   '/get-user-new-message-nbr',
   verifyGeneralToken,
   getUserNumberOfNewMessagesController
+);
+router.post(
+  '/can-user-edit-advertisement',
+  verifyGeneralToken,
+  canUserEditAdvertisementController
+);
+router.post(
+  '/edit-advertisement',
+  verifyGeneralToken,
+  editAdvertisementController
+);
+router.post(
+  '/advertisement-general-edit-info',
+  verifyGeneralToken,
+  getAdvertisementEditInfoController
 );
 
 module.exports = router;

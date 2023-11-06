@@ -50,11 +50,12 @@
               <a
                 type="button"
                 class="btn btn-outline-secondary"
-                [routerLink]="[
-                  '/view-advertisement-details',
-                  advertisement.userAdvertisementId
-                ]"
-                routerLinkActive="router-link-active"
+                (click)="
+                  navigateDetails(
+                    advertisement,
+                    advertisement.userAdvertisementId
+                  )
+                "
               >
                 View more info
               </a>

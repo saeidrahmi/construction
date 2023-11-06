@@ -19,6 +19,7 @@ import { PreviewAdvertisementComponent } from './advertisements/preview-advertis
 import { UserMessagesComponent } from './user-messages/user-messages.component';
 import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-favorite-ads.component';
 import { UserMessagesDetailsComponent } from './user-messages/user-messages-details/user-messages-details.component';
+import { UserAdvertisementDetailsViewComponent } from './advertisements/advertisement-details-view/advertisement-details-view.component';
 const routes: Routes = [
   {
     path: '',
@@ -61,7 +62,7 @@ const routes: Routes = [
         component: NewAdvertisementComponent,
       },
       {
-        path: 'edit-advertisement/:id',
+        path: 'edit-advertisement',
         component: EditAdvertisementComponent,
       },
       {
@@ -95,6 +96,10 @@ const routes: Routes = [
       {
         path: 'message-details/:id',
         component: UserMessagesDetailsComponent,
+      },
+      {
+        path: 'advertisement-details',
+        component: UserAdvertisementDetailsViewComponent,
       },
 
       {

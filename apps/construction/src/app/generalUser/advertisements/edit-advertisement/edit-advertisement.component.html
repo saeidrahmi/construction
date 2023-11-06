@@ -6,6 +6,356 @@
           <h2 class="card-title">
             <span class="col-12">Edit Advertisement</span>
           </h2>
+
+          <div class="container-fluid my-3 border border-1 p-2">
+            <div class="row">
+              <div class="col">
+                <button button type="button" class="btn btn-secondary">
+                  View Sample
+                </button>
+                <button
+                  button
+                  type="button"
+                  class="mx-1 btn btn-secondary"
+                  (click)="preview()"
+                >
+                  Preview
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <app-form-errors [formErrors]="formErrors"></app-form-errors>
+              </div>
+            </div>
+            <div class="row p-2">
+              <div class="col">
+                <form [formGroup]="form">
+                  <mat-horizontal-stepper
+                    formArrayName="formArray"
+                    linear
+                    #stepper
+                    animationDuration="500"
+                    [class]="
+                      this.storageService.getTheme()() === 'dark'
+                        ? 'bg-dark'
+                        : 'bg-light'
+                    "
+                  >
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="0"
+                      [stepControl]="formArray?.get([0])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >Basic Information</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid">
+                        <div class="row">
+                          <div
+                            class="col-md-3 mt-1 form-labe form-label"
+                            for="formFile"
+                          >
+                            Header image
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-control"
+                              type="file"
+                              formControlName="headerImage"
+                              accept="image/*"
+                              aria-describedby="fileHelpBlock"
+                              (change)="headerImageHandler($event)"
+                            />
+                            <div id="fileHelpBlock" class="form-text">
+                              <span class="small-text">
+                                Max image size for profile pictures is 180 by
+                                180 pixels with a maximum file size of 1 MB
+                                (megabyte).</span
+                              >
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">Title</div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-control"
+                              placeholder="Enter title..."
+                              formControlName="title"
+                              [(ngModel)]="advertisement.title"
+                            />
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-3 mt-2">Description</div>
+                          <div class="col-md-8">
+                            <textarea
+                              class="form-control"
+                              placeholder="Enter description"
+                              formControlName="description"
+                              maxlength="400"
+                              rows="5"
+                              [(ngModel)]="advertisement.description"
+                            ></textarea>
+                            <span class="text-danger">
+                              {{
+                                advertisement.description?.length
+                                  ? advertisement.description?.length
+                                  : 0
+                              }}</span
+                            >
+
+                            / 400
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          id="stepTwoBack"
+                          (click)="goForward(stepper, 0)"
+                        >
+                          Next
+                        </button>
+                      </div>
+                      <div class="border-border-1 my-2">
+                        <h4>Preview</h4>
+                        <app-advertisement-preview></app-advertisement-preview>
+                      </div>
+                    </mat-step>
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="1"
+                      [stepControl]="formArray?.get([1])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >Display Sections</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid border border-black p-4">
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">
+                            Show Picture
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showPicture"
+                              [(ngModel)]="advertisement.showPicture"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">
+                            Show My Phone
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showPhone"
+                              [(ngModel)]="advertisement.showPhone"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">
+                            Show Address
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showAddress"
+                              [(ngModel)]="advertisement.showAddress"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">Show Chat</div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showChat"
+                              [(ngModel)]="advertisement.showChat"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">Show Email</div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showEmail"
+                              [(ngModel)]="advertisement.showEmail"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          matStepperPrevious
+                          id="stepTwoBack"
+                        >
+                          Back
+                        </button>
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          matStepperNext
+                          id="stepTwoNext"
+                        >
+                          Next
+                        </button>
+                      </div>
+                      <div class="border-border-1 my-2">
+                        <h4>Preview</h4>
+                        <app-advertisement-details-preview></app-advertisement-details-preview>
+                      </div>
+                    </mat-step>
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="2"
+                      [stepControl]="formArray?.get([2])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >Slider Images</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid border border-black p-4">
+                        <div class="row my-2 border border-1 rounded my-2 p-2">
+                          <div class="container-fluid">
+                            <div class="row">
+                              <div class="col">
+                                <h5>Slider Images</h5>
+                                <h6>
+                                  You can upload up to
+                                  {{ maxAdvertisementSliderImage }} images
+                                </h6>
+                              </div>
+                            </div>
+                            <div formArrayName="sliderImages">
+                              <div
+                                *ngFor="
+                                  let group of getClienttFormArrayControls();
+                                  let i = index
+                                "
+                                [formGroupName]="i"
+                                class="border border-1 p-2 my-2"
+                              >
+                                <div class="row">
+                                  <div class="col-md-3 mt-1 form-labe">
+                                    Image
+                                  </div>
+                                  <div class="col-md-8">
+                                    <input
+                                      type="file"
+                                      class="form-control"
+                                      placeholder="Enter description.."
+                                      formControlName="sliderImage"
+                                      accept="image/*"
+                                      aria-describedby="fileHelpBlock"
+                                      (change)="sliderImageHandler($event, i)"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col">
+                                    <button
+                                      type="button"
+                                      class="btn btn-secondary my-2"
+                                      (click)="removeClientFormGroup(i)"
+                                    >
+                                      Remove Slider Image
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col">
+                                  <button
+                                    type="button"
+                                    class="btn btn-primary my-2"
+                                    (click)="addClientFormControl()"
+                                    [disabled]="
+                                      getClienttFormArrayControls().length >=
+                                      maxAdvertisementSliderImage
+                                    "
+                                  >
+                                    Add Slider Image
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          matStepperPrevious
+                          id="stepTwoBack"
+                        >
+                          Back
+                        </button>
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-4"
+                          (click)="submit()"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                      <div class="border-border-1 my-2">
+                        <h4>Preview</h4>
+                        <app-advertisement-details-preview></app-advertisement-details-preview>
+                      </div>
+                    </mat-step>
+                  </mat-horizontal-stepper>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -21,8 +21,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [CommonModule, RatingModule, FormsModule],
 })
 export class AdvertisementDetailsPreviewComponent {
-  @Input('advertisement') advertisement: AdvertisementInterface = {};
-
   env: EnvironmentInfo = new EnvironmentInfo();
 
   storageService = inject(StorageService);
@@ -33,6 +31,7 @@ export class AdvertisementDetailsPreviewComponent {
   apiService = inject(ApiService);
   encryptionService = inject(EncryptionService);
   user = this.storageService.getUser();
+  advertisement = this.storageService?.getSelectedAdvertisement();
   message = '';
   max = 10;
   rate: number;
@@ -43,6 +42,7 @@ export class AdvertisementDetailsPreviewComponent {
   registeredDate: any;
   acitveAds: Date;
   constructor() {
+    console.log('detas', this.advertisement);
     const userId = this.storageService?.getUserId();
     this.apiService
       .getPreNewAdInfo(this.encryptionService.encryptItem(userId()))

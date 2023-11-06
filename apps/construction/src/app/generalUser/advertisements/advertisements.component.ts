@@ -137,4 +137,8 @@ export class AdvertisementsComponent {
       )
       .subscribe();
   }
+  editAdvertisement(userAdvertisementId: string) {
+    this.storageService.updateSelectedAdvertisementId(userAdvertisementId);
+    this.router.navigate(['/general/edit-advertisement']);
+  }
 }

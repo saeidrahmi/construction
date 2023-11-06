@@ -45,6 +45,9 @@ import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-favorite-ads.component';
 import { UserMessagesDetailsComponent } from './user-messages/user-messages-details/user-messages-details.component';
+import { UserAdvertisementDetailsViewComponent } from './advertisements/advertisement-details-view/advertisement-details-view.component';
+import { UserAdvertisementViewComponent } from './advertisements/advertisement-view/advertisement-view.component';
+import { RatingModule } from 'ngx-bootstrap/rating';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -65,6 +68,8 @@ import { UserMessagesDetailsComponent } from './user-messages/user-messages-deta
     UserMessagesComponent,
     UserFavoriteAdvertisementsComponent,
     UserMessagesDetailsComponent,
+    UserAdvertisementDetailsViewComponent,
+    UserAdvertisementViewComponent,
   ],
   imports: [
     CommonModule,
@@ -99,6 +104,7 @@ import { UserMessagesDetailsComponent } from './user-messages/user-messages-deta
     MatSortModule,
     MatPaginatorModule,
     MatInputModule,
+    RatingModule,
   ],
   providers: [],
 })

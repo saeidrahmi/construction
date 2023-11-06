@@ -72,68 +72,72 @@ export class AdvertisementDetailsViewComponent {
   formErrors: string[] = [];
 
   constructor(private sanitizer: DomSanitizer) {
-    this.route.params
-      .pipe(
-        map((param) => param['id']),
-        switchMap((id) => {
-          return this.apiService.getAdvertisementDetails(id).pipe(
-            takeUntilDestroyed(),
-            take(1),
-            tap((info: any) => {
-              if (info?.selectAdResult?.length < 1)
-                this.advertisementExists = false;
-              else {
-                this.advertisementExists = true;
-                this.advertisement = info?.selectAdResult[0];
-                this.headerImage = info?.selectAdResult[0]?.headerImage;
-                const selectAdResult = info?.selectAdResult;
-                this.sliderImages = [];
+    const adObject = this.storageService?.getAdvertisement()();
+    if (
+      adObject?.advertisementIdSelected &&
+      adObject?.advertisementAction === 'view'
+    ) {
+      this.apiService
+        .getAdvertisementDetails(adObject?.advertisementIdSelected)
+        .pipe(
+          takeUntilDestroyed(),
+          take(1),
+          tap((info: any) => {
+            if (info?.selectAdResult?.length < 1)
+              this.advertisementExists = false;
+            else {
+              this.advertisementExists = true;
+              this.advertisement = info?.selectAdResult[0];
+              this.headerImage = info?.selectAdResult[0]?.headerImage;
+              const selectAdResult = info?.selectAdResult;
+              this.sliderImages = [];
 
-                selectAdResult.forEach((item) => {
-                  if (item?.userAdvertisementImage) {
-                    this.sliderImages.push(item?.userAdvertisementImage);
-                  }
-                });
-
-                this.userInfo = info?.userInfo;
-                this.registeredDate = new Date(info?.registeredDate);
-                this.acitveAds = info.acitveAds;
-                this.rate = info.userRate;
-                this.myServices = info?.services;
-                this.locationType = info?.locations?.serviceCoverageType;
-                if (this.locationType === 'province') {
-                  this.myLocations = info?.locations?.provinces;
-                } else if (this.locationType === 'city') {
-                  this.myLocations = info?.locations?.cities;
-                } else if (this.locationType === 'country') {
-                  this.myLocations.push('All over Canada');
+              selectAdResult.forEach((item) => {
+                if (item?.userAdvertisementImage) {
+                  this.sliderImages.push(item?.userAdvertisementImage);
                 }
-              }
-            }),
-            catchError((err) => {
-              return of(err);
-            })
-          );
-        }),
-        switchMap((info) => {
-          if (this.isLoggedIn())
-            return this.apiService
-              .isUserFavoriteAd(
-                info?.selectAdResult[0]?.userAdvertisementId,
-                this.encryptionService.encryptItem(this.userId())
-              )
-              .pipe(
-                take(1),
-                tap((isFavorite) => {
-                  if (isFavorite) this.heartColor = 'red';
-                  else this.heartColor = '';
-                })
-              );
-          else return of(null);
-        })
-      )
+              });
 
-      .subscribe();
+              this.userInfo = info?.userInfo;
+              this.registeredDate = new Date(info?.registeredDate);
+              this.acitveAds = info.acitveAds;
+              this.rate = info.userRate;
+              this.myServices = info?.services;
+              this.locationType = info?.locations?.serviceCoverageType;
+              if (this.locationType === 'province') {
+                this.myLocations = info?.locations?.provinces;
+              } else if (this.locationType === 'city') {
+                this.myLocations = info?.locations?.cities;
+              } else if (this.locationType === 'country') {
+                this.myLocations.push('All over Canada');
+              }
+            }
+          }),
+          catchError((err) => {
+            return of(err);
+          }),
+
+          switchMap((info) => {
+            if (this.isLoggedIn())
+              return this.apiService
+                .isUserFavoriteAd(
+                  this.storageService?.getSelectedAdvertisementId()(),
+                  this.encryptionService.encryptItem(this.userId())
+                )
+                .pipe(
+                  take(1),
+                  tap((isFavorite) => {
+                    if (isFavorite) this.heartColor = 'red';
+                    else this.heartColor = '';
+                  })
+                );
+            else return of(null);
+          })
+        )
+
+        .subscribe();
+    } else this.advertisementExists = false;
+
     this.messageForm = this.fb.group({
       message: new FormControl('', [Validators.required]),
     });

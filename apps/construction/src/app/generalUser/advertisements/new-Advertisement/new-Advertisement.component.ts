@@ -40,13 +40,14 @@ export class NewAdvertisementComponent {
   destroyRef = inject(DestroyRef);
   canAdvertise: boolean;
   generalInfo: any;
-  advertisement: AdvertisementInterface = {};
+
   headerImageFile: any;
   topAdPrice: any;
   maxAdvertisementSliderImage: number;
   userAdvertisementDuration: number;
   sliderImages: any[] = [];
   userId = this.storageService?.getUserId();
+  advertisement: AdvertisementInterface;
   getUserAdvertiseInfo$ = this.apiService
     .canUserAdvertise(this.encryptionService.encryptItem(this.userId()))
     .pipe(
@@ -75,6 +76,13 @@ export class NewAdvertisementComponent {
 
   tax;
   constructor() {
+    const adObject = this.storageService?.getAdvertisement()();
+    if (
+      adObject?.advertisementSelected &&
+      adObject?.advertisementAction === 'new'
+    )
+      this.advertisement = this.storageService?.getSelectedAdvertisement()();
+    else this.advertisement = {};
     this.apiService
       .getApplicationSetting()
       .pipe(
@@ -95,12 +103,7 @@ export class NewAdvertisementComponent {
     // getPreNewAdInfo;
     this.advertisement.dateCreated = new Date();
     this.advertisement.sliderImages = [];
-    this.advertisementCommunicationService.message$
-      .pipe(first())
-      .subscribe((message) => {
-        const isEmpty = Object.keys(message).length === 0;
-        if (!isEmpty) this.advertisement = message;
-      });
+
     // const newDate = new Date(
     //   this.advertisement.dateCreated.getTime() - 5 * 24 * 60 * 60 * 1000
     // );
@@ -140,6 +143,16 @@ export class NewAdvertisementComponent {
         }),
       ]),
     });
+    this.form.valueChanges
+      .pipe(
+        tap(() => {
+          this.storageService.updateSelectedAdvertisement(
+            this.advertisement,
+            'new'
+          );
+        })
+      )
+      .subscribe();
   }
   get formArray(): AbstractControl | null {
     return this.form?.get('formArray');

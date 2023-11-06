@@ -1478,6 +1478,100 @@ async function getAdvertisementDetailsController(req, res) {
     });
   }
 }
+async function getUserAdvertisementDetailsController(req, res) {
+  try {
+    let userAdvertisementId = req.body.userAdvertisementId;
+    let userId = decryptItem(req.body.userId, webSecretKey);
+
+    // get user general info
+    const selectUserInfoQuery = `select userId,firstName,lastName,registeredDate,phone,fax,address, city, province, postalCode, website,  profileImage from  users where userId=?`;
+
+    const selectUserInfoResult = await executeQuery(selectUserInfoQuery, [
+      userId,
+    ]);
+
+    // get Ad details
+
+    const selectAdQuery = `SELECT userAdvertisements.*, userAdvertisementImages.userAdvertisementImage
+                          FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          LEFT JOIN userAdvertisementImages ON userAdvertisements.userAdvertisementId = userAdvertisementImages.userAdvertisementId
+                          WHERE userAdvertisements.userAdvertisementId=? and userAdvertisements.deleted = 0 and userPlans.userId=? `;
+    const selectAdResult = await executeQuery(selectAdQuery, [
+      userAdvertisementId,
+      userId,
+    ]);
+
+    // get user registered date
+    const selectRegDateQuery = `SELECT registeredDate FROM users where userId=?`;
+    const selectRegDateResult = await executeQuery(selectRegDateQuery, [
+      userId,
+    ]);
+    // get user rating
+    const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
+    const selectRatingResult = await executeQuery(selectRatingQuery, [userId]);
+    // get number of active ads
+    const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
+    const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
+      userId,
+    ]);
+    // get settings
+    const selectSettingQuery = `SELECT * FROM settings`;
+    const selectSettingResult = await executeQuery(selectSettingQuery, []);
+    // get services
+
+    const selectServicesQuery = `SELECT service FROM userServices WHERE userId = ?`;
+    const selectServicesResult = await executeQuery(selectServicesQuery, [
+      userId,
+    ]);
+    const serviceNames = selectServicesResult.map((row) => row.service);
+    // get locations
+
+    const selectLocationsQuery = `SELECT serviceCoverageType FROM users WHERE  userId = ?  `;
+    const selectLocationsResult = await executeQuery(selectLocationsQuery, [
+      userId,
+    ]);
+    let serviceLocationInfo;
+    if (selectLocationsResult[0].serviceCoverageType === 'country') {
+      serviceLocationInfo = {
+        serviceCoverageType: 'country',
+      };
+    } else if (selectLocationsResult[0].serviceCoverageType === 'province') {
+      const selectQueryProv = `SELECT province FROM userProvinces WHERE  userId = ?  `;
+      const selectResultProv = await executeQuery(selectQueryProv, [userId]);
+      serviceLocationInfo = {
+        serviceCoverageType: selectLocationsResult[0].serviceCoverageType,
+        provinces: selectResultProv.map((item) => item.province),
+      };
+    } else if (selectLocationsResult[0].serviceCoverageType === 'city') {
+      const selectQueryCity = `SELECT province,city FROM userServiceCities WHERE  userId = ?  `;
+      const selectResultCity = await executeQuery(selectQueryCity, [userId]);
+      serviceLocationInfo = {
+        serviceCoverageType: selectLocationsResult[0].serviceCoverageType,
+        cities: selectResultCity.map(
+          (item) => `${item.city} (${item.province})`
+        ),
+      };
+    }
+
+    // info
+    const info = {
+      registeredDate: selectRegDateResult[0].registeredDate,
+      acitveAds: selectActiveAdsResult[0].countAds,
+      userRate: selectRatingResult[0].average_rating,
+      appSettings: selectSettingResult[0],
+      services: serviceNames,
+      locations: serviceLocationInfo,
+      selectAdResult: selectAdResult,
+      userInfo: selectUserInfoResult[0],
+    };
+    return res.status(200).json(info);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 
 function canUserCreateAdvertisementController(userId) {
   return new Promise(async (resolve, reject) => {
@@ -1497,6 +1591,22 @@ function canUserCreateAdvertisementController(userId) {
       } else {
         reject('server error');
       }
+    } catch (error) {
+      reject('server error');
+    }
+  });
+}
+function canUserEditAdvertisement(userId, advertisementId) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const selectQuery = `select count(*) as count from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId where userAdvertisements.expiryDate  > CURDATE() and userAdvertisements.active=1 and userAdvertisements.deleted=0 and  userPlans.userId = ? and  userAdvertisements.userAdvertisementId  = ?`;
+      const selectResult = await executeQuery(selectQuery, [
+        userId,
+        advertisementId,
+      ]);
+
+      if (selectResult[0]?.count >= 0) resolve(true);
+      else resolve(false);
     } catch (error) {
       reject('server error');
     }
@@ -2003,9 +2113,165 @@ async function getUserNumberOfNewMessagesController(req, res) {
     await connection.end();
   }
 }
+async function canUserEditAdvertisementController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    let advertisementId = req.body.advertisementId;
+    const canEdit = await canUserEditAdvertisement(userId, advertisementId);
+    return res.status(200).json(canEdit);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 
+async function editAdvertisementController(req, res) {
+  let connection;
+  try {
+    const info = req.body;
+    const userId = decryptItem(info.userId, webSecretKey);
+    const dateCreated = new Date();
+    const advertisementId = req.body.advertisementId;
+    const expiryDate = addDays(dateCreated, info.userAdvertisementDuration);
+    const canEdit = await canUserEditAdvertisement(userId, advertisementId);
+
+    if (!canEdit) {
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
+    }
+
+    connection = await connectToDatabase();
+    await connection.beginTransaction();
+
+    const insertResult = await insertUserAdvertisement(connection, {
+      userPlanId: info.userPlanId,
+      dateCreated,
+      expiryDate,
+      title: info.title,
+      description: info.description,
+      active: info.active,
+      approvedByAdmin: info.approvedByAdmin,
+      topAdvertisement: info.topAdvertisement,
+      showPhone: info.showPhone,
+      showAddress: info.showAddress,
+      showEmail: info.showEmail,
+      showPicture: info.showPicture,
+      showChat: info.showChat,
+      numberOfVisits: info.numberOfVisits,
+    });
+
+    if (!insertResult) {
+      await connection.rollback();
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
+    }
+
+    if (req.files['headerImage']) {
+      const image = req.files['headerImage'][0];
+      const { buffer } = image;
+      const insertImageResult = await insertHeaderImage(
+        connection,
+        buffer,
+        insertResult.insertId
+      );
+
+      if (!insertImageResult) {
+        await connection.rollback();
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
+      }
+    }
+    if (req.files['sliderImages']) {
+      for (const file of req.files['sliderImages']) {
+        const { buffer } = file;
+        const insertSliderImageResult =
+          await insertUserAdvertisementSliderImages(connection, {
+            userAdvertisementId: insertResult.insertId,
+            userAdvertisementImage: buffer,
+          });
+
+        if (!insertSliderImageResult) {
+          await connection.rollback();
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
+        }
+      }
+    }
+
+    if (info.topAdvertisement == '1') {
+      const insertPaymentResult = await insertUserTopAdvertisementPayment(
+        connection,
+        {
+          userAdvertisementId: insertResult.insertId,
+          paymentConfirmation: info.paymentConfirmation,
+          paymentAmount: info.paymentAmount,
+          tax: info.tax,
+          totalPayment: info.totalPayment,
+        }
+      );
+
+      if (!insertPaymentResult) {
+        await connection.rollback();
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
+      }
+    }
+
+    await connection.commit();
+    return res.status(200).json(true);
+  } catch (error) {
+    if (connection) {
+      try {
+        await connection.rollback();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  } finally {
+    if (connection) {
+      try {
+        await connection.end();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
+  }
+}
+async function getAdvertisementEditInfoController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const advertisementId = req.body.advertisementId;
+    const selectAdQuery = `SELECT userAdvertisements.*, userAdvertisementImages.userAdvertisementImage
+                          FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          LEFT JOIN userAdvertisementImages ON userAdvertisements.userAdvertisementId = userAdvertisementImages.userAdvertisementId
+                          WHERE userAdvertisements.userAdvertisementId=?  and userPlans.userId = ?   `;
+
+    const selectResult = await executeQuery(selectAdQuery, [
+      advertisementId,
+      userId,
+    ]);
+
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  }
+}
 module.exports = {
+  getAdvertisementEditInfoController,
   getUserNumberOfNewMessagesController,
+  editAdvertisementController,
   deleteAllUserMessagesController,
   updateUserMessageViewController,
   getMessageInfoController,
@@ -2050,4 +2316,6 @@ module.exports = {
   getAdvertisementDetailsController,
   addUserRatingController,
   refreshTokenController,
+  canUserEditAdvertisementController,
+  getUserAdvertisementDetailsController,
 };

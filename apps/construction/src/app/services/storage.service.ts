@@ -2,6 +2,7 @@ import { Injectable, Signal, computed, effect, signal } from '@angular/core';
 import { UserInterface } from '../models/user';
 import { StoreInterface } from '../models/store';
 import { UserApiResponseInterface } from '../../../../../libs/common/src/models/user-response';
+import { AdvertisementInterface } from '../models/advertisement';
 
 @Injectable({
   providedIn: 'root',
@@ -44,6 +45,15 @@ export class StorageService {
   getRefreshToken(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.refreshToken);
   }
+  getSelectedAdvertisementId(): Signal<string | undefined> {
+    return computed(() => this.store()?.advertisement?.advertisementIdSelected);
+  }
+  getSelectedAdvertisement(): Signal<AdvertisementInterface | undefined> {
+    return computed(() => this.store()?.advertisement?.advertisementSelected);
+  }
+  getAdvertisement(): Signal<any | undefined> {
+    return computed(() => this.store()?.advertisement);
+  }
   getUserName(): Signal<string | undefined> {
     return computed(
       () => this.store()?.user?.firstName + ' ' + this.store()?.user?.lastName
@@ -67,6 +77,42 @@ export class StorageService {
   }
   saveStore() {
     sessionStorage.setItem(this.stateSessionItem, JSON.stringify(this.store()));
+  }
+  updateSelectedAdvertisementId(id: string) {
+    this.store.update((state) => {
+      return {
+        ...state,
+        advertisement: { ...state.advertisement, advertisementIdSelected: id },
+      };
+    });
+  }
+  updateAdvertisementState(advertisement: any, id: string, action: any) {
+    this.store.update((state) => {
+      return {
+        ...state,
+        advertisement: {
+          ...state.advertisement,
+          advertisementIdSelected: id,
+          advertisementSelected: advertisement,
+          advertisementAction: action,
+        },
+      };
+    });
+  }
+  updateSelectedAdvertisement(
+    advertisement: AdvertisementInterface,
+    action: string
+  ) {
+    this.store.update((state) => {
+      return {
+        ...state,
+        advertisement: {
+          ...state.advertisement,
+          advertisementSelected: advertisement,
+          advertisementAction: action,
+        },
+      };
+    });
   }
   updateUserNewMessagesNbr(nbr: number) {
     this.store.update((state) => {

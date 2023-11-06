@@ -7,11 +7,11 @@
             <span class="col-12">Preview Advertisements</span>
           </h2>
           <div class="border border-1 p-2">
-            <a
-              class="btn btn-outline-primary"
-              routerLink="/general/new-advertisement"
-            >
-              Back to Create New Advertisement Page
+            <a class="btn btn-outline-primary" (click)="navigateBack()">
+              Back to
+              {{
+                this.previousPage === 'new' ? 'Create New ' : 'Edit '
+              }}Advertisement Page
             </a>
           </div>
           <!-- <div class="container-fluid">
@@ -54,9 +54,7 @@
                 <div class="accordion-body">
                   <div class="row gy-3">
                     <div class="col">
-                      <app-advertisement-preview
-                        [advertisement]="advertisement"
-                      ></app-advertisement-preview>
+                      <app-advertisement-preview></app-advertisement-preview>
                     </div>
                   </div>
                 </div>
@@ -105,9 +103,7 @@
                 <div class="accordion-body">
                   <div class="row gy-3">
                     <div class="col">
-                      <app-advertisement-details-preview
-                        [advertisement]="advertisement"
-                      ></app-advertisement-details-preview>
+                      <app-advertisement-details-preview></app-advertisement-details-preview>
                     </div>
                   </div>
                 </div>
