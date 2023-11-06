@@ -1,0 +1,68 @@
+<div class="container-fluid">
+  <div class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2">
+    <div
+      class="col-3 align-middle background-container rounded-1 border border-1"
+      [style.backgroundImage]="advertisement.headerImage"
+    ></div>
+    <div class="col-9">
+      <div class="continer-fluid">
+        <div class="row">
+          <div class="col-11">
+            <h5>{{ advertisement.title }}</h5>
+          </div>
+          <div class="col-1"><i class="bi bi-heart"></i></div>
+        </div>
+        <div class="row">
+          <div class="col" *ngIf="advertisement?.topAdvertisement">
+            <button type="button" class="btn btn-outline-info">TOP AD</button>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div *ngIf="isUserLoggedIn(); then loggedIn; else public"></div>
+              <ng-template #loggedIn> {{ user()?.city }}</ng-template>
+              <ng-template #public> {{ advertisement?.city }}</ng-template>
+
+              |
+              {{
+                userService.formatTimeDifference(advertisement?.dateCreated) ===
+                'Now'
+                  ? 'Now'
+                  : userService.formatTimeDifference(
+                      advertisement?.dateCreated
+                    ) + ' ago'
+              }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <span class="lead">
+                {{ advertisement?.description?.substring(0, 180) }}
+                {{
+                  advertisement?.description?.length > 180 ? '...' : ''
+                }}</span
+              >
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col">
+              <a
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="
+                  navigateDetails(
+                    advertisement,
+                    advertisement.userAdvertisementId
+                  )
+                "
+              >
+                View more info
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
