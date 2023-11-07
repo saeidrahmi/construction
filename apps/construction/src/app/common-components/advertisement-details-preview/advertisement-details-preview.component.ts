@@ -42,7 +42,6 @@ export class AdvertisementDetailsPreviewComponent {
   registeredDate: any;
   acitveAds: Date;
   constructor() {
-    console.log('detas', this.advertisement);
     const userId = this.storageService?.getUserId();
     this.apiService
       .getPreNewAdInfo(this.encryptionService.encryptItem(userId()))

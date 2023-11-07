@@ -4,6 +4,16 @@
     <div
       class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2 gy-3"
     >
+      <col-12>
+        <div class="border border-1 p-2">
+          <a
+            class="btn btn-outline-primary"
+            routerLink="/general/user-advertisements"
+          >
+            Back to advertisements
+          </a>
+        </div>
+      </col-12>
       <div class="col-12" *ngIf="sliderImages?.length > 0">
         <div
           style="width: 100%"
@@ -31,9 +41,12 @@
             >
               <img
                 [src]="imageService.bufferToSafeUrl(imageUrl)"
-                style="height: 250px"
+                style="height: 400px"
                 class="d-block w-100 rounded opacity-100"
                 alt="..."
+                data-bs-toggle="modal"
+                data-bs-target="#imageModal"
+                (click)="setImage(imageUrl)"
               />
               <!-- Your content goes here for each slide -->
             </div>
@@ -360,4 +373,25 @@
       Advertisement does not exist.
     </div>
   </ng-template>
+</div>
+<div
+  class="modal fade"
+  id="imageModal"
+  tabindex="-1"
+  aria-labelledby="imageModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <img
+          *ngIf="selectedImage"
+          class="rounded float-center"
+          width="600px"
+          height="600p"
+          [src]="imageService.bufferToSafeUrl(selectedImage)"
+        />
+      </div>
+    </div>
+  </div>
 </div>

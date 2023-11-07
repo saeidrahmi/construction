@@ -103,6 +103,7 @@ export class EditAdvertisementComponent {
                 ); // Adjust 'image/jpeg' to the correct image MIME type
                 const imageUrl = URL.createObjectURL(blob);
                 this.advertisement.headerImageUrl = `url(${imageUrl})`;
+                this.advertisement.headerImage = imageUrl;
                 //this.advertisement.dateCreated = new Date();
                 this.advertisement.sliderImages = [];
                 selectAdResult.forEach((item) => {
@@ -114,7 +115,8 @@ export class EditAdvertisementComponent {
                       }
                     ); // Adjust 'image/jpeg' to the correct image MIME type
                     const imageUrl = URL.createObjectURL(blob);
-                    this.sliderImages.push(`${imageUrl}`);
+                    this.sliderImages.push(imageUrl);
+                    this.advertisement.sliderImages.push(imageUrl);
                   }
                 });
                 this.storageService.updateSelectedAdvertisement(

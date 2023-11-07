@@ -62,6 +62,7 @@ export class UserAdvertisementDetailsViewComponent {
   headerImage: any;
   sliderImages: any[];
   formErrors: string[] = [];
+  selectedImage: any;
 
   constructor(private sanitizer: DomSanitizer) {
     const adObject = this.storageService?.getAdvertisement()();
@@ -270,5 +271,8 @@ export class UserAdvertisementDetailsViewComponent {
     //   this.formErrors = this.formService.getFormValidationErrorMessages(
     //     this.messageForm
     //   );
+  }
+  setImage(imageUrl) {
+    this.selectedImage = imageUrl;
   }
 }

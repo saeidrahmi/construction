@@ -351,6 +351,79 @@
                                   </h6>
                                 </div>
                               </div>
+                              <div class="row">
+                                <div class="col">
+                                  <div>
+                                    <ngx-dropzone
+                                      [multiple]="true"
+                                      (change)="onFilesAdded($event)"
+                                      accept="image/*"
+                                    >
+                                      <p>Drag and drop files here</p>
+                                    </ngx-dropzone>
+
+                                    <div class="file-item my-2">
+                                      <table
+                                        class="table table-bordered table-responsive align-middle"
+                                      >
+                                        <thead>
+                                          <tr>
+                                            <th>File name</th>
+                                            <th>File type</th>
+                                            <th>File size</th>
+
+                                            <th>Action</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <ng-container
+                                            *ngFor="
+                                              let file of files;
+                                              let i = index
+                                            "
+                                          >
+                                            <tr class="file-item">
+                                              <td>{{ file.name }}</td>
+                                              <td>{{ file.type }}</td>
+                                              <td>
+                                                {{
+                                                  utilityService.convertBytesToKbOrMb(
+                                                    file.size
+                                                  )
+                                                }}
+                                                bytes
+                                              </td>
+
+                                              <td>
+                                                <button
+                                                  (click)="onFileDeleted(i)"
+                                                >
+                                                  Delete
+                                                </button>
+                                              </td>
+                                            </tr>
+                                            <tr>
+                                              <td
+                                                colspan="4"
+                                                style="text-align: center"
+                                              >
+                                                <img
+                                                  [src]="getObjectURL(file)"
+                                                  style="
+                                                    max-width: 800px;
+                                                    max-height: 400px;
+                                                  "
+                                                />
+                                              </td>
+                                            </tr>
+                                          </ng-container>
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <!--
                               <div formArrayName="sliderImages">
                                 <div
                                   *ngFor="
@@ -360,30 +433,7 @@
                                   [formGroupName]="i"
                                   class="border border-1 p-2 my-2"
                                 >
-                                  <!-- <div class="row">
-                              <div class="col-md-3 mt-1 form-labe">Title</div>
-                              <div class="col-md-8">
-                                <input
-                                  class="form-control"
-                                  placeholder="Enter title..."
-                                  formControlName="sliderTitle"
-                                  maxlength="40"
-                                />
-                              </div>
-                            </div>
-                            <div class="row">
-                              <div class="col-md-3 mt-1 form-labe">
-                                Description
-                              </div>
-                              <div class="col-md-8">
-                                <input
-                                  class="form-control"
-                                  placeholder="Enter description.."
-                                  formControlName="sliderDescription"
-                                  maxlength="80"
-                                />
-                              </div>
-                            </div> -->
+
                                   <div class="row">
                                     <div class="col-md-3 mt-1 form-labe">
                                       Image
@@ -428,7 +478,7 @@
                                     </button>
                                   </div>
                                 </div>
-                              </div>
+                              </div> -->
                             </div>
                           </div>
                         </div>

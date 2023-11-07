@@ -1,4 +1,5 @@
 import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -24,12 +25,13 @@ import { IConfig, provideEnvironmentNgxMask } from 'ngx-mask';
 export const appConfig: ApplicationConfig = {
   providers: [
     //provideHttpClient(withInterceptors([httpInterceptor])),
-    importProvidersFrom(HttpClientModule),
+
     { provide: HTTP_INTERCEPTORS, useClass: AppHttpInterceptor, multi: true },
     provideRouter(appRoutes, withEnabledBlockingInitialNavigation()),
     provideAnimations(),
     provideEnvironmentNgxMask(),
     importProvidersFrom([
+      HttpClientModule,
       NgIdleKeepaliveModule.forRoot(),
       NgbTooltipModule,
       ToastrModule.forRoot(),

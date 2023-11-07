@@ -48,6 +48,7 @@ import { UserMessagesDetailsComponent } from './user-messages/user-messages-deta
 import { UserAdvertisementDetailsViewComponent } from './advertisements/advertisement-details-view/advertisement-details-view.component';
 import { UserAdvertisementViewComponent } from './advertisements/advertisement-view/advertisement-view.component';
 import { RatingModule } from 'ngx-bootstrap/rating';
+import { NgxDropzoneModule } from 'ngx-dropzone';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -105,6 +106,7 @@ import { RatingModule } from 'ngx-bootstrap/rating';
     MatPaginatorModule,
     MatInputModule,
     RatingModule,
+    NgxDropzoneModule,
   ],
   providers: [],
 })

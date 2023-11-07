@@ -19,6 +19,7 @@ import { Router } from '@angular/router';
 import { AdvertisementCommunicationService } from '../../../services/advertisementServcie';
 import { FormService } from '../../../services/form.service';
 import { MatStepper } from '@angular/material/stepper';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-new-Advertisement',
@@ -29,12 +30,15 @@ export class NewAdvertisementComponent {
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   fb = inject(FormBuilder);
+  utilityService = inject(CommonUtilityService);
+
   form: FormGroup;
   formErrors: string[] = [];
   encryptionService = inject(EncryptionService);
   formService = inject(FormService);
   router = inject(Router);
   storageService = inject(StorageService);
+
   advertisementCommunicationService = inject(AdvertisementCommunicationService);
   commonUtility = inject(CommonUtilityService);
   destroyRef = inject(DestroyRef);
@@ -75,7 +79,7 @@ export class NewAdvertisementComponent {
     );
 
   tax;
-  constructor() {
+  constructor(private sanitizer: DomSanitizer) {
     const adObject = this.storageService?.getAdvertisement()();
     if (
       adObject?.advertisementSelected &&
@@ -183,6 +187,9 @@ export class NewAdvertisementComponent {
   preview() {
     this.advertisementCommunicationService.sendMessage(this.advertisement);
     this.router.navigate(['/general/preview-advertisement']);
+  }
+  getObjectURL(file: File): SafeUrl {
+    return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
   }
   headerImageHandler(event: any) {
     const headerImageFile = event?.target?.files[0];
@@ -407,4 +414,90 @@ export class NewAdvertisementComponent {
     }
   }
   submitNewTopAd() {}
+  files: File[] = [];
+
+  onFilesAdded(event: any) {
+    const newFiles: File[] = event.addedFiles;
+    if (
+      this.files.length + newFiles.length >
+      this.maxAdvertisementSliderImage
+    ) {
+      const allowedFilesCount =
+        this.maxAdvertisementSliderImage - this.files.length;
+      const allowedFiles = newFiles.slice(0, allowedFilesCount);
+      this.files.push(...allowedFiles);
+
+      this.toastService.error(
+        `You can upload only ${this.maxAdvertisementSliderImage} images. Remaining slots: ${allowedFilesCount}`,
+        'Server failure',
+        {
+          timeOut: 3000,
+          positionClass: 'toast-top-right',
+          closeButton: true,
+          progressBar: true,
+        }
+      );
+    } else {
+      this.files.push(...newFiles);
+    }
+    const maxFileSize = this.commonUtility._sliderPhotoMaxSize;
+    const allowedFileTypes = this.commonUtility._imageMimeTypes;
+    for (const sliderImageFile of this.files) {
+      if (sliderImageFile) {
+        const fileType = sliderImageFile?.name
+          ?.split('.')
+          ?.pop()
+          ?.toLowerCase();
+        if (fileType && !allowedFileTypes?.includes(fileType)) {
+          this.toastService.error(
+            'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+              allowedFileTypes.join(', '),
+            'Wrong File Type',
+            {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          // this.form.get('photo')?.setValue('');
+          // this.headerImageFile = null;
+        } else if (
+          sliderImageFile?.size == 0 ||
+          sliderImageFile?.size > maxFileSize
+        ) {
+          this.toastService.error(
+            'File size can not be empty and can not exceeds the maximum limit of 1 MB',
+            'Wrong File Size',
+            {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          //this.form.get('headerImage')?.setValue('');
+          //this.headerImageFile = null;
+        } else {
+          // file ok
+
+          const imageUrl = URL.createObjectURL(sliderImageFile);
+
+          this.sliderImages.push(sliderImageFile);
+          this.advertisement.sliderImages.push(`${imageUrl}`);
+        }
+      }
+    }
+  }
+  onFileDeleted(index: number) {
+    // Delete the file at the specified index
+    this.files.splice(index, 1);
+    this.sliderImages = [];
+    this.advertisement.sliderImages = [];
+    for (const sliderImageFile of this.files) {
+      const imageUrl = URL.createObjectURL(sliderImageFile);
+      this.sliderImages.push(sliderImageFile);
+      this.advertisement.sliderImages.push(`${imageUrl}`);
+    }
+  }
 }
