@@ -17,7 +17,8 @@ export class AdvertisementPreviewComponent {
   storageService = inject(StorageService);
   userService = inject(UserService);
   user = this.storageService.getUser();
-  advertisement = this.storageService?.getSelectedAdvertisement();
+
+  @Input() advertisement: AdvertisementInterface = {};
   max = 10;
   rate = 7;
   isReadonly = true;

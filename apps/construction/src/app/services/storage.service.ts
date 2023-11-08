@@ -86,6 +86,14 @@ export class StorageService {
       };
     });
   }
+  clearAdvertisementInfo() {
+    this.store.update((state) => {
+      return {
+        ...state,
+        advertisement: null,
+      };
+    });
+  }
   updateAdvertisementState(advertisement: any, id: string, action: any) {
     this.store.update((state) => {
       return {
@@ -164,6 +172,7 @@ export class StorageService {
       return {
         ...state,
         user: user,
+        advertisement: null,
         general: { ...state.general, newMessagesNbr: null },
       };
     });
@@ -269,6 +278,7 @@ export class StorageService {
     return {
       general: { theme: 'dark' },
       plan: null,
+      advertisement: null,
       user: {
         loggedIn: false,
         userId: '',

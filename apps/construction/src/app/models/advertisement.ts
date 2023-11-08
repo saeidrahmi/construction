@@ -19,4 +19,5 @@ export interface AdvertisementInterface {
   showChat?: boolean;
   numberOfVisits?: number;
   sliderImages?: string[];
+  sliderImageFiles?: File[];
 }

@@ -6,32 +6,7 @@
           <h2 class="card-title">
             <span class="col-12">Preview Advertisements</span>
           </h2>
-          <div class="border border-1 p-2">
-            <a class="btn btn-outline-primary" (click)="navigateBack()">
-              Back to
-              {{
-                this.previousPage === 'new' ? 'Create New ' : 'Edit '
-              }}Advertisement Page
-            </a>
-          </div>
-          <!-- <div class="container-fluid">
-            <div class="row">
-              <div class="col">
-                <h3>Summary View</h3>
-                <app-advertisement-preview
-                  [advertisement]="advertisement"
-                ></app-advertisement-preview>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <h3>Detailed View</h3>
-                <app-advertisement-details-preview
-                  [advertisement]="advertisement"
-                ></app-advertisement-details-preview>
-              </div>
-            </div>
-          </div> -->
+
           <div class="accordion" id="preview">
             <div class="accordion-item">
               <h2 class="accordion-header">
@@ -54,7 +29,9 @@
                 <div class="accordion-body">
                   <div class="row gy-3">
                     <div class="col">
-                      <app-advertisement-preview></app-advertisement-preview>
+                      <app-advertisement-preview
+                        [advertisement]="advertisement"
+                      ></app-advertisement-preview>
                     </div>
                   </div>
                 </div>
@@ -103,7 +80,9 @@
                 <div class="accordion-body">
                   <div class="row gy-3">
                     <div class="col">
-                      <app-advertisement-details-preview></app-advertisement-details-preview>
+                      <app-advertisement-details-preview
+                        [advertisement]="advertisement"
+                      ></app-advertisement-details-preview>
                     </div>
                   </div>
                 </div>

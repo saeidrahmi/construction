@@ -1756,6 +1756,24 @@ async function insertUserAdvertisement(connection, data) {
     ? insertResult
     : null;
 }
+async function updateUserAdvertisement(connection, data) {
+  const selectQuery = `update userAdvertisements set  title=? , description=? ,  showPhone=? , showAddress=? , showEmail=? , showPicture=? , showChat=? where userAdvertisementId=?   `;
+  const values = [
+    data.title,
+    data.description,
+
+    data.showPhone,
+    data.showAddress,
+    data.showEmail,
+    data.showPicture,
+    data.showChat,
+    data.userAdvertisementId,
+  ];
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
 
 async function insertHeaderImage(connection, buffer, insertId) {
   const insertImageQuery =
@@ -1771,6 +1789,14 @@ async function insertHeaderImage(connection, buffer, insertId) {
 async function insertUserAdvertisementSliderImages(connection, data) {
   const selectQuery = `INSERT INTO userAdvertisementImages (userAdvertisementId , userAdvertisementImage) VALUES (?,?)`;
   const values = [data.userAdvertisementId, data.userAdvertisementImage];
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
+async function deleteUserAdvertisementSliderImages(connection, data) {
+  const selectQuery = `DELETE FROM userAdvertisementImages  where userAdvertisementId = ?`;
+  const values = [data.userAdvertisementId];
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId
     ? insertResult
@@ -2130,11 +2156,12 @@ async function editAdvertisementController(req, res) {
   let connection;
   try {
     const info = req.body;
+
     const userId = decryptItem(info.userId, webSecretKey);
-    const dateCreated = new Date();
-    const advertisementId = req.body.advertisementId;
-    const expiryDate = addDays(dateCreated, info.userAdvertisementDuration);
-    const canEdit = await canUserEditAdvertisement(userId, advertisementId);
+
+    const userAdvertisementId = req.body.userAdvertisementId;
+
+    const canEdit = await canUserEditAdvertisement(userId, userAdvertisementId);
 
     if (!canEdit) {
       return res.status(500).json({
@@ -2145,21 +2172,15 @@ async function editAdvertisementController(req, res) {
     connection = await connectToDatabase();
     await connection.beginTransaction();
 
-    const insertResult = await insertUserAdvertisement(connection, {
-      userPlanId: info.userPlanId,
-      dateCreated,
-      expiryDate,
+    const insertResult = await updateUserAdvertisement(connection, {
+      userAdvertisementId: userAdvertisementId,
       title: info.title,
       description: info.description,
-      active: info.active,
-      approvedByAdmin: info.approvedByAdmin,
-      topAdvertisement: info.topAdvertisement,
       showPhone: info.showPhone,
       showAddress: info.showAddress,
       showEmail: info.showEmail,
       showPicture: info.showPicture,
       showChat: info.showChat,
-      numberOfVisits: info.numberOfVisits,
     });
 
     if (!insertResult) {
@@ -2175,7 +2196,7 @@ async function editAdvertisementController(req, res) {
       const insertImageResult = await insertHeaderImage(
         connection,
         buffer,
-        insertResult.insertId
+        userAdvertisementId
       );
 
       if (!insertImageResult) {
@@ -2185,12 +2206,17 @@ async function editAdvertisementController(req, res) {
         });
       }
     }
+    console.log('here1', userAdvertisementId);
+    const deleteResult = await deleteUserAdvertisementSliderImages(connection, {
+      userAdvertisementId: userAdvertisementId,
+    });
+    console.log('here2', req.files['sliderImages']);
     if (req.files['sliderImages']) {
       for (const file of req.files['sliderImages']) {
         const { buffer } = file;
         const insertSliderImageResult =
           await insertUserAdvertisementSliderImages(connection, {
-            userAdvertisementId: insertResult.insertId,
+            userAdvertisementId: userAdvertisementId,
             userAdvertisementImage: buffer,
           });
 
@@ -2200,26 +2226,6 @@ async function editAdvertisementController(req, res) {
             errorMessage: 'Failed to update information. Please try again.',
           });
         }
-      }
-    }
-
-    if (info.topAdvertisement == '1') {
-      const insertPaymentResult = await insertUserTopAdvertisementPayment(
-        connection,
-        {
-          userAdvertisementId: insertResult.insertId,
-          paymentConfirmation: info.paymentConfirmation,
-          paymentAmount: info.paymentAmount,
-          tax: info.tax,
-          totalPayment: info.totalPayment,
-        }
-      );
-
-      if (!insertPaymentResult) {
-        await connection.rollback();
-        return res.status(500).json({
-          errorMessage: 'Failed to update information. Please try again.',
-        });
       }
     }
 

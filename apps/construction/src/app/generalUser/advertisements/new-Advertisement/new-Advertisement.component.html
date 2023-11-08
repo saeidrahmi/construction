@@ -73,21 +73,6 @@
             <div class="container-fluid my-3 border border-1 p-2">
               <div class="row">
                 <div class="col">
-                  <button button type="button" class="btn btn-secondary">
-                    View Sample
-                  </button>
-                  <button
-                    button
-                    type="button"
-                    class="mx-1 btn btn-secondary"
-                    (click)="preview()"
-                  >
-                    Preview
-                  </button>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col">
                   <app-form-errors [formErrors]="formErrors"></app-form-errors>
                 </div>
               </div>
@@ -193,10 +178,6 @@
                           >
                             Next
                           </button>
-                        </div>
-                        <div class="border-border-1 my-2">
-                          <h4>Preview</h4>
-                          <app-advertisement-preview></app-advertisement-preview>
                         </div>
                       </mat-step>
                       <mat-step
@@ -316,10 +297,6 @@
                             Next
                           </button>
                         </div>
-                        <div class="border-border-1 my-2">
-                          <h4>Preview</h4>
-                          <app-advertisement-details-preview></app-advertisement-details-preview>
-                        </div>
                       </mat-step>
                       <mat-step
                         linear
@@ -353,73 +330,71 @@
                               </div>
                               <div class="row">
                                 <div class="col">
-                                  <div>
-                                    <ngx-dropzone
-                                      [multiple]="true"
-                                      (change)="onFilesAdded($event)"
-                                      accept="image/*"
+                                  <ngx-dropzone
+                                    [multiple]="true"
+                                    (change)="onFilesAdded($event)"
+                                    accept="image/*"
+                                  >
+                                    <p>Drag and drop files here</p>
+                                  </ngx-dropzone>
+
+                                  <div class="file-item my-2">
+                                    <table
+                                      class="table table-bordered table-responsive align-middle"
                                     >
-                                      <p>Drag and drop files here</p>
-                                    </ngx-dropzone>
+                                      <thead>
+                                        <tr>
+                                          <th>File name</th>
+                                          <th>File type</th>
+                                          <th>File size</th>
 
-                                    <div class="file-item my-2">
-                                      <table
-                                        class="table table-bordered table-responsive align-middle"
-                                      >
-                                        <thead>
+                                          <th>Action</th>
+                                        </tr>
+                                      </thead>
+                                      <tbody>
+                                        <ng-container
+                                          *ngFor="
+                                            let file of this.advertisement
+                                              ?.sliderImageFiles;
+                                            let i = index
+                                          "
+                                        >
                                           <tr>
-                                            <th>File name</th>
-                                            <th>File type</th>
-                                            <th>File size</th>
+                                            <td>{{ file.name }}</td>
+                                            <td>{{ file.type }}</td>
+                                            <td>
+                                              {{
+                                                utilityService.convertBytesToKbOrMb(
+                                                  file.size
+                                                )
+                                              }}
+                                            </td>
 
-                                            <th>Action</th>
-                                          </tr>
-                                        </thead>
-                                        <tbody>
-                                          <ng-container
-                                            *ngFor="
-                                              let file of files;
-                                              let i = index
-                                            "
-                                          >
-                                            <tr class="file-item">
-                                              <td>{{ file.name }}</td>
-                                              <td>{{ file.type }}</td>
-                                              <td>
-                                                {{
-                                                  utilityService.convertBytesToKbOrMb(
-                                                    file.size
-                                                  )
-                                                }}
-                                                bytes
-                                              </td>
-
-                                              <td>
-                                                <button
-                                                  (click)="onFileDeleted(i)"
-                                                >
-                                                  Delete
-                                                </button>
-                                              </td>
-                                            </tr>
-                                            <tr>
-                                              <td
-                                                colspan="4"
-                                                style="text-align: center"
+                                            <td>
+                                              <button
+                                                (click)="onFileDeleted(i)"
                                               >
-                                                <img
-                                                  [src]="getObjectURL(file)"
-                                                  style="
-                                                    max-width: 800px;
-                                                    max-height: 400px;
-                                                  "
-                                                />
-                                              </td>
-                                            </tr>
-                                          </ng-container>
-                                        </tbody>
-                                      </table>
-                                    </div>
+                                                Delete
+                                              </button>
+                                            </td>
+                                          </tr>
+                                          <tr>
+                                            <td
+                                              colspan="4"
+                                              style="text-align: center"
+                                            >
+                                              <img
+                                                [src]="getObjectURL(file)"
+                                                style="
+                                                  max-width: 800px;
+                                                  max-height: 400px;
+                                                "
+                                              />
+                                            </td>
+                                          </tr>
+                                        </ng-container>
+                                      </tbody>
+                                    </table>
                                   </div>
                                 </div>
                               </div>
@@ -513,10 +488,6 @@
                             Next
                           </button>
                         </div>
-                        <div class="border-border-1 my-2">
-                          <h4>Preview</h4>
-                          <app-advertisement-details-preview></app-advertisement-details-preview>
-                        </div>
                       </mat-step>
                       <mat-step
                         linear
@@ -566,6 +537,14 @@
                       </mat-step>
                     </mat-horizontal-stepper>
                   </form>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col border-border-1 my-2">
+                  <h4>Preview</h4>
+                  <app-preview-advertisement
+                    [advertisement]="advertisement"
+                  ></app-preview-advertisement>
                 </div>
               </div>
             </div>

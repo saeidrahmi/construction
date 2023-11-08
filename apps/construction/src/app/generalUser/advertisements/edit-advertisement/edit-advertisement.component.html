@@ -8,7 +8,7 @@
           </h2>
 
           <div class="container-fluid my-3 border border-1 p-2">
-            <div class="row">
+            <!-- <div class="row">
               <div class="col">
                 <button button type="button" class="btn btn-secondary">
                   View Sample
@@ -22,7 +22,7 @@
                   Preview
                 </button>
               </div>
-            </div>
+            </div> -->
             <div class="row">
               <div class="col">
                 <app-form-errors [formErrors]="formErrors"></app-form-errors>
@@ -131,10 +131,6 @@
                           Next
                         </button>
                       </div>
-                      <div class="border-border-1 my-2">
-                        <h4>Preview</h4>
-                        <app-advertisement-preview></app-advertisement-preview>
-                      </div>
                     </mat-step>
                     <mat-step
                       linear
@@ -236,10 +232,6 @@
                           Next
                         </button>
                       </div>
-                      <div class="border-border-1 my-2">
-                        <h4>Preview</h4>
-                        <app-advertisement-details-preview></app-advertisement-details-preview>
-                      </div>
                     </mat-step>
                     <mat-step
                       linear
@@ -257,71 +249,81 @@
                           >Slider Images</span
                         ></ng-template
                       >
-                      <div class="container-fluid border border-black p-4">
-                        <div class="row my-2 border border-1 rounded my-2 p-2">
-                          <div class="container-fluid">
-                            <div class="row">
-                              <div class="col">
-                                <h5>Slider Images</h5>
-                                <h6>
-                                  You can upload up to
-                                  {{ maxAdvertisementSliderImage }} images
-                                </h6>
-                              </div>
-                            </div>
-                            <div formArrayName="sliderImages">
-                              <div
-                                *ngFor="
-                                  let group of getClienttFormArrayControls();
-                                  let i = index
-                                "
-                                [formGroupName]="i"
-                                class="border border-1 p-2 my-2"
-                              >
-                                <div class="row">
-                                  <div class="col-md-3 mt-1 form-labe">
-                                    Image
-                                  </div>
-                                  <div class="col-md-8">
-                                    <input
-                                      type="file"
-                                      class="form-control"
-                                      placeholder="Enter description.."
-                                      formControlName="sliderImage"
-                                      accept="image/*"
-                                      aria-describedby="fileHelpBlock"
-                                      (change)="sliderImageHandler($event, i)"
-                                    />
-                                  </div>
-                                </div>
+                      <div class="container-fluid">
+                        <div class="row">
+                          <div class="col">
+                            <h5>Slider Images</h5>
+                            <h6>
+                              You can upload up to
+                              {{ maxAdvertisementSliderImage }} images
+                            </h6>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col">
+                            <ngx-dropzone
+                              [multiple]="true"
+                              (change)="onFilesAdded($event)"
+                              accept="image/*"
+                            >
+                              <p>Drag and drop files here</p>
+                            </ngx-dropzone>
 
-                                <div class="row">
-                                  <div class="col">
-                                    <button
-                                      type="button"
-                                      class="btn btn-secondary my-2"
-                                      (click)="removeClientFormGroup(i)"
-                                    >
-                                      Remove Slider Image
-                                    </button>
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="row">
-                                <div class="col">
-                                  <button
-                                    type="button"
-                                    class="btn btn-primary my-2"
-                                    (click)="addClientFormControl()"
-                                    [disabled]="
-                                      getClienttFormArrayControls().length >=
-                                      maxAdvertisementSliderImage
+                            <div class="file-item my-2">
+                              <table
+                                class="table table-bordered table-responsive align-middle"
+                              >
+                                <thead>
+                                  <tr>
+                                    <th>File name</th>
+                                    <th>File type</th>
+                                    <th>File size</th>
+
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <ng-container
+                                    *ngFor="
+                                      let file of this.advertisement
+                                        ?.sliderImageFiles;
+                                      let i = index
                                     "
                                   >
-                                    Add Slider Image
-                                  </button>
-                                </div>
-                              </div>
+                                    <tr>
+                                      <td>{{ file?.name }}</td>
+                                      <td>{{ file?.type }}</td>
+                                      <td>
+                                        {{
+                                          utilityService.convertBytesToKbOrMb(
+                                            file.size
+                                          )
+                                        }}
+                                      </td>
+
+                                      <td>
+                                        <button (click)="onFileDeleted(i)">
+                                          Delete
+                                        </button>
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td
+                                        colspan="4"
+                                        style="text-align: center"
+                                      >
+                                        <!-- <img
+                                          [src]="getObjectURL(file)"
+                                          style="
+                                            max-width: 800px;
+                                            max-height: 400px;
+                                          "
+                                        /> -->
+                                      </td>
+                                    </tr>
+                                  </ng-container>
+                                </tbody>
+                              </table>
                             </div>
                           </div>
                         </div>
@@ -346,13 +348,17 @@
                           Submit
                         </button>
                       </div>
-                      <div class="border-border-1 my-2">
-                        <h4>Preview</h4>
-                        <app-advertisement-details-preview></app-advertisement-details-preview>
-                      </div>
                     </mat-step>
                   </mat-horizontal-stepper>
                 </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col border-border-1 my-2">
+                <h4>Preview</h4>
+                <app-preview-advertisement
+                  [advertisement]="advertisement"
+                ></app-preview-advertisement>
               </div>
             </div>
           </div>

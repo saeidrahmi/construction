@@ -3,7 +3,7 @@
   <div
     class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2 gy-3"
   >
-    <div class="col-12" *ngIf="advertisement()?.sliderImages?.length > 0">
+    <div class="col-12" *ngIf="advertisement?.sliderImages?.length > 0">
       <div
         style="width: 100%"
         id="carouselAdSliderIndicatorsPrv"
@@ -12,7 +12,7 @@
       >
         <div class="carousel-indicators">
           <button
-            *ngFor="let imageUrl of advertisement().sliderImages; let i = index"
+            *ngFor="let imageUrl of advertisement.sliderImages; let i = index"
             type="button"
             [attr.data-bs-target]="'#carouselAdSliderIndicatorsPrv'"
             [attr.data-bs-slide-to]="i"
@@ -23,13 +23,13 @@
         </div>
         <div class="carousel-inner">
           <div
-            *ngFor="let imageUrl of advertisement().sliderImages; let i = index"
+            *ngFor="let imageUrl of advertisement.sliderImages; let i = index"
             class="carousel-item"
             [class.active]="i === 0"
             [attr.data-bs-interval]="8000"
           >
             <img
-              [src]="imageUrl"
+              [src]="sanitizer.bypassSecurityTrustUrl(imageUrl)"
               style="height: 350px"
               class="d-block w-100 rounded"
               alt="..."
@@ -68,11 +68,11 @@
               class="img-thumbnail rounded"
               width="200"
               height="200"
-              [src]="advertisement().headerImage"
+              [src]="advertisement.headerImage"
             />
           </div>
           <div class="col-8">
-            <h5>{{ advertisement().title }}</h5>
+            <h5>{{ advertisement.title }}</h5>
           </div>
           <div class="col-1">
             <i class="bi bi-heart"></i>
@@ -80,13 +80,13 @@
         </div>
         <div class="row">
           <div class="col-11">
-            <h5>{{ advertisement().title }}</h5>
+            <h5>{{ advertisement.title }}</h5>
           </div>
         </div>
         <div class="row">
           <div class="col-8">
             <div class="container-fluid">
-              <div class="row" *ngIf="advertisement()?.topadvertisement">
+              <div class="row" *ngIf="advertisement?.topAdvertisement">
                 <div class="col">
                   <button type="button" class="btn btn-outline-info">
                     TOP AD
@@ -98,9 +98,7 @@
                 <div class="col">
                   {{ user().city }} |
                   {{
-                    userService.formatTimeDifference(
-                      advertisement()?.dateCreated
-                    )
+                    userService.formatTimeDifference(advertisement?.dateCreated)
                   }}
                 </div>
               </div>
@@ -110,7 +108,7 @@
                 <div class="col">
                   <h5>Description</h5>
                   <span class="lead font-md">
-                    {{ advertisement()?.description }}
+                    {{ advertisement?.description }}
                   </span>
                 </div>
               </div>
@@ -145,7 +143,7 @@
                   </ul>
                 </div>
               </div>
-              <div class="row m-2" *ngIf="advertisement()?.showAddress">
+              <div class="row m-2" *ngIf="advertisement?.showAddress">
                 <div class="col border border-1 p-2">
                   {{
                     user().address +
@@ -186,7 +184,7 @@
                 <div class="col">
                   <div
                     *ngIf="
-                      advertisement()?.showPicture;
+                      advertisement?.showPicture;
                       then showPic;
                       else noShow
                     "
@@ -248,7 +246,7 @@
                     </li>
 
                     <li
-                      *ngIf="advertisement()?.showPhone"
+                      *ngIf="advertisement?.showPhone"
                       class="list-group-item d-flex justify-content-between align-items-center"
                     >
                       <i class="bi bi-chat-heart"
@@ -271,7 +269,7 @@
                           Visit website
                         </a></span
                       >
-                      <span class="mx-2" *ngIf="advertisement()?.showEmail">
+                      <span class="mx-2" *ngIf="advertisement?.showEmail">
                         <a
                           type="button"
                           class="btn btn-outline-secondary"
@@ -286,7 +284,7 @@
               </div>
               <div
                 class="row border rounded p-2"
-                *ngIf="advertisement().showChat"
+                *ngIf="advertisement.showChat"
               >
                 <div class="col">
                   <h5 class=" ">Contact me</h5>

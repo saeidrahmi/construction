@@ -255,6 +255,10 @@ router.post(
 router.post(
   '/edit-advertisement',
   verifyGeneralToken,
+  upload.fields([
+    { name: 'headerImage', maxCount: 1 },
+    { name: 'sliderImages', maxCount: 30 }, // You can adjust the number of allowed files
+  ]),
   editAdvertisementController
 );
 router.post(

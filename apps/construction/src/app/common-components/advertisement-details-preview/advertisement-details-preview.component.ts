@@ -12,6 +12,7 @@ import { catchError, first, of, take, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-advertisement-details-preview',
@@ -31,7 +32,8 @@ export class AdvertisementDetailsPreviewComponent {
   apiService = inject(ApiService);
   encryptionService = inject(EncryptionService);
   user = this.storageService.getUser();
-  advertisement = this.storageService?.getSelectedAdvertisement();
+
+  @Input() advertisement: AdvertisementInterface = {};
   message = '';
   max = 10;
   rate: number;
@@ -41,7 +43,7 @@ export class AdvertisementDetailsPreviewComponent {
   myLocations: string[] = [];
   registeredDate: any;
   acitveAds: Date;
-  constructor() {
+  constructor(public sanitizer: DomSanitizer) {
     const userId = this.storageService?.getUserId();
     this.apiService
       .getPreNewAdInfo(this.encryptionService.encryptItem(userId()))
