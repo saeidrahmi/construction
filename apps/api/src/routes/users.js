@@ -53,6 +53,7 @@ const {
   getMessageInfoController,
   canUserEditAdvertisementController,
   editAdvertisementController,
+  repostAdvertisementController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -265,6 +266,11 @@ router.post(
   '/advertisement-general-edit-info',
   verifyGeneralToken,
   getAdvertisementEditInfoController
+);
+router.post(
+  '/advertisement-repost',
+  verifyGeneralToken,
+  repostAdvertisementController
 );
 
 module.exports = router;

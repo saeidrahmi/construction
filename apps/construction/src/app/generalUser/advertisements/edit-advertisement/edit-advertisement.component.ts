@@ -87,7 +87,6 @@ export class EditAdvertisementComponent {
             takeUntilDestroyed(this.destroyRef),
             take(1),
             tap((results: any) => {
-              console.log(results, 'results');
               if (results?.selectAdResult?.length < 1)
                 this.router.navigate(['/general/user-advertisements']);
               else {
@@ -96,15 +95,27 @@ export class EditAdvertisementComponent {
                 const selectAdResult = results;
                 this.sliderImages = [];
 
-                const blob = new Blob(
-                  [new Uint8Array(results[0].headerImage.data)],
-                  {
+                if (results[0].headerImage) {
+                  const uint8Array = new Uint8Array(
+                    results[0].headerImage.data
+                  );
+                  const blob = new Blob(
+                    [new Uint8Array(results[0].headerImage.data)],
+                    {
+                      type: 'image/jpeg',
+                    }
+                  ); // Adjust 'image/jpeg' to the correct image MIME type
+                  const imageUrl = URL.createObjectURL(blob);
+                  this.advertisement.headerImageUrl = `url(${imageUrl})`;
+                  this.advertisement.headerImage = imageUrl;
+
+                  const temporaryFile = new File([blob], 'example.jpg', {
                     type: 'image/jpeg',
-                  }
-                ); // Adjust 'image/jpeg' to the correct image MIME type
-                const imageUrl = URL.createObjectURL(blob);
-                this.advertisement.headerImageUrl = `url(${imageUrl})`;
-                this.advertisement.headerImage = imageUrl;
+                  });
+
+                  this.headerImageFile = temporaryFile;
+                }
+
                 //this.advertisement.dateCreated = new Date();
                 this.advertisement.sliderImageFiles = [];
                 this.advertisement.sliderImages = [];
@@ -138,7 +149,6 @@ export class EditAdvertisementComponent {
                     this.files.push(temporaryFile);
 
                     this.advertisement.sliderImages.push(`${imageUrl}`);
-                    console.log(this.advertisement, 'temp');
                   }
                 });
               }
@@ -173,25 +183,7 @@ export class EditAdvertisementComponent {
     )
       this.advertisement = this.storageService?.getSelectedAdvertisement()();
     else this.advertisement = {};
-    // this.apiService
-    //   .getApplicationSetting()
-    //   .pipe(
-    //     takeUntilDestroyed(),
-    //     take(1),
-    //     tap((info: any) => {
-    //       // this.topAdPrice = info.topAdvertisementPrice;
-    //       // this.tax = info.tax;
-    //       this.maxAdvertisementSliderImage = info.maxAdvertisementSliderImage;
-    //       this.userAdvertisementDuration = info.userAdvertisementDuration;
-    //     }),
-    //     catchError((err) => {
-    //       return of(err);
-    //     })
-    //   )
-    //   .subscribe();
 
-    // getPreNewAdInfo;
-    //this.advertisement.dateCreated = new Date();
     this.advertisement.sliderImages = [];
     this.advertisementCommunicationService.message$
       .pipe(first())
@@ -229,7 +221,6 @@ export class EditAdvertisementComponent {
   }
 
   getObjectURL(file: File): SafeUrl {
-    console.log(file, 'thi is hte file');
     if (file)
       return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
     else return null;
@@ -248,6 +239,11 @@ export class EditAdvertisementComponent {
   preview() {
     this.advertisementCommunicationService.sendMessage(this.advertisement);
     this.router.navigate(['/general/preview-advertisement']);
+  }
+  deleteHeaderImage() {
+    this.headerImageFile = null;
+    this.advertisement.headerImage = null;
+    this.advertisement.headerImageUrl = null;
   }
   headerImageHandler(event: any) {
     const headerImageFile = event?.target?.files[0];
@@ -340,7 +336,7 @@ export class EditAdvertisementComponent {
         'showChat',
         `${this.advertisement?.showChat ? '1' : '0'}`
       );
-      console.log(this.advertisement, formData);
+
       this.apiService
         .editAdvertisement(formData)
         .pipe(

@@ -1,9 +1,21 @@
 <div class="container-fluid">
   <div class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2">
     <div
-      class="col-3 align-middle background-container rounded-1 border border-1"
-      [style.backgroundImage]="advertisement.headerImageUrl"
+      *ngIf="advertisement.headerImageUrl; then imageSection; else noImage"
     ></div>
+    <ng-template #imageSection>
+      <div
+        class="col-3 align-middle background-container rounded-1 border border-1"
+        [style.backgroundImage]="advertisement.headerImageUrl"
+      ></div
+    ></ng-template>
+    <ng-template #noImage>
+      <div
+        class="col-3 align-middle background-container rounded-1 border border-1"
+        [style.backgroundImage]="'url(../../../assets/images/questionmark.png)'"
+      ></div
+    ></ng-template>
+
     <div class="col-9">
       <div class="continer-fluid">
         <div class="row">

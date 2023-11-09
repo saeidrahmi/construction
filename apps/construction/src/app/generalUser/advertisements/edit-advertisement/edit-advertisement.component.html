@@ -84,7 +84,56 @@
                             </div>
                           </div>
                         </div>
+                        <div class="row" *ngIf="this.headerImageFile">
+                          <div class="col-md-3"></div>
+                          <div class="col-md-8">
+                            <div class="file-item my-2">
+                              <table
+                                class="table table-bordered table-responsive align-middle"
+                              >
+                                <thead>
+                                  <tr>
+                                    <th>File name</th>
+                                    <th>File type</th>
+                                    <th>File size</th>
 
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td>{{ headerImageFile?.name }}</td>
+                                    <td>{{ headerImageFile?.type }}</td>
+                                    <td>
+                                      {{
+                                        utilityService.convertBytesToKbOrMb(
+                                          headerImageFile?.size
+                                        )
+                                      }}
+                                    </td>
+
+                                    <td>
+                                      <button (click)="deleteHeaderImage()">
+                                        Delete
+                                      </button>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td colspan="4" style="text-align: center">
+                                      <img
+                                        [src]="this.advertisement?.headerImage"
+                                        style="
+                                          max-width: 800px;
+                                          max-height: 400px;
+                                        "
+                                      />
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
                         <div class="row">
                           <div class="col-md-3 mt-1 form-labe">Title</div>
                           <div class="col-md-8">
@@ -120,6 +169,7 @@
                           </div>
                         </div>
                       </div>
+
                       <div class="mt-5">
                         <button
                           mat-stroked-button

@@ -827,6 +827,29 @@ export class ApiService {
         })
       );
   }
+  repostUserAdvertisement(
+    userId: string,
+    userAdvertisementId: any,
+    userAdvertisementDuration: any,
+    activePlanId: any
+  ): Observable<any> {
+    this.spinner.show();
+
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/advertisement-repost', {
+        userId: userId,
+        userAdvertisementId: userAdvertisementId,
+        userAdvertisementDuration: userAdvertisementDuration,
+        activePlanId: activePlanId,
+      })
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   getAdvertisementDetails(userAdvertisementId: any): Observable<any> {
     this.spinner.show();
     return this.httpClient

@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { take, tap, catchError, of, switchMap } from 'rxjs';
+import { take, tap, catchError, of, switchMap, map } from 'rxjs';
 import { AdvertisementInterface } from '../../models/advertisement';
 import { AdvertisementCommunicationService } from '../../services/advertisementServcie';
 import { CommonUtilityService } from '../../services/common-utility.service';
@@ -38,7 +38,7 @@ export class AdvertisementsComponent {
   getAds$ = this.apiService
     .getUserAdvertisements(this.encryptionService.encryptItem(this.userId()))
     .pipe(
-      takeUntilDestroyed(),
+      takeUntilDestroyed(this.destroyRef),
       take(1),
       tap((list: any) => {
         this.allAdvertisements = list;
@@ -69,8 +69,22 @@ export class AdvertisementsComponent {
       }),
       catchError((err) => {
         return of(err);
-      })
+      }),
+      switchMap(() =>
+        this.apiService.getApplicationSetting().pipe(
+          takeUntilDestroyed(this.destroyRef),
+          take(1),
+          tap((info: any) => {
+            7;
+            this.userAdvertisementDuration = info.userAdvertisementDuration;
+          }),
+          catchError((err) => {
+            return of(err);
+          })
+        )
+      )
     );
+  userAdvertisementDuration: any;
   constructor() {
     this.getAds$.subscribe();
   }
@@ -140,5 +154,63 @@ export class AdvertisementsComponent {
   editAdvertisement(userAdvertisementId: string) {
     this.storageService.updateSelectedAdvertisementId(userAdvertisementId);
     this.router.navigate(['/general/edit-advertisement']);
+  }
+  repostAdvertisement(advertisement: AdvertisementInterface) {
+    this.apiService
+      .canUserAdvertise(this.encryptionService.encryptItem(this.userId()))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+
+        switchMap((info) => {
+          if (info.result) {
+            return this.apiService
+              .repostUserAdvertisement(
+                this.encryptionService.encryptItem(this.userId()),
+                advertisement.userAdvertisementId,
+                this.userAdvertisementDuration,
+                info.activePlanId
+              )
+
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                take(1),
+                tap((list: any) => {
+                  this.toastService.success('Deleted. ', 'Success', {
+                    timeOut: 3000,
+                    positionClass: 'toast-top-right',
+                    closeButton: true,
+                    progressBar: true,
+                  });
+                }),
+                catchError((err) => {
+                  this.toastService.error(
+                    'Deleted failed. ' + err,
+                    'Plan failure',
+                    {
+                      timeOut: 3000,
+                      positionClass: 'toast-top-right',
+                      closeButton: true,
+                      progressBar: true,
+                    }
+                  );
+                  return of(err);
+                })
+              );
+          } else {
+            this.toastService.error(
+              'You have no sufficient balance to create new advertisement. please purchase a plan . ',
+              'Plan failure',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
+          }
+        }),
+        switchMap(() => this.getAds$)
+      )
+      .subscribe();
   }
 }

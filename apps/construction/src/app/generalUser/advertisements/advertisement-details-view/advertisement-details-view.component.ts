@@ -63,6 +63,7 @@ export class UserAdvertisementDetailsViewComponent {
   sliderImages: any[];
   formErrors: string[] = [];
   selectedImage: any;
+  profileImage: string;
 
   constructor(private sanitizer: DomSanitizer) {
     const adObject = this.storageService?.getAdvertisement()();
@@ -95,6 +96,7 @@ export class UserAdvertisementDetailsViewComponent {
               });
 
               this.userInfo = info?.userInfo;
+
               this.registeredDate = new Date(info?.registeredDate);
               this.acitveAds = info.acitveAds;
               this.rate = info.userRate;
