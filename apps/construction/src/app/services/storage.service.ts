@@ -107,6 +107,19 @@ export class StorageService {
       };
     });
   }
+  updateAdvertisementIdAndAction(id: string, action: any) {
+    this.store.update((state) => {
+      return {
+        ...state,
+        advertisement: {
+          ...state.advertisement,
+          advertisementIdSelected: id,
+
+          advertisementAction: action,
+        },
+      };
+    });
+  }
   updateSelectedAdvertisement(
     advertisement: AdvertisementInterface,
     action: string

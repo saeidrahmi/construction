@@ -20,6 +20,7 @@ import { UserMessagesComponent } from './user-messages/user-messages.component';
 import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-favorite-ads.component';
 import { UserMessagesDetailsComponent } from './user-messages/user-messages-details/user-messages-details.component';
 import { UserAdvertisementDetailsViewComponent } from './advertisements/advertisement-details-view/advertisement-details-view.component';
+import { PromoteToAdComponent } from './advertisements/promote-toAd/promote-toAd.component';
 const routes: Routes = [
   {
     path: '',
@@ -100,6 +101,10 @@ const routes: Routes = [
       {
         path: 'advertisement-details',
         component: UserAdvertisementDetailsViewComponent,
+      },
+      {
+        path: 'promote-top-ad',
+        component: PromoteToAdComponent,
       },
 
       {

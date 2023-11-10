@@ -75,7 +75,7 @@ export class UserProfileComponent {
       city: new FormControl('', [Validators.required]),
       website: new FormControl(this.user()?.website, []),
       company: new FormControl(this.user()?.company, []),
-      companyLogo: new FormControl(),
+      // companyLogo: new FormControl(),
       jobProfileDescription: new FormControl(
         this.user()?.jobProfileDescription,
         []
@@ -126,13 +126,15 @@ export class UserProfileComponent {
         );
       else formData.append('profileImage', '');
 
-      if (this.logoImageFile)
-        formData.append(
-          'logoImage',
-          this.logoImageFile,
-          this.logoImageFile.name
-        );
-      else formData.append('logoImage', '');
+      // if (this.logoImageFile)
+      //   formData.append(
+      //     'logoImage',
+      //     this.logoImageFile,
+      //     this.logoImageFile.name
+      //   );
+      // else
+
+      formData.append('logoImage', '');
       formData.append(
         'firstName',
         this.commonUtility.trimString(this.form.get('firstName')?.value)
@@ -303,49 +305,49 @@ export class UserProfileComponent {
       }
     }
   }
-  companyLogoHandler(event: any) {
-    this.logoImageFile = event?.target?.files[0];
-    const maxFileSize = this.commonUtility._companyLogoMaxSize;
-    const allowedFileTypes = this.commonUtility._imageMimeTypes;
-    if (this.logoImageFile) {
-      const fileType = this.logoImageFile?.name
-        ?.split('.')
-        ?.pop()
-        ?.toLowerCase();
-      if (fileType && !allowedFileTypes?.includes(fileType)) {
-        this.toastService.error(
-          'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
-            allowedFileTypes.join(', '),
-          'Wrong File Type',
-          {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          }
-        );
-        this.form.get('photo')?.setValue('');
-        this.logoImageFile = null;
-      }
-      if (
-        this.logoImageFile?.size == 0 ||
-        this.logoImageFile?.size > maxFileSize
-      ) {
-        this.toastService.error(
-          'File size can not be empty and can not exceeds the maximum limit of 1 MB',
-          'Wrong File Size',
-          {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          }
-        );
-        this.form.get('photo')?.setValue('');
-        this.logoImageFile = null;
-      } else {
-        // file ok
-      }
-    }
-  }
+  // companyLogoHandler(event: any) {
+  //   this.logoImageFile = event?.target?.files[0];
+  //   const maxFileSize = this.commonUtility._companyLogoMaxSize;
+  //   const allowedFileTypes = this.commonUtility._imageMimeTypes;
+  //   if (this.logoImageFile) {
+  //     const fileType = this.logoImageFile?.name
+  //       ?.split('.')
+  //       ?.pop()
+  //       ?.toLowerCase();
+  //     if (fileType && !allowedFileTypes?.includes(fileType)) {
+  //       this.toastService.error(
+  //         'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+  //           allowedFileTypes.join(', '),
+  //         'Wrong File Type',
+  //         {
+  //           timeOut: 3000,
+  //           positionClass: 'toast-top-right',
+  //           closeButton: true,
+  //           progressBar: true,
+  //         }
+  //       );
+  //       this.form.get('photo')?.setValue('');
+  //       this.logoImageFile = null;
+  //     }
+  //     if (
+  //       this.logoImageFile?.size == 0 ||
+  //       this.logoImageFile?.size > maxFileSize
+  //     ) {
+  //       this.toastService.error(
+  //         'File size can not be empty and can not exceeds the maximum limit of 1 MB',
+  //         'Wrong File Size',
+  //         {
+  //           timeOut: 3000,
+  //           positionClass: 'toast-top-right',
+  //           closeButton: true,
+  //           progressBar: true,
+  //         }
+  //       );
+  //       this.form.get('photo')?.setValue('');
+  //       this.logoImageFile = null;
+  //     } else {
+  //       // file ok
+  //     }
+  //   }
+  // }
 }

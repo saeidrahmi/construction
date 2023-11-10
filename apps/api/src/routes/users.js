@@ -4,6 +4,7 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage });
 const router = express.Router();
 const {
+  promoteTopAdvertisementController,
   getUserAdvertisementDetailsController,
   getAdvertisementEditInfoController,
   refreshTokenController,
@@ -271,6 +272,11 @@ router.post(
   '/advertisement-repost',
   verifyGeneralToken,
   repostAdvertisementController
+);
+router.post(
+  '/promote-top-ad',
+  verifyGeneralToken,
+  promoteTopAdvertisementController
 );
 
 module.exports = router;

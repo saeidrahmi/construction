@@ -155,7 +155,9 @@
                       mat-stroked-button
                       color="primary"
                       class="mx-1"
-                      click=""
+                      (click)="
+                        navigatePromoteAd(advertisement.userAdvertisementId)
+                      "
                       *ngIf="
                         userService.getDaysRemaining(
                           currentDate,

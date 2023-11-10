@@ -49,6 +49,7 @@ import { UserAdvertisementDetailsViewComponent } from './advertisements/advertis
 import { UserAdvertisementViewComponent } from './advertisements/advertisement-view/advertisement-view.component';
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { NgxDropzoneModule } from 'ngx-dropzone';
+import { PromoteToAdComponent } from './advertisements/promote-toAd/promote-toAd.component';
 @NgModule({
   declarations: [
     GeneralComponent,
@@ -71,6 +72,7 @@ import { NgxDropzoneModule } from 'ngx-dropzone';
     UserMessagesDetailsComponent,
     UserAdvertisementDetailsViewComponent,
     UserAdvertisementViewComponent,
+    PromoteToAdComponent,
   ],
   imports: [
     CommonModule,

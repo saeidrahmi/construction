@@ -1711,7 +1711,10 @@ async function getFavoriteAdvertisementsController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const values = [userId];
-    const selectQuery = `select * from userFavoriteAdvertisements where userId=?`;
+    const selectQuery = `SELECT userAdvertisements.*
+                          FROM userAdvertisements
+                          JOIN userFavoriteAdvertisements ON userAdvertisements.userAdvertisementId  = userFavoriteAdvertisements.userAdvertisementId
+                          WHERE  userFavoriteAdvertisements.userId=? ORDER BY userFavoriteAdvertisements.dateCreated DESC;`;
     const selectResult = await executeQuery(selectQuery, values);
 
     return res.status(200).json(selectResult);

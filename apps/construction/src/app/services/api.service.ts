@@ -850,6 +850,29 @@ export class ApiService {
         })
       );
   }
+
+  promoteTopAdvertisement(
+    userId: string,
+    paymentInfo: any,
+    userAdvertisementId: any
+  ): Observable<any> {
+    this.spinner.show();
+
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/promote-top-ad', {
+        userId: userId,
+        paymentInfo: paymentInfo,
+        userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+
   getAdvertisementDetails(userAdvertisementId: any): Observable<any> {
     this.spinner.show();
     return this.httpClient

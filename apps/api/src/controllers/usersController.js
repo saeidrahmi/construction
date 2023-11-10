@@ -1814,6 +1814,7 @@ async function updateUserAdvertisementHeaderImages(connection, data) {
 }
 async function insertUserTopAdvertisementPayment(connection, data) {
   const selectQuery = `INSERT INTO userTopAdvertisementPayments (userAdvertisementId , paymentConfirmation,paymentAmount,tax,totalPayment) VALUES (?,?,?,?,?)`;
+
   const values = [
     data.userAdvertisementId,
     data.paymentConfirmation,
@@ -2031,13 +2032,17 @@ async function getFavoriteAdvertisementsController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const values = [userId];
-    const selectQuery = `select * from userFavoriteAdvertisements where userId=?`;
+    const selectQuery = `SELECT userAdvertisements.*
+                          FROM userAdvertisements
+                          JOIN userFavoriteAdvertisements ON userAdvertisements.userAdvertisementId  = userFavoriteAdvertisements.userAdvertisementId
+                          WHERE  userFavoriteAdvertisements.userId=? ORDER BY userFavoriteAdvertisements.dateCreated DESC;`;
     const selectResult = await executeQuery(selectQuery, values);
 
     return res.status(200).json(selectResult);
   } catch (error) {
     return res.status(500).json({
-      errorMessage: 'Failed to retrieve information. Please try again later.',
+      errorMessage:
+        'Error adding favorite ad. This is already your favorite ad',
     });
   }
 }
@@ -2330,7 +2335,7 @@ async function repostAdvertisementController(req, res) {
     FROM userAdvertisementImages WHERE
       userAdvertisementId = ?;
     `;
-    await executeQuery(insertImageQuery, [
+    await connection.execute(insertImageQuery, [
       newAdvertisementId,
       userAdvertisementId,
     ]);
@@ -2351,8 +2356,64 @@ async function repostAdvertisementController(req, res) {
     }
   }
 }
+async function promoteTopAdvertisementController(req, res) {
+  let connection;
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const userAdvertisementId = req.body.userAdvertisementId;
+    const paymentInfo = req.body.paymentInfo;
+    connection = await connectToDatabase();
+    await connection.beginTransaction();
+    const updateQuery = `UPDATE  userAdvertisements   SET topAdvertisement = 1  WHERE userAdvertisementId = ?`;
+    const [updateResult] = await connection.execute(updateQuery, [
+      userAdvertisementId,
+    ]);
+    console.log('her1', updateResult);
+    if (updateResult.affectedRows === 0) {
+      await connection.rollback();
+      return res.status(500).json({
+        errorMessage: 'Failed to insert information. Please try again.',
+      });
+    }
+
+    const insertPaymentResult = await insertUserTopAdvertisementPayment(
+      connection,
+      {
+        userAdvertisementId: userAdvertisementId,
+        paymentConfirmation: paymentInfo.paymentConfirmation,
+        paymentAmount: paymentInfo.paymentAmount,
+        tax: paymentInfo.tax,
+        totalPayment: paymentInfo.totalPayment,
+      }
+    );
+    console.log('her');
+    if (!insertPaymentResult) {
+      await connection.rollback();
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
+    }
+
+    await connection.commit();
+    return res.status(200).json();
+  } catch (error) {
+    await connection.rollback();
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  } finally {
+    if (connection) {
+      try {
+        await connection.end();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
+  }
+}
 
 module.exports = {
+  promoteTopAdvertisementController,
   repostAdvertisementController,
   getAdvertisementEditInfoController,
   getUserNumberOfNewMessagesController,

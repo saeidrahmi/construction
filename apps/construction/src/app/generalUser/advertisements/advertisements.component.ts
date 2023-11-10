@@ -213,4 +213,12 @@ export class AdvertisementsComponent {
       )
       .subscribe();
   }
+  navigatePromoteAd(userAdvertisementId) {
+    this.storageService.updateAdvertisementIdAndAction(
+      userAdvertisementId,
+      'promote'
+    );
+
+    this.router.navigate(['/general/promote-top-ad']);
+  }
 }
