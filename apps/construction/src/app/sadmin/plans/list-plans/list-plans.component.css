@@ -1,3 +1,11 @@
 .pointer {
   cursor: pointer;
 }
+
+/* Set column widths */
+mat-cell,
+mat-header-cell {
+  display: flex;
+  max-width: 450px;
+  min-width: 350px;
+}

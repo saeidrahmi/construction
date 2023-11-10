@@ -117,8 +117,11 @@ export class CreatePlanComponent {
             this.plan.originalPrice = this.setting?.monthlyPrice * monthNbr;
             this.plan.discountPercentage = discount;
             this.plan.priceAfterDiscount =
-              this.setting?.monthlyPrice * monthNbr -
-              (this.setting?.monthlyPrice * monthNbr * discount) / 100;
+              Math.floor(
+                (this.setting?.monthlyPrice * monthNbr -
+                  (this.setting?.monthlyPrice * monthNbr * discount) / 100) *
+                  100
+              ) / 100;
 
             this.form.get('price')?.setValue(this.plan.priceAfterDiscount);
           } else {
@@ -131,6 +134,7 @@ export class CreatePlanComponent {
       });
   }
   submit() {
+    this.formErrors = [];
     if (this.form.invalid) {
       this.formErrors = this.formService.getFormValidationErrorMessages(
         this.form

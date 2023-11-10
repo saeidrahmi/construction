@@ -9,6 +9,7 @@ import { AdminSettingsComponent } from './admin-settings/admin-settings.componen
 import { ListPlansComponent } from './plans/list-plans/list-plans.component';
 import { CreatePlanComponent } from './plans/createPlan/createPlan.component';
 import { EditPlanComponent } from './plans/edit-plan/edit-plan.component';
+import { AdvertisementsPendingApprovalComponent } from './user-advertisements/advertisements-pending-approval/advertisements-pending-approval.component';
 const routes: Routes = [
   {
     path: '',
@@ -41,6 +42,10 @@ const routes: Routes = [
       {
         path: 'edit-plan/:id',
         component: EditPlanComponent,
+      },
+      {
+        path: 'advertisements-pending-approval',
+        component: AdvertisementsPendingApprovalComponent,
       },
       {
         path: '',

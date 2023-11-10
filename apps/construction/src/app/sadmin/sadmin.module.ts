@@ -22,13 +22,16 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { PlanComponent } from '../common-components/plan/plan.component';
 import { EditPlanComponent } from './plans/edit-plan/edit-plan.component';
+import { AdvertisementsPendingApprovalComponent } from './user-advertisements/advertisements-pending-approval/advertisements-pending-approval.component';
+import { AdvertisementViewComponent } from '../common-components/advertisement-view/advertisement-view.component';
+import { MatButtonModule } from '@angular/material/button';
 @NgModule({
   declarations: [
     SAdminComponent,
     SAdminSideBarComponent,
     DashboardComponent,
     UsersComponent,
-
+    AdvertisementsPendingApprovalComponent,
     ListPlansComponent,
     CreatePlanComponent,
     AdminSettingsComponent,
@@ -49,6 +52,8 @@ import { EditPlanComponent } from './plans/edit-plan/edit-plan.component';
     MatDatepickerModule,
     MatNativeDateModule,
     PlanComponent,
+    AdvertisementViewComponent,
+    MatButtonModule,
   ],
 })
 export class AdminModule {}

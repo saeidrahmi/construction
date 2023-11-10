@@ -193,11 +193,7 @@ router.post(
   deleteFavoriteAdvertisementsController
 );
 router.post('/add-user-rating', verifyAllToken, addUserRatingController);
-router.post(
-  '/is-user-favorite-ad',
-  verifyGeneralToken,
-  isUserFavoriteAdController
-);
+router.post('/is-user-favorite-ad', verifyAllToken, isUserFavoriteAdController);
 router.post(
   '/post-advertisement-message',
   verifyAllToken,

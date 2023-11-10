@@ -11,6 +11,9 @@ const {
   dashboardController,
   getPlanInfoController,
   updatePlanController,
+  getAllUsersAdvertisementsPendingApproval,
+  approveAdvertisement,
+  rejectAdvertisement,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -36,5 +39,21 @@ router.post(
 router.post('/delete-plan', verifySAdminToken, deletePlanController);
 router.get('/dashboard', verifySAdminToken, dashboardController);
 router.post('/plan-info', verifyAdminAndSAdminToken, getPlanInfoController);
+router.get(
+  '/list-advertisements-pending-approval',
+  verifyAdminAndSAdminToken,
+  getAllUsersAdvertisementsPendingApproval
+);
+router.post(
+  '/approve-advertisement',
+  verifyAdminAndSAdminToken,
+  approveAdvertisement
+);
+router.post(
+  '/reject-advertisement',
+  verifyAdminAndSAdminToken,
+  rejectAdvertisement
+);
 router.post('/update-plan', verifySAdminToken, updatePlanController);
+
 module.exports = router;

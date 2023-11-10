@@ -152,11 +152,9 @@ async function listPlansController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        errorMessage: 'Failed to retrieve information. Please try again later.',
-      });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function updatePlanStatusController(req, res) {
@@ -190,11 +188,9 @@ async function deletePlanController(req, res) {
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json();
     } else {
-      return res
-        .status(500)
-        .json({
-          errorMessage: 'Failed to delete the information. Please try again',
-        });
+      return res.status(500).json({
+        errorMessage: 'Failed to delete the information. Please try again',
+      });
     }
   } catch (error) {
     return res.status(500).json({
@@ -287,8 +283,51 @@ async function updatePlanController(req, res) {
     });
   }
 }
+async function getAllUsersAdvertisementsPendingApproval(req, res) {
+  try {
+    const selectQuery = `SELECT  * FROM userAdvertisements WHERE   approvedByAdmin = 0 and active=1 and deleted=0 and  userAdvertisements.expiryDate  > CURDATE()  ORDER BY userAdvertisements.dateCreated DESC`;
+    const selectResult = await executeQuery(selectQuery, []);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 
+async function approveAdvertisement(req, res) {
+  try {
+    const userAdvertisementId = req.body.userAdvertisementId;
+    console.log(userAdvertisementId);
+    const selectQuery = `UPDATE userAdvertisements set   approvedByAdmin = 1,  rejected=0 , rejectedReason='' where userAdvertisementId =?`;
+    const selectResult = await executeQuery(selectQuery, [userAdvertisementId]);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
+async function rejectAdvertisement(req, res) {
+  try {
+    const userAdvertisementId = req.body.userAdvertisementId;
+    const reason = req.body.rejectReason;
+    console.log(userAdvertisementId);
+    const selectQuery = `UPDATE userAdvertisements set   approvedByAdmin = 0,  rejected=1 , rejectedReason=? where userAdvertisementId =?`;
+    const selectResult = await executeQuery(selectQuery, [
+      reason,
+      userAdvertisementId,
+    ]);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 module.exports = {
+  rejectAdvertisement,
+  approveAdvertisement,
   listAdminSettingsController,
   updateAdminSettingsController,
   createNewPlanController,
@@ -298,4 +337,5 @@ module.exports = {
   dashboardController,
   getPlanInfoController,
   updatePlanController,
+  getAllUsersAdvertisementsPendingApproval,
 };

@@ -887,6 +887,35 @@ export class ApiService {
         })
       );
   }
+  approveAdvertisement(userAdvertisementId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/approve-advertisement', {
+        userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  rejectAdvertisement(userAdvertisementId: any, reason: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/reject-advertisement', {
+        userAdvertisementId: userAdvertisementId,
+        rejectReason: reason,
+      })
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   getUserAdvertisementDetails(
     userAdvertisementId: any,
     userId: any
@@ -910,6 +939,20 @@ export class ApiService {
     this.spinner.show();
     return this.httpClient
       .get<any>(this.backendApiUrl + '/public/list-advertisements')
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getAllUsersAdvertisementsPendingApproval(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(
+        this.backendApiUrl + '/admin/list-advertisements-pending-approval'
+      )
       .pipe(
         take(1),
 
