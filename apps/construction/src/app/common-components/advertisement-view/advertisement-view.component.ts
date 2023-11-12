@@ -24,9 +24,9 @@ export class AdvertisementViewComponent {
   isUserLoggedIn = this.storageService.isUserLoggedIn();
 
   constructor() {}
-  navigateDetails(advertisement, userAdvertisementId) {
-    this.storageService.updateAdvertisementState(
-      advertisement,
+
+  navigateDetails(userAdvertisementId) {
+    this.storageService.updateAdvertisementIdAndAction(
       userAdvertisementId,
       'view'
     );

@@ -12,7 +12,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ListPlansComponent } from './plans/list-plans/list-plans.component';
 import { CreatePlanComponent } from './plans/createPlan/createPlan.component';
@@ -26,6 +26,9 @@ import { AdvertisementsPendingApprovalComponent } from './user-advertisements/ad
 import { AdvertisementViewComponent } from '../common-components/advertisement-view/advertisement-view.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { AdminAdvertisementDetailsViewComponent } from './user-advertisements/advertisements-pending-approval/advertisement-details-view/advertisement-details-view.component';
+import { AdminAdvertisementViewComponent } from './user-advertisements/advertisements-pending-approval/advertisement-view/advertisement-view.component';
+import { RatingModule } from 'ngx-bootstrap/rating';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -37,6 +40,8 @@ import { MatSelectModule } from '@angular/material/select';
     CreatePlanComponent,
     AdminSettingsComponent,
     EditPlanComponent,
+    AdminAdvertisementViewComponent,
+    AdminAdvertisementDetailsViewComponent,
   ],
   imports: [
     CommonModule,
@@ -56,6 +61,9 @@ import { MatSelectModule } from '@angular/material/select';
     AdvertisementViewComponent,
     MatButtonModule,
     MatSelectModule,
+    RatingModule,
+    FormErrorsComponent,
+    FormsModule,
   ],
 })
 export class AdminModule {}

@@ -268,7 +268,7 @@ export class AdvertisementDetailsViewComponent {
               });
             }),
             catchError((err) => {
-              this.toastService.error('Adding failed', 'Failed', {
+              this.toastService.error('Server Error ' + err, 'Failed', {
                 timeOut: 3000,
                 positionClass: 'toast-top-right',
                 closeButton: true,

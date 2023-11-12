@@ -1980,6 +1980,12 @@ async function postAdvertisementMessageController(req, res) {
     let messageBy = decryptItem(req.body.messageBy, webSecretKey);
     const message = req.body.message;
     const userAdvertisementId = req.body.userAdvertisementId;
+
+    if (userId === messageBy)
+      res.status(500).json({
+        errorMessage: 'You can not message yourself. Please try again.',
+      });
+
     const values = [
       userId,
       messageBy,
@@ -2005,7 +2011,7 @@ async function getAdvertisementMessageController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const values = [userId];
-    const selectQuery = `select * from userAdvertisementsMessages where userId=?   ORDER BY dateCreated desc `;
+    const selectQuery = `select * from userAdvertisementsMessages where deleted=0 and userId=?   ORDER BY dateCreated desc `;
     const selectResult = await executeQuery(selectQuery, values);
 
     return res.status(200).json(selectResult);
@@ -2018,9 +2024,20 @@ async function getAdvertisementMessageController(req, res) {
 async function deleteAdvertisementMessageController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
-    const values = [userId, req.body.messageId];
-    const selectQuery = `delete from userAdvertisementsMessages where userId=? and messageId=?`;
+    let values = [userId, req.body.messageId];
+    const selectQuery = `update userAdvertisementsMessages set deleted=1 where userId=? and messageId=?`;
     const selectResult = await executeQuery(selectQuery, values);
+    let fromUserId = decryptItem(req.body.fromUserId, webSecretKey);
+    values = [userId, fromUserId, fromUserId, userId, req.body.advertisementId];
+    const selectCountQuery = `select count(*) as total, SUM(CASE WHEN deleted = 1 THEN 1 ELSE 0 END) AS deletedTotal from userAdvertisementsMessages where ((userId=? and fromUserId=?) or (userId=? and fromUserId=?)) and
+    advertisementId =? `;
+    const selectCountResult = await executeQuery(selectCountQuery, values);
+
+    if (selectCountResult[0]?.total == selectCountResult[0]?.deletedTotal) {
+      const deleteQuery = `delete from userAdvertisementsMessages where ((userId=? and fromUserId=?) or (userId=? and fromUserId=?)) and
+      advertisementId =? and deleted=1`;
+      await executeQuery(deleteQuery, values);
+    }
     return res.status(200).json();
   } catch (error) {
     return res.status(500).json({
@@ -2071,7 +2088,7 @@ async function getAdvertisementMessageThreadsController(req, res) {
       req.body.userAdvertisementId,
     ];
 
-    const selectQuery = `select * from userAdvertisementsMessages where ((userId=? and fromUserId=?) or (userId=? and fromUserId=?)) and advertisementId =? ORDER BY dateCreated asc `;
+    const selectQuery = `select * from userAdvertisementsMessages where ((userId=? and fromUserId=?) or (userId=? and fromUserId=?)) and advertisementId =? and deleted=0 ORDER BY dateCreated asc `;
     const selectResult = await executeQuery(selectQuery, values);
 
     return res.status(200).json(selectResult);

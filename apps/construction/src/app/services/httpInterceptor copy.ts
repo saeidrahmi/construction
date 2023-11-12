@@ -70,7 +70,7 @@ const getErrorMessage = (error: HttpErrorResponse): string => {
     }
 
     case 500: {
-      return 'Internal server error/exception. ';
+      return 'Internal server error/exception. . ' + error.error.errorMessage;
     }
     case 503: {
       return 'Service is Unavailable. ';

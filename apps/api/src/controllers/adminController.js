@@ -325,7 +325,109 @@ async function rejectAdvertisement(req, res) {
     });
   }
 }
+
+async function getAdvertisementDetailsController(req, res) {
+  try {
+    let userAdvertisementId = req.body.userAdvertisementId;
+
+    // get userId
+    const selectUserQuery = `select userId from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.userAdvertisementId=?;`;
+    const selectUserResult = await executeQuery(selectUserQuery, [
+      userAdvertisementId,
+    ]);
+
+    const userId = selectUserResult[0].userId;
+
+    // get user general info
+    const selectUserInfoQuery = `select userId,firstName,lastName,registeredDate,phone,fax,address, city, province, postalCode, website,  profileImage from  users where userId=?`;
+
+    const selectUserInfoResult = await executeQuery(selectUserInfoQuery, [
+      userId,
+    ]);
+
+    // get Ad details
+
+    const selectAdQuery = `SELECT userAdvertisements.*, userAdvertisementImages.userAdvertisementImage
+                          FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          LEFT JOIN userAdvertisementImages ON userAdvertisements.userAdvertisementId = userAdvertisementImages.userAdvertisementId
+                          WHERE userAdvertisements.userAdvertisementId=? and userAdvertisements.deleted = 0 and userAdvertisements.active = 1  and   userAdvertisements.expiryDate  > CURDATE() `;
+    const selectAdResult = await executeQuery(selectAdQuery, [
+      userAdvertisementId,
+    ]);
+
+    // get user registered date
+    const selectRegDateQuery = `SELECT registeredDate FROM users where userId=?`;
+    const selectRegDateResult = await executeQuery(selectRegDateQuery, [
+      userId,
+    ]);
+    // get user rating
+    const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
+    const selectRatingResult = await executeQuery(selectRatingQuery, [userId]);
+    // get number of active ads
+    const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
+    const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
+      userId,
+    ]);
+    // get settings
+    const selectSettingQuery = `SELECT * FROM settings`;
+    const selectSettingResult = await executeQuery(selectSettingQuery, []);
+    // get services
+
+    const selectServicesQuery = `SELECT service FROM userServices WHERE userId = ?`;
+    const selectServicesResult = await executeQuery(selectServicesQuery, [
+      userId,
+    ]);
+    const serviceNames = selectServicesResult.map((row) => row.service);
+    // get locations
+
+    const selectLocationsQuery = `SELECT serviceCoverageType FROM users WHERE  userId = ?  `;
+    const selectLocationsResult = await executeQuery(selectLocationsQuery, [
+      userId,
+    ]);
+    let serviceLocationInfo;
+    if (selectLocationsResult[0].serviceCoverageType === 'country') {
+      serviceLocationInfo = {
+        serviceCoverageType: 'country',
+      };
+    } else if (selectLocationsResult[0].serviceCoverageType === 'province') {
+      const selectQueryProv = `SELECT province FROM userProvinces WHERE  userId = ?  `;
+      const selectResultProv = await executeQuery(selectQueryProv, [userId]);
+      serviceLocationInfo = {
+        serviceCoverageType: selectLocationsResult[0].serviceCoverageType,
+        provinces: selectResultProv.map((item) => item.province),
+      };
+    } else if (selectLocationsResult[0].serviceCoverageType === 'city') {
+      const selectQueryCity = `SELECT province,city FROM userServiceCities WHERE  userId = ?  `;
+      const selectResultCity = await executeQuery(selectQueryCity, [userId]);
+      serviceLocationInfo = {
+        serviceCoverageType: selectLocationsResult[0].serviceCoverageType,
+        cities: selectResultCity.map(
+          (item) => `${item.city} (${item.province})`
+        ),
+      };
+    }
+
+    // info
+    const info = {
+      registeredDate: selectRegDateResult[0].registeredDate,
+      acitveAds: selectActiveAdsResult[0].countAds,
+      userRate: selectRatingResult[0].average_rating,
+      appSettings: selectSettingResult[0],
+      services: serviceNames,
+      locations: serviceLocationInfo,
+      selectAdResult: selectAdResult,
+      userInfo: selectUserInfoResult[0],
+    };
+    return res.status(200).json(info);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 module.exports = {
+  getAdvertisementDetailsController,
   rejectAdvertisement,
   approveAdvertisement,
   listAdminSettingsController,

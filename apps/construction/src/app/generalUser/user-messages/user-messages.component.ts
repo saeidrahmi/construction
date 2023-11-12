@@ -38,7 +38,7 @@ export class UserMessagesComponent {
   ];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
-  dataSource!: MatTableDataSource<UserApiResponseInterface>;
+  dataSource!: MatTableDataSource<any>;
   getAdvertisementMessges$ = this.apiService
     .getUserAdvertisementMessages(
       this.encryptionService.encryptItem(this.userId())
@@ -47,6 +47,7 @@ export class UserMessagesComponent {
       takeUntilDestroyed(this.destroyRef),
       take(1),
       tap((messages: any) => {
+        console.log(messages, 'messages');
         this.dataSource = new MatTableDataSource(messages);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -77,13 +78,16 @@ export class UserMessagesComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-  deleteMessage(messageId: any) {
-    if (messageId) {
+  deleteMessage(row: any) {
+    console.log(row, 'row');
+    if (row.messageId) {
       this.storageService.updateIsLoading(true);
       this.apiService
         .deleteUserAdvertisementMessage(
           this.encryptionService.encryptItem(this.userId()),
-          messageId
+          row.messageId,
+          this.encryptionService.encryptItem(row.fromUserId),
+          row.advertisementId
         )
         .pipe(
           takeUntilDestroyed(this.destroyRef),
@@ -137,37 +141,11 @@ export class UserMessagesComponent {
       .subscribe();
   }
 
-  // changeAccountStatus(userId: string, activate: boolean) {
-  //   this.storageService.updateIsLoading(true);
-  //   this.apiService
-  //     .updateUserActivationStatus(userId, activate, true)
-  //     .pipe(
-  //       takeUntilDestroyed(this.destroyRef),
-  //       tap((users: UserApiResponseInterface[]) => {
-  //         this.dataSource = new MatTableDataSource(users);
-  //         this.dataSource.paginator = this.paginator;
-  //         this.dataSource.sort = this.sort;
-  //         this.toastService.success('User updated.', 'Update Successful', {
-  //           timeOut: 3000,
-  //           positionClass: 'toast-top-right',
-  //           closeButton: true,
-  //           progressBar: true,
-  //         });
-  //       }),
-  //       catchError((err) => {
-  //         this.toastService.error(
-  //           'User update failed. ' + err,
-  //           'List failure',
-  //           {
-  //             timeOut: 3000,
-  //             positionClass: 'toast-top-right',
-  //             closeButton: true,
-  //             progressBar: true,
-  //           }
-  //         );
-  //         return of(err);
-  //       })
-  //     )
-  //     .subscribe();
-  // }
+  navigateDetails(userAdvertisementId) {
+    this.storageService.updateAdvertisementIdAndAction(
+      userAdvertisementId,
+      'view'
+    );
+    this.router.navigate(['/view-advertisement-details']);
+  }
 }

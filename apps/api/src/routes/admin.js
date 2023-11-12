@@ -14,6 +14,7 @@ const {
   getAllUsersAdvertisementsPendingApproval,
   approveAdvertisement,
   rejectAdvertisement,
+  getAdvertisementDetailsController,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -55,5 +56,9 @@ router.post(
   rejectAdvertisement
 );
 router.post('/update-plan', verifySAdminToken, updatePlanController);
-
+router.post(
+  '/get-advertisement-details',
+  verifyAdminAndSAdminToken,
+  getAdvertisementDetailsController
+);
 module.exports = router;

@@ -99,6 +99,7 @@
                         </a>
                       </th>
                     </ng-container>
+
                     <ng-container matColumnDef="advertisementId">
                       <th
                         mat-header-cell
@@ -124,11 +125,8 @@
                         <a
                           type="button"
                           class="btn btn-outline-secondary"
-                          [routerLink]="[
-                            '/view-advertisement-details',
-                            row?.advertisementId
-                          ]"
                           routerLinkActive="router-link-active"
+                          (click)="navigateDetails(row.advertisementId)"
                         >
                           View Advertisement
                         </a>
@@ -251,7 +249,7 @@
                           matTooltip="Delete message"
                           matTooltipPosition="above"
                           class="pointer"
-                          (click)="deleteMessage(row.messageId)"
+                          (click)="deleteMessage(row)"
                           >delete</mat-icon
                         >
                         <mat-icon

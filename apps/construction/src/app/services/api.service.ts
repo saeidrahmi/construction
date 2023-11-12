@@ -887,6 +887,20 @@ export class ApiService {
         })
       );
   }
+  getAdminAdvertisementDetails(userAdvertisementId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/get-advertisement-details', {
+        userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
   approveAdvertisement(userAdvertisementId: any): Observable<any> {
     this.spinner.show();
     return this.httpClient
@@ -1068,7 +1082,12 @@ export class ApiService {
         })
       );
   }
-  deleteUserAdvertisementMessage(userId: any, messageId: any): Observable<any> {
+  deleteUserAdvertisementMessage(
+    userId: any,
+    messageId: any,
+    fromUserId: any,
+    advertisementId: any
+  ): Observable<any> {
     this.spinner.show();
     return this.httpClient
       .post<any>(
@@ -1076,6 +1095,8 @@ export class ApiService {
         {
           userId: userId,
           messageId: messageId,
+          fromUserId: fromUserId,
+          advertisementId: advertisementId,
         }
       )
       .pipe(
