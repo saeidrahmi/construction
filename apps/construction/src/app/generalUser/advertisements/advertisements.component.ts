@@ -23,6 +23,7 @@ export class AdvertisementsComponent {
   formService = inject(FormService);
   router = inject(Router);
   imageService = inject(ImageService);
+  utilityService = inject(CommonUtilityService);
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   userService = inject(UserService);

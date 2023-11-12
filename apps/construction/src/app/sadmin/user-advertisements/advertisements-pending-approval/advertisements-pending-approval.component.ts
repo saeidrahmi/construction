@@ -12,6 +12,12 @@ import { ApiService } from '../../../services/api.service';
 import { ImageService } from '../../../services/image-service';
 import { UserService } from '../../../services/user-service';
 import { ToastrService } from 'ngx-toastr';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 
 @Component({
   selector: 'app-advertisements-pending-approval',
@@ -26,6 +32,8 @@ export class AdvertisementsPendingApprovalComponent {
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   userService = inject(UserService);
+
+  fb = inject(FormBuilder);
   storageService = inject(StorageService);
   advertisementCommunicationService = inject(AdvertisementCommunicationService);
   commonUtility = inject(CommonUtilityService);
@@ -34,6 +42,11 @@ export class AdvertisementsPendingApprovalComponent {
   uniqueAdvertisements: any[] = [];
   userId = this.storageService?.getUserId();
   user = this.storageService?.getUser();
+  reason: string[] = [];
+  form: FormGroup = this.fb.group({
+    reasonControl: new FormControl('', [Validators.required]),
+  });
+
   currentDate = new Date();
   getAds$ = this.apiService.getAllUsersAdvertisementsPendingApproval().pipe(
     takeUntilDestroyed(this.destroyRef),
@@ -92,7 +105,7 @@ export class AdvertisementsPendingApprovalComponent {
   }
   rejectAd(userAdvertisementId: any) {
     this.apiService
-      .rejectAdvertisement(userAdvertisementId, 'Rejected By Admin')
+      .rejectAdvertisement(userAdvertisementId, this.reason?.join(', '))
 
       .pipe(
         takeUntilDestroyed(this.destroyRef),

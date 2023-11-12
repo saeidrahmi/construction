@@ -90,28 +90,58 @@
                     >
                       Approve
                     </button>
-                    <button
-                      mat-stroked-button
-                      color="primary"
-                      class="mx-1"
-                      (click)="rejectAd(advertisement?.userAdvertisementId)"
-                      *ngIf="
-                        userService.getDaysRemaining(
-                          currentDate,
-                          advertisement?.expiryDate
-                        ) >= 1 && advertisement?.active === 1
-                      "
-                    >
-                      Reject
-                    </button>
                   </div>
                 </div>
+                <div class="row my-2">
+                  <form action="" [formGroup]="form">
+                    <div class="col-p-3">
+                      <mat-form-field style="width: 500px">
+                        <mat-label>Reject Reasons</mat-label>
+                        <mat-select
+                          multiple
+                          [(ngModel)]="reason"
+                          formControlName="reasonControl"
+                          placeholder="Select reasons"
+                        >
+                          <mat-option value="In-appropriate content"
+                            >In-appropriate content</mat-option
+                          >
+                          <mat-option value="In-appropriate images"
+                            >In-appropriate images</mat-option
+                          >
+                        </mat-select>
+                      </mat-form-field>
+
+                      <button
+                        [disabled]="form.invalid"
+                        mat-stroked-button
+                        color="primary"
+                        class="mx-1"
+                        (click)="rejectAd(advertisement?.userAdvertisementId)"
+                        *ngIf="
+                          userService.getDaysRemaining(
+                            currentDate,
+                            advertisement?.expiryDate
+                          ) >= 1 && advertisement?.active === 1
+                        "
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
                 <div class="row" *ngIf="advertisement?.rejected === 1">
                   <div class="col border border-1 pt-3">
                     <h6 class="text-primary">
                       <div class="alert alert-danger" role="alert">
                         This Advertisement has been rejected by Administrator
-                        due to {{ advertisement?.rejectedReason }}
+                        due to
+                        {{
+                          commonUtility.formatStringWithAnd(
+                            advertisement?.rejectedReason
+                          )
+                        }}
                       </div>
                     </h6>
                   </div>

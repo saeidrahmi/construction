@@ -25,6 +25,7 @@ import { EditPlanComponent } from './plans/edit-plan/edit-plan.component';
 import { AdvertisementsPendingApprovalComponent } from './user-advertisements/advertisements-pending-approval/advertisements-pending-approval.component';
 import { AdvertisementViewComponent } from '../common-components/advertisement-view/advertisement-view.component';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -54,6 +55,7 @@ import { MatButtonModule } from '@angular/material/button';
     PlanComponent,
     AdvertisementViewComponent,
     MatButtonModule,
+    MatSelectModule,
   ],
 })
 export class AdminModule {}

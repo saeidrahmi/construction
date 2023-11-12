@@ -180,7 +180,12 @@
                     <h6 class="text-primary">
                       <div class="alert alert-danger" role="alert">
                         This Advertisement has been rejected by Administrator
-                        due to {{ advertisement?.rejectedReason }}
+                        due to
+                        {{
+                          commonUtility.formatStringWithAnd(
+                            advertisement?.rejectedReason
+                          )
+                        }}
                       </div>
                     </h6>
                   </div>

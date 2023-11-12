@@ -163,7 +163,7 @@ export class CommonUtilityService {
       'Must include: one or more special characters',
     ];
   }
-   convertBytesToKbOrMb(bytes: number): string {
+  convertBytesToKbOrMb(bytes: number): string {
     if (bytes === 0) {
       return '0 Bytes';
     }
@@ -174,5 +174,23 @@ export class CommonUtilityService {
 
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   }
-}
+  formatStringWithAnd(inputString) {
+    // Split the string by commas
+    const parts = inputString.split(', ');
 
+    // Check if there are more than one part
+    if (parts.length > 1) {
+      // Remove the last comma if it exists
+      const lastPartIndex = parts.length - 1;
+      parts[lastPartIndex] = 'and ' + parts[lastPartIndex];
+      if (parts[lastPartIndex - 1].endsWith(',')) {
+        parts[lastPartIndex - 1] = parts[lastPartIndex - 1].slice(0, -1);
+      }
+    }
+
+    // Join the parts back into a single string
+    const resultString = parts.join(', ');
+
+    return resultString;
+  }
+}
