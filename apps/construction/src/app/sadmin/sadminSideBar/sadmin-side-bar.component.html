@@ -1,57 +1,60 @@
 <div class="border">
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">
+    <li class="list-group-item" *ngIf="userPermissions().viewDashboard">
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/sadmin/dashboard']"
+        [routerLink]="['/admin/dashboard']"
       >
         <i class="bi bi-speedometer"><span class="mx-2">Dashboard</span></i>
       </a>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item" *ngIf="userPermissions().updateAdminSettings">
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/sadmin/admin-settings']"
+        [routerLink]="['/admin/admin-settings']"
       >
         <i class="bi bi-sliders"><span class="mx-2">Admin Settings</span></i>
       </a>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item" *ngIf="userPermissions().viewUsers">
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/sadmin/users']"
+        [routerLink]="['/admin/users']"
       >
         <i class="bi bi-people-fill"><span class="mx-2">Users</span></i>
       </a>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item" *ngIf="userPermissions().createUser">
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/sadmin/create-user']"
+        [routerLink]="['/admin/create-user']"
       >
         <i class="bi bi-person-add"><span class="mx-2">Create User</span></i>
       </a>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item" *ngIf="userPermissions().listPlans">
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/sadmin/list-plans']"
+        [routerLink]="['/admin/list-plans']"
       >
         <i class="bi bi-grid"><span class="mx-2">List Plans</span></i>
       </a>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item" *ngIf="userPermissions().createPlan">
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/sadmin/create-plan']"
+        [routerLink]="['/admin/create-plan']"
       >
         <i class="bi bi-file-plus"><span class="mx-2">Create Plan</span></i>
       </a>
     </li>
-    <li class="list-group-item">
+    <li
+      class="list-group-item"
+      *ngIf="userPermissions().viewPendingAdvertisements"
+    >
       <a
         [routerLinkActive]="['active_section']"
-        [routerLink]="['/sadmin/advertisements-pending-approval']"
+        [routerLink]="['/admin/advertisements-pending-approval']"
       >
         <i class="bi bi-file-plus"
           ><span class="mx-2">Ads Pending Approval</span></i

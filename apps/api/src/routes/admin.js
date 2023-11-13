@@ -27,19 +27,23 @@ const {
 router.get('/list-admin-settings', verifyAllToken, listAdminSettingsController);
 router.post(
   '/update-admin-settings',
-  verifySAdminToken,
+  verifyAdminAndSAdminToken,
 
   updateAdminSettingsController
 );
-router.post('/create-new-plan', verifySAdminToken, createNewPlanController);
+router.post(
+  '/create-new-plan',
+  verifyAdminAndSAdminToken,
+  createNewPlanController
+);
 router.get('/list-plans', verifyAdminAndSAdminToken, listPlansController);
 router.post(
   '/update-plan-status',
-  verifySAdminToken,
+  verifyAdminAndSAdminToken,
   updatePlanStatusController
 );
-router.post('/delete-plan', verifySAdminToken, deletePlanController);
-router.get('/dashboard', verifySAdminToken, dashboardController);
+router.post('/delete-plan', verifyAdminAndSAdminToken, deletePlanController);
+router.get('/dashboard', verifyAdminAndSAdminToken, dashboardController);
 router.post('/plan-info', verifyAdminAndSAdminToken, getPlanInfoController);
 router.get(
   '/list-advertisements-pending-approval',

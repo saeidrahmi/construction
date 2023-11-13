@@ -13,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 import { tap, catchError, of, take } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-settings',
@@ -24,14 +25,19 @@ export class AdminSettingsComponent {
   setting: AdminSettingsInterface = {};
   apiService = inject(ApiService);
   toastService = inject(ToastrService);
-  storageService = inject(StorageService);
-  destroyRef = inject(DestroyRef);
-  planType = '';
 
+  destroyRef = inject(DestroyRef);
+
+  planType = '';
+  storageService = inject(StorageService);
+  router = inject(Router);
+  userPermissions = this.storageService.getUserPermissions();
   formService = inject(FormService);
   formErrors: string[] = [];
   initialSetting: AdminSettingsInterface = {};
   constructor(private fb: FormBuilder) {
+    if (!this.userPermissions().updateAdminSettings)
+      this.router.navigate(['/admin/user-profile']);
     this.form = this.fb.group({
       tax: new FormControl('', [Validators.required]),
       freeTiralPeriod: new FormControl('', [Validators.required]),

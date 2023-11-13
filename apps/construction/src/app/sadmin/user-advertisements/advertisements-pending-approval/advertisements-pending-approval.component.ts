@@ -72,7 +72,10 @@ export class AdvertisementsPendingApprovalComponent {
     )
   );
   userAdvertisementDuration: any;
+  userPermissions = this.storageService.getUserPermissions();
   constructor() {
+    if (!this.userPermissions().viewPendingAdvertisements)
+      this.router.navigate(['/admin/user-profile']);
     this.getAds$.subscribe();
   }
   approveAd(userAdvertisementId: any) {

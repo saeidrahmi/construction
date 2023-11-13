@@ -16,6 +16,7 @@ import { ApiService } from '../../../services/api.service';
 import { StorageService } from '../../../services/storage.service';
 import { left } from '@popperjs/core';
 import { PlanInterface } from '../../../models/plan';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-createPlan',
@@ -34,7 +35,11 @@ export class CreatePlanComponent {
   formErrors: string[] = [];
   setting: AdminSettingsInterface = {};
   settingError = false;
+  router = inject(Router);
+  userPermissions = this.storageService.getUserPermissions();
   constructor(private fb: FormBuilder) {
+    if (!this.userPermissions().createPlan)
+      this.router.navigate(['/admin/user-profile']);
     this.apiService
       .getAdminSettings()
       .pipe(

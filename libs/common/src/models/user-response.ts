@@ -27,4 +27,5 @@ export interface UserApiResponseInterface {
   };
   plan?: any;
   newMessagesNbr?: number;
+  userPermissions?: any;
 }

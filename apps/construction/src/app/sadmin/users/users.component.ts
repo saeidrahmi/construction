@@ -16,6 +16,7 @@ import { ToastrService } from 'ngx-toastr';
 import { StorageService } from '../../services/storage.service';
 import { UserApiResponseInterface } from 'libs/common/src/models/user-response';
 import { ImageService } from '../../services/image-service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'construction-users',
@@ -56,7 +57,11 @@ export class UsersComponent {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
   profileImage: any;
+  router = inject(Router);
+  userPermissions = this.storageService.getUserPermissions();
   constructor(public imageService: ImageService) {
+    if (!this.userPermissions().viewUsers)
+      this.router.navigate(['/admin/user-profile']);
     // Assign the data to the data source for the table to render
     this.storageService.updateIsLoading(true);
     this.apiService

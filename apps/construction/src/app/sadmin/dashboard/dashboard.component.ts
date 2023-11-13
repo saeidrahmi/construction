@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr';
 import { take, tap, catchError, of } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'construction-dashboard',
@@ -37,7 +38,12 @@ export class DashboardComponent {
   );
 
   dashboard: any;
+  storageService = inject(StorageService);
+  router = inject(Router);
+  userPermissions = this.storageService.getUserPermissions();
   constructor() {
+    if (!this.userPermissions().viewDashboard)
+      this.router.navigate(['/admin/user-profile']);
     this.dashboard$.subscribe();
   }
 }

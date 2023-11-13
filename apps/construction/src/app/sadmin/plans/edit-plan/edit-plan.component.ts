@@ -1,4 +1,4 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminSettingsInterface } from './../../../../../../../libs/common/src/models/admin-settings';
 import { Component, DestroyRef, inject } from '@angular/core';
 import {
@@ -36,7 +36,12 @@ export class EditPlanComponent {
   setting: AdminSettingsInterface = {};
   settingError = false;
   planId: any;
+
+  router = inject(Router);
+  userPermissions = this.storageService.getUserPermissions();
   constructor(private fb: FormBuilder) {
+    if (!this.userPermissions().createPlan)
+      this.router.navigate(['/admin/user-profile']);
     this.apiService
       .getAdminSettings()
       .pipe(

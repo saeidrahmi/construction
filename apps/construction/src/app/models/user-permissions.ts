@@ -7,4 +7,6 @@ export interface UserPermissionsInterface {
   listPlans?: boolean;
   viewPendingAdvertisements?: boolean;
   approveAdvertisement?: boolean;
+  allowUserActions?: boolean;
+  allowPlanActions?: boolean;
 }

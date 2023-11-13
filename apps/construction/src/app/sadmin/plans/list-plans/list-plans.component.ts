@@ -63,7 +63,11 @@ export class ListPlansComponent {
       return of(err);
     })
   );
+
+  userPermissions = this.storageService.getUserPermissions();
   constructor() {
+    if (!this.userPermissions().listPlans)
+      this.router.navigate(['/admin/user-profile']);
     // Assign the data to the data source for the table to render
 
     this.getPlans$.subscribe();

@@ -3,6 +3,7 @@ import { UserInterface } from '../models/user';
 import { StoreInterface } from '../models/store';
 import { UserApiResponseInterface } from '../../../../../libs/common/src/models/user-response';
 import { AdvertisementInterface } from '../models/advertisement';
+import { UserPermissionsInterface } from '../models/user-permissions';
 
 @Injectable({
   providedIn: 'root',
@@ -61,6 +62,9 @@ export class StorageService {
   }
   getUserfirstName(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.firstName);
+  }
+  getUserPermissions(): Signal<UserPermissionsInterface | undefined> {
+    return computed(() => this.store()?.user?.userPermissions);
   }
   loginError(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.error);
@@ -217,6 +221,7 @@ export class StorageService {
       active: response?.user?.active,
       registered: response?.user?.registered,
       lastLoginDate: response?.user?.lastLoginDate,
+      userPermissions: response?.userPermissions,
     };
 
     this.store.update((state) => {
@@ -278,6 +283,7 @@ export class StorageService {
       active: false,
       registered: false,
       lastLoginDate: null,
+      userPermissions: null,
     };
     this.store.update((state) => {
       return {
@@ -311,6 +317,7 @@ export class StorageService {
         active: false,
         registered: false,
         lastLoginDate: null,
+        userPermissions: null,
       },
     };
   }

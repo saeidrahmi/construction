@@ -194,6 +194,35 @@ async function loginController(req, res) {
           user: user,
           plan: updateResult[0],
         };
+
+        if (user.role === 'Admin') {
+          const selectQuery = `SELECT * FROM userPermissions where userId=? `;
+          const [selectResult] = await connection.execute(selectQuery, [
+            userId,
+          ]);
+          if (selectResult?.length > 0) {
+            response.userPermissions = {
+              viewDashboard:
+                selectResult[0]?.viewDashboard === 1 ? true : false,
+              updateAdminSettings:
+                selectResult[0]?.updateAdminSettings === 1 ? true : false,
+              createUser: selectResult[0]?.createUser === 1 ? true : false,
+              viewUsers: selectResult[0]?.viewUsers === 1 ? true : false,
+              createPlan: selectResult[0]?.createPlan === 1 ? true : false,
+              listPlans: selectResult[0]?.listPlans === 1 ? true : false,
+              viewPendingAdvertisements:
+                selectResult[0]?.viewPendingAdvertisements === 1 ? true : false,
+              approveAdvertisement:
+                selectResult[0]?.approveAdvertisement === 1 ? true : false,
+              allowPlanActions:
+                selectResult[0]?.allowPlanActions === 1 ? true : false,
+              allowUserActions:
+                selectResult[0]?.allowUserActions === 1 ? true : false,
+            };
+          }
+
+          selectResult[0];
+        }
         await connection.commit();
         return res.status(200).json(response);
       }

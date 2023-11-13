@@ -3,7 +3,6 @@ import {
   isGeneralUser,
   isUserAdmin,
   isUserLoggedIn,
-  isUserSAdmin,
 } from './services/user-gaurds';
 import { PrivacyPolicyComponent } from './public/privacy-policy/privacy-policy.component';
 import { PageNotFoundComponent } from './public/page-not-found/page-not-found.component';
@@ -74,15 +73,15 @@ export const appRoutes: Route[] = [
   //       './common-components/change-password/change-password.component'
   //     ).then((com) => com.ChangePasswordComponent),
   // },
+  // {
+  //   path: 'admin',
+  //   canActivate: [isUserAdmin],
+  //   loadChildren: () =>
+  //     import('./admin/admin.module').then((mod) => mod.AdminModule),
+  // },
   {
     path: 'admin',
     canActivate: [isUserAdmin],
-    loadChildren: () =>
-      import('./admin/admin.module').then((mod) => mod.AdminModule),
-  },
-  {
-    path: 'sadmin',
-    canActivate: [isUserSAdmin],
     loadChildren: () =>
       import('./sadmin/sadmin.module').then((mod) => mod.AdminModule),
   },

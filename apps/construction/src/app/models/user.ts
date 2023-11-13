@@ -1,4 +1,4 @@
-import { AddressInterface } from 'libs/common/src/models/address';
+import { UserPermissionsInterface } from './user-permissions';
 
 export interface UserInterface {
   loggedIn?: boolean;
@@ -27,4 +27,5 @@ export interface UserInterface {
   fax?: string;
   website?: string;
   company?: string;
+  userPermissions?: UserPermissionsInterface;
 }

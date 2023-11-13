@@ -17,15 +17,19 @@ export class UserRoutingService {
     if (this.user()?.loggedIn) {
       if (
         this.user().role?.toLocaleLowerCase() ==
-        env.getRole()?.sAdmin?.toLocaleLowerCase()
-      ) {
-        this.router.navigate(['sadmin']);
-      } else if (
+          env.getRole()?.sAdmin?.toLocaleLowerCase() ||
         this.user().role?.toLocaleLowerCase() ==
-        env.getRole()?.admin?.toLocaleLowerCase()
+          env.getRole()?.admin?.toLocaleLowerCase()
       ) {
-        this.router.navigate(['/admin']);
-      } else if (
+        this.router.navigate(['admin']);
+      }
+      // else if (
+      //   this.user().role?.toLocaleLowerCase() ==
+      //   env.getRole()?.admin?.toLocaleLowerCase()
+      // ) {
+      //   this.router.navigate(['/admin']);
+      // }
+      else if (
         this.user().role?.toLocaleLowerCase() ==
         env.getRole()?.general?.toLocaleLowerCase()
       ) {

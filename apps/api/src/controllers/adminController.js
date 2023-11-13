@@ -485,8 +485,8 @@ async function createNewUserController(req, res) {
     }
 
     if (user.role === 'Admin') {
-      const query = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan, listPlans, viewPendingAdvertisements, approveAdvertisement, userId)
-                   values(?,?,?,?,?,?,?,?,?)`;
+      const query = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan, listPlans, viewPendingAdvertisements, approveAdvertisement,allowUserActions,allowPlanActions, userId)
+                   values(?,?,?,?,?,?,?,?,?,?,?)`;
       const values = [
         userPermissions.viewDashboard,
         userPermissions.updateAdminSettings,
@@ -496,6 +496,8 @@ async function createNewUserController(req, res) {
         userPermissions.listPlans,
         userPermissions.viewPendingAdvertisements,
         userPermissions.approveAdvertisement,
+        userPermissions.allowUserActions,
+        userPermissions.allowPlanActions,
         userId,
       ];
 

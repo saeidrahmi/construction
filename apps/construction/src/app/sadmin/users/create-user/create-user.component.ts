@@ -39,7 +39,10 @@ export class CreateUserComponent {
   roles = this.env.getRoles();
   formService = inject(FormService);
   userPermissions: UserPermissionsInterface = {};
+  userPermission = this.storageService.getUserPermissions();
   constructor(private fb: FormBuilder) {
+    if (!this.userPermission().createUser)
+      this.router.navigate(['/admin/user-profile']);
     this.form = this.fb.group({
       firstName: new FormControl('', [Validators.required]),
       userId: new FormControl('', [Validators.required, Validators.email]),
@@ -53,6 +56,8 @@ export class CreateUserComponent {
       listPlans: new FormControl('', []),
       viewPendingAdvertisements: new FormControl('', []),
       approveAdvertisement: new FormControl('', []),
+      allowUserActions: new FormControl('', []),
+      allowPlanActions: new FormControl('', []),
     });
   }
   submit() {
@@ -85,6 +90,8 @@ export class CreateUserComponent {
             viewUsers: this.userPermissions.viewUsers ? 1 : 0,
             createPlan: this.userPermissions.createPlan ? 1 : 0,
             listPlans: this.userPermissions.listPlans ? 1 : 0,
+            allowUserActions: this.userPermissions.allowUserActions ? 1 : 0,
+            allowPlanActions: this.userPermissions.allowPlanActions ? 1 : 0,
             approveAdvertisement: this.userPermissions.approveAdvertisement
               ? 1
               : 0,
