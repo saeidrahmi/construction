@@ -30,6 +30,7 @@ import { AdminAdvertisementDetailsViewComponent } from './user-advertisements/ad
 import { AdminAdvertisementViewComponent } from './user-advertisements/advertisements-pending-approval/advertisement-view/advertisement-view.component';
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { CreateUserComponent } from './users/create-user/create-user.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -66,6 +67,7 @@ import { CreateUserComponent } from './users/create-user/create-user.component';
     RatingModule,
     FormErrorsComponent,
     FormsModule,
+    MatCheckboxModule,
   ],
 })
 export class AdminModule {}

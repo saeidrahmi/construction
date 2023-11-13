@@ -64,12 +64,71 @@
                   <div class="row">
                     <div class="col-md-3 mt-1 form-label">Role</div>
                     <div class="col-md-8">
-                      <select formControlName="role" class="form-select">
+                      <select
+                        formControlName="role"
+                        class="form-select"
+                        [(ngModel)]="selectedRole"
+                      >
                         <option selected>Select Role</option>
                         <option *ngFor="let item of this.roles">
                           {{ item }}
                         </option>
                       </select>
+                    </div>
+                  </div>
+                  <div
+                    class="row my-1 border rounded"
+                    *ngIf="selectedRole === 'Admin'"
+                  >
+                    <div class="col-md-3 mt-1 form-label">Permissions</div>
+                    <div class="col-md-8">
+                      <mat-checkbox
+                        formControlName="viewDashboard"
+                        [(ngModel)]="userPermissions.viewDashboard"
+                        >View Dashboard</mat-checkbox
+                      >
+
+                      <mat-checkbox
+                        formControlName="updateAdminSettings"
+                        [(ngModel)]="userPermissions.updateAdminSettings"
+                        >Update Admin Settings</mat-checkbox
+                      >
+
+                      <mat-checkbox
+                        formControlName="createUser"
+                        [(ngModel)]="userPermissions.createUser"
+                        >Create User</mat-checkbox
+                      >
+
+                      <mat-checkbox
+                        formControlName="viewUsers"
+                        [(ngModel)]="userPermissions.viewUsers"
+                        >View Users</mat-checkbox
+                      >
+
+                      <mat-checkbox
+                        formControlName="createPlan"
+                        [(ngModel)]="userPermissions.createPlan"
+                        >Create Plan</mat-checkbox
+                      >
+
+                      <mat-checkbox
+                        formControlName="listPlans"
+                        [(ngModel)]="userPermissions.listPlans"
+                        >List Plans</mat-checkbox
+                      >
+
+                      <mat-checkbox
+                        formControlName="viewPendingAdvertisements"
+                        [(ngModel)]="userPermissions.viewPendingAdvertisements"
+                        >View Pending Advertisements</mat-checkbox
+                      >
+
+                      <mat-checkbox
+                        formControlName="approveAdvertisement"
+                        [(ngModel)]="userPermissions.approveAdvertisement"
+                        >Approve Advertisements</mat-checkbox
+                      >
                     </div>
                   </div>
                 </form>

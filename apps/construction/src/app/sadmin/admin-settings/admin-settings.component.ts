@@ -43,6 +43,12 @@ export class AdminSettingsComponent {
       topAdvertisementPrice: new FormControl('', [Validators.required]),
       maxAdvertisementSliderImage: new FormControl('', [Validators.required]),
       userAdvertisementDuration: new FormControl('', [Validators.required]),
+      passwordResetDurationGeneralUsers: new FormControl('', [
+        Validators.required,
+      ]),
+      passwordResetDurationAdminUsers: new FormControl('', [
+        Validators.required,
+      ]),
     });
     this.storageService.updateIsLoading(true);
     this.apiService

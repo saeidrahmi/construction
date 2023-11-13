@@ -1,6 +1,18 @@
-const { executeQuery } = require('./utilityService'); // Import necessary helper functions
+const {
+  decryptItem,
+  executeQuery,
+  encryptItem,
+  decryptCredentials,
+  verifyToken,
+  addDays,
+} = require('./utilityService'); // Import necessary helper functions
+const connectToDatabase = require('../db');
 
 import { AdminSettingsInterface } from '../../../../libs/common/src/models/admin-settings';
+import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
+const env = new EnvironmentInfo();
+const webSecretKey = env.webSecretKey();
+const dbSecretKey = env.dbSecretKey();
 
 async function listAdminSettingsController(req, res) {
   try {
@@ -17,6 +29,10 @@ async function listAdminSettingsController(req, res) {
       maxAdvertisementSliderImage: selectResult[0].maxAdvertisementSliderImage,
       tax: selectResult[0].tax,
       userAdvertisementDuration: selectResult[0].userAdvertisementDuration,
+      passwordResetDurationGeneralUsers:
+        selectResult[0].passwordResetDurationGeneralUsers,
+      passwordResetDurationAdminUsers:
+        selectResult[0].passwordResetDurationAdminUsers,
     };
     return res.status(200).json(setting);
   } catch (error) {
@@ -39,6 +55,8 @@ async function updateAdminSettingsController(req, res) {
       maxAdvertisementSliderImage: info.maxAdvertisementSliderImage,
       tax: info.tax,
       userAdvertisementDuration: info.userAdvertisementDuration,
+      passwordResetDurationGeneralUsers: info.passwordResetDurationGeneralUsers,
+      passwordResetDurationAdminUsers: info.passwordResetDurationAdminUsers,
     };
     const values = [
       setting.tax,
@@ -51,13 +69,16 @@ async function updateAdminSettingsController(req, res) {
       setting.topAdvertisementPrice,
       setting.maxAdvertisementSliderImage,
       setting.userAdvertisementDuration,
+      setting.passwordResetDurationGeneralUsers,
+      setting.passwordResetDurationAdminUsers,
     ];
     const selectQuery = `SELECT * FROM settings`;
     const selectResult = await executeQuery(selectQuery, []);
 
     if (selectResult.length > 0) {
       // There are results
-      const query = `UPDATE settings SET tax =? , freeTiralPeriod = ?, monthlyPrice = ?,monthlyDiscount = ?, quarterlyDiscount = ?,semiAnualDiscount=?, yearlyDiscount=?, topAdvertisementPrice=?, maxAdvertisementSliderImage=?, userAdvertisementDuration=?`;
+      const query = `UPDATE settings SET tax =? , freeTiralPeriod = ?, monthlyPrice = ?,monthlyDiscount = ?, quarterlyDiscount = ?,semiAnualDiscount=?, yearlyDiscount=?, topAdvertisementPrice=?,
+       maxAdvertisementSliderImage=?, userAdvertisementDuration=?,passwordResetDurationGeneralUsers=?, passwordResetDurationAdminUsers=?`;
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(setting);
@@ -68,7 +89,7 @@ async function updateAdminSettingsController(req, res) {
       }
     } else {
       // No results
-      const query = `INSERT INTO settings (freeTiralPeriod, monthlyPrice,quarterlyDiscount, semiAnualDiscount=?,yearlyDiscount,topAdvertisementPrice,maxAdvertisementSliderImage,userAdvertisementDuration) VALUES ( ?,?,?, ?, ?,?,?)`;
+      const query = `INSERT INTO settings (freeTiralPeriod, monthlyPrice,quarterlyDiscount, semiAnualDiscount=?,yearlyDiscount,topAdvertisementPrice,maxAdvertisementSliderImage,userAdvertisementDuration,passwordResetDurationGeneralUsers, passwordResetDurationAdminUsers) VALUES ( ?,?,?,?,?, ?, ?,?,?)`;
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(setting);
@@ -426,6 +447,85 @@ async function getAdvertisementDetailsController(req, res) {
     });
   }
 }
+async function createNewUserController(req, res) {
+  let connection;
+  try {
+    const user = req.body.user;
+    const userPermissions = req.body.user.userPermissions;
+    const userId = decryptItem(user.userId, webSecretKey);
+    const password = decryptItem(user.password, webSecretKey);
+
+    const values = [
+      userId,
+      user.role,
+      user.firstName,
+      user.lastName,
+      new Date(),
+      1,
+      1,
+
+      encryptItem(password, dbSecretKey),
+      1,
+    ];
+    connection = await connectToDatabase();
+    await connection.beginTransaction();
+
+    // No results
+    const query = `INSERT INTO users( userId, role, firstName, lastName, registeredDate,   active, registered,   password, passwordResetRequired)
+                   values(?,?,?,?,?,?,?,?,?)`;
+
+    const [result] = await connection.execute(query, values);
+
+    if (result.affectedRows === 0) {
+      await connection.rollback();
+      return res
+        .status(500)
+        .json({ errorMessage: 'Error creating plan. Please try again.' });
+    }
+
+    if (user.role === 'Admin') {
+      const query = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan, listPlans, viewPendingAdvertisements, approveAdvertisement, userId)
+                   values(?,?,?,?,?,?,?,?,?)`;
+      const values = [
+        userPermissions.viewDashboard,
+        userPermissions.updateAdminSettings,
+        userPermissions.createUser,
+        userPermissions.viewUsers,
+        userPermissions.createPlan,
+        userPermissions.listPlans,
+        userPermissions.viewPendingAdvertisements,
+        userPermissions.approveAdvertisement,
+        userId,
+      ];
+
+      const [result] = await connection.execute(query, values);
+
+      console.log(result);
+      if (result.affectedRows === 0) {
+        await connection.rollback();
+        return res
+          .status(500)
+          .json({ errorMessage: 'Error creating plan. Please try again.' });
+      }
+    }
+
+    await connection.commit();
+    return res.status(200).json();
+  } catch (error) {
+    if (connection) await connection.rollback();
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error creating plan. Please try again.' });
+  } finally {
+    if (connection) {
+      try {
+        await connection.end();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
+  }
+}
 module.exports = {
   getAdvertisementDetailsController,
   rejectAdvertisement,
@@ -440,4 +540,5 @@ module.exports = {
   getPlanInfoController,
   updatePlanController,
   getAllUsersAdvertisementsPendingApproval,
+  createNewUserController,
 };

@@ -9,4 +9,6 @@ export interface AdminSettingsInterface {
   topAdvertisementPrice?: number;
   maxAdvertisementSliderImage?: number;
   userAdvertisementDuration?: number;
+  passwordResetDurationGeneralUsers?: number;
+  passwordResetDurationAdminUsers?: number;
 }

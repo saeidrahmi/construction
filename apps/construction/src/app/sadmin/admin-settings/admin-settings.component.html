@@ -161,6 +161,38 @@
                       />
                     </div>
                   </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">
+                      Password Reset Duration (General Users)
+                    </div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter ..."
+                        formControlName="passwordResetDurationGeneralUsers"
+                        type="number"
+                        min="14"
+                        max="365"
+                        [(ngModel)]="setting.passwordResetDurationGeneralUsers"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-labe">
+                      Password Reset Duration (Admin Users)
+                    </div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter ..."
+                        formControlName="passwordResetDurationAdminUsers"
+                        type="number"
+                        min="14"
+                        max="365"
+                        [(ngModel)]="setting.passwordResetDurationAdminUsers"
+                      />
+                    </div>
+                  </div>
                 </form>
               </div>
               <div class="col-5 border-start"></div>

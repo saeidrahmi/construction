@@ -1225,4 +1225,19 @@ export class ApiService {
         })
       );
   }
+  createNewUser(user: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/create-new-user', {
+        user: user,
+      })
+      .pipe(
+        take(1),
+        tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

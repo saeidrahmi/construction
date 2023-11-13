@@ -111,6 +111,14 @@ export class FormService {
       filedName: 'description',
       filedValue: 'Description ',
     },
+    {
+      filedName: 'passwordResetDurationGeneralUsers',
+      filedValue: 'Password duration for general users ',
+    },
+    {
+      filedName: 'passwordResetDurationAdminUsers',
+      filedValue: 'Password duration for admins ',
+    },
   ];
 
   getFormValidationErrorMessages(form: FormGroup): string[] {

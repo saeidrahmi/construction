@@ -193,4 +193,15 @@ export class CommonUtilityService {
 
     return resultString;
   }
+  generateRandomPassword(length: number): string {
+    const charset =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_';
+    const charsetArray = Array.from(charset);
+
+    const password = Array.from(crypto.getRandomValues(new Uint32Array(length)))
+      .map((value) => charsetArray[value % charsetArray.length])
+      .join('');
+
+    return password;
+  }
 }
