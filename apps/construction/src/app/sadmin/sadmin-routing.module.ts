@@ -11,6 +11,7 @@ import { CreatePlanComponent } from './plans/createPlan/createPlan.component';
 import { EditPlanComponent } from './plans/edit-plan/edit-plan.component';
 import { AdvertisementsPendingApprovalComponent } from './user-advertisements/advertisements-pending-approval/advertisements-pending-approval.component';
 import { AdminAdvertisementDetailsViewComponent } from './user-advertisements/advertisements-pending-approval/advertisement-details-view/advertisement-details-view.component';
+import { CreateUserComponent } from './users/create-user/create-user.component';
 const routes: Routes = [
   {
     path: '',
@@ -51,6 +52,10 @@ const routes: Routes = [
       {
         path: 'advertisement-details',
         component: AdminAdvertisementDetailsViewComponent,
+      },
+      {
+        path: 'create-user',
+        component: CreateUserComponent,
       },
       {
         path: '',

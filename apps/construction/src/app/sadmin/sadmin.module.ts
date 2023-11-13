@@ -29,6 +29,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { AdminAdvertisementDetailsViewComponent } from './user-advertisements/advertisements-pending-approval/advertisement-details-view/advertisement-details-view.component';
 import { AdminAdvertisementViewComponent } from './user-advertisements/advertisements-pending-approval/advertisement-view/advertisement-view.component';
 import { RatingModule } from 'ngx-bootstrap/rating';
+import { CreateUserComponent } from './users/create-user/create-user.component';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -42,6 +43,7 @@ import { RatingModule } from 'ngx-bootstrap/rating';
     EditPlanComponent,
     AdminAdvertisementViewComponent,
     AdminAdvertisementDetailsViewComponent,
+    CreateUserComponent,
   ],
   imports: [
     CommonModule,

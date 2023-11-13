@@ -27,6 +27,14 @@
     <li class="list-group-item">
       <a
         [routerLinkActive]="['active_section']"
+        [routerLink]="['/sadmin/create-user']"
+      >
+        <i class="bi bi-person-add"><span class="mx-2">Create User</span></i>
+      </a>
+    </li>
+    <li class="list-group-item">
+      <a
+        [routerLinkActive]="['active_section']"
         [routerLink]="['/sadmin/list-plans']"
       >
         <i class="bi bi-grid"><span class="mx-2">List Plans</span></i>
@@ -46,7 +54,7 @@
         [routerLink]="['/sadmin/advertisements-pending-approval']"
       >
         <i class="bi bi-file-plus"
-          ><span class="mx-2">Advertisements Pending Approval</span></i
+          ><span class="mx-2">Ads Pending Approval</span></i
         >
       </a>
     </li>

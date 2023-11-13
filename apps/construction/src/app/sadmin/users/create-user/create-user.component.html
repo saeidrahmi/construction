@@ -1,0 +1,92 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-12">Create New User</span>
+          </h2>
+
+          <div class="border border-1 p-2">
+            <a mat-raised-button color="primary" routerLink="/sadmin/users">
+              Users list
+            </a>
+          </div>
+
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
+                <app-form-errors [formErrors]="formErrors"></app-form-errors>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12">
+                <p class="h2 border-bottom">Enter all required information</p>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-7">
+                <form [formGroup]="form">
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-label">User ID/Email</div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter your middle name..."
+                        formControlName="userId"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-label">First Name</div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter your first name..."
+                        formControlName="firstName"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-label">Last Name</div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter your last name..."
+                        formControlName="lastName"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-md-3 mt-1 form-label">Role</div>
+                    <div class="col-md-8">
+                      <select formControlName="role" class="form-select">
+                        <option selected>Select Role</option>
+                        <option *ngFor="let item of this.roles">
+                          {{ item }}
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-3"></div>
+              <div class="col-md-8">
+                <button class="submit-button my-2" (click)="submit()">
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

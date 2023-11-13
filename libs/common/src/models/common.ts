@@ -23,6 +23,7 @@ export class EnvironmentInfo {
   private _systemName: string = 'Ontsoft';
   private _dbDatabaseName: string = 'construction';
   private _roles = { general: 'General', admin: 'Admin', sAdmin: 'SAdmin' };
+  private _rolesArray = ['General', 'Admin', 'SAdmin'];
   constructor() {}
   refreshSecretKey() {
     return this._jwtRefreshSecretKey;
@@ -38,6 +39,9 @@ export class EnvironmentInfo {
   }
   getRole() {
     return this._roles;
+  }
+  getRoles() {
+    return this._rolesArray;
   }
   getSystemName() {
     return this._systemName;
