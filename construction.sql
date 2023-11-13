@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Oct 22, 2023 at 11:15 PM
+-- Generation Time: Nov 13, 2023 at 05:13 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -42,7 +42,7 @@ CREATE TABLE `plans` (
   `numberOfAdvertisements` int NOT NULL,
   `duration` varchar(20) NOT NULL,
   `priceAfterDiscount` decimal(10,2) NOT NULL,
-  `originalPrice` decimal(10,0) NOT NULL,
+  `originalPrice` decimal(10,2) NOT NULL,
   `discountPercentage` int NOT NULL,
   `active` tinyint(1) NOT NULL,
   `deleted` tinyint(1) DEFAULT '0'
@@ -61,7 +61,26 @@ CREATE TABLE `settings` (
   `quarterlyDiscount` int DEFAULT NULL,
   `semiAnualDiscount` int NOT NULL,
   `yearlyDiscount` int DEFAULT NULL,
-  `tax` decimal(10,2) DEFAULT NULL
+  `tax` decimal(10,2) DEFAULT NULL,
+  `topAdvertisementPrice` decimal(10,2) DEFAULT NULL,
+  `maxAdvertisementSliderImage` int DEFAULT NULL,
+  `userAdvertisementDuration` int NOT NULL,
+  `passwordResetDurationAdminUsers` int DEFAULT NULL,
+  `passwordResetDurationGeneralUsers` int DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userAdvertisementImages`
+--
+
+CREATE TABLE `userAdvertisementImages` (
+  `userAdvertisementImageId` bigint UNSIGNED NOT NULL,
+  `userAdvertisementId` bigint UNSIGNED NOT NULL,
+  `userAdvertisementImage` longblob NOT NULL,
+  `imageTitle` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `imageDescription` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -71,12 +90,54 @@ CREATE TABLE `settings` (
 --
 
 CREATE TABLE `userAdvertisements` (
+  `userAdvertisementId` bigint UNSIGNED NOT NULL,
   `userPlanId` bigint UNSIGNED NOT NULL,
-  `dateCreated` timestamp NOT NULL,
-  `expiryDate` timestamp NULL DEFAULT NULL,
-  `header` varchar(80) NOT NULL,
+  `title` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `description` varchar(400) NOT NULL,
-  `expired` tinyint(1) DEFAULT NULL
+  `active` tinyint(1) DEFAULT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `approvedByAdmin` tinyint(1) DEFAULT '0',
+  `rejected` tinyint(1) NOT NULL DEFAULT '0',
+  `rejectedReason` varchar(160) DEFAULT NULL,
+  `headerImage` longblob,
+  `topAdvertisement` tinyint(1) DEFAULT NULL,
+  `showPhone` tinyint(1) DEFAULT NULL,
+  `showAddress` tinyint(1) DEFAULT NULL,
+  `showEmail` tinyint(1) DEFAULT NULL,
+  `showPicture` tinyint(1) DEFAULT NULL,
+  `showChat` tinyint(1) DEFAULT NULL,
+  `numberOfVisits` int DEFAULT '0',
+  `dateCreated` timestamp NOT NULL,
+  `expiryDate` timestamp NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userAdvertisementsMessages`
+--
+
+CREATE TABLE `userAdvertisementsMessages` (
+  `messageId` bigint UNSIGNED NOT NULL,
+  `userId` varchar(80) NOT NULL,
+  `fromUserId` varchar(80) NOT NULL,
+  `advertisementId` bigint NOT NULL,
+  `message` varchar(1000) NOT NULL,
+  `dateCreated` timestamp NOT NULL,
+  `viewed` tinyint(1) NOT NULL DEFAULT '0',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userFavoriteAdvertisements`
+--
+
+CREATE TABLE `userFavoriteAdvertisements` (
+  `dateCreated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `userId` varchar(80) NOT NULL,
+  `userAdvertisementId` bigint UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -92,6 +153,24 @@ CREATE TABLE `userPayments` (
   `paymentAmount` decimal(10,2) NOT NULL,
   `tax` decimal(10,2) DEFAULT NULL,
   `totalPayment` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userPermissions`
+--
+
+CREATE TABLE `userPermissions` (
+  `userId` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `viewDashboard` tinyint(1) NOT NULL DEFAULT '0',
+  `updateAdminSettings` tinyint(1) NOT NULL DEFAULT '0',
+  `createUser` tinyint(1) NOT NULL DEFAULT '0',
+  `viewUsers` tinyint(1) NOT NULL DEFAULT '0',
+  `createPlan` tinyint(1) NOT NULL DEFAULT '0',
+  `listPlans` tinyint(1) NOT NULL DEFAULT '0',
+  `viewPendingAdvertisements` tinyint(1) NOT NULL DEFAULT '0',
+  `approveAdvertisement` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -119,6 +198,18 @@ CREATE TABLE `userPlans` (
 CREATE TABLE `userProvinces` (
   `userId` varchar(80) NOT NULL,
   `province` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userRatings`
+--
+
+CREATE TABLE `userRatings` (
+  `userId` varchar(80) NOT NULL,
+  `ratedBy` varchar(80) NOT NULL,
+  `rate` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -154,7 +245,9 @@ CREATE TABLE `users` (
   `company` varchar(80) DEFAULT NULL,
   `jobProfileDescription` varchar(400) DEFAULT NULL,
   `deleted` tinyint(1) DEFAULT '0',
-  `serviceCoverageType` varchar(10) DEFAULT NULL
+  `serviceCoverageType` varchar(10) DEFAULT NULL,
+  `passwordResetRequired` tinyint(1) DEFAULT '0',
+  `lastPasswordResetDate` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -180,6 +273,21 @@ CREATE TABLE `userServices` (
   `service` varchar(80) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userTopAdvertisementPayments`
+--
+
+CREATE TABLE `userTopAdvertisementPayments` (
+  `paymentId` bigint UNSIGNED NOT NULL,
+  `userAdvertisementId` bigint UNSIGNED NOT NULL,
+  `paymentConfirmation` varchar(80) DEFAULT NULL,
+  `paymentAmount` decimal(10,2) NOT NULL,
+  `tax` decimal(10,2) DEFAULT NULL,
+  `totalPayment` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --
 -- Indexes for dumped tables
 --
@@ -192,10 +300,34 @@ ALTER TABLE `plans`
   ADD UNIQUE KEY `planId` (`planId`);
 
 --
+-- Indexes for table `userAdvertisementImages`
+--
+ALTER TABLE `userAdvertisementImages`
+  ADD PRIMARY KEY (`userAdvertisementImageId`),
+  ADD UNIQUE KEY `userAdvertisementImageId` (`userAdvertisementImageId`),
+  ADD KEY `userAdImage_id` (`userAdvertisementId`);
+
+--
 -- Indexes for table `userAdvertisements`
 --
 ALTER TABLE `userAdvertisements`
+  ADD PRIMARY KEY (`userAdvertisementId`),
+  ADD UNIQUE KEY `userAdvertisementId` (`userAdvertisementId`),
   ADD KEY `userplan_Id` (`userPlanId`);
+
+--
+-- Indexes for table `userAdvertisementsMessages`
+--
+ALTER TABLE `userAdvertisementsMessages`
+  ADD PRIMARY KEY (`messageId`),
+  ADD UNIQUE KEY `messageId` (`messageId`);
+
+--
+-- Indexes for table `userFavoriteAdvertisements`
+--
+ALTER TABLE `userFavoriteAdvertisements`
+  ADD PRIMARY KEY (`userId`,`userAdvertisementId`),
+  ADD KEY `fav_adId` (`userAdvertisementId`);
 
 --
 -- Indexes for table `userPayments`
@@ -203,6 +335,12 @@ ALTER TABLE `userAdvertisements`
 ALTER TABLE `userPayments`
   ADD PRIMARY KEY (`userPlanId`),
   ADD UNIQUE KEY `paymentId` (`paymentId`);
+
+--
+-- Indexes for table `userPermissions`
+--
+ALTER TABLE `userPermissions`
+  ADD PRIMARY KEY (`userId`);
 
 --
 -- Indexes for table `userPlans`
@@ -218,6 +356,12 @@ ALTER TABLE `userPlans`
 --
 ALTER TABLE `userProvinces`
   ADD PRIMARY KEY (`userId`,`province`);
+
+--
+-- Indexes for table `userRatings`
+--
+ALTER TABLE `userRatings`
+  ADD PRIMARY KEY (`userId`,`ratedBy`);
 
 --
 -- Indexes for table `users`
@@ -239,6 +383,13 @@ ALTER TABLE `userServices`
   ADD UNIQUE KEY `userId` (`userId`,`service`);
 
 --
+-- Indexes for table `userTopAdvertisementPayments`
+--
+ALTER TABLE `userTopAdvertisementPayments`
+  ADD PRIMARY KEY (`paymentId`),
+  ADD KEY `userAdvertisementId_index` (`userAdvertisementId`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -247,6 +398,24 @@ ALTER TABLE `userServices`
 --
 ALTER TABLE `plans`
   MODIFY `planId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `userAdvertisementImages`
+--
+ALTER TABLE `userAdvertisementImages`
+  MODIFY `userAdvertisementImageId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `userAdvertisements`
+--
+ALTER TABLE `userAdvertisements`
+  MODIFY `userAdvertisementId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `userAdvertisementsMessages`
+--
+ALTER TABLE `userAdvertisementsMessages`
+  MODIFY `messageId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `userPayments`
@@ -267,8 +436,20 @@ ALTER TABLE `users`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `userTopAdvertisementPayments`
+--
+ALTER TABLE `userTopAdvertisementPayments`
+  MODIFY `paymentId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `userAdvertisementImages`
+--
+ALTER TABLE `userAdvertisementImages`
+  ADD CONSTRAINT `userAdImage_id` FOREIGN KEY (`userAdvertisementId`) REFERENCES `userAdvertisements` (`userAdvertisementId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `userAdvertisements`
@@ -277,10 +458,23 @@ ALTER TABLE `userAdvertisements`
   ADD CONSTRAINT `userplan_Id` FOREIGN KEY (`userPlanId`) REFERENCES `userPlans` (`userPlanId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
+-- Constraints for table `userFavoriteAdvertisements`
+--
+ALTER TABLE `userFavoriteAdvertisements`
+  ADD CONSTRAINT `fav_adId` FOREIGN KEY (`userAdvertisementId`) REFERENCES `userAdvertisements` (`userAdvertisementId`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `userId_fav` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `userPayments`
 --
 ALTER TABLE `userPayments`
   ADD CONSTRAINT `planId` FOREIGN KEY (`userPlanId`) REFERENCES `userPlans` (`userPlanId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userPermissions`
+--
+ALTER TABLE `userPermissions`
+  ADD CONSTRAINT `userId_permissions` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `userPlans`
@@ -306,6 +500,12 @@ ALTER TABLE `userServiceCities`
 --
 ALTER TABLE `userServices`
   ADD CONSTRAINT `userId` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userTopAdvertisementPayments`
+--
+ALTER TABLE `userTopAdvertisementPayments`
+  ADD CONSTRAINT `userAdvertisementId_index` FOREIGN KEY (`userAdvertisementId`) REFERENCES `userAdvertisements` (`userAdvertisementId`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

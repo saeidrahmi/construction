@@ -71,6 +71,30 @@ function sendPasswordResetEmail(userId, token) {
               </div>
               `,
   };
+}
+function sendTemporaryPasswordEmail(userId, password) {
+  var mailOptions = {
+    from: 'Ontsoft Web System',
+    to: userId,
+    subject: 'Temporary Password',
+    html: `<div style="border: solid 1px blue; padding: 30px">
+                <h2>Login with your  temporary password</h2>
+                <p>Hello,</p>
+
+                <p>
+                  Please login to your account. please click the link below.
+                </p>
+                <br>
+                Your temporary password is ${password}
+                <p>
+                  <a href="http://localhost:4200/login">Login</a>
+                </p>
+
+
+                <p>Ontsoft Team</p>
+              </div>
+              `,
+  };
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       reject(error);
@@ -79,4 +103,8 @@ function sendPasswordResetEmail(userId, token) {
     }
   });
 }
-module.exports = { sendVerificationEmail, sendPasswordResetEmail };
+module.exports = {
+  sendVerificationEmail,
+  sendPasswordResetEmail,
+  sendTemporaryPasswordEmail,
+};

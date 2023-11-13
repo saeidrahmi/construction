@@ -7,6 +7,7 @@ const {
   addDays,
 } = require('./utilityService'); // Import necessary helper functions
 const connectToDatabase = require('../db');
+const { sendTemporaryPasswordEmail } = require('../../nodemailer');
 
 import { AdminSettingsInterface } from '../../../../libs/common/src/models/admin-settings';
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
@@ -508,6 +509,8 @@ async function createNewUserController(req, res) {
           .json({ errorMessage: 'Error creating plan. Please try again.' });
       }
     }
+
+    await sendTemporaryPasswordEmail(userId, password);
 
     await connection.commit();
     return res.status(200).json();
