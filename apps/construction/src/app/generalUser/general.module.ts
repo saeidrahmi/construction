@@ -50,6 +50,8 @@ import { UserAdvertisementViewComponent } from './advertisements/advertisement-v
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { PromoteToAdComponent } from './advertisements/promote-toAd/promote-toAd.component';
+import { MyBidsComponent } from './my-bids/my-bids.component';
+import { NewBidComponent } from './my-bids/new-bid/new-bid.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +76,8 @@ import { PromoteToAdComponent } from './advertisements/promote-toAd/promote-toAd
     UserAdvertisementDetailsViewComponent,
     UserAdvertisementViewComponent,
     PromoteToAdComponent,
+    MyBidsComponent,
+    NewBidComponent,
   ],
   imports: [
     CommonModule,

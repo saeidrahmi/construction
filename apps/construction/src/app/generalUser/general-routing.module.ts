@@ -21,6 +21,8 @@ import { UserFavoriteAdvertisementsComponent } from './user-favorite-ads/user-fa
 import { UserMessagesDetailsComponent } from './user-messages/user-messages-details/user-messages-details.component';
 import { UserAdvertisementDetailsViewComponent } from './advertisements/advertisement-details-view/advertisement-details-view.component';
 import { PromoteToAdComponent } from './advertisements/promote-toAd/promote-toAd.component';
+import { MyBidsComponent } from './my-bids/my-bids.component';
+import { NewBidComponent } from './my-bids/new-bid/new-bid.component';
 const routes: Routes = [
   {
     path: '',
@@ -73,6 +75,14 @@ const routes: Routes = [
       {
         path: 'new-support',
         component: NewSupportComponent,
+      },
+      {
+        path: 'my-bids',
+        component: MyBidsComponent,
+      },
+      {
+        path: 'new-bid',
+        component: NewBidComponent,
       },
       {
         path: 'custom-page',

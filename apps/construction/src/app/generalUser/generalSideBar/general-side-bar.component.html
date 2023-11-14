@@ -71,6 +71,14 @@
     <li class="list-group-item" *ngIf="plan()?.onlineSupportIncluded === 1">
       <a
         [routerLinkActive]="['active_section']"
+        [routerLink]="['/general/my-bids']"
+      >
+        <i class="bi bi-question-diamond"><span class="mx-2">My Bids</span></i>
+      </a>
+    </li>
+    <li class="list-group-item" *ngIf="plan()?.onlineSupportIncluded === 1">
+      <a
+        [routerLinkActive]="['active_section']"
         [routerLink]="['/general/request-support']"
       >
         <i class="bi bi-question-diamond"
