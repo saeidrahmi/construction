@@ -1233,7 +1233,6 @@ export class ApiService {
       })
       .pipe(
         take(1),
-        tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
 
         finalize(() => {
           this.spinner.hide();
@@ -1248,8 +1247,19 @@ export class ApiService {
       })
       .pipe(
         take(1),
-        tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
 
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  updateUserPermissions(data: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/update-user-permissions', data)
+      .pipe(
+        take(1),
+        tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
         finalize(() => {
           this.spinner.hide();
         })

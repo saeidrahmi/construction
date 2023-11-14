@@ -698,6 +698,26 @@
                   >check_box</mat-icon
                 ></ng-template
               >
+              <mat-icon
+                matTooltip="View User Information"
+                matTooltipPosition="above"
+                class="pointer"
+                (click)="viewUserInfo(row.userId)"
+                >info</mat-icon
+              >
+              <mat-icon
+                matTooltip="Change User permissions"
+                matTooltipPosition="above"
+                *ngIf="
+                  row.active === 1 &&
+                  row.deleted === 0 &&
+                  row.registered === 1 &&
+                  row.role === 'Admin'
+                "
+                class="pointer"
+                (click)="changeUserPermissions(row)"
+                >edit</mat-icon
+              >
             </th>
           </ng-container>
 

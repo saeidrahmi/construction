@@ -3,7 +3,7 @@
     <li
       class="list-group-item"
       *ngIf="
-        this.userRole() === 'SAdmin' || this.userPermissions().viewDashboard
+        this.userRole() === 'SAdmin' || this.userPermissions()?.viewDashboard
       "
     >
       <a
@@ -15,7 +15,9 @@
     </li>
     <li
       class="list-group-item"
-      *ngIf="userRole() === 'SAdmin' || userPermissions().updateAdminSettings"
+      *ngIf="
+        userRole() === 'SAdmin' || this.userPermissions()?.updateAdminSettings
+      "
     >
       <a
         [routerLinkActive]="['active_section']"
@@ -26,7 +28,7 @@
     </li>
     <li
       class="list-group-item"
-      *ngIf="userRole() === 'SAdmin' || userPermissions().viewUsers"
+      *ngIf="userRole() === 'SAdmin' || this.userPermissions()?.viewUsers"
     >
       <a
         [routerLinkActive]="['active_section']"
@@ -37,7 +39,7 @@
     </li>
     <li
       class="list-group-item"
-      *ngIf="userRole() === 'SAdmin' || userPermissions().createUser"
+      *ngIf="userRole() === 'SAdmin' || this.userPermissions()?.createUser"
     >
       <a
         [routerLinkActive]="['active_section']"
@@ -48,7 +50,7 @@
     </li>
     <li
       class="list-group-item"
-      *ngIf="userRole() === 'SAdmin' || userPermissions().listPlans"
+      *ngIf="userRole() === 'SAdmin' || this.userPermissions()?.listPlans"
     >
       <a
         [routerLinkActive]="['active_section']"
@@ -59,7 +61,7 @@
     </li>
     <li
       class="list-group-item"
-      *ngIf="userRole() === 'SAdmin' || userPermissions().createPlan"
+      *ngIf="userRole() === 'SAdmin' || this.userPermissions()?.createPlan"
     >
       <a
         [routerLinkActive]="['active_section']"
@@ -71,7 +73,8 @@
     <li
       class="list-group-item"
       *ngIf="
-        userRole() === 'SAdmin' || userPermissions().viewPendingAdvertisements
+        userRole() === 'SAdmin' ||
+        this.userPermissions()?.viewPendingAdvertisements
       "
     >
       <a

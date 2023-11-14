@@ -57,12 +57,6 @@ export class ChangeUserPermissionComponent {
         takeUntilDestroyed(this.destroyRef),
         tap((permissions: UserPermissionsInterface) => {
           this.userPermissions = permissions;
-          this.toastService.success('Updated.', 'Update Successful', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          });
         }),
         catchError((err) => {
           this.toastService.error('Update failed. ' + err, 'Update failure', {
@@ -104,43 +98,32 @@ export class ChangeUserPermissionComponent {
     });
   }
   submit() {
-    let user = {
-      firstName: this.form.get('firstName').value,
-      userId: this.encryptionService.encryptItem(
-        this.form.get('userId').value as string
-      ),
-      lastName: this.form.get('lastName').value,
-      role: this.selectedRole,
-      password: this.encryptionService.encryptItem(
-        this.commonUtilityService.generateRandomPassword(12) as string
-      ),
+    const data = {
+      userId: this.encryptionService.encryptItem(this.getUserIdEdited()),
+      userPermissions: {
+        viewDashboard: this.userPermissions.viewDashboard ? 1 : 0,
+        updateAdminSettings: this.userPermissions.updateAdminSettings ? 1 : 0,
+        createUser: this.userPermissions.createUser ? 1 : 0,
+        viewUsers: this.userPermissions.viewUsers ? 1 : 0,
+        createPlan: this.userPermissions.createPlan ? 1 : 0,
+        listPlans: this.userPermissions.listPlans ? 1 : 0,
+        allowUserActions: this.userPermissions.allowUserActions ? 1 : 0,
+        allowPlanActions: this.userPermissions.allowPlanActions ? 1 : 0,
+        approveAdvertisement: this.userPermissions.approveAdvertisement ? 1 : 0,
+        viewPendingAdvertisements: this.userPermissions
+          .viewPendingAdvertisements
+          ? 1
+          : 0,
+      },
     };
-    if (this.selectedRole === 'Admin')
-      Object.assign(user, {
-        userPermissions: {
-          viewDashboard: this.userPermissions.viewDashboard ? 1 : 0,
-          updateAdminSettings: this.userPermissions.updateAdminSettings ? 1 : 0,
-          createUser: this.userPermissions.createUser ? 1 : 0,
-          viewUsers: this.userPermissions.viewUsers ? 1 : 0,
-          createPlan: this.userPermissions.createPlan ? 1 : 0,
-          listPlans: this.userPermissions.listPlans ? 1 : 0,
-          allowUserActions: this.userPermissions.allowUserActions ? 1 : 0,
-          allowPlanActions: this.userPermissions.allowPlanActions ? 1 : 0,
-          approveAdvertisement: this.userPermissions.approveAdvertisement
-            ? 1
-            : 0,
-          viewPendingAdvertisements: this.userPermissions
-            .viewPendingAdvertisements
-            ? 1
-            : 0,
-        },
-      });
 
     this.apiService
-      .createNewUser(user)
+      .updateUserPermissions(data)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        tap(() => {
+        tap((userPermissions: any) => {
+          this.userPermission = userPermissions;
+          // this.router.navigate(['/admin/users']);
           this.toastService.success('Updated.', 'Update Successful', {
             timeOut: 3000,
             positionClass: 'toast-top-right',

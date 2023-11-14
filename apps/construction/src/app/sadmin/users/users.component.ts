@@ -86,7 +86,19 @@ export class UsersComponent {
       )
       .subscribe();
   }
-
+  viewUserInfo(userId: string) {}
+  changeUserPermissions(user: any) {
+    if (
+      user.active === 1 &&
+      user.deleted === 0 &&
+      user.registered === 1 &&
+      user.role === 'Admin'
+    )
+      this.storageService.updateUserIdEdited(user.userId);
+    {
+      this.router.navigate(['/admin/edit-user-permissions']);
+    }
+  }
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();

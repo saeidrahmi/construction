@@ -536,8 +536,10 @@ async function getUserPermissionController(req, res) {
     const userId = decryptItem(req.body.userId, webSecretKey);
     const selectQuery = `select * From userPermissions where userId =?`;
     const selectResult = await executeQuery(selectQuery, [userId]);
-    if (selectResult.length > 0) return res.status(200).json(selectResult[0]);
-    else
+    if (selectResult.length > 0) {
+      delete selectResult[0].userId;
+      return res.status(200).json(selectResult[0]);
+    } else
       return res.status(500).json({
         errorMessage: 'Failed to retrieve information. Please try again later.',
       });
@@ -547,8 +549,46 @@ async function getUserPermissionController(req, res) {
     });
   }
 }
+async function updateUserPermissionController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const userPermissions = req.body.userPermissions;
+    const values = [
+      userPermissions.viewDashboard,
+      userPermissions.updateAdminSettings,
+      userPermissions.createUser,
+      userPermissions.viewUsers,
+      userPermissions.createPlan,
+      userPermissions.listPlans,
+      userPermissions.viewPendingAdvertisements,
+      userPermissions.approveAdvertisement,
+      userPermissions.allowPlanActions,
+      userPermissions.allowUserActions,
+      userId,
+    ];
 
+    const updateQuery = `UPDATE userPermissions SET  viewDashboard=?,updateAdminSettings=?,
+    createUser=?,viewUsers=?,createPlan=?,listPlans=?,
+    viewPendingAdvertisements=?,approveAdvertisement=?,allowPlanActions=?,
+    allowUserActions=? WHERE userId =?`;
+
+    console.log(updateQuery, values);
+    const updateResult = await executeQuery(updateQuery, values);
+    console.log(updateResult);
+    if (updateResult.affectedRows > 0) {
+      return res.status(200).json(userPermissions);
+    } else
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again later.',
+      });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again later.',
+    });
+  }
+}
 module.exports = {
+  updateUserPermissionController,
   getAdvertisementDetailsController,
   getUserPermissionController,
   rejectAdvertisement,
