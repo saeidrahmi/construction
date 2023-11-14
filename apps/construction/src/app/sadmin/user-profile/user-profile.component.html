@@ -1,0 +1,166 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <app-form-errors [formErrors]="formErrors"></app-form-errors>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12"><p class="h2 border-bottom">Edit Profile</p></div>
+  </div>
+  <div class="row">
+    <div class="col-7">
+      <form [formGroup]="form">
+        <div class="row">
+          <div class="col-md-2 mt-1 form-labe form-label" for="formFile">
+            Profile Photo
+          </div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              type="file"
+              formControlName="photo"
+              accept="image/*"
+              aria-describedby="fileHelpBlock"
+              (change)="profileImageHandler($event)"
+            />
+            <div id="fileHelpBlock" class="form-text">
+              <span class="small-text">
+                Max image size for profile pictures is 180 by 180 pixels with a
+                maximum file size of 1 MB (megabyte).</span
+              >
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">First Name</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter your first name..."
+              formControlName="firstName"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">Middle Name</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter your middle name..."
+              formControlName="middleName"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">Last Name</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter your last name..."
+              formControlName="lastName"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">Phone Number</div>
+          <div class="col-md-8">
+            <input
+              formControlName="phone"
+              type="text"
+              class="form-control"
+              [showMaskTyped]="true"
+              mask="(000) 000-0000"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">Fax Number</div>
+          <div class="col-md-8">
+            <input
+              formControlName="fax"
+              [showMaskTyped]="true"
+              class="form-control"
+              mask="(000) 000-0000"
+            />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">Address</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Enter your last name..."
+              formControlName="address"
+            />
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">Province</div>
+          <div class="col-md-8">
+            <select
+              formControlName="province"
+              class="form-select"
+              aria-label="Default select province"
+              [(ngModel)]="selectedProvince"
+              (change)="selectedProvinceAction()"
+            >
+              <option selected>Select Province</option>
+              <option
+                [value]="item.province"
+                *ngFor="let item of this.canadaCountryInfo()"
+              >
+                {{ item.province }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">City</div>
+          <div class="col-md-8">
+            <select
+              formControlName="city"
+              class="form-select"
+              aria-label="Default select city"
+              [(ngModel)]="selectedCity"
+            >
+              <option [value]="city" *ngFor="let city of cities()">
+                {{ city }}
+              </option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2 mt-1 form-label">Postal Code</div>
+          <div class="col-md-8">
+            <input
+              class="form-control"
+              placeholder="Postal Code"
+              formControlName="postalCode"
+              mask="A0A-0A0"
+              [showMaskTyped]="true"
+            />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-5 border-start">
+      <h3>Profile Image</h3>
+      <img
+        #imageElement
+        [src]="imageService.bufferToSafeUrl(user()?.profileImage)"
+        alt="Image"
+        width="200px"
+        height="200px"
+      />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <button class="submit-button my-2" (click)="submit()">Submit</button>
+    </div>
+  </div>
+</div>

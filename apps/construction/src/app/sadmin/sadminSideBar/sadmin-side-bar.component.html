@@ -1,5 +1,13 @@
 <div class="border">
   <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <a
+        [routerLinkActive]="['active_section']"
+        [routerLink]="['/admin/user-profile']"
+      >
+        <i class="bi bi-person-fill"><span class="mx-2">My Profile</span></i>
+      </a>
+    </li>
     <li
       class="list-group-item"
       *ngIf="
@@ -84,6 +92,14 @@
         <i class="bi bi-file-plus"
           ><span class="mx-2">Ads Pending Approval</span></i
         >
+      </a>
+    </li>
+    <li class="list-group-item">
+      <a
+        [routerLinkActive]="['active_section']"
+        [routerLink]="['/admin/change-password']"
+      >
+        <i class="bi bi-key"><span class="mx-2">Change Password</span></i>
       </a>
     </li>
   </ul>

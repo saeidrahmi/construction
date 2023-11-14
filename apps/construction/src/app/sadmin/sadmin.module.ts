@@ -32,6 +32,9 @@ import { RatingModule } from 'ngx-bootstrap/rating';
 import { ChangeUserPermissionComponent } from './users/change-user-permissions/change-permission.component';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { CreateUserComponent } from './users/create-user/create-user.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
+import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -47,8 +50,12 @@ import { CreateUserComponent } from './users/create-user/create-user.component';
     AdminAdvertisementDetailsViewComponent,
     CreateUserComponent,
     ChangeUserPermissionComponent,
+    UserProfileComponent,
   ],
   imports: [
+    ChangePasswordComponent,
+    NgxMaskDirective,
+    NgxMaskPipe,
     CommonModule,
     AdminRoutingModule,
     ReactiveFormsModule,

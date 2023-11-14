@@ -13,6 +13,8 @@ import { AdvertisementsPendingApprovalComponent } from './user-advertisements/ad
 import { AdminAdvertisementDetailsViewComponent } from './user-advertisements/advertisements-pending-approval/advertisement-details-view/advertisement-details-view.component';
 import { CreateUserComponent } from './users/create-user/create-user.component';
 import { ChangeUserPermissionComponent } from './users/change-user-permissions/change-permission.component';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
 
 const routes: Routes = [
   {
@@ -60,8 +62,16 @@ const routes: Routes = [
         component: CreateUserComponent,
       },
       {
+        path: 'user-profile',
+        component: UserProfileComponent,
+      },
+      {
         path: 'edit-user-permissions',
         component: ChangeUserPermissionComponent,
+      },
+      {
+        path: 'change-password',
+        component: ChangePasswordComponent,
       },
       {
         path: '',
