@@ -77,11 +77,11 @@
                     </div>
                   </div>
                   <div
-                    class="row my-1 border rounded"
+                    class="row my-2 border rounded"
                     *ngIf="selectedRole === 'Admin'"
                   >
                     <div class="col-md-3 mt-1 form-label">Permissions</div>
-                    <div class="col-md-8">
+                    <div class="col-md-9">
                       <mat-checkbox
                         formControlName="viewDashboard"
                         [(ngModel)]="userPermissions.viewDashboard"
@@ -138,6 +138,16 @@
                         formControlName="allowUserActions"
                         [(ngModel)]="userPermissions.allowUserActions"
                         >Allow User update/delete actions</mat-checkbox
+                      >
+                      <mat-checkbox
+                        formControlName="viewRfps"
+                        [(ngModel)]="userPermissions.viewRfps"
+                        >View Request for proposal(RFP)</mat-checkbox
+                      >
+                      <mat-checkbox
+                        formControlName="approvedRfps"
+                        [(ngModel)]="userPermissions.approvedRfps"
+                        >Approve Request for proposal(RFP)</mat-checkbox
                       >
                     </div>
                   </div>

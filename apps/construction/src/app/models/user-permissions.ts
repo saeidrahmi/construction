@@ -9,4 +9,6 @@ export interface UserPermissionsInterface {
   approveAdvertisement?: boolean;
   allowUserActions?: boolean;
   allowPlanActions?: boolean;
+  viewRfps?: boolean;
+  approvedRfps?: boolean;
 }

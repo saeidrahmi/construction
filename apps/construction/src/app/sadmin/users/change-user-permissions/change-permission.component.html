@@ -20,7 +20,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-7">
+              <div class="col-10">
                 <form [formGroup]="form">
                   <div class="row my-1 border rounded">
                     <div class="col-md-3 mt-1 form-label">Permissions</div>
@@ -81,6 +81,16 @@
                         formControlName="allowUserActions"
                         [(ngModel)]="userPermissions.allowUserActions"
                         >Allow User update/delete actions</mat-checkbox
+                      >
+                      <mat-checkbox
+                        formControlName="viewRfps"
+                        [(ngModel)]="userPermissions.viewRfps"
+                        >View Request for proposal(RFP)</mat-checkbox
+                      >
+                      <mat-checkbox
+                        formControlName="approvedRfps"
+                        [(ngModel)]="userPermissions.approvedRfps"
+                        >Approve Request for proposal(RFP)</mat-checkbox
                       >
                     </div>
                   </div>

@@ -485,8 +485,8 @@ async function createNewUserController(req, res) {
     }
 
     if (user.role === 'Admin') {
-      const query = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan, listPlans, viewPendingAdvertisements, approveAdvertisement,allowUserActions,allowPlanActions, userId)
-                   values(?,?,?,?,?,?,?,?,?,?,?)`;
+      const query = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan, listPlans, viewPendingAdvertisements, approveAdvertisement,allowUserActions,allowPlanActions,viewRfps,approvedRfps userId)
+                   values(?,?,?,?,?,?,?,?,?,?,?,?,?)`;
       const values = [
         userPermissions.viewDashboard,
         userPermissions.updateAdminSettings,
@@ -498,6 +498,8 @@ async function createNewUserController(req, res) {
         userPermissions.approveAdvertisement,
         userPermissions.allowUserActions,
         userPermissions.allowPlanActions,
+        userPermissions.viewRfps,
+        userPermissions.approvedRfps,
         userId,
       ];
 
@@ -564,13 +566,15 @@ async function updateUserPermissionController(req, res) {
       userPermissions.approveAdvertisement,
       userPermissions.allowPlanActions,
       userPermissions.allowUserActions,
+      userPermissions.viewRfps,
+      userPermissions.approvedRfps,
       userId,
     ];
 
     const updateQuery = `UPDATE userPermissions SET  viewDashboard=?,updateAdminSettings=?,
     createUser=?,viewUsers=?,createPlan=?,listPlans=?,
     viewPendingAdvertisements=?,approveAdvertisement=?,allowPlanActions=?,
-    allowUserActions=? WHERE userId =?`;
+    allowUserActions=? , viewRfps=?, approvedRfps=? WHERE userId =?`;
 
     console.log(updateQuery, values);
     const updateResult = await executeQuery(updateQuery, values);

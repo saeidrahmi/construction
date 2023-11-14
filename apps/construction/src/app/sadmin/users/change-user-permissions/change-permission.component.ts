@@ -95,6 +95,8 @@ export class ChangeUserPermissionComponent {
         this.userPermissions?.allowPlanActions,
         []
       ),
+      viewRfps: new FormControl(this.userPermissions?.viewRfps, []),
+      approvedRfps: new FormControl(this.userPermissions?.approvedRfps, []),
     });
   }
   submit() {
@@ -109,6 +111,8 @@ export class ChangeUserPermissionComponent {
         listPlans: this.userPermissions.listPlans ? 1 : 0,
         allowUserActions: this.userPermissions.allowUserActions ? 1 : 0,
         allowPlanActions: this.userPermissions.allowPlanActions ? 1 : 0,
+        viewRfps: this.userPermissions.viewRfps ? 1 : 0,
+        approvedRfps: this.userPermissions.approvedRfps ? 1 : 0,
         approveAdvertisement: this.userPermissions.approveAdvertisement ? 1 : 0,
         viewPendingAdvertisements: this.userPermissions
           .viewPendingAdvertisements

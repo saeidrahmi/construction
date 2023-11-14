@@ -94,6 +94,19 @@
         >
       </a>
     </li>
+    <li
+      class="list-group-item"
+      *ngIf="userRole() === 'SAdmin' || this.userPermissions()?.viewRfps"
+    >
+      <a
+        [routerLinkActive]="['active_section']"
+        [routerLink]="['/admin/advertisements-pending-approval']"
+      >
+        <i class="bi bi-file-plus"
+          ><span class="mx-2">RFPs Pending Approval</span></i
+        >
+      </a>
+    </li>
     <li class="list-group-item">
       <a
         [routerLinkActive]="['active_section']"
