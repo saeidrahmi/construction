@@ -50,6 +50,7 @@ import { UserAdvertisementViewComponent } from './advertisements/advertisement-v
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { PromoteToAdComponent } from './advertisements/promote-toAd/promote-toAd.component';
+
 @NgModule({
   declarations: [
     GeneralComponent,
