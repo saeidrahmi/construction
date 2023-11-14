@@ -106,7 +106,7 @@ export class EditPlanComponent {
       startDate: new FormControl('', [Validators.required]),
       endDate: new FormControl('', [Validators.required]),
       customProfileIncluded: new FormControl('', []),
-      viewBidsIncluded: new FormControl('', []),
+      createRfpIncluded: new FormControl('', []),
       createBidsIncluded: new FormControl('', []),
       onlineSupportIncluded: new FormControl('', []),
 
@@ -181,8 +181,8 @@ export class EditPlanComponent {
       this.plan.dateCreated = new Date();
       if (!this.form?.get('customProfileIncluded')?.value)
         this.plan.customProfileIncluded = false;
-      if (!this.form?.get('viewBidsIncluded')?.value)
-        this.plan.viewBidsIncluded = false;
+      if (!this.form?.get('createRfpIncluded')?.value)
+        this.plan.createRfpIncluded = false;
 
       this.apiService
         .updatePlan(this.plan, this.planId)

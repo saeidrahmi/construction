@@ -22,7 +22,9 @@ import { UserMessagesDetailsComponent } from './user-messages/user-messages-deta
 import { UserAdvertisementDetailsViewComponent } from './advertisements/advertisement-details-view/advertisement-details-view.component';
 import { PromoteToAdComponent } from './advertisements/promote-toAd/promote-toAd.component';
 import { MyBidsComponent } from './my-bids/my-bids.component';
-import { NewBidComponent } from './my-bids/new-bid/new-bid.component';
+import { ViewBidComponent } from './my-bids/view-bid/view-bid.component';
+import { MyRFPComponent } from './rfps/my-rfp.component';
+import { NewRFPComponent } from './rfps/new-rfp/new-rfp.component';
 const routes: Routes = [
   {
     path: '',
@@ -81,8 +83,16 @@ const routes: Routes = [
         component: MyBidsComponent,
       },
       {
-        path: 'new-bid',
-        component: NewBidComponent,
+        path: 'view-bid',
+        component: ViewBidComponent,
+      },
+      {
+        path: 'my-rfps',
+        component: MyRFPComponent,
+      },
+      {
+        path: 'new-rfp',
+        component: NewRFPComponent,
       },
       {
         path: 'custom-page',

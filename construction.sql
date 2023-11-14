@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Nov 13, 2023 at 05:13 PM
+-- Generation Time: Nov 14, 2023 at 09:02 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -31,7 +31,7 @@ CREATE TABLE `plans` (
   `planId` bigint UNSIGNED NOT NULL,
   `planName` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `planType` varchar(20) NOT NULL,
-  `viewBidsIncluded` tinyint(1) NOT NULL,
+  `createRfpIncluded` tinyint(1) NOT NULL,
   `createBidsIncluded` tinyint(1) DEFAULT NULL,
   `customProfileIncluded` tinyint(1) NOT NULL,
   `onlineSupportIncluded` tinyint(1) DEFAULT NULL,
@@ -170,7 +170,9 @@ CREATE TABLE `userPermissions` (
   `createPlan` tinyint(1) NOT NULL DEFAULT '0',
   `listPlans` tinyint(1) NOT NULL DEFAULT '0',
   `viewPendingAdvertisements` tinyint(1) NOT NULL DEFAULT '0',
-  `approveAdvertisement` tinyint(1) NOT NULL DEFAULT '0'
+  `approveAdvertisement` tinyint(1) NOT NULL DEFAULT '0',
+  `allowPlanActions` tinyint(1) NOT NULL DEFAULT '0',
+  `allowUserActions` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -240,7 +242,7 @@ CREATE TABLE `users` (
   `profileImage` longblob,
   `logoImage` longblob,
   `jwtToken` varchar(500) DEFAULT NULL,
-  `loginCount` int DEFAULT NULL,
+  `loginCount` int DEFAULT '0',
   `password` varchar(200) DEFAULT NULL,
   `company` varchar(80) DEFAULT NULL,
   `jobProfileDescription` varchar(400) DEFAULT NULL,

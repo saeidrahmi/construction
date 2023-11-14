@@ -15,7 +15,7 @@ export class MyBidsComponent implements OnInit {
   destroyRef = inject(DestroyRef);
   plan = this.storageService.getPlan();
   constructor() {
-    if (this.plan()?.onlineSupportIncluded != 1)
+    if (this.plan()?.createBidsIncluded != 1)
       this.router.navigate(['/general/dashboard']);
   }
 

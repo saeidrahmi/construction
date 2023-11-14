@@ -13,7 +13,7 @@
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/user-profile']"
       >
-        <i class="bi bi-person-fill"><span class="mx-2">My Profile</span></i>
+        <i class="bi bi-person-square"><span class="mx-2">My Profile</span></i>
       </a>
     </li>
     <li class="list-group-item">
@@ -29,7 +29,7 @@
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/user-account']"
       >
-        <i class="bi bi-person-add"><span class="mx-2">My Account</span></i>
+        <i class="bi bi-person-vcard"><span class="mx-2">My Account</span></i>
       </a>
     </li>
     <li class="list-group-item">
@@ -63,17 +63,25 @@
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/new-advertisement']"
       >
-        <i class="bi bi-badge-ad"
+        <i class="bi bi-plus-circle-dotted"
           ><span class="mx-2">Create Advertisement</span></i
         >
       </a>
     </li>
-    <li class="list-group-item" *ngIf="plan()?.onlineSupportIncluded === 1">
+    <li class="list-group-item" *ngIf="plan()?.createRfpIncluded === 1">
+      <a
+        [routerLinkActive]="['active_section']"
+        [routerLink]="['/general/my-rfps']"
+      >
+        <i class="bi bi-card-list"><span class="mx-2">My RFPs</span></i>
+      </a>
+    </li>
+    <li class="list-group-item" *ngIf="plan()?.createBidsIncluded === 1">
       <a
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/my-bids']"
       >
-        <i class="bi bi-question-diamond"><span class="mx-2">My Bids</span></i>
+        <i class="bi bi-card-list"><span class="mx-2">My Bids/Offers</span></i>
       </a>
     </li>
     <li class="list-group-item" *ngIf="plan()?.onlineSupportIncluded === 1">

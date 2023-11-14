@@ -138,6 +138,33 @@
                         />
                       </div>
                     </div>
+
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Create Request for Proposal (RFP)
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="createRfpIncluded"
+                          [(ngModel)]="plan.createRfpIncluded"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Submit Proposals for Construction Projects
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-check-input"
+                          type="checkbox"
+                          formControlName="createBidsIncluded"
+                          [(ngModel)]="plan.createBidsIncluded"
+                        />
+                      </div>
+                    </div>
                     <div class="row">
                       <div class="col-md-3 mt-1 form-labe">
                         Custom Profile Included
@@ -161,32 +188,6 @@
                           type="checkbox"
                           formControlName="onlineSupportIncluded"
                           [(ngModel)]="plan.onlineSupportIncluded"
-                        />
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-3 mt-1 form-labe">
-                        View Bids Included
-                      </div>
-                      <div class="col-md-8">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          formControlName="viewBidsIncluded"
-                          [(ngModel)]="plan.viewBidsIncluded"
-                        />
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-3 mt-1 form-labe">
-                        Create Bids Included
-                      </div>
-                      <div class="col-md-8">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          formControlName="createBidsIncluded"
-                          [(ngModel)]="plan.createBidsIncluded"
                         />
                       </div>
                     </div>

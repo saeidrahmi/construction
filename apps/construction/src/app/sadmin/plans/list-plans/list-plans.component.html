@@ -282,7 +282,8 @@
                   {{ row.numberOfAdvertisements }}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="customProfileIncluded">
+
+              <ng-container matColumnDef="createRfpIncluded">
                 <th
                   mat-header-cell
                   [class]="
@@ -293,36 +294,7 @@
                   *matHeaderCellDef
                   mat-sort-header
                 >
-                  Custom Profile Included
-                </th>
-                <td mat-cell *matCellDef="let row">
-                  <div
-                    *ngIf="
-                      row.customProfileIncluded === 1;
-                      then yesSection;
-                      else noSection
-                    "
-                  ></div>
-                  <ng-template #yesSection>
-                    <mat-icon>check_box</mat-icon></ng-template
-                  >
-                  <ng-template #noSection>
-                    <mat-icon>close</mat-icon></ng-template
-                  >
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="viewBidsIncluded">
-                <th
-                  mat-header-cell
-                  [class]="
-                    this.storageService.getTheme()() === 'dark'
-                      ? 'bg-dark text-light'
-                      : 'bg-light'
-                  "
-                  *matHeaderCellDef
-                  mat-sort-header
-                >
-                  View Bids Included
+                  Create Request for Proposal (RFP)
                 </th>
                 <td
                   mat-cell
@@ -335,7 +307,7 @@
                 >
                   <div
                     *ngIf="
-                      row.viewBidsIncluded === 1;
+                      row.createRfpIncluded === 1;
                       then yesSection;
                       else noSection
                     "
@@ -359,7 +331,7 @@
                   *matHeaderCellDef
                   mat-sort-header
                 >
-                  Create Bids Included
+                  Submit Proposals for Construction Projects
                 </th>
                 <td
                   mat-cell
@@ -373,6 +345,35 @@
                   <div
                     *ngIf="
                       row.createBidsIncluded === 1;
+                      then yesSection;
+                      else noSection
+                    "
+                  ></div>
+                  <ng-template #yesSection>
+                    <mat-icon>check_box</mat-icon></ng-template
+                  >
+                  <ng-template #noSection>
+                    <mat-icon>close</mat-icon></ng-template
+                  >
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="customProfileIncluded">
+                <th
+                  mat-header-cell
+                  [class]="
+                    this.storageService.getTheme()() === 'dark'
+                      ? 'bg-dark text-light'
+                      : 'bg-light'
+                  "
+                  *matHeaderCellDef
+                  mat-sort-header
+                >
+                  Custom Profile Included
+                </th>
+                <td mat-cell *matCellDef="let row">
+                  <div
+                    *ngIf="
+                      row.customProfileIncluded === 1;
                       then yesSection;
                       else noSection
                     "

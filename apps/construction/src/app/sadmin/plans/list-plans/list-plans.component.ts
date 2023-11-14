@@ -32,7 +32,7 @@ export class ListPlansComponent {
     'priceAfterDiscount',
     'numberOfAdvertisements',
     'customProfileIncluded',
-    'viewBidsIncluded',
+    'createRfpIncluded',
     'createBidsIncluded',
     'onlineSupportIncluded',
   ];
