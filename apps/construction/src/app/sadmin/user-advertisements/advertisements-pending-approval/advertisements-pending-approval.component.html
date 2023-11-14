@@ -73,7 +73,13 @@
                       }}
                     </h6>
                   </div>
-                  <div class="col-6 border border-1 p-2">
+                  <div
+                    class="col-6 border border-1 p-2"
+                    *ngIf="
+                      userRole() === 'SAdmin' ||
+                      this.userPermissions().approveAdvertisement
+                    "
+                  >
                     <button
                       mat-stroked-button
                       color="primary"
@@ -92,7 +98,13 @@
                     </button>
                   </div>
                 </div>
-                <div class="row my-2">
+                <div
+                  class="row my-2"
+                  *ngIf="
+                    userRole() === 'SAdmin' ||
+                    this.userPermissions().approveAdvertisement
+                  "
+                >
                   <form action="" [formGroup]="form">
                     <div class="col-p-3">
                       <mat-form-field style="width: 500px">

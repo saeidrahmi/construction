@@ -9,4 +9,5 @@ import { Component, inject } from '@angular/core';
 export class SAdminSideBarComponent {
   storageService = inject(StorageService);
   userPermissions = this.storageService.getUserPermissions();
+  userRole = this.storageService.getUserRole();
 }

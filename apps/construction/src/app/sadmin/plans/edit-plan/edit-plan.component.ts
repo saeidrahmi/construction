@@ -39,8 +39,9 @@ export class EditPlanComponent {
 
   router = inject(Router);
   userPermissions = this.storageService.getUserPermissions();
+  userRole = this.storageService.getUserRole();
   constructor(private fb: FormBuilder) {
-    if (!this.userPermissions().createPlan)
+    if (this.userRole() != 'SAdmin' && !this.userPermissions().allowPlanActions)
       this.router.navigate(['/admin/user-profile']);
     this.apiService
       .getAdminSettings()

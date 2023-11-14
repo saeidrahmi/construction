@@ -531,8 +531,26 @@ async function createNewUserController(req, res) {
     }
   }
 }
+async function getUserPermissionController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const selectQuery = `select * From userPermissions where userId =?`;
+    const selectResult = await executeQuery(selectQuery, [userId]);
+    if (selectResult.length > 0) return res.status(200).json(selectResult[0]);
+    else
+      return res.status(500).json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
+
 module.exports = {
   getAdvertisementDetailsController,
+  getUserPermissionController,
   rejectAdvertisement,
   approveAdvertisement,
   listAdminSettingsController,

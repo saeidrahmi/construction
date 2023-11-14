@@ -442,14 +442,23 @@
                     matTooltipPosition="above"
                     class="pointer"
                     (click)="editPlan(row.planId)"
-                    *ngIf="row.active === 1 && row.deleted === 0"
+                    *ngIf="
+                      (this.userRole() === 'SAdmin' ||
+                        this.userPermissions().allowPlanActions) &&
+                      row.active === 1 &&
+                      row.deleted === 0
+                    "
                     >edit</mat-icon
                   >
                   <div
                     *ngIf="row.active === 1; then yesSection; else noSection"
                   ></div>
                   <mat-icon
-                    *ngIf="row.deleted === 0"
+                    *ngIf="
+                      (this.userRole() === 'SAdmin' ||
+                        this.userPermissions().allowPlanActions) &&
+                      row.deleted === 0
+                    "
                     class="mat-18"
                     matTooltip="Delete account"
                     matTooltipPosition="above"
@@ -459,7 +468,12 @@
                   >
                   <ng-template #yesSection>
                     <mat-icon
-                      *ngIf="row.deleted === 0"
+                      *ngIf="
+                        this.userRole() ===
+                          ('SAdmin' ||
+                            this.userPermissions().allowPlanActions) &&
+                        row.deleted === 0
+                      "
                       matTooltip="Inactivate plan"
                       matTooltipPosition="above"
                       class="pointer"
@@ -469,7 +483,11 @@
                   >
                   <ng-template #noSection>
                     <mat-icon
-                      *ngIf="row.deleted === 0"
+                      *ngIf="
+                        (this.userRole() === 'SAdmin' ||
+                          this.userPermissions().allowPlanActions) &&
+                        row.deleted === 0
+                      "
                       matTooltip="Activate plan"
                       matTooltipPosition="above"
                       class="pointer"

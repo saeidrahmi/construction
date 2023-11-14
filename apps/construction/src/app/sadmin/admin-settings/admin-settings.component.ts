@@ -35,8 +35,12 @@ export class AdminSettingsComponent {
   formService = inject(FormService);
   formErrors: string[] = [];
   initialSetting: AdminSettingsInterface = {};
+  userRole = this.storageService.getUserRole();
   constructor(private fb: FormBuilder) {
-    if (!this.userPermissions().updateAdminSettings)
+    if (
+      this.userRole() != 'SAdmin' &&
+      !this.userPermissions().updateAdminSettings
+    )
       this.router.navigate(['/admin/user-profile']);
     this.form = this.fb.group({
       tax: new FormControl('', [Validators.required]),

@@ -41,8 +41,9 @@ export class DashboardComponent {
   storageService = inject(StorageService);
   router = inject(Router);
   userPermissions = this.storageService.getUserPermissions();
+  userRole = this.storageService.getUserRole();
   constructor() {
-    if (!this.userPermissions().viewDashboard)
+    if (this.userRole() != 'SAdmin' && !this.userPermissions().viewDashboard)
       this.router.navigate(['/admin/user-profile']);
     this.dashboard$.subscribe();
   }

@@ -66,6 +66,12 @@ export class StorageService {
   getUserPermissions(): Signal<UserPermissionsInterface | undefined> {
     return computed(() => this.store()?.user?.userPermissions);
   }
+  getUserRole(): Signal<string | undefined> {
+    return computed(() => this.store()?.user?.role);
+  }
+  getUserIdEdited(): Signal<string | undefined> {
+    return computed(() => this.store()?.userIdEdited);
+  }
   loginError(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.error);
   }
@@ -147,6 +153,11 @@ export class StorageService {
   updateIsLoading(flag: boolean) {
     this.store.update((state) => {
       return { ...state, isLoading: flag };
+    });
+  }
+  updateUserIdEdited(userId: any) {
+    this.store.update((state) => {
+      return { ...state, userIdEdited: userId };
     });
   }
   updateLoginError() {

@@ -59,8 +59,9 @@ export class UsersComponent {
   profileImage: any;
   router = inject(Router);
   userPermissions = this.storageService.getUserPermissions();
+  userRole = this.storageService.getUserRole();
   constructor(public imageService: ImageService) {
-    if (!this.userPermissions().viewUsers)
+    if (this.userRole() != 'SAdmin' && !this.userPermissions().viewUsers)
       this.router.navigate(['/admin/user-profile']);
     // Assign the data to the data source for the table to render
     this.storageService.updateIsLoading(true);

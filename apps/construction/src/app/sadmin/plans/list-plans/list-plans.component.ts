@@ -65,8 +65,9 @@ export class ListPlansComponent {
   );
 
   userPermissions = this.storageService.getUserPermissions();
+  userRole = this.storageService.getUserRole();
   constructor() {
-    if (!this.userPermissions().listPlans)
+    if (this.userRole() != 'SAdmin' && !this.userPermissions().listPlans)
       this.router.navigate(['/admin/user-profile']);
     // Assign the data to the data source for the table to render
 
@@ -133,6 +134,6 @@ export class ListPlansComponent {
       .subscribe();
   }
   editPlan(planId: string) {
-    this.router.navigate(['/sadmin/edit-plan', planId]);
+    this.router.navigate(['/admin/edit-plan', planId]);
   }
 }

@@ -73,8 +73,12 @@ export class AdvertisementsPendingApprovalComponent {
   );
   userAdvertisementDuration: any;
   userPermissions = this.storageService.getUserPermissions();
+  userRole = this.storageService.getUserRole();
   constructor() {
-    if (!this.userPermissions().viewPendingAdvertisements)
+    if (
+      this.userRole() != 'SAdmin' &&
+      !this.userPermissions().viewPendingAdvertisements
+    )
       this.router.navigate(['/admin/user-profile']);
     this.getAds$.subscribe();
   }

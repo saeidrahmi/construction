@@ -8,4 +8,5 @@ export interface StoreInterface {
   plan: any;
   isLoading?: boolean;
   advertisement?: AdvertisementStateInterface;
+  userIdEdited?: string;
 }

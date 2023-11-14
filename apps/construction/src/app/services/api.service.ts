@@ -1240,4 +1240,19 @@ export class ApiService {
         })
       );
   }
+  getUserPermissions(userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/get-user-permissions', {
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

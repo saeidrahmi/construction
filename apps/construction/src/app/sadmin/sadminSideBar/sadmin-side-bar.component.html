@@ -1,6 +1,11 @@
 <div class="border">
   <ul class="list-group list-group-flush">
-    <li class="list-group-item" *ngIf="userPermissions().viewDashboard">
+    <li
+      class="list-group-item"
+      *ngIf="
+        this.userRole() === 'SAdmin' || this.userPermissions().viewDashboard
+      "
+    >
       <a
         [routerLinkActive]="['active_section']"
         [routerLink]="['/admin/dashboard']"
@@ -8,7 +13,10 @@
         <i class="bi bi-speedometer"><span class="mx-2">Dashboard</span></i>
       </a>
     </li>
-    <li class="list-group-item" *ngIf="userPermissions().updateAdminSettings">
+    <li
+      class="list-group-item"
+      *ngIf="userRole() === 'SAdmin' || userPermissions().updateAdminSettings"
+    >
       <a
         [routerLinkActive]="['active_section']"
         [routerLink]="['/admin/admin-settings']"
@@ -16,7 +24,10 @@
         <i class="bi bi-sliders"><span class="mx-2">Admin Settings</span></i>
       </a>
     </li>
-    <li class="list-group-item" *ngIf="userPermissions().viewUsers">
+    <li
+      class="list-group-item"
+      *ngIf="userRole() === 'SAdmin' || userPermissions().viewUsers"
+    >
       <a
         [routerLinkActive]="['active_section']"
         [routerLink]="['/admin/users']"
@@ -24,7 +35,10 @@
         <i class="bi bi-people-fill"><span class="mx-2">Users</span></i>
       </a>
     </li>
-    <li class="list-group-item" *ngIf="userPermissions().createUser">
+    <li
+      class="list-group-item"
+      *ngIf="userRole() === 'SAdmin' || userPermissions().createUser"
+    >
       <a
         [routerLinkActive]="['active_section']"
         [routerLink]="['/admin/create-user']"
@@ -32,7 +46,10 @@
         <i class="bi bi-person-add"><span class="mx-2">Create User</span></i>
       </a>
     </li>
-    <li class="list-group-item" *ngIf="userPermissions().listPlans">
+    <li
+      class="list-group-item"
+      *ngIf="userRole() === 'SAdmin' || userPermissions().listPlans"
+    >
       <a
         [routerLinkActive]="['active_section']"
         [routerLink]="['/admin/list-plans']"
@@ -40,7 +57,10 @@
         <i class="bi bi-grid"><span class="mx-2">List Plans</span></i>
       </a>
     </li>
-    <li class="list-group-item" *ngIf="userPermissions().createPlan">
+    <li
+      class="list-group-item"
+      *ngIf="userRole() === 'SAdmin' || userPermissions().createPlan"
+    >
       <a
         [routerLinkActive]="['active_section']"
         [routerLink]="['/admin/create-plan']"
@@ -50,7 +70,9 @@
     </li>
     <li
       class="list-group-item"
-      *ngIf="userPermissions().viewPendingAdvertisements"
+      *ngIf="
+        userRole() === 'SAdmin' || userPermissions().viewPendingAdvertisements
+      "
     >
       <a
         [routerLinkActive]="['active_section']"
