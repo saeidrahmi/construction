@@ -1,132 +1,324 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col">
-      <div class="card" aria-hidden="true">
-        <div class="card-body">
-          <h2 class="card-title">
-            <span class="col-6">Dashboard</span>
-          </h2>
-          <hr />
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-4">
-                <div class="card" aria-hidden="true">
-                  <div class="card-body">
-                    <h4 class="card-title text-center">Users</h4>
-                    <hr />
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link active"
+      id="home-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#home-tab-pane"
+      type="button"
+      role="tab"
+      aria-controls="home-tab-pane"
+      aria-selected="true"
+    >
+      Home
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      id="profile-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#profile-tab-pane"
+      type="button"
+      role="tab"
+      aria-controls="profile-tab-pane"
+      aria-selected="false"
+    >
+      Users
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      id="contact-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#contact-tab-pane"
+      type="button"
+      role="tab"
+      aria-controls="contact-tab-pane"
+      aria-selected="false"
+    >
+      Sales
+    </button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button
+      class="nav-link"
+      id="disabled-tab"
+      data-bs-toggle="tab"
+      data-bs-target="#disabled-tab-pane"
+      type="button"
+      role="tab"
+      aria-controls="disabled-tab-pane"
+      aria-selected="false"
+    >
+      Financial
+    </button>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div
+    class="tab-pane fade show active"
+    id="home-tab-pane"
+    role="tabpanel"
+    aria-labelledby="home-tab"
+    tabindex="0"
+  >
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <div class="card" aria-hidden="true">
+            <div class="card-body">
+              <h2 class="card-title">
+                <span class="col-6">General</span>
+              </h2>
+              <hr />
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-4">
+                    <div class="card" aria-hidden="true">
+                      <div class="card-body">
+                        <h4 class="card-title text-center">Users</h4>
+                        <hr />
 
-                    <ul class="list-group">
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Users
-                        <span class="badge bg-primary rounded-pill">
-                          {{ dashboard?.total_users }}</span
-                        >
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Active Users
-                        <span class="badge bg-primary rounded-pill">
-                          {{ dashboard?.active_users }}</span
-                        >
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Inactive Users
-                        <span class="badge bg-primary rounded-pill">
-                          {{ dashboard?.inactive_users }}</span
-                        >
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of closed account Users
-                        <span class="badge bg-primary rounded-pill">
-                          {{ dashboard?.deleted_users }}</span
-                        >
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Currently logged in Users
-                        <span class="badge bg-primary rounded-pill">
-                          {{ dashboard?.loggedIn_users }}</span
-                        >
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of free Users
-                        <span class="badge bg-primary rounded-pill"> a </span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of paid Users
-                        <span class="badge bg-primary rounded-pill"> a</span>
-                      </li>
-                    </ul>
+                        <ul class="list-group">
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of Users
+                            <span class="badge bg-primary rounded-pill">
+                              {{ dashboard?.total_users }}</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of Active Users
+                            <span class="badge bg-primary rounded-pill">
+                              {{ dashboard?.active_users }}</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of Inactive Users
+                            <span class="badge bg-primary rounded-pill">
+                              {{ dashboard?.inactive_users }}</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of closed account Users
+                            <span class="badge bg-primary rounded-pill">
+                              {{ dashboard?.deleted_users }}</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of Currently logged in Users
+                            <span class="badge bg-primary rounded-pill">
+                              {{ dashboard?.loggedIn_users }}</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of free Users
+                            <span class="badge bg-primary rounded-pill">
+                              a
+                            </span>
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of paid Users
+                            <span class="badge bg-primary rounded-pill">
+                              a</span
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="card" aria-hidden="true">
+                      <div class="card-body">
+                        <h4 class="card-title text-center">Financial</h4>
+                        <hr />
+
+                        <ul class="list-group">
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Total Revenue
+                            <span class="badge bg-primary rounded-pill">
+                              255</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Revenue this month
+                            <span class="badge bg-primary rounded-pill">
+                              255</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of Currently logged in Users
+                            <span class="badge bg-primary rounded-pill">
+                              255</span
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="card" aria-hidden="true">
+                      <div class="card-body">
+                        <h4 class="card-title text-center">Plans</h4>
+                        <hr />
+
+                        <ul class="list-group">
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Sales per plan
+                            <span class="badge bg-primary rounded-pill">
+                              255</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of purchased plans
+                            <span class="badge bg-primary rounded-pill">
+                              255</span
+                            >
+                          </li>
+                          <li
+                            class="list-group-item d-flex justify-content-between align-items-center"
+                          >
+                            Number of Currently logged in Users
+                            <span class="badge bg-primary rounded-pill">
+                              255</span
+                            >
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="col-4">
-                <div class="card" aria-hidden="true">
-                  <div class="card-body">
-                    <h4 class="card-title text-center">Financial</h4>
-                    <hr />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="tab-pane fade"
+    id="profile-tab-pane"
+    role="tabpanel"
+    aria-labelledby="profile-tab"
+    tabindex="0"
+  >
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <div class="card" aria-hidden="true">
+            <div class="card-body">
+              <h2 class="card-title">
+                <span class="col-6">General</span>
+              </h2>
+              <hr />
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card" aria-hidden="true">
+                      <div class="card-body">
+                        <h4 class="card-title text-center">Users Growth</h4>
+                        <hr />
 
-                    <ul class="list-group">
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Total Revenue
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Revenue this month
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Currently logged in Users
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                    </ul>
+                        growth
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="col-4">
-                <div class="card" aria-hidden="true">
-                  <div class="card-body">
-                    <h4 class="card-title text-center">Plans</h4>
-                    <hr />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="tab-pane fade"
+    id="contact-tab-pane"
+    role="tabpanel"
+    aria-labelledby="contact-tab"
+    tabindex="0"
+  >
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <div class="card" aria-hidden="true">
+            <div class="card-body">
+              <h2 class="card-title">
+                <span class="col-6">General</span>
+              </h2>
+              <hr />
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card" aria-hidden="true">
+                      <div class="card-body">
+                        <h4 class="card-title text-center">Users Growth</h4>
+                        <hr />
 
-                    <ul class="list-group">
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Sales per plan
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of purchased plans
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Currently logged in Users
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                    </ul>
+                        growth
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="tab-pane fade"
+    id="disabled-tab-pane"
+    role="tabpanel"
+    aria-labelledby="disabled-tab"
+    tabindex="0"
+  >
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <div class="card" aria-hidden="true">
+            <div class="card-body">
+              <h2 class="card-title">
+                <span class="col-6">General</span>
+              </h2>
+              <hr />
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col-6">
+                    <div class="card" aria-hidden="true">
+                      <div class="card-body">
+                        <h4 class="card-title text-center">Users Growth</h4>
+                        <hr />
+
+                        growth
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
