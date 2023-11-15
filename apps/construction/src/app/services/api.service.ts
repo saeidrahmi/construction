@@ -1279,4 +1279,16 @@ export class ApiService {
         })
       );
   }
+  getUserDashboardAdminDetails(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/admin/get-user-dashboard-details')
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

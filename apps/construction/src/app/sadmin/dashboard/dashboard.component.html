@@ -64,7 +64,7 @@
     aria-labelledby="home-tab"
     tabindex="0"
   >
-    <div class="container-fluid">
+    <div class="container-fluid my-2">
       <div class="row">
         <div class="col">
           <div class="card" aria-hidden="true">
@@ -227,29 +227,12 @@
     aria-labelledby="profile-tab"
     tabindex="0"
   >
-    <div class="container-fluid">
+    <div class="container-fluid my-2">
       <div class="row">
         <div class="col">
           <div class="card" aria-hidden="true">
             <div class="card-body">
-              <h2 class="card-title">
-                <span class="col-6">General</span>
-              </h2>
-              <hr />
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card" aria-hidden="true">
-                      <div class="card-body">
-                        <h4 class="card-title text-center">Users Growth</h4>
-                        <hr />
-
-                        growth
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <app-user-dashboard-details></app-user-dashboard-details>
             </div>
           </div>
         </div>
@@ -263,34 +246,7 @@
     aria-labelledby="contact-tab"
     tabindex="0"
   >
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col">
-          <div class="card" aria-hidden="true">
-            <div class="card-body">
-              <h2 class="card-title">
-                <span class="col-6">General</span>
-              </h2>
-              <hr />
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card" aria-hidden="true">
-                      <div class="card-body">
-                        <h4 class="card-title text-center">Users Growth</h4>
-                        <hr />
-
-                        growth
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <app-sales-dashboard></app-sales-dashboard>
   </div>
   <div
     class="tab-pane fade"
@@ -299,7 +255,7 @@
     aria-labelledby="disabled-tab"
     tabindex="0"
   >
-    <div class="container-fluid">
+    <div class="container-fluid my-2">
       <div class="row">
         <div class="col">
           <div class="card" aria-hidden="true">
@@ -308,20 +264,7 @@
                 <span class="col-6">General</span>
               </h2>
               <hr />
-              <div class="container-fluid">
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card" aria-hidden="true">
-                      <div class="card-body">
-                        <h4 class="card-title text-center">Users Growth</h4>
-                        <hr />
-
-                        growth
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <app-user-dashboard-details></app-user-dashboard-details>
             </div>
           </div>
         </div>

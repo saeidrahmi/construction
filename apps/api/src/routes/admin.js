@@ -19,6 +19,7 @@ const {
   getUserPermissionController,
   updateUserPermissionController,
   getUserDetailsController,
+  getUsersDetailedDashboard,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -88,5 +89,10 @@ router.post(
   '/get-user-details',
   verifyAdminAndSAdminToken,
   getUserDetailsController
+);
+router.get(
+  '/get-user-dashboard-details',
+  verifyAdminAndSAdminToken,
+  getUsersDetailedDashboard
 );
 module.exports = router;

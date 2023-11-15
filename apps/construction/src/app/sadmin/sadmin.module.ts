@@ -37,6 +37,10 @@ import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
 import { ViewUserComponent } from './users/view-user/view-user.component';
 import { MyPlansComponent } from '../common-components/my-plans/myplans.component';
+import { NgChartsModule } from 'ng2-charts';
+import { UserDashboardDetailsComponent } from './dashboard/user-dashobard-details/user-dashboard-details.component';
+import { SalesDashboardComponent } from './dashboard/sales-dashboard/sales-dashboard.component';
+
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -54,8 +58,11 @@ import { MyPlansComponent } from '../common-components/my-plans/myplans.componen
     ChangeUserPermissionComponent,
     UserProfileComponent,
     ViewUserComponent,
+    UserDashboardDetailsComponent,
+    SalesDashboardComponent,
   ],
   imports: [
+    NgChartsModule,
     ChangePasswordComponent,
     NgxMaskDirective,
     NgxMaskPipe,

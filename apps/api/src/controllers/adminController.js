@@ -634,7 +634,44 @@ async function getUserDetailsController(req, res) {
     });
   }
 }
+async function getUsersDetailedDashboard(req, res) {
+  try {
+    const selectDailyQuery = `SELECT DATE_FORMAT(registeredDate, '%Y-%m-%d') as registeredDate, COUNT(*) as userCount
+                        FROM users WHERE role IN ('General')
+                        GROUP BY DATE_FORMAT(registeredDate, '%Y-%m-%d')
+                        ORDER BY DATE_FORMAT(registeredDate, '%Y-%m-%d');   `;
+
+    const selectDailyResult = await executeQuery(selectDailyQuery, []);
+    const selectMonthlyQuery = `SELECT DATE_FORMAT(registeredDate, '%Y-%m') as registeredMonth, COUNT(*) as userCount
+                                FROM users
+                                WHERE role IN ('General')
+                                GROUP BY DATE_FORMAT(registeredDate, '%Y-%m')
+                                ORDER BY DATE_FORMAT(registeredDate, '%Y-%m');   `;
+
+    const selectMonthlyResult = await executeQuery(selectMonthlyQuery, []);
+    const selectYearlyQuery = `SELECT DATE_FORMAT(registeredDate, '%Y') as registeredYear, COUNT(*) as userCount
+                                FROM users
+                                WHERE role IN ('General')
+                                GROUP BY DATE_FORMAT(registeredDate, '%Y')
+                                ORDER BY DATE_FORMAT(registeredDate, '%Y');  `;
+
+    const selectYearlyResult = await executeQuery(selectYearlyQuery, []);
+
+    const response = {
+      daily: selectDailyResult,
+      monthly: selectMonthlyResult,
+      yearly: selectYearlyResult,
+    };
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 module.exports = {
+  getUsersDetailedDashboard,
   getUserDetailsController,
   updateUserPermissionController,
   getAdvertisementDetailsController,
