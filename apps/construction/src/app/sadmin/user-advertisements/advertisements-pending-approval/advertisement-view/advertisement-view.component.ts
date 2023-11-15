@@ -28,6 +28,6 @@ export class AdminAdvertisementViewComponent {
       userAdvertisementId,
       'view'
     );
-    this.router.navigate(['/sadmin/advertisement-details']);
+    this.router.navigate(['/admin/advertisement-details']);
   }
 }
