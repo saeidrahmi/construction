@@ -18,6 +18,7 @@ const {
   createNewUserController,
   getUserPermissionController,
   updateUserPermissionController,
+  getUserDetailsController,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -82,5 +83,10 @@ router.post(
   '/update-user-permissions',
   verifyAdminAndSAdminToken,
   updateUserPermissionController
+);
+router.post(
+  '/get-user-details',
+  verifyAdminAndSAdminToken,
+  getUserDetailsController
 );
 module.exports = router;

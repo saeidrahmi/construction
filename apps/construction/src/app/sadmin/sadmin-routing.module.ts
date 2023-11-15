@@ -15,6 +15,7 @@ import { CreateUserComponent } from './users/create-user/create-user.component';
 import { ChangeUserPermissionComponent } from './users/change-user-permissions/change-permission.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
+import { ViewUserComponent } from './users/view-user/view-user.component';
 
 const routes: Routes = [
   {
@@ -68,6 +69,10 @@ const routes: Routes = [
       {
         path: 'edit-user-permissions',
         component: ChangeUserPermissionComponent,
+      },
+      {
+        path: 'view-user',
+        component: ViewUserComponent,
       },
       {
         path: 'change-password',

@@ -1265,4 +1265,18 @@ export class ApiService {
         })
       );
   }
+  getUserDetails(userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/get-user-details', {
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }

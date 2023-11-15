@@ -35,6 +35,8 @@ import { CreateUserComponent } from './users/create-user/create-user.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { NgxMaskDirective, NgxMaskPipe } from 'ngx-mask';
 import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
+import { ViewUserComponent } from './users/view-user/view-user.component';
+import { MyPlansComponent } from '../common-components/my-plans/myplans.component';
 @NgModule({
   declarations: [
     SAdminComponent,
@@ -51,6 +53,7 @@ import { ChangePasswordComponent } from '../common-components/change-password/ch
     CreateUserComponent,
     ChangeUserPermissionComponent,
     UserProfileComponent,
+    ViewUserComponent,
   ],
   imports: [
     ChangePasswordComponent,
@@ -77,6 +80,7 @@ import { ChangePasswordComponent } from '../common-components/change-password/ch
     FormErrorsComponent,
     FormsModule,
     MatCheckboxModule,
+    MyPlansComponent,
   ],
 })
 export class AdminModule {}

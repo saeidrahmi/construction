@@ -9,4 +9,5 @@ export interface StoreInterface {
   isLoading?: boolean;
   advertisement?: AdvertisementStateInterface;
   userIdEdited?: string;
+  userSelected?: any;
 }

@@ -64,7 +64,7 @@ export class UsersComponent {
     if (this.userRole() != 'SAdmin' && !this.userPermissions().viewUsers)
       this.router.navigate(['/admin/user-profile']);
     // Assign the data to the data source for the table to render
-    this.storageService.updateIsLoading(true);
+
     this.apiService
       .getUsers(this.user(), true)
       .pipe(
@@ -86,7 +86,11 @@ export class UsersComponent {
       )
       .subscribe();
   }
-  viewUserInfo(userId: string) {}
+  viewUserInfo(user: any) {
+    console.log(user);
+    this.storageService.updateUserSelected(user);
+    this.router.navigate(['/admin/view-user']);
+  }
   changeUserPermissions(user: any) {
     if (
       user.active === 1 &&

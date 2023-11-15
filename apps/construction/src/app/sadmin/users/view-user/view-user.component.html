@@ -1,3 +1,508 @@
-<p>
-  view-user works!
-</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="home-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#home-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="home-tab-pane"
+            aria-selected="true"
+          >
+            User General Info
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="profile-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#profile-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="profile-tab-pane"
+            aria-selected="false"
+          >
+            User Advertisements
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="contact-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#contact-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="contact-tab-pane"
+            aria-selected="false"
+          >
+            Plans
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="payment-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#payment-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="payment-tab-pane"
+            aria-selected="false"
+          >
+            Payments
+          </button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="rfp-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#rfp-tab-pane"
+            type="button"
+            role="tab"
+            aria-controls="rfp-tab-pane"
+            aria-selected="false"
+          >
+            RFPs
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="myTabContent">
+        <div
+          class="tab-pane fade show active"
+          id="home-tab-pane"
+          role="tabpanel"
+          aria-labelledby="home-tab"
+          tabindex="0"
+        >
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body">
+                    <h2 class="card-title">
+                      <span class="col-12">View User Details</span>
+                    </h2>
+
+                    <div class="container">
+                      <div class="row my-2">
+                        <div class="col-4 border-end">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <div
+                                *ngIf="
+                                  this.getUserSelected()?.profileImage;
+                                  then showPic;
+                                  else noShow
+                                "
+                              ></div>
+                              <ng-template #showPic>
+                                <img
+                                  class="img-thumbnail rounded float-center"
+                                  width="400"
+                                  height="400"
+                                  [src]="
+                                    imageService.bufferToSafeUrl(
+                                      this.getUserSelected()?.profileImage
+                                    )
+                                  "
+                              /></ng-template>
+                              <ng-template #noShow>
+                                <i
+                                  class="bi bi-person"
+                                  style="font-size: 4rem; color: cornflowerblue"
+                                ></i>
+                              </ng-template>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-8">
+                          <h6>
+                            {{ this.getUserSelected()?.jobProfileDescription }}
+                          </h6>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="row">
+                        <div class="col-3">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Name</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.lastName +
+                                    ', ' +
+                                    this.getUserSelected()?.firstName
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-2">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Active</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.active ? 'Yes' : 'No'
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-2">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Deleted</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.deleted ? 'Yes' : 'No'
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-2">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Registered</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.registered
+                                    ? 'Yes'
+                                    : 'No'
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-3">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Registered Date</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.registeredDate | date
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="row my-2">
+                        <div class="col-3">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Role</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{ this.getUserSelected()?.role }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-2">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Login Count</span>
+                              </h5>
+                              <hr />
+                              <h6>{{ this.getUserSelected()?.loginCount }}</h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-2">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Company</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.company
+                                    ? this.getUserSelected()?.company
+                                    : 'Not Specified'
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-2">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Phone</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{ this.getUserSelected()?.phone }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-3">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12"
+                                  >Service Coverage Type</span
+                                >
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.serviceCoverageType
+                                    ? this.getUserSelected()
+                                        ?.serviceCoverageType
+                                    : 'Not Specified'
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
+                      <div class="row my-2">
+                        <div class="col-4">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Address</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.address +
+                                    ', ' +
+                                    this.getUserSelected()?.city +
+                                    ', ' +
+                                    this.getUserSelected()?.province +
+                                    ', ' +
+                                    this.getUserSelected()?.postalCode +
+                                    ', Canada'
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-4">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Website</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{
+                                  this.getUserSelected()?.website
+                                    ? this.getUserSelected()?.website
+                                    : 'Not Specified'
+                                }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-4">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h5 class="card-title">
+                                <span class="col-12">Email</span>
+                              </h5>
+                              <hr />
+                              <h6>
+                                {{ this.getUserSelected()?.userId }}
+                              </h6>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="profile-tab-pane"
+          role="tabpanel"
+          aria-labelledby="profile-tab"
+          tabindex="0"
+        >
+          <div class="container-fluid">
+            <div class="row my-2">
+              <div class="col-4">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body text-center">
+                    <h5 class="card-title">
+                      <span class="col-12">Number of Advertisements</span>
+                    </h5>
+                    <hr />
+                    <h6>
+                      {{ this.userAdvertisements?.length }}
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <app-admin-advertisement-view
+                  *ngFor="let advertisement of userAdvertisements"
+                  [advertisement]="advertisement"
+                ></app-admin-advertisement-view>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="contact-tab-pane"
+          role="tabpanel"
+          aria-labelledby="contact-tab"
+          tabindex="0"
+        >
+          <div class="container my-3">
+            <div class="row">
+              <div class="col-3">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body text-center">
+                    <h6 class="card-title">
+                      <span class="col-12">Purchased Plan Advertisements</span>
+                    </h6>
+                    <hr />
+                    <h4>{{ planBalance?.allowedOriginalAdvertisements }}</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body text-center">
+                    <h6 class="card-title">
+                      <span class="col-12">Used Advertisements</span>
+                    </h6>
+                    <hr />
+                    <h4>{{ planBalance?.usedAdvertisements }}</h4>
+                  </div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body text-center">
+                    <h6 class="card-title">
+                      <span class="col-12">Remained Advertisements</span>
+                    </h6>
+                    <hr />
+                    <h4
+                      [ngClass]="
+                        planBalance?.remainedAdvertisements > 0
+                          ? 'text-success'
+                          : 'text-danger'
+                      "
+                    >
+                      {{ planBalance?.remainedAdvertisements }}
+                    </h4>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="container-fluid">
+            <div class="row">
+              <h2>Current Plan</h2>
+              <div class="col-6">
+                <ng-container *ngIf="currentPlan">
+                  <app-myplans
+                    [plan]="currentPlan"
+                    [currentPlan]="true"
+                  ></app-myplans>
+                </ng-container>
+              </div>
+            </div>
+            <hr />
+
+            <div class="accordion" id="previousPlan">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne"
+                    aria-expanded="true"
+                    aria-controls="collapseOne"
+                  >
+                    Previous Plans
+                  </button>
+                </h2>
+                <div
+                  id="collapseOne"
+                  class="accordion-collapse collapse"
+                  data-bs-parent="#previousPlan"
+                >
+                  <div class="accordion-body">
+                    <div class="row row-cols-3 gy-3">
+                      <div class="col" *ngFor="let plan of listPlans">
+                        <app-myplans
+                          [plan]="plan"
+                          [currentPlan]="false"
+                        ></app-myplans>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="payment-tab-pane"
+          role="tabpanel"
+          aria-labelledby="payment-tab"
+          tabindex="0"
+        >
+          ...payment
+        </div>
+        <div
+          class="tab-pane fade"
+          id="rfp-tab-pane"
+          role="tabpanel"
+          aria-labelledby="rfp-tab"
+          tabindex="0"
+        >
+          ...rfp
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -591,7 +591,51 @@ async function updateUserPermissionController(req, res) {
     });
   }
 }
+async function getUserDetailsController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const selectAdsQuery = `SELECT userAdvertisements.*
+                          FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          WHERE userPlans.userId= ?   ORDER BY userAdvertisements.dateCreated DESC`;
+    const selectAdsResult = await executeQuery(selectAdsQuery, [userId]);
+
+    const selectPlanQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userId=?  AND plans.planType != 'free' `;
+
+    const selectPlanResult = await executeQuery(selectPlanQuery, [userId]);
+
+    const selectQuery1 = `SELECT userPlans.userPlanId ,plans.numberOfAdvertisements FROM userPlans JOIN plans ON userPlans.planId  = plans.planId  WHERE  userPlans.userId = ? and userPlans.userPlanActive=1  `;
+    const selectResult1 = await executeQuery(selectQuery1, [userId]);
+    let planBalance;
+    if (selectResult1?.length > 0) {
+      const selectQuery = `select count(*) as count from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId  where userAdvertisements.userPlanId=? `;
+      const selectResult = await executeQuery(selectQuery, [
+        selectResult1[0]?.userPlanId,
+      ]);
+
+      planBalance = {
+        activePlanId: selectResult1[0].userPlanId,
+        usedAdvertisements: selectResult[0]?.count,
+        allowedOriginalAdvertisements: selectResult1[0]?.numberOfAdvertisements,
+        remainedAdvertisements:
+          selectResult1[0]?.numberOfAdvertisements - selectResult[0]?.count,
+      };
+    }
+    const result = {
+      userAds: selectAdsResult,
+      plans: selectPlanResult,
+      planBalance: planBalance,
+    };
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 module.exports = {
+  getUserDetailsController,
   updateUserPermissionController,
   getAdvertisementDetailsController,
   getUserPermissionController,

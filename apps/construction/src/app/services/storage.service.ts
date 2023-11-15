@@ -72,6 +72,9 @@ export class StorageService {
   getUserIdEdited(): Signal<string | undefined> {
     return computed(() => this.store()?.userIdEdited);
   }
+  getUserSelected(): Signal<any | undefined> {
+    return computed(() => this.store()?.userSelected);
+  }
   loginError(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.error);
   }
@@ -158,6 +161,11 @@ export class StorageService {
   updateUserIdEdited(userId: any) {
     this.store.update((state) => {
       return { ...state, userIdEdited: userId };
+    });
+  }
+  updateUserSelected(user: any) {
+    this.store.update((state) => {
+      return { ...state, userSelected: user };
     });
   }
   updateLoginError() {
