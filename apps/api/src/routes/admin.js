@@ -21,6 +21,8 @@ const {
   getUserDetailsController,
   getUsersDetailedDashboard,
   UsersListController,
+  UsersTotalCountBasedOnPlansController,
+  getUsersCountBasedOnPlanTypesDashboard,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -97,4 +99,15 @@ router.get(
   verifyAdminAndSAdminToken,
   getUsersDetailedDashboard
 );
+router.get(
+  '/get-uses-totalCount-based-planType',
+  verifyAdminAndSAdminToken,
+  UsersTotalCountBasedOnPlansController
+);
+router.get(
+  '/get-user-count-based-planTypes-andRegistrationDate',
+  verifyAdminAndSAdminToken,
+  getUsersCountBasedOnPlanTypesDashboard
+);
+
 module.exports = router;

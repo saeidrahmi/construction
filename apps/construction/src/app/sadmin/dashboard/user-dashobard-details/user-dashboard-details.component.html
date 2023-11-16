@@ -4,7 +4,7 @@
       <div class="card" aria-hidden="true">
         <div class="card-body">
           <h2 class="card-title">
-            <span class="col-6">User Growth Daily</span>
+            <span class="col-6">User Growth Daily (Last 30 days)</span>
           </h2>
           <hr />
           <!-- <canvas
@@ -30,12 +30,12 @@
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row my-2">
     <div class="col">
       <div class="card" aria-hidden="true">
         <div class="card-body">
           <h2 class="card-title">
-            <span class="col-6">User Growth Monthly</span>
+            <span class="col-6">User Growth Monthly (Last 12 month)</span>
           </h2>
           <hr />
 
@@ -51,7 +51,7 @@
       </div>
     </div>
   </div>
-  <div class="row">
+  <div class="row my-2">
     <div class="col">
       <div class="card" aria-hidden="true">
         <div class="card-body">
@@ -67,6 +67,109 @@
             [options]="barChartOptions"
             [legend]="barChartLegend"
             [type]="barChartType"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6"
+              >User Growth Daily (Last 30 days) based on free/paid users</span
+            >
+          </h2>
+          <hr />
+          <!-- <canvas
+            baseChart
+            class="chart"
+            [data]="barChartData"
+            [options]="barChartOptions"
+            [labels]="barChartLabels"
+            [type]="barChartType"
+            (chartHover)="chartHovered($event)"
+            (chartClick)="chartClicked($event)"
+          >
+          </canvas> -->
+          <canvas
+            baseChart
+            [datasets]="barChartDetailsDailyData"
+            [labels]="barChartDetailsDailyLabels"
+            [options]="barChartOptions"
+            [legend]="barChartLegend"
+            [type]="barChartType"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6"
+              >User Growth Monthly (Last 12 month) based on free/paid
+              users</span
+            >
+          </h2>
+          <hr />
+
+          <canvas
+            baseChart
+            [datasets]="barChartDetailsMonthlyData"
+            [labels]="barChartDetailsMonthlyLabels"
+            [options]="barChartOptions"
+            [legend]="barChartLegend"
+            [type]="barChartType"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6"
+              >User Growth Yearly based on free/paid users</span
+            >
+          </h2>
+          <hr />
+
+          <canvas
+            baseChart
+            [datasets]="barChartDetailsYearlyData"
+            [labels]="barChartYearlyDetailsLabels"
+            [options]="barChartOptions"
+            [legend]="barChartLegend"
+            [type]="barChartType"
+          ></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row my-2">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6"
+              >User Growth total numbers based on free/paid users</span
+            >
+          </h2>
+          <hr />
+
+          <canvas
+            baseChart
+            [datasets]="pieChartData"
+            [labels]="pieChartLabels"
+            [options]="pieChartOptions"
+            [legend]="pieChartLegend"
+            [type]="pieChartType"
           ></canvas>
         </div>
       </div>

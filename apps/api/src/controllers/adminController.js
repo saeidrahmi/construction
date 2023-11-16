@@ -637,14 +637,14 @@ async function getUserDetailsController(req, res) {
 async function getUsersDetailedDashboard(req, res) {
   try {
     const selectDailyQuery = `SELECT DATE_FORMAT(registeredDate, '%Y-%m-%d') as registeredDate, COUNT(*) as userCount
-                        FROM users WHERE role IN ('General')
+                        FROM users WHERE role IN ('General')   AND registeredDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
                         GROUP BY DATE_FORMAT(registeredDate, '%Y-%m-%d')
                         ORDER BY DATE_FORMAT(registeredDate, '%Y-%m-%d');   `;
 
     const selectDailyResult = await executeQuery(selectDailyQuery, []);
     const selectMonthlyQuery = `SELECT DATE_FORMAT(registeredDate, '%Y-%m') as registeredMonth, COUNT(*) as userCount
                                 FROM users
-                                WHERE role IN ('General')
+                                WHERE role IN ('General') AND registeredDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
                                 GROUP BY DATE_FORMAT(registeredDate, '%Y-%m')
                                 ORDER BY DATE_FORMAT(registeredDate, '%Y-%m');   `;
 
@@ -654,6 +654,121 @@ async function getUsersDetailedDashboard(req, res) {
                                 WHERE role IN ('General')
                                 GROUP BY DATE_FORMAT(registeredDate, '%Y')
                                 ORDER BY DATE_FORMAT(registeredDate, '%Y');  `;
+
+    const selectYearlyResult = await executeQuery(selectYearlyQuery, []);
+
+    const response = {
+      daily: selectDailyResult,
+      monthly: selectMonthlyResult,
+      yearly: selectYearlyResult,
+    };
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
+async function getUsersCountBasedOnPlanTypesDashboard(req, res) {
+  try {
+    const selectDailyQuery = `WITH RecentRegistrations AS (
+                            SELECT
+                                DATE_FORMAT(registeredDate, '%Y-%m-%d') as registeredDate,
+                                COUNT(*) as userCount
+                              FROM
+                                users
+                              WHERE
+                                role IN ('General')
+                                AND registeredDate >= DATE_SUB(CURDATE(), INTERVAL 30 DAY)
+                              GROUP BY
+                                DATE_FORMAT(registeredDate, '%Y-%m-%d')
+                            )
+                            SELECT
+                              rr.registeredDate,
+                              rr.userCount as totalActiveUsers,
+                              SUM(CASE WHEN p.planType = 'free' THEN 1 ELSE 0 END) as freeActiveUsers,
+                              SUM(CASE WHEN p.planType != 'free' THEN 1 ELSE 0 END) as paidActiveUsers
+                            FROM
+                              RecentRegistrations rr
+                            JOIN
+                              users u ON rr.registeredDate = DATE_FORMAT(u.registeredDate, '%Y-%m-%d')
+                            JOIN
+                              userPlans up ON u.userId = up.userId AND up.userPlanActive = true
+                            JOIN
+                              plans p ON up.planId = p.planId
+                            WHERE
+                              u.role IN ('General')
+                            GROUP BY
+                              rr.registeredDate
+                            ORDER BY
+                              rr.registeredDate;  `;
+
+    const selectDailyResult = await executeQuery(selectDailyQuery, []);
+    const selectMonthlyQuery = `WITH RecentRegistrations AS (
+                            SELECT
+                                DATE_FORMAT(registeredDate, '%Y-%m') as registeredDate,
+                                COUNT(*) as userCount
+                              FROM
+                                users
+                              WHERE
+                                role IN ('General')
+                                AND registeredDate >= DATE_SUB(CURDATE(), INTERVAL 12 MONTH)
+                              GROUP BY
+                                DATE_FORMAT(registeredDate, '%Y-%m')
+                            )
+                            SELECT
+                              rr.registeredDate,
+                              rr.userCount as totalActiveUsers,
+                              SUM(CASE WHEN p.planType = 'free' THEN 1 ELSE 0 END) as freeActiveUsers,
+                              SUM(CASE WHEN p.planType != 'free' THEN 1 ELSE 0 END) as paidActiveUsers
+                            FROM
+                              RecentRegistrations rr
+                            JOIN
+                              users u ON rr.registeredDate = DATE_FORMAT(u.registeredDate, '%Y-%m')
+                            JOIN
+                              userPlans up ON u.userId = up.userId AND up.userPlanActive = true
+                            JOIN
+                              plans p ON up.planId = p.planId
+                            WHERE
+                              u.role IN ('General')
+                            GROUP BY
+                              rr.registeredDate
+                            ORDER BY
+                              rr.registeredDate;    `;
+
+    const selectMonthlyResult = await executeQuery(selectMonthlyQuery, []);
+    const selectYearlyQuery = `WITH RecentRegistrations AS (
+                            SELECT
+                                DATE_FORMAT(registeredDate, '%Y') as registeredDate,
+                                COUNT(*) as userCount
+                              FROM
+                                users
+                              WHERE
+                                role IN ('General')
+
+                              GROUP BY
+                                DATE_FORMAT(registeredDate, '%Y')
+                            )
+                            SELECT
+                              rr.registeredDate,
+                              rr.userCount as totalActiveUsers,
+                              SUM(CASE WHEN p.planType = 'free' THEN 1 ELSE 0 END) as freeActiveUsers,
+                              SUM(CASE WHEN p.planType != 'free' THEN 1 ELSE 0 END) as paidActiveUsers
+                            FROM
+                              RecentRegistrations rr
+                            JOIN
+                              users u ON rr.registeredDate = DATE_FORMAT(u.registeredDate, '%Y')
+                            JOIN
+                              userPlans up ON u.userId = up.userId AND up.userPlanActive = true
+                            JOIN
+                              plans p ON up.planId = p.planId
+                            WHERE
+                              u.role IN ('General')
+                            GROUP BY
+                              rr.registeredDate
+                            ORDER BY
+                              rr.registeredDate;   `;
 
     const selectYearlyResult = await executeQuery(selectYearlyQuery, []);
 
@@ -686,7 +801,31 @@ async function UsersListController(req, res) {
     });
   }
 }
+async function UsersTotalCountBasedOnPlansController(req, res) {
+  try {
+    const selectQuery = `SELECT
+  COUNT(*) as totalActiveUsers,
+  SUM(CASE WHEN p.planType = 'free' THEN 1 ELSE 0 END) as freeActiveUsers,
+  SUM(CASE WHEN p.planType != 'free' THEN 1 ELSE 0 END) as paidActiveUsers
+    FROM users u
+    JOIN
+      userPlans up ON u.userId = up.userId AND up.userPlanActive = true
+    JOIN
+      plans p ON up.planId = p.planId
+      WHERE u.role ='General';`;
+    const selectResult = await executeQuery(selectQuery, []);
+
+    // const serviceNames = selectResult.map((row) => row.service);
+    return res.status(200).json(selectResult[0]);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 module.exports = {
+  UsersTotalCountBasedOnPlansController,
+  getUsersCountBasedOnPlanTypesDashboard,
   UsersListController,
   getUsersDetailedDashboard,
   getUserDetailsController,

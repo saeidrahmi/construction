@@ -1303,4 +1303,33 @@ export class ApiService {
         })
       );
   }
+  getUserDashboardAdminDetailsBasedOnRegistrationAndPlanType(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(
+        this.backendApiUrl +
+          '/admin/get-user-count-based-planTypes-andRegistrationDate'
+      )
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
+  getUserDashboardTotalCountBasedOnPlanType(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(
+        this.backendApiUrl + '/admin/get-uses-totalCount-based-planType'
+      )
+      .pipe(
+        take(1),
+
+        finalize(() => {
+          this.spinner.hide();
+        })
+      );
+  }
 }
