@@ -27,5 +27,7 @@ export interface UserInterface {
   fax?: string;
   website?: string;
   company?: string;
+  passwordResetRequired?: boolean;
+  lastPasswordResetDate?: Date | null | undefined;
   userPermissions?: UserPermissionsInterface;
 }

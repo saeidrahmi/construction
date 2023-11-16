@@ -24,8 +24,7 @@ import { EncryptionService } from './encryption-service';
 import { AdminSettingsInterface } from 'libs/common/src/models/admin-settings';
 import { PlanInterface } from '../models/plan';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { AdvertisementInterface } from '../models/advertisement';
-import { O } from '@angular/cdk/keycodes';
+import * as moment from 'moment';
 @Injectable({
   providedIn: 'root',
 })
@@ -34,12 +33,13 @@ export class ApiService {
   apiTimeoutValue = this.env.apiTimeoutValue();
   storageService = inject(StorageService);
   toastService = inject(ToastrService);
+
   encryptionService = inject(EncryptionService);
   user = this.storageService.getUser();
   jwtRefreshToken = this.storageService.getRefreshToken();
   router = inject(Router);
   userRouting = inject(UserRoutingService);
-  backendApiUrl: string = `${this.env.apiUrl()}:${this.env.apiPort()}`;
+  backendApiUrl = `${this.env.apiUrl()}:${this.env.apiPort()}`;
   constructor(
     private httpClient: HttpClient,
     private spinner: NgxSpinnerService
@@ -49,16 +49,6 @@ export class ApiService {
     return this.httpClient.post(this.backendApiUrl + '/users/token', {
       refreshToken: this.jwtRefreshToken(),
     });
-    // .subscribe(
-    //   (response: any) => {
-    //     this.storageService.updateJwtToken(response.accessToken);
-    //   },
-    //   (error) => {
-    //     // Handle error, e.g., logout user
-    //     console.error('Token refresh failed:', error);
-    //     this.logout();
-    //   }
-    // );
   }
 
   login(credential: LoginCredential): Observable<UserApiResponseInterface> {
@@ -80,7 +70,11 @@ export class ApiService {
         }),
         tap((response: UserApiResponseInterface) => {
           this.storageService.updateStateLoginSuccessful(response);
-          this.userRouting.navigateToUserMainPage();
+          if (this.isPasswordResetRequired(response)) {
+            this.storageService.updateLoginFlag(false);
+            this.storageService.updatePasswordResetRequiredFlag(true);
+            this.router.navigate(['/reset-expired-password']);
+          } else this.userRouting.navigateToUserMainPage();
         }),
         catchError((error) => {
           this.toastService.error(error.message, 'Login Failed', {
@@ -93,6 +87,24 @@ export class ApiService {
           return of(error.message);
         })
       );
+  }
+  isPasswordResetRequired(response: UserApiResponseInterface) {
+    if (response?.user.passwordResetRequired) return true;
+    else {
+      const expirationDate = moment().subtract(
+        response.expirationPeriodInDays,
+        'days'
+      );
+      console.log(
+        response.expirationPeriodInDays,
+        response.user.lastPasswordResetDate,
+        expirationDate
+      );
+      // Compare the last password reset date with the expiration date
+      return moment(response.user.lastPasswordResetDate).isBefore(
+        expirationDate
+      );
+    }
   }
   logout(): Observable<any> {
     if (this.user()?.userId) {
@@ -286,7 +298,7 @@ export class ApiService {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
     this.spinner.show();
     return this.httpClient
-      .post<UserApiResponseInterface[]>(this.backendApiUrl + '/users/users', {
+      .post<UserApiResponseInterface[]>(this.backendApiUrl + '/admin/users', {
         userId: userIdEncrypted,
         isSAdmin: isSAdmin,
       })

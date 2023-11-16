@@ -23,7 +23,6 @@ const {
   userServicesListController,
   addUserServicesController,
   removeUserServicesController,
-  UsersListController,
   DeleteUserController,
   UpdateUserActivationStatusController,
   purchasePlanController,
@@ -103,7 +102,7 @@ router.post(
   verifyGeneralToken,
   removeUserServicesController
 );
-router.post('/users', verifyAdminAndSAdminToken, UsersListController);
+
 router.post('/delete-user', verifyAdminAndSAdminToken, DeleteUserController);
 router.post(
   '/update-user-activation-status',

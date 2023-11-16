@@ -149,6 +149,9 @@ async function loginController(req, res) {
         city: rows[0].city,
         province: rows[0].province,
         postalCode: rows[0].postalCode,
+        passwordResetRequired:
+          rows[0].passwordResetRequired === 1 ? true : false,
+        lastPasswordResetDate: rows[0].lastPasswordResetDate,
       };
       const jwtUser = {
         userId: rows[0].userId,
@@ -189,12 +192,27 @@ async function loginController(req, res) {
           }
         );
 
+        // get password reset days info
+        const selectSettingQuery = `SELECT passwordResetDurationAdminUsers,passwordResetDurationGeneralUsers FROM settings   `;
+        const [SelectSettingResult] = await connection.execute(
+          selectSettingQuery,
+          []
+        );
+
+        let expirationPeriodInDays;
+        if (user.role === 'General') {
+          expirationPeriodInDays =
+            SelectSettingResult[0].passwordResetDurationGeneralUsers;
+        } else if (user.role === 'Admin' || user.role === 'SAdmin') {
+          expirationPeriodInDays =
+            SelectSettingResult[0].passwordResetDurationAdminUsers;
+        }
         const response = {
           newMessagesNbr: userMessagesResult,
           user: user,
           plan: updateResult[0],
+          expirationPeriodInDays: expirationPeriodInDays,
         };
-
         if (user.role === 'Admin') {
           const selectQuery = `SELECT * FROM userPermissions where userId=? `;
           const [selectResult] = await connection.execute(selectQuery, [
@@ -338,8 +356,8 @@ async function resetPasswordController(req, res) {
       // User already exists, handle accordingly (return error or update existing user)
 
       const query =
-        'UPDATE  users SET  jwtToken = ?, passwordReset = ?  WHERE userId = ? ';
-      const values = [token, 1, userId];
+        'UPDATE  users SET  jwtToken = ?, passwordReset = ? ,lastPasswordResetDate=?, passwordResetRequired=0 WHERE userId = ? ';
+      const values = [token, 1, new Date(), userId];
 
       const result = await executeQuery(query, values);
 
@@ -410,8 +428,9 @@ async function registerFreeUserController(req, res) {
         const refreshToken = generateRefreshToken(userObj.userId, userObj.role);
 
         const query =
-          'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
+          'UPDATE  users SET lastPasswordResetDate=?, passwordResetRequired=0, loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
         const values = [
+          new Date(),
           1,
           userObj.registeredDate,
           userObj.lastLoginDate,
@@ -458,6 +477,8 @@ async function registerFreeUserController(req, res) {
                 deleted: false,
                 loggedIn: true,
                 registered: true,
+                passwordResetRequired: false,
+                lastPasswordResetDate: new Date(),
               },
               plan: {
                 ...plan,
@@ -495,36 +516,7 @@ async function registerFreeUserController(req, res) {
     });
   }
 }
-// Route to refresh the access token using the refresh token
-// async function refreshTokenController(req, res) {
-//   const refreshToken = req.body.refreshToken;
 
-//   if (refreshToken == null) {
-//     return res.status(401);
-//   }
-
-//   try {
-//     const user = await verify(refreshToken, refreshSecretKey);
-
-//     const accessToken = generateAccessToken(
-//       user.subject.userId,
-//       user.subject.role
-//     );
-
-//     const updateResult = await executeQuery(
-//       'UPDATE users SET jwtToken = ? where userId = ?',
-//       [accessToken, user.subject.userId]
-//     );
-
-//     if (updateResult.affectedRows > 0 || updateResult.insertId) {
-//       return res.status(200).json(accessToken);
-//     } else {
-//       return res.status(403);
-//     }
-//   } catch (error) {
-//     return res.status(403);
-//   }
-// }
 async function refreshTokenController(req, res) {
   const refreshToken = req.body.refreshToken;
 
@@ -600,8 +592,9 @@ async function registerPaidUserController(req, res) {
         const refreshToken = generateRefreshToken(userObj.userId, userObj.role);
 
         const query =
-          'UPDATE  users SET loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
+          'UPDATE  users SET lastPasswordResetDate=?, passwordResetRequired=0, loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
         const values = [
+          new Date(),
           1,
           userObj.registeredDate,
           userObj.lastLoginDate,
@@ -659,6 +652,8 @@ async function registerPaidUserController(req, res) {
                   deleted: false,
                   loggedIn: true,
                   registered: true,
+                  passwordResetRequired: false,
+                  lastPasswordResetDate: new Date(),
                 },
                 plan: {
                   ...plan,
@@ -736,8 +731,9 @@ async function completeResetPasswordController(req, res) {
     let userId = decryptItem(req.body.userId, webSecretKey);
     let password = decryptItem(req.body.password, webSecretKey);
     const query =
-      'UPDATE  users SET password= ?,jwtToken = ?, passwordReset = ?  WHERE userId = ? and jwtToken = ? and passwordReset = ?';
+      'UPDATE  users SET lastPasswordResetDate=?, passwordResetRequired=0, password= ?,jwtToken = ?, passwordReset = ?  WHERE userId = ? and jwtToken = ? and passwordReset = ?';
     const values = [
+      new Date(),
       encryptItem(password, dbSecretKey),
       '',
       0,
@@ -903,8 +899,9 @@ async function changePasswordController(req, res) {
       existingUser.length > 0 &&
       currentPassword === decryptItem(existingUser[0].password, dbSecretKey)
     ) {
-      const query = 'UPDATE  users SET password= ? WHERE userId = ? ';
-      const values = [encryptItem(password, dbSecretKey), userId];
+      const query =
+        'UPDATE  users SET password= ?, lastPasswordResetDate=?, passwordResetRequired=0 WHERE userId = ? ';
+      const values = [encryptItem(password, dbSecretKey), new Date(), userId];
       const result = await executeQuery(query, values);
 
       if (result.affectedRows > 0 || result.insertId) {
@@ -983,23 +980,7 @@ async function removeUserServicesController(req, res) {
     });
   }
 }
-async function UsersListController(req, res) {
-  try {
-    let userId = decryptItem(req.body.userId, webSecretKey);
-    const isSAdmin = req.body.isSAdmin;
-    let selectQuery;
-    if (isSAdmin) selectQuery = `SELECT * FROM users `;
-    else selectQuery = `SELECT * FROM users where role !='Admin' `;
-    const selectResult = await executeQuery(selectQuery, []);
 
-    // const serviceNames = selectResult.map((row) => row.service);
-    return res.status(200).json(selectResult);
-  } catch (error) {
-    return res.status(500).json({
-      errorMessage: 'Failed to retrieve information. Please try again later.',
-    });
-  }
-}
 async function DeleteUserController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
@@ -2488,7 +2469,6 @@ module.exports = {
   userServicesListController,
   addUserServicesController,
   removeUserServicesController,
-  UsersListController,
   DeleteUserController,
   UpdateUserActivationStatusController,
   purchasePlanController,

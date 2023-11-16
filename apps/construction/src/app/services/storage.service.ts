@@ -63,6 +63,9 @@ export class StorageService {
   getUserfirstName(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.firstName);
   }
+  getUserPasswordResetRequired(): Signal<boolean | undefined> {
+    return computed(() => this.store()?.user?.passwordResetRequired);
+  }
   getUserPermissions(): Signal<UserPermissionsInterface | undefined> {
     return computed(() => this.store()?.user?.userPermissions);
   }
@@ -173,6 +176,21 @@ export class StorageService {
       return { ...state, user: { ...state.user, error: '' } };
     });
   }
+  updateLoginFlag(flag: boolean) {
+    this.store.update((state) => {
+      return { ...state, user: { ...state.user, loggedIn: flag } };
+    });
+  }
+  updatePasswordResetRequiredFlag(flag: boolean) {
+    this.store.update((state) => {
+      return { ...state, user: { ...state.user, passwordResetRequired: flag } };
+    });
+  }
+  updatePasswordResetDateFlag(date: Date) {
+    this.store.update((state) => {
+      return { ...state, user: { ...state.user, lastPasswordResetDate: date } };
+    });
+  }
   updateJwtToken(token: string) {
     this.store.update((state) => {
       return { ...state, user: { ...state.user, jwtToken: token } };
@@ -203,12 +221,15 @@ export class StorageService {
       active: false,
       registered: false,
       lastLoginDate: null,
+      passwordResetRequired: null,
+      lastPasswordResetDate: null,
     };
     this.store.update((state) => {
       return {
         ...state,
         user: user,
         advertisement: null,
+        plan: null,
         general: { ...state.general, newMessagesNbr: null },
       };
     });
@@ -221,7 +242,6 @@ export class StorageService {
       logoImage: response?.user?.logoImage,
       jwtToken: response?.user?.jwtToken,
       refreshToken: response?.user?.refreshToken,
-
       role: response?.user?.role,
       phone: response?.user?.phone,
       fax: response?.user?.fax,
@@ -241,6 +261,8 @@ export class StorageService {
       registered: response?.user?.registered,
       lastLoginDate: response?.user?.lastLoginDate,
       userPermissions: response?.userPermissions,
+      passwordResetRequired: response?.user?.passwordResetRequired,
+      lastPasswordResetDate: response?.user?.lastPasswordResetDate,
     };
 
     this.store.update((state) => {
@@ -303,11 +325,14 @@ export class StorageService {
       registered: false,
       lastLoginDate: null,
       userPermissions: null,
+      passwordResetRequired: null,
+      lastPasswordResetDate: null,
     };
     this.store.update((state) => {
       return {
         ...state,
         user: user,
+        plan: null,
         general: { ...state.general, newMessagesNbr: null },
       };
     });
@@ -337,6 +362,8 @@ export class StorageService {
         registered: false,
         lastLoginDate: null,
         userPermissions: null,
+        passwordResetRequired: null,
+        lastPasswordResetDate: null,
       },
     };
   }

@@ -3,6 +3,7 @@ import {
   isGeneralUser,
   isUserAdmin,
   isUserLoggedIn,
+  isUserPasswordResetRequired,
 } from './services/user-gaurds';
 import { PrivacyPolicyComponent } from './public/privacy-policy/privacy-policy.component';
 import { PageNotFoundComponent } from './public/page-not-found/page-not-found.component';
@@ -65,14 +66,14 @@ export const appRoutes: Route[] = [
       ).then((com) => com.AdvertisementDetailsViewComponent),
   },
 
-  // {
-  //   path: 'change-password',
-  //   canActivate: [isUserLoggedIn],
-  //   loadComponent: () =>
-  //     import(
-  //       './common-components/change-password/change-password.component'
-  //     ).then((com) => com.ChangePasswordComponent),
-  // },
+  {
+    path: 'reset-expired-password',
+    canActivate: [isUserPasswordResetRequired],
+    loadComponent: () =>
+      import(
+        './common-components/reset-expired-password/reset-expired-password.component'
+      ).then((com) => com.ResetExpiredPasswordComponent),
+  },
   // {
   //   path: 'admin',
   //   canActivate: [isUserAdmin],

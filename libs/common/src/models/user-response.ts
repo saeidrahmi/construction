@@ -23,9 +23,12 @@ export interface UserApiResponseInterface {
     deleted?: boolean;
     loggedIn?: boolean;
     registered?: boolean;
+    passwordResetRequired?: boolean;
+    lastPasswordResetDate?: Date | null | undefined;
     lastLoginDate?: Date | null | undefined;
   };
   plan?: any;
   newMessagesNbr?: number;
   userPermissions?: any;
+  expirationPeriodInDays?: number;
 }

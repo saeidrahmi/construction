@@ -20,6 +20,7 @@ const {
   updateUserPermissionController,
   getUserDetailsController,
   getUsersDetailedDashboard,
+  UsersListController,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -29,6 +30,7 @@ const {
   verifyAllToken,
 } = require('../controllers/utilityService');
 router.get('/list-admin-settings', verifyAllToken, listAdminSettingsController);
+router.post('/users', verifyAdminAndSAdminToken, UsersListController);
 router.post(
   '/update-admin-settings',
   verifyAdminAndSAdminToken,

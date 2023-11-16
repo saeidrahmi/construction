@@ -670,7 +670,24 @@ async function getUsersDetailedDashboard(req, res) {
     });
   }
 }
+async function UsersListController(req, res) {
+  try {
+    const selectQuery = `SELECT id, userId, role, firstName, lastName, registeredDate, loggedIn, active, registered,
+    lastLoginDate, phone, fax, address, city, province, postalCode, website, middleName, profileImage, logoImage,
+     loginCount, company, jobProfileDescription,
+     deleted, serviceCoverageType, passwordResetRequired, lastPasswordResetDate FROM users `;
+    const selectResult = await executeQuery(selectQuery, []);
+
+    // const serviceNames = selectResult.map((row) => row.service);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 module.exports = {
+  UsersListController,
   getUsersDetailedDashboard,
   getUserDetailsController,
   updateUserPermissionController,

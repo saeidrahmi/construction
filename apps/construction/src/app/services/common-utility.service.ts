@@ -3,7 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { HttpClient } from '@angular/common/http';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, take } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+
 import { CountryInterface } from '../models/country';
 
 @Injectable({
