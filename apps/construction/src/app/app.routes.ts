@@ -104,6 +104,11 @@ export const appRoutes: Route[] = [
         (com) => com.ListPlansComponent
       ),
   },
+  {
+    path: 'rfps',
+    loadComponent: () =>
+      import('./public/rfps/rfps.component').then((com) => com.RfpsComponent),
+  },
 
   {
     path: '**',
