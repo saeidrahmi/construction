@@ -71,6 +71,13 @@ function sendPasswordResetEmail(userId, token) {
               </div>
               `,
   };
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      reject(error);
+    } else {
+      resolve();
+    }
+  });
 }
 function sendTemporaryPasswordEmail(userId, password) {
   var mailOptions = {

@@ -139,9 +139,9 @@ export class CompleteResetPasswordComponent implements OnInit {
 
   completeResetPassword(): void {
     if (this.form.valid) {
-      this.storageService.updateIsLoading(true);
+      this.formErrors = [];
       this.serverError = '';
-      let data: any = {
+      let data = {
         userId: this.commonUtility.trimString(this.form.get('userId')?.value),
         password: this.commonUtility.trimString(
           this.form.get('password')?.value
@@ -153,9 +153,7 @@ export class CompleteResetPasswordComponent implements OnInit {
         .completeResetPassword(data)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          finalize(() => {
-            this.storageService.updateIsLoading(false);
-          }),
+          finalize(() => {}),
           tap((response) => {
             this.router.navigate(['/login']);
           }),

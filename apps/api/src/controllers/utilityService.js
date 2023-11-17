@@ -50,6 +50,57 @@ function verifyToken(allowedRoles) {
     });
   };
 }
+function verifyTokenWithNoRole() {
+  return async function (req, res, next) {
+    try {
+      // console.log('here oiajsdi', req);
+      const authorizationHeader = req.headers.authorization;
+
+      if (
+        !authorizationHeader ||
+        authorizationHeader.split(' ')[0] !== 'Bearer'
+      ) {
+        return res.status(401).send({ errorMessage: 'Unauthorized request' });
+      }
+
+      const token = authorizationHeader.split(' ')[1];
+
+      if (!token || token === 'null') {
+        return res.status(401).send({ errorMessage: 'Unauthorized request' });
+      }
+
+      jwt.verify(token, jwtSecretKey, async function (err, decoded) {
+        if (err) {
+          return res
+            .status(401)
+            .send({ errorMessage: 'Unauthorized! Access Token was expired!' });
+        }
+
+        const userId = decoded?.subject?.userId;
+
+        if (!userId) {
+          return res.status(401).send({ errorMessage: 'Unauthorized request' });
+        }
+
+        const existingUser = await executeQuery(
+          'SELECT * FROM users WHERE userId = ? and jwtToken= ?',
+          [userId, token]
+        );
+
+        if (existingUser.length > 0) {
+          next();
+        } else {
+          return res
+            .status(401)
+            .json({ errorMessage: 'Error resetting password.' });
+        }
+      });
+    } catch (error) {
+      console.error('Error in verifyTokenWithNoRole middleware:', error);
+      return res.status(500).send({ errorMessage: 'Internal Server Error' });
+    }
+  };
+}
 
 function roleCheck(allowedRoles, userRole) {
   const userRoleLower = userRole?.toLocaleLowerCase();
@@ -136,4 +187,5 @@ module.exports = {
   verifyGeneralToken,
   verifyAdminAndSAdminToken,
   verifyAllToken,
+  verifyTokenWithNoRole,
 };

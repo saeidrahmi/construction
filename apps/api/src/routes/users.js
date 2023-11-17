@@ -61,6 +61,7 @@ const {
   verifyAdminToken,
   verifyGeneralToken,
   verifyAdminAndSAdminToken,
+  verifyTokenWithNoRole,
 } = require('../controllers/utilityService');
 router.post('/logout', logoutController);
 router.post('/checkUserToken', checkUserTokenController);
@@ -82,7 +83,7 @@ router.post(
 );
 router.post(
   '/complete-reset-password',
-  verifyAllToken,
+  verifyTokenWithNoRole(),
   completeResetPasswordController
 );
 router.post('/token', refreshTokenController);

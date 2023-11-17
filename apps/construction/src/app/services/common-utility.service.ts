@@ -156,6 +156,7 @@ export class CommonUtilityService {
   }
   passwordRule(): string[] {
     return [
+      'Do not use previous passwords.',
       'Password length must be between 8-12 characters',
       'Must include: one or more lowercase letters',
       'Must include: one or more uppercase letters',

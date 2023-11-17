@@ -186,14 +186,19 @@ export class ApiService {
     data.userId = this.encryptionService.encryptItem(data.userId as string);
     data.password = this.encryptionService.encryptItem(data.password as string);
 
-    const headers = new HttpHeaders({
-      Authorization: 'bearer ' + data.token, // Replace 'yourAccessToken' with the actual access token
-      'Content-Type': 'application/json',
-    });
+    // const headers = new HttpHeaders({
+    //   Authorization: `Bearer ${data?.token}`,
+    //   'Content-Type': 'application/json',
+    // });
+    this.storageService.updateJwtToken(data.token);
+    // console.log(headers);
+    // return this.httpClient
+    //   .post<any>(this.backendApiUrl + '/users/complete-reset-password', data, {
+    //     headers,
+    //   })
+    //   .pipe(take(1), delay(300));
     return this.httpClient
-      .post<any>(this.backendApiUrl + '/users/complete-reset-password', data, {
-        headers,
-      })
+      .post<any>(this.backendApiUrl + '/users/complete-reset-password', data)
       .pipe(take(1), delay(300));
   }
 

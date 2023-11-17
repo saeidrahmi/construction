@@ -344,20 +344,21 @@ async function resetPasswordController(req, res) {
     };
 
     const payload = { subject: user };
+
     const token = jwt.sign(payload, jwtSecretKey, {
       expiresIn: env.getPasswordResetExpiry(),
     });
     const existingUser = await executeQuery(
-      `SELECT * FROM users WHERE userId = ? and registered= ? and active= ?`,
-      [userId, 1, 1]
+      `SELECT * FROM users WHERE userId = ? and registered= 1 and active= 1`,
+      [userId]
     );
 
     if (existingUser.length > 0) {
       // User already exists, handle accordingly (return error or update existing user)
 
       const query =
-        'UPDATE  users SET  jwtToken = ?, passwordReset = ? ,lastPasswordResetDate=?, passwordResetRequired=0 WHERE userId = ? ';
-      const values = [token, 1, new Date(), userId];
+        'UPDATE  users SET  jwtToken = ?, passwordResetRequired = 1 WHERE userId = ? ';
+      const values = [token, userId];
 
       const result = await executeQuery(query, values);
 
@@ -428,7 +429,7 @@ async function registerFreeUserController(req, res) {
         const refreshToken = generateRefreshToken(userObj.userId, userObj.role);
 
         const query =
-          'UPDATE  users SET lastPasswordResetDate=?, passwordResetRequired=0, loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
+          'UPDATE  users SET lastPasswordResetDate=?, passwordResetRequired=0, loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?, previousPassword=?  WHERE userId = ?';
         const values = [
           new Date(),
           1,
@@ -440,6 +441,7 @@ async function registerFreeUserController(req, res) {
           1,
           userObj.firstName,
           userObj.lastName,
+          encryptItem(password, dbSecretKey),
           encryptItem(password, dbSecretKey),
           userId,
         ];
@@ -592,7 +594,7 @@ async function registerPaidUserController(req, res) {
         const refreshToken = generateRefreshToken(userObj.userId, userObj.role);
 
         const query =
-          'UPDATE  users SET lastPasswordResetDate=?, passwordResetRequired=0, loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?  WHERE userId = ?';
+          'UPDATE  users SET lastPasswordResetDate=?, passwordResetRequired=0, loginCount=?, registeredDate=?, lastLoginDate=?, jwtToken = ?, loggedIn = ?, active=?, registered=?,firstName= ?,  lastName= ?, password= ?, previousPassword=?  WHERE userId = ?';
         const values = [
           new Date(),
           1,
@@ -604,6 +606,7 @@ async function registerPaidUserController(req, res) {
           1,
           userObj.firstName,
           userObj.lastName,
+          encryptItem(password, dbSecretKey),
           encryptItem(password, dbSecretKey),
           userId,
         ];
@@ -730,16 +733,32 @@ async function completeResetPasswordController(req, res) {
     let token = req.body.token;
     let userId = decryptItem(req.body.userId, webSecretKey);
     let password = decryptItem(req.body.password, webSecretKey);
+
+    const existingUser = await executeQuery(
+      `SELECT password,previousPassword FROM users WHERE userId = ? and jwtToken = ?`,
+      [userId, token]
+    );
+    console.log('here', existingUser);
+    if (
+      existingUser.length > 0 &&
+      existingUser[0].previousPassword &&
+      password === decryptItem(existingUser[0]?.previousPassword, dbSecretKey)
+    ) {
+      return res.status(500).json({
+        errorMessage: 'Failed to change the password. Please try again.',
+      });
+    }
+
     const query =
-      'UPDATE  users SET lastPasswordResetDate=?, passwordResetRequired=0, password= ?,jwtToken = ?, passwordReset = ?  WHERE userId = ? and jwtToken = ? and passwordReset = ?';
+      'UPDATE  users SET previousPassword=?,lastPasswordResetDate=?, passwordResetRequired=0, password= ?,jwtToken = ?, passwordResetRequired = 0  WHERE userId = ? and jwtToken = ? and passwordResetRequired = 1';
     const values = [
+      existingUser[0].password,
       new Date(),
       encryptItem(password, dbSecretKey),
       '',
-      0,
+
       userId,
       token,
-      1,
     ];
     const result = await executeQuery(query, values);
 
@@ -889,19 +908,35 @@ async function editUserProfileController(req, res) {
 async function changePasswordController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
-    let password = decryptItem(req.body.password, webSecretKey);
+    let newPassword = decryptItem(req.body.password, webSecretKey);
     let currentPassword = decryptItem(req.body.currentPassword, webSecretKey);
     const existingUser = await executeQuery(
-      `SELECT password FROM users WHERE userId = ? `,
+      `SELECT password,previousPassword FROM users WHERE userId = ? `,
       [userId]
     );
     if (
       existingUser.length > 0 &&
       currentPassword === decryptItem(existingUser[0].password, dbSecretKey)
     ) {
+      if (
+        existingUser[0].previousPassword &&
+        newPassword ===
+          decryptItem(existingUser[0]?.previousPassword, dbSecretKey)
+      ) {
+        return res.status(500).json({
+          errorMessage: 'Failed to change the password. Please try again.',
+        });
+      }
+
       const query =
-        'UPDATE  users SET password= ?, lastPasswordResetDate=?, passwordResetRequired=0 WHERE userId = ? ';
-      const values = [encryptItem(password, dbSecretKey), new Date(), userId];
+        'UPDATE  users SET password= ?, lastPasswordResetDate=?, passwordResetRequired=0,previousPassword=? WHERE userId = ? ';
+      const values = [
+        encryptItem(newPassword, dbSecretKey),
+        new Date(),
+        existingUser[0].password,
+        userId,
+      ];
+
       const result = await executeQuery(query, values);
 
       if (result.affectedRows > 0 || result.insertId) {

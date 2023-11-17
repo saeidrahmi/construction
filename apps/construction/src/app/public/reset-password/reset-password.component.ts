@@ -63,6 +63,7 @@ export class ResetPasswordComponent {
   resetPassword() {
     this.serverError = '';
     this.resetDone = false;
+    this.formErrors = [];
     if (this.form.valid) {
       this.loading = true;
       this.formErrors = [];
