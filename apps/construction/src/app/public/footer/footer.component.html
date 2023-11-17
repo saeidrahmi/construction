@@ -25,9 +25,7 @@
                 >Home</a
               >
             </li>
-            <li class="nav-item mb-2">
-              <a href="#" class="nav-link p-0 text-body-secondary">Features</a>
-            </li>
+
             <li class="nav-item mb-2">
               <a
                 [routerLink]="'plans'"
@@ -38,10 +36,31 @@
               >
             </li>
             <li class="nav-item mb-2">
-              <a href="#" class="nav-link p-0 text-body-secondary">FAQs</a>
+              <a
+                [routerLink]="'contact-us'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-link p-0 text-body-secondary"
+                >Contact us</a
+              >
             </li>
             <li class="nav-item mb-2">
-              <a href="#" class="nav-link p-0 text-body-secondary">About</a>
+              <a
+                [routerLink]="'about-us'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-link p-0 text-body-secondary"
+                >About Us</a
+              >
+            </li>
+            <li class="nav-item mb-2">
+              <a
+                [routerLink]="'/faqs'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-link p-0 text-body-secondary"
+                >FAQs</a
+              >
             </li>
           </ul>
         </div>
@@ -98,13 +117,31 @@
               >
             </li>
             <li class="nav-item mb-2">
-              <a href="#" class="nav-link p-0 text-body-secondary">Pricing</a>
+              <a
+                [routerLink]="'/privacy-policy'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-link p-0 text-body-secondary"
+                >Privacy Policy</a
+              >
             </li>
             <li class="nav-item mb-2">
-              <a href="#" class="nav-link p-0 text-body-secondary">FAQs</a>
+              <a
+                [routerLink]="'/terms-conditions'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-link p-0 text-body-secondary"
+                >Terms & Conditions</a
+              >
             </li>
             <li class="nav-item mb-2">
-              <a href="#" class="nav-link p-0 text-body-secondary">About</a>
+              <a
+                [routerLink]="'/cookie-policy'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                class="nav-link p-0 text-body-secondary"
+                >Cookie Policy</a
+              >
             </li>
           </ul>
         </div>

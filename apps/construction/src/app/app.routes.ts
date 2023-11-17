@@ -109,7 +109,39 @@ export const appRoutes: Route[] = [
     loadComponent: () =>
       import('./public/rfps/rfps.component').then((com) => com.RfpsComponent),
   },
-
+  {
+    path: 'contact-us',
+    loadComponent: () =>
+      import('./public/contact-us/contact-us.component').then(
+        (com) => com.ContactUsComponent
+      ),
+  },
+  {
+    path: 'faqs',
+    loadComponent: () =>
+      import('./public/faq/faq.component').then((com) => com.FaqComponent),
+  },
+  {
+    path: 'terms-conditions',
+    loadComponent: () =>
+      import('./public/terms-conditions/terms-conditions.component').then(
+        (com) => com.TermsConditionsComponent
+      ),
+  },
+  {
+    path: 'about-us',
+    loadComponent: () =>
+      import('./public/about-us/about-us.component').then(
+        (com) => com.AboutUsComponent
+      ),
+  },
+  {
+    path: 'cookie-policy',
+    loadComponent: () =>
+      import('./public/cookie-policy/cookie-policy.component').then(
+        (com) => com.CookiePolicyComponent
+      ),
+  },
   {
     path: '**',
     component: PageNotFoundComponent,
