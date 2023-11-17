@@ -52,7 +52,11 @@
                 </p>
               </div>
               <div class="mt-3 text-center">
-                <a class="btn btn-success mb-sm-2" href="/plans"
+                <a
+                  class="btn btn-success mb-sm-2"
+                  [routerLink]="'plans'"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
                   >View our plans</a
                 >
                 <a

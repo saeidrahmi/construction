@@ -1,142 +1,32 @@
-<div class="m-3 border border-radius-3 p-3">
-  <!-- <a [routerLink]="['/']" fragment="why">Go to Section 1</a>
-  <a [routerLink]="['/']" fragment="plans">Go to Section 1</a> -->
-  <section id="why">
-    <div class="container">
-      <div class="row">
-        <div class="col-12 col-lg-8 mx-auto">
-          <div class="title text-center">
-            <span class="pre-title">Why choose wizixo?</span>
-            <h2>Passion, dedication, and a lot of savings.</h2>
-            <p class="mb-0">
-              The real challenge before companies in today's world is to make
-              their products and services appealing to thier customers.
-            </p>
-          </div>
-        </div>
+<section class="pt-lg-3" id="plans">
+  <h2 class="d-block bg-gradient text-light text-center px-3 mb-5">
+    Pricing plans
+  </h2>
+  <div class="container pt-2">
+    <div class="p-4 p-sm-5">
+      <div class="text-center px-0 px-sm-5">
+        <h2>Premium features on all plans.</h2>
+        <p class="m-0 px-0 px-md-5">
+          We've always worked very hard to give our customers the best
+          experience in dealing with their client's services.
+        </p>
       </div>
-      <div class="row">
-        <div class="col-md-4 mt-4">
-          <div class="feature-box f-style-5 h-100 icon-grad">
-            <div class="feature-box-icon"><i class="ti-panel"></i></div>
-            <h3 class="feature-box-title">
-              Modern, Innovative & high quality survey Platform
-            </h3>
-            <p class="feature-box-desc">
-              An enterprise-grade reliable online survey platform to handle all
-              sort of surveys from simple to sophisticated survey projects for
-              all business weather small or large. It includes many Key features
-              such as realtime tracking, rich template library, 360-degree
-              assessment, powerfull dashboard and much more!
-            </p>
-          </div>
-        </div>
-        <div class="col-md-4 mt-4">
-          <div class="feature-box f-style-5 h-100 icon-grad">
-            <div class="feature-box-icon"><i class="ti-palette"></i></div>
-            <h3 class="feature-box-title">
-              World class Security, Privacy & Confidentiality
-            </h3>
-            <p class="feature-box-desc">
-              Our system has been implemented with World class security. We take
-              security & privacy of our clients data very seriously. System
-              security is implemented in all layers from OS tier, network tier,
-              DB, application tier & presentation layer. We are GDPR & EU & CCPA
-              Compliance
-            </p>
-          </div>
-        </div>
-        <div class="col-md-4 mt-4">
-          <div class="feature-box f-style-5 h-100 icon-grad">
-            <div class="feature-box-icon"><i class="ti-gift"></i></div>
-            <h3 class="feature-box-title">Competitive Price Plans</h3>
-            <p class="feature-box-desc">
-              All of our plans are fully featured. Yet our price model and
-              attractive payment options are unbeatable. Our free trial account
-              is among one of the best accounts in the market. It is full
-              feature account for 30 days. No creadit card is required and you
-              can cancel anytime.
-            </p>
-            <strong
-              >No overhead cost, No cancellation fees, No hidden costs</strong
-            >
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4 mt-4">
-          <div class="feature-box f-style-5 h-100 icon-grad">
-            <div class="feature-box-icon"><i class="ti-panel"></i></div>
-            <h3 class="feature-box-title">Extensive Support</h3>
-            <p class="feature-box-desc">
-              Extensive friendly support services to ensure smooth application
-              operation. 24/7 online live Chat & Email Support. Priority Email
-              Support for businesses and enterprises . We have also great deal
-              of online training materials, demos and training materials to help
-              our customers to design effective surveys. We respond fast to our
-              clients inquieries.
-            </p>
-            <strong>We support our clients every step of the way.</strong>
-          </div>
-        </div>
-        <div class="col-md-4 mt-4">
-          <div class="feature-box f-style-5 h-100 icon-grad">
-            <div class="feature-box-icon"><i class="ti-palette"></i></div>
-            <h3 class="feature-box-title">360-degree assessment</h3>
-            <p class="feature-box-desc">
-              Full and complete 360-degree evaluation surveys for companies and
-              agencies at all required and pertinent levels. Collect feedback
-              from internal and external sources such as customers and suppliers
-              from a different perspectives to measure company’s team work
-              performance, policies and procedures strengths and weaknesses and
-              to take improvements measures.
-            </p>
-          </div>
-        </div>
-        <div class="col-md-4 mt-4">
-          <div class="feature-box f-style-5 h-100 icon-grad">
-            <div class="feature-box-icon"><i class="ti-gift"></i></div>
-            <h3 class="feature-box-title">
-              Powerful Dashboard and analytical tools
-            </h3>
-            <p class="feature-box-desc">
-              Systems provide Realtime feedback tracking and analysis and turns
-              volumes of data into actionable, manageable information. Analyze
-              the results thru powerful dashboard and analytical reports.
-              Insightful real time analytical reports with filtered and detailed
-              information can help to make appropriate decisions and
-              improvements.
-            </p>
-          </div>
-        </div>
+      <div class="mt-3 text-center">
+        <a
+          class="btn btn-success"
+          [routerLink]="'plans'"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ><i class="fa fa-arrow-right"></i>View our price plans</a
+        >
+        <a
+          class="btn btn-primary mx-3"
+          [routerLink]="'/signup'"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ><i class="fa fa-arrow-right"></i>Sign up for free</a
+        >
       </div>
     </div>
-  </section>
-
-  <section class="pt-lg-3" id="plans">
-    <h2 class="d-block bg-gradient text-light text-center px-3 mb-5">
-      Pricing plans
-    </h2>
-    <div class="container pt-2">
-      <div class="p-4 p-sm-5">
-        <div class="text-center px-0 px-sm-5">
-          <h2>Premium features on all plans.</h2>
-          <p class="m-0 px-0 px-md-5">
-            We've always worked very hard to give our customers the best
-            experience in dealing with their client's surveys.
-          </p>
-        </div>
-        <div class="mt-3 text-center">
-          <a class="btn btn-grad" href="price.html"
-            ><i class="fa fa-arrow-right"></i>View our plans</a
-          >
-          <a class="btn btn-success mb-sm-2" href="#">Sign up for free</a>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- <app-main-banner></app-main-banner> -->
-
-  <!-- <app-why-us></app-why-us>
-  <app-free-accountsection></app-free-accountsection> -->
-</div>
+  </div>
+</section>

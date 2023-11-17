@@ -339,7 +339,7 @@ export class StorageService {
   }
   initializeStore(): StoreInterface {
     return {
-      general: { theme: 'dark' },
+      general: { theme: 'light' },
       plan: null,
       advertisement: null,
       user: {

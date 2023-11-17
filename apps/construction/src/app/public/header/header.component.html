@@ -42,7 +42,7 @@
             >Request for Proposals(RFPs)</a
           >
         </li>
-        <li class="nav-item dropdown">
+        <!-- <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
             href="#"
@@ -58,6 +58,15 @@
             <li><hr class="dropdown-divider" /></li>
             <li><a class="dropdown-item" href="#">Something else here</a></li>
           </ul>
+        </li> -->
+        <li class="nav-item" *ngIf="!isLoggedIn()">
+          <a
+            class="nav-link"
+            [routerLink]="'plans'"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            >Price Plans</a
+          >
         </li>
         <li class="nav-item" *ngIf="!isLoggedIn()">
           <a
@@ -74,7 +83,7 @@
             [routerLink]="'signup'"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"
-            >Signup</a
+            >Free Signup</a
           >
         </li>
         <li class="nav-item">

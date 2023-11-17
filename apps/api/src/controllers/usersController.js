@@ -1101,7 +1101,8 @@ async function purchasePlanController(req, res) {
 async function listUserPlansController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
-    const selectQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userId=?  AND plans.planType != 'free' `;
+    const selectQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userId=?  `;
+    // const selectQuery = `SELECT * FROM userPlans JOIN plans ON userPlans.planId = plans.planId where userId=?  AND plans.planType != 'free' `;
 
     const selectResult = await executeQuery(selectQuery, [userId]);
     return res.status(200).json(selectResult);

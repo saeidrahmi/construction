@@ -1,3 +1,4 @@
+import { ListPlansComponent } from './sadmin/plans/list-plans/list-plans.component';
 import { Route } from '@angular/router';
 import {
   isGeneralUser,
@@ -96,6 +97,14 @@ export const appRoutes: Route[] = [
     path: 'privacy-policy',
     component: PrivacyPolicyComponent,
   },
+  {
+    path: 'plans',
+    loadComponent: () =>
+      import('./common-components/list-plans/list-plans.component').then(
+        (com) => com.ListPlansComponent
+      ),
+  },
+
   {
     path: '**',
     component: PageNotFoundComponent,
