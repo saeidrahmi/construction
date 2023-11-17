@@ -55,9 +55,9 @@ export const appRoutes: Route[] = [
   {
     path: 'advertisements',
     loadComponent: () =>
-      import(
-        './common-components/advertisements-list/advertisements-list.component'
-      ).then((com) => com.AdvertisementsListComponent),
+      import('./public/advertisements-list/advertisements-list.component').then(
+        (com) => com.AdvertisementsListComponent
+      ),
   },
   {
     path: 'view-advertisement-details',
@@ -72,7 +72,7 @@ export const appRoutes: Route[] = [
     canActivate: [isUserPasswordResetRequired],
     loadComponent: () =>
       import(
-        './common-components/reset-expired-password/reset-expired-password.component'
+        './public/reset-expired-password/reset-expired-password.component'
       ).then((com) => com.ResetExpiredPasswordComponent),
   },
   // {
@@ -100,7 +100,7 @@ export const appRoutes: Route[] = [
   {
     path: 'plans',
     loadComponent: () =>
-      import('./common-components/list-plans/list-plans.component').then(
+      import('./public/list-plans/list-plans.component').then(
         (com) => com.ListPlansComponent
       ),
   },

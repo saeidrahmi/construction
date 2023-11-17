@@ -12,7 +12,7 @@ import { CommonUtilityService } from '../../services/common-utility.service';
 import { ImageService } from '../../services/image-service';
 import { StorageService } from '../../services/storage.service';
 import { UserService } from '../../services/user-service';
-import { AdvertisementViewComponent } from '../advertisement-view/advertisement-view.component';
+import { AdvertisementViewComponent } from '../../common-components/advertisement-view/advertisement-view.component';
 
 @Component({
   selector: 'app-advertisements-list',
