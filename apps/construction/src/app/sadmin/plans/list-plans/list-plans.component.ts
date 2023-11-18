@@ -78,9 +78,7 @@ export class ListPlansComponent {
       .updatePlanActivationStatus(planId, activate)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        tap(() => {
-          //this.getPlans$.subscribe();
-        }),
+
         switchMap(() => this.getPlans$)
       )
       .subscribe();
@@ -91,9 +89,7 @@ export class ListPlansComponent {
       .deletePlan(planId)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        tap(() => {
-          //this.getPlans$.subscribe();
-        }),
+
         switchMap(() => this.getPlans$)
       )
       .subscribe();

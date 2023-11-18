@@ -65,7 +65,7 @@ export class AdminSettingsComponent {
       .getAdminSettings()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
+
         tap((setting: AdminSettingsInterface) => {
           this.setting = setting;
           this.initialSetting = { ...setting };

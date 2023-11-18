@@ -47,7 +47,7 @@ export class EditPlanComponent {
       .getAdminSettings()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
+
         tap((setting: AdminSettingsInterface) => {
           this.setting = setting;
         })
@@ -60,7 +60,7 @@ export class EditPlanComponent {
         switchMap((planId) =>
           this.apiService.getPlanInfo(planId).pipe(
             takeUntilDestroyed(this.destroyRef),
-            take(1),
+
             tap((plan: any) => {
               this.planId = planId;
               this.plan = plan;

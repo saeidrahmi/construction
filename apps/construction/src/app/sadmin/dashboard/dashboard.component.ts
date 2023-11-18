@@ -18,7 +18,7 @@ export class DashboardComponent {
   destroyRef = inject(DestroyRef);
   dashboard$ = this.apiService.getDashboardInfo().pipe(
     takeUntilDestroyed(this.destroyRef),
-    take(1),
+
     tap((data: any) => {
       this.dashboard = data;
     })

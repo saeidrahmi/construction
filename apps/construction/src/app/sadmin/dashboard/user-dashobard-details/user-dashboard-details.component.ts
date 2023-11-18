@@ -94,7 +94,7 @@ export class UserDashboardDetailsComponent {
       .getUserDashboardAdminDetails()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
+
         tap((data: any) => {
           this.barChartLabelsDaily = data?.daily?.map(
             (entry) => entry.registeredDate
@@ -120,7 +120,7 @@ export class UserDashboardDetailsComponent {
           return this.apiService
             .getUserDashboardAdminDetailsBasedOnRegistrationAndPlanType()
             .pipe(
-              take(1),
+              takeUntilDestroyed(this.destroyRef),
               tap((data) => {
                 // daily
                 this.barChartDetailsDailyLabels = data?.daily?.map(
@@ -183,7 +183,7 @@ export class UserDashboardDetailsComponent {
           return this.apiService
             .getUserDashboardTotalCountBasedOnPlanType()
             .pipe(
-              take(1),
+              takeUntilDestroyed(this.destroyRef),
               tap((data) => {
                 this.pieChartData[0].data = [
                   data.freeActiveUsers,

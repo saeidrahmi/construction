@@ -51,7 +51,6 @@ export class ViewUserComponent {
             this.currentPlan = userInfo?.plans.filter(
               (plan) => plan.userPlanActive === 1
             )[0];
-            console.log(userInfo);
           })
         )
         .subscribe();

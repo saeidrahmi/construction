@@ -73,7 +73,7 @@ export class AdminAdvertisementDetailsViewComponent {
         .getAdminAdvertisementDetails(adObject?.advertisementIdSelected)
         .pipe(
           takeUntilDestroyed(),
-          take(1),
+
           tap((info: any) => {
             if (info?.selectAdResult?.length < 1)
               this.advertisementExists = false;
@@ -106,9 +106,6 @@ export class AdminAdvertisementDetailsViewComponent {
               }
             }
           }),
-          catchError((err) => {
-            return of(err);
-          }),
 
           switchMap((info) => {
             if (this.isLoggedIn())
@@ -118,7 +115,7 @@ export class AdminAdvertisementDetailsViewComponent {
                   this.encryptionService.encryptItem(this.userId())
                 )
                 .pipe(
-                  take(1),
+                  takeUntilDestroyed(this.destroyRef),
                   tap((isFavorite) => {
                     if (isFavorite) this.heartColor = 'red';
                     else this.heartColor = '';
@@ -145,7 +142,7 @@ export class AdminAdvertisementDetailsViewComponent {
         )
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          take(1),
+
           tap((info: any) => {
             this.rate = info;
             this.toastService.success('success', 'success', {
@@ -195,7 +192,7 @@ export class AdminAdvertisementDetailsViewComponent {
         )
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          take(1),
+
           tap((info: any) => {
             if (info === 'inserted') this.heartColor = 'red';
             else this.heartColor = '';
@@ -230,7 +227,7 @@ export class AdminAdvertisementDetailsViewComponent {
           )
           .pipe(
             takeUntilDestroyed(this.destroyRef),
-            take(1),
+
             tap((info: any) => {
               this.toastService.success('success', 'success', {
                 timeOut: 3000,

@@ -50,7 +50,7 @@ export class AdvertisementsPendingApprovalComponent {
   currentDate = new Date();
   getAds$ = this.apiService.getAllUsersAdvertisementsPendingApproval().pipe(
     takeUntilDestroyed(this.destroyRef),
-    take(1),
+
     tap((list: any) => {
       this.allAdvertisements = list;
     }),
@@ -60,13 +60,10 @@ export class AdvertisementsPendingApprovalComponent {
     switchMap(() =>
       this.apiService.getApplicationSetting().pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
+
         tap((info: any) => {
           7;
           this.userAdvertisementDuration = info.userAdvertisementDuration;
-        }),
-        catchError((err) => {
-          return of(err);
         })
       )
     )
@@ -88,7 +85,7 @@ export class AdvertisementsPendingApprovalComponent {
 
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
+
         tap((list: any) => {
           this.toastService.success('Updated. ', 'Success', {
             timeOut: 3000,
@@ -108,8 +105,8 @@ export class AdvertisementsPendingApprovalComponent {
 
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
-        tap((list: any) => {
+
+        tap(() => {
           this.toastService.success('Deleted. ', 'Success', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
