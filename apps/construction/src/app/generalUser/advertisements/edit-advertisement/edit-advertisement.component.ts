@@ -63,20 +63,7 @@ export class EditAdvertisementComponent {
       tap((canEdit: boolean) => {
         if (!canEdit) this.router.navigate(['/general/user-advertisements']);
       }),
-      catchError((err) => {
-        this.toastService.error(
-          'Getting Info failed. ' + err,
-          'Server failure',
-          {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          }
-        );
 
-        return of(err);
-      }),
       switchMap(() => {
         return this.apiService
           .getAdvertisementEditInfo(
@@ -354,16 +341,6 @@ export class EditAdvertisementComponent {
                 progressBar: true,
               }
             );
-          }),
-          catchError((err) => {
-            this.toastService.error('Saving failed. ' + err, 'Server failure', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
-
-            return of(err);
           })
         )
         .subscribe();

@@ -3,7 +3,6 @@ import { Injectable, inject } from '@angular/core';
 import {
   Observable,
   catchError,
-  delay,
   finalize,
   map,
   of,
@@ -12,7 +11,6 @@ import {
   timeout,
 } from 'rxjs';
 import { LoginCredential } from '../models/login';
-
 import { EnvironmentInfo } from '../../../../../libs/common/src/models/common';
 import { UserInterface } from '../models/user';
 import { StorageService } from './storage.service';
@@ -31,9 +29,9 @@ import * as moment from 'moment';
 export class ApiService {
   env: EnvironmentInfo = new EnvironmentInfo();
   apiTimeoutValue = this.env.apiTimeoutValue();
+  toastrTimeoutValue = this.env.toastrTimeoutValue();
   storageService = inject(StorageService);
   toastService = inject(ToastrService);
-
   encryptionService = inject(EncryptionService);
   user = this.storageService.getUser();
   jwtRefreshToken = this.storageService.getRefreshToken();
@@ -64,7 +62,6 @@ export class ApiService {
       })
       .pipe(
         take(1),
-        delay(400),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -78,7 +75,7 @@ export class ApiService {
         }),
         catchError((error) => {
           this.toastService.error(error.message, 'Login Failed', {
-            timeOut: 8000,
+            timeOut: this.toastrTimeoutValue,
             positionClass: 'toast-top-right',
             closeButton: true,
             progressBar: true,
@@ -94,11 +91,6 @@ export class ApiService {
       const expirationDate = moment().subtract(
         response.expirationPeriodInDays,
         'days'
-      );
-      console.log(
-        response.expirationPeriodInDays,
-        response.user.lastPasswordResetDate,
-        expirationDate
       );
       // Compare the last password reset date with the expiration date
       return moment(response.user.lastPasswordResetDate).isBefore(
@@ -117,7 +109,6 @@ export class ApiService {
         })
         .pipe(
           take(1),
-          delay(400),
           finalize(() => {
             this.spinner.hide();
             this.storageService.updateStateLogoutSuccessful();
@@ -127,6 +118,7 @@ export class ApiService {
     } else return of(null);
   }
   signup(userId: string): Observable<any> {
+    this.spinner.show();
     return this.httpClient
       .post(
         this.backendApiUrl + '/users/signup',
@@ -137,9 +129,17 @@ export class ApiService {
       )
       .pipe(
         take(1),
-        delay(600),
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Signup Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -148,13 +148,14 @@ export class ApiService {
       .post<boolean>(this.backendApiUrl + '/users/checkUserToken', {
         token: token,
       })
-      .pipe(take(1), delay(300));
+      .pipe(take(1));
   }
   registerFreePlan(
     user: UserInterface,
     plan: PlanInterface,
     userSignupToken: string
   ): Observable<UserApiResponseInterface> {
+    this.spinner.show();
     user.userId = this.encryptionService.encryptItem(user.userId as string);
     user.password = this.encryptionService.encryptItem(user.password as string);
     const data = { user: user, plan: plan, userSignupToken: userSignupToken };
@@ -168,10 +169,19 @@ export class ApiService {
         finalize(() => {
           this.spinner.hide();
         }),
-        delay(300)
+        catchError((error) => {
+          this.toastService.error(error.message, 'Registration Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
+        })
       );
   }
   resetPassword(userId: string): Observable<any> {
+    this.spinner.show();
     return this.httpClient
       .post(
         this.backendApiUrl + '/users/reset-password',
@@ -180,9 +190,24 @@ export class ApiService {
           userId: this.encryptionService.encryptItem(userId as string),
         }
       )
-      .pipe(take(1), delay(600));
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Reset Password Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
+        })
+      );
   }
   completeResetPassword(data: any): Observable<any> {
+    this.spinner.show();
     data.userId = this.encryptionService.encryptItem(data.userId as string);
     data.password = this.encryptionService.encryptItem(data.password as string);
 
@@ -199,7 +224,21 @@ export class ApiService {
     //   .pipe(take(1), delay(300));
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/complete-reset-password', data)
-      .pipe(take(1), delay(300));
+      .pipe(
+        take(1),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Reset Password Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
+        })
+      );
   }
 
   editUserProfile(data: FormData): Observable<UserApiResponseInterface> {
@@ -208,13 +247,21 @@ export class ApiService {
       .post<any>(this.backendApiUrl + '/users/edit-user-profile', data)
       .pipe(
         take(1),
-
-        timeout(5000),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
         tap((response: UserApiResponseInterface) => {
           this.storageService.updateStateProfileSuccessful(response);
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Edit User Profile Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -227,13 +274,26 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Profile Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
   changePassword(data: any): Observable<any> {
+    this.spinner.show();
     data.userId = this.encryptionService.encryptItem(data.userId as string);
     data.password = this.encryptionService.encryptItem(data.password as string);
     data.currentPassword = this.encryptionService.encryptItem(
@@ -241,7 +301,26 @@ export class ApiService {
     );
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/change-password', data)
-      .pipe(take(1), timeout(this.apiTimeoutValue), delay(300));
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Change User Password Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
+        })
+      );
   }
   getUserServices(userId: string): Observable<any> {
     const userIdEncrypted = this.encryptionService.encryptItem(userId);
@@ -252,9 +331,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Services Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -271,9 +362,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Services Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -290,9 +393,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Services Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -309,9 +424,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User List Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -333,9 +460,17 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'User Deletion Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -357,9 +492,17 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'User Activation Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -376,9 +519,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating Admin Settings Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -390,9 +545,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Admin Settings Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -404,9 +571,17 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Creating New Plan Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -416,9 +591,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/admin/list-plans')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Plans List Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -428,9 +615,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/list-plans')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Active Plans List Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -440,9 +639,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/list-paid-plans')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Plans List Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -458,9 +669,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating Plans Status Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -472,9 +695,17 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Deleting Plan Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -484,9 +715,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/admin/dashboard')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Admin Dashboard Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -496,9 +739,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/get-free-trial-info')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Free Trial Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -508,9 +763,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/get-top-ad-info')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Top Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -520,9 +787,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/users/get-application-settings')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Application Settings Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -534,9 +813,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving New Advertisement Pre-Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -552,9 +843,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Advertisement Edit Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -564,9 +867,17 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/get-tax')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Retrieving Tax Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -585,9 +896,17 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Purchase Plan Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -614,9 +933,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Registering Paid Plans Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -628,9 +959,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Plans Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -646,9 +989,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Service Locations Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -665,9 +1020,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Service Provinces Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -681,9 +1048,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Service Cities Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -696,9 +1075,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Service Locations Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -711,9 +1102,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Plan Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -726,9 +1129,17 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Updating Plan Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -740,9 +1151,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving If User Can Advertise Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -758,9 +1181,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving If User Can Edit Advertise Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -770,9 +1205,21 @@ export class ApiService {
       .post<any>(this.backendApiUrl + '/users/save-user-regular-ad', data)
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Saving User Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -782,9 +1229,21 @@ export class ApiService {
       .post<any>(this.backendApiUrl + '/users/edit-advertisement', data)
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Editing Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -796,9 +1255,17 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Retrieving User Ads Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -817,9 +1284,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Ads Active Status Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -829,7 +1308,6 @@ export class ApiService {
     userAdvertisementId: any
   ): Observable<any> {
     this.spinner.show();
-
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/updateAd-delete-status', {
         userId: userId,
@@ -838,9 +1316,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Ads Delete Status Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -861,9 +1351,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Re-Posting Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -883,9 +1385,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Promoting Top Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -898,9 +1412,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Advertisement Details Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -912,9 +1438,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Admin Advertisement Details Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -926,9 +1464,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Approving Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -941,9 +1491,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Rejecting Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -959,9 +1521,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Advertisement Details Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -972,9 +1546,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/list-advertisements')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Advertisements Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -986,9 +1572,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1004,9 +1602,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Favorite Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1022,9 +1632,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Deleting Favorite Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1038,9 +1660,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Rating Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1054,9 +1688,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'User Favorite Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1076,9 +1722,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Posting Advertisement Message Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1093,9 +1751,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Advertisement Messages Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1118,9 +1788,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Deleting User Advertisement Message Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1135,9 +1817,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Favorite Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1156,9 +1850,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Deleting User Favorite Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1179,9 +1885,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Advertisement Messages Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1193,9 +1911,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Advertisement Message Details Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1207,9 +1937,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Advertisement Messages Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1221,9 +1963,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Deleting User Advertisement Messages Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1236,9 +1990,21 @@ export class ApiService {
       .pipe(
         take(1),
         tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Number of New Advertisement Messages Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1250,9 +2016,17 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Creating New User Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          return of(error);
         })
       );
   }
@@ -1264,9 +2038,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Permissions Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1279,6 +2065,19 @@ export class ApiService {
         tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Permissions Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1290,9 +2089,21 @@ export class ApiService {
       })
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Getting User Details Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1302,9 +2113,21 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/admin/get-user-dashboard-details')
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Getting User Dashboard Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1317,9 +2140,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Getting User Dashboard Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }
@@ -1331,9 +2166,21 @@ export class ApiService {
       )
       .pipe(
         take(1),
-
         finalize(() => {
           this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Getting User Dashboard Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          return of(error);
         })
       );
   }

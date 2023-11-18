@@ -215,16 +215,6 @@ export class UserAdvertisementDetailsViewComponent {
             closeButton: true,
             progressBar: true,
           });
-        }),
-        catchError((err) => {
-          this.heartColor = '';
-          this.toastService.error('Adding failed', 'Failed', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          });
-          return of(err);
         })
       )
 

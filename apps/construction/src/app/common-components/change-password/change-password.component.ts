@@ -134,19 +134,6 @@ export class ChangePasswordComponent implements OnInit {
               closeButton: true,
               progressBar: true,
             });
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'Plan list failed. ' + err,
-              'Plan failure',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();

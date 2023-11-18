@@ -63,17 +63,6 @@ export class NewAdvertisementComponent {
       }),
       catchError((err) => {
         this.canAdvertise = false;
-        this.toastService.error(
-          'Getting Info failed. ' + err,
-          'Server failure',
-          {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          }
-        );
-
         return of(err);
       })
     );
@@ -355,16 +344,7 @@ export class NewAdvertisementComponent {
               }
             );
           }),
-          catchError((err) => {
-            this.toastService.error('Saving failed. ' + err, 'Server failure', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
 
-            return of(err);
-          }),
           switchMap(() => this.getUserAdvertiseInfo$)
         )
         .subscribe();

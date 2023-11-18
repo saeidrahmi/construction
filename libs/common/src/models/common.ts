@@ -4,6 +4,7 @@ export class EnvironmentInfo {
   sessionTimeout: number = 60; // one minute
   sessionPing: number = 20;
   _apiTimeoutValue: number = 120000; // one miniutes
+  _toastrTimeoutValue: number = 8000; // one miniutes
   _webSecretKey = 'web-secret-key';
   _jwtSecretKey = 'jwt-secret-key';
   _dbSecretKey = 'db-secret-key';
@@ -36,6 +37,9 @@ export class EnvironmentInfo {
   }
   apiTimeoutValue() {
     return this._apiTimeoutValue;
+  }
+  toastrTimeoutValue() {
+    return this._toastrTimeoutValue;
   }
   getRole() {
     return this._roles;
