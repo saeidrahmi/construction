@@ -79,8 +79,7 @@
               <div class="row">
                 <div class="col">
                   <div class="alert alert-warning" role="alert">
-                    Please make sure that you have updated your services and the
-                    service location coverages initially.
+                    Please make sure that you have updated your
                     <span>
                       <a
                         class="text-primary"
@@ -88,9 +87,21 @@
                         routerLinkActive="active"
                         [routerLinkActiveOptions]="{ exact: true }"
                       >
-                        Click here to update</a
+                        services and the service location coverages</a
                       ></span
                     >
+                    and also your
+                    <span>
+                      <a
+                        class="text-primary"
+                        [routerLink]="'/general/user-profile'"
+                        routerLinkActive="active"
+                        [routerLinkActiveOptions]="{ exact: true }"
+                      >
+                        profile</a
+                      ></span
+                    >
+                    is up to date initially.
                   </div>
                 </div>
               </div>
@@ -196,7 +207,7 @@
                                       <th>File name</th>
                                       <th>File type</th>
                                       <th>File size</th>
-
+                                      <th>Dimensions</th>
                                       <th>Action</th>
                                     </tr>
                                   </thead>
@@ -210,6 +221,9 @@
                                             headerImageFile?.size
                                           )
                                         }}
+                                      </td>
+                                      <td>
+                                        {{ imageWidth + ' X ' + imageHeight }}
                                       </td>
 
                                       <td>
@@ -491,52 +505,54 @@
                                           <th>File name</th>
                                           <th>File type</th>
                                           <th>File size</th>
-
+                                          <th>Dimensions</th>
                                           <th>Action</th>
                                         </tr>
                                       </thead>
-                                      <tbody>
-                                        <ng-container
-                                          *ngFor="
-                                            let file of this.advertisement
-                                              ?.sliderImageFiles;
-                                            let i = index
-                                          "
-                                        >
-                                          <tr>
-                                            <td>{{ file.name }}</td>
-                                            <td>{{ file.type }}</td>
-                                            <td>
-                                              {{
-                                                utilityService.convertBytesToKbOrMb(
-                                                  file.size
-                                                )
-                                              }}
-                                            </td>
+                                      <tbody
+                                        *ngFor="
+                                          let file of this.advertisement
+                                            ?.sliderImageFiles;
+                                          let i = index
+                                        "
+                                      >
+                                        <tr>
+                                          <td>{{ file.name }}</td>
+                                          <td>{{ file.type }}</td>
+                                          <td>
+                                            {{
+                                              utilityService.convertBytesToKbOrMb(
+                                                file.size
+                                              )
+                                            }}
+                                          </td>
 
-                                            <td>
-                                              <button
-                                                (click)="onFileDeleted(i)"
-                                              >
-                                                Delete
-                                              </button>
-                                            </td>
-                                          </tr>
-                                          <tr>
-                                            <td
-                                              colspan="4"
-                                              style="text-align: center"
-                                            >
-                                              <img
-                                                [src]="getObjectURL(file)"
-                                                style="
-                                                  max-width: 800px;
-                                                  max-height: 400px;
-                                                "
-                                              />
-                                            </td>
-                                          </tr>
-                                        </ng-container>
+                                          <td>
+                                            {{
+                                              file.width + ' X ' + file.height
+                                            }}
+                                          </td>
+
+                                          <td>
+                                            <button (click)="onFileDeleted(i)">
+                                              Delete
+                                            </button>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                          <td
+                                            colspan="4"
+                                            style="text-align: center"
+                                          >
+                                            <img
+                                              [src]="getObjectURL(file)"
+                                              style="
+                                                max-width: 800px;
+                                                max-height: 400px;
+                                              "
+                                            />
+                                          </td>
+                                        </tr>
                                       </tbody>
                                     </table>
                                   </div>

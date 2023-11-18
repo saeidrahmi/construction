@@ -24,8 +24,8 @@ export class CommonUtilityService {
   ];
   _sliderPhotoMaxSize = 1 * 1024 * 1024;
   _sliderPhotoMinMaxWidthHeightPixel = [
-    [800, 1800], // width: 800-1800,
-    [300, 500], // height: 300-500,
+    [1000, 2000], // width: 800-1800,
+    [400, 700], // height: 300-500,
   ];
 
   constructor() {}

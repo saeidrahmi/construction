@@ -31,14 +31,13 @@ export class NewAdvertisementComponent {
   apiService = inject(ApiService);
   fb = inject(FormBuilder);
   utilityService = inject(CommonUtilityService);
-
+  files: File[] = [];
   form: FormGroup;
   formErrors: string[] = [];
   encryptionService = inject(EncryptionService);
   formService = inject(FormService);
   router = inject(Router);
   storageService = inject(StorageService);
-
   advertisementCommunicationService = inject(AdvertisementCommunicationService);
   commonUtility = inject(CommonUtilityService);
   destroyRef = inject(DestroyRef);
@@ -66,6 +65,8 @@ export class NewAdvertisementComponent {
         return of(err);
       })
     );
+  imageWidth: number;
+  imageHeight: number;
 
   constructor(private sanitizer: DomSanitizer) {
     this.advertisement = {};
@@ -84,8 +85,6 @@ export class NewAdvertisementComponent {
         })
       )
       .subscribe();
-
-    // getPreNewAdInfo;
 
     // const newDate = new Date(
     //   this.advertisement.dateCreated.getTime() - 5 * 24 * 60 * 60 * 1000
@@ -154,108 +153,80 @@ export class NewAdvertisementComponent {
     this.advertisement.headerImage = null;
     this.advertisement.headerImageUrl = null;
   }
-  headerImageHandler(event: any) {
+  headerImageHandler(event: any): void {
     const headerImageFile = event?.target?.files[0];
-    const imageUrl = URL.createObjectURL(headerImageFile);
-    this.advertisement.headerImageUrl = `url(${imageUrl})`;
-    this.advertisement.headerImage = imageUrl;
-    const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
-    const headerImageMinWidth =
-      this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[0][0];
-    const headerImageMaxWidth =
-      this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[0][1];
-    const headerImageMinHeight =
-      this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[1][0];
-    const headerImageMaxHeight =
-      this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[1][1];
 
-    const allowedFileTypes = this.commonUtility._imageMimeTypes;
     if (headerImageFile) {
       const fileType = headerImageFile?.name?.split('.')?.pop()?.toLowerCase();
+      const allowedFileTypes = this.commonUtility._imageMimeTypes;
+      const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
+
+      // Check file type
       if (fileType && !allowedFileTypes?.includes(fileType)) {
-        this.toastService.error(
+        this.handleImageError(
           'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
             allowedFileTypes.join(', '),
-          'Wrong File Type',
-          {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          }
+          'Wrong File Type'
         );
-        //this.form.get('photo')?.setValue('');
-        this.headerImageFile = null;
+        return;
       }
-      if (headerImageFile?.size == 0 || headerImageFile?.size > maxFileSize) {
-        this.toastService.error(
-          'File size can not be empty and can not exceeds the maximum limit of 1 MB',
-          'Wrong File Size',
-          {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          }
+
+      // Check file size
+      if (headerImageFile.size === 0 || headerImageFile.size > maxFileSize) {
+        this.handleImageError(
+          `File size can not be empty and cannot exceed the maximum limit of ${this.utilityService.convertBytesToKbOrMb(
+            maxFileSize
+          )}`,
+          'Wrong File Size'
         );
-        //this.form.get('headerImage')?.setValue('');
-        this.headerImageFile = null;
-      } else {
-        // file ok
-        this.headerImageFile = headerImageFile;
+        return;
       }
+
+      // Check image dimensions
+      const [minWidth, maxWidth] =
+        this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[0];
+      const [minHeight, maxHeight] =
+        this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[1];
+
+      const img = new Image();
+      img.src = URL.createObjectURL(headerImageFile);
+
+      img.onload = () => {
+        const imageWidth = img.width;
+        this.imageWidth = img.width;
+        const imageHeight = img.height;
+        this.imageHeight = img.height;
+
+        if (
+          imageWidth < minWidth ||
+          imageWidth > maxWidth ||
+          imageHeight < minHeight ||
+          imageHeight > maxHeight
+        ) {
+          this.handleImageError(
+            `Image dimensions must be between ${minWidth}x${minHeight} and ${maxWidth}x${maxHeight} pixels.`,
+            'Invalid Image Dimensions'
+          );
+        } else {
+          // Image is within the specified dimensions
+          this.advertisement.headerImageUrl = `url(${img.src})`;
+          this.advertisement.headerImage = img.src;
+          this.headerImageFile = headerImageFile;
+        }
+      };
     }
   }
-  // sliderImageHandler(event: any, index: number) {
-  //   const sliderImageFile = event?.target?.files[0];
-  //   if (!sliderImageFile) {
-  //     this.advertisement.sliderImages[index] = '';
-  //     this.sliderImages[index] = null;
-  //   }
 
-  //   const maxFileSize = this.commonUtility._sliderPhotoMaxSize;
-  //   const allowedFileTypes = this.commonUtility._imageMimeTypes;
-  //   if (sliderImageFile) {
-  //     const fileType = sliderImageFile?.name?.split('.')?.pop()?.toLowerCase();
-  //     if (fileType && !allowedFileTypes?.includes(fileType)) {
-  //       this.toastService.error(
-  //         'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
-  //           allowedFileTypes.join(', '),
-  //         'Wrong File Type',
-  //         {
-  //           timeOut: 3000,
-  //           positionClass: 'toast-top-right',
-  //           closeButton: true,
-  //           progressBar: true,
-  //         }
-  //       );
-  //       // this.form.get('photo')?.setValue('');
-  //       // this.headerImageFile = null;
-  //     } else if (
-  //       sliderImageFile?.size == 0 ||
-  //       sliderImageFile?.size > maxFileSize
-  //     ) {
-  //       this.toastService.error(
-  //         'File size can not be empty and can not exceeds the maximum limit of 1 MB',
-  //         'Wrong File Size',
-  //         {
-  //           timeOut: 3000,
-  //           positionClass: 'toast-top-right',
-  //           closeButton: true,
-  //           progressBar: true,
-  //         }
-  //       );
-  //       //this.form.get('headerImage')?.setValue('');
-  //       //this.headerImageFile = null;
-  //     } else {
-  //       // file ok
+  private handleImageError(message: string, title: string): void {
+    this.toastService.error(message, title, {
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      closeButton: true,
+      progressBar: true,
+    });
+    this.headerImageFile = null;
+  }
 
-  //       const imageUrl = URL.createObjectURL(sliderImageFile);
-  //       this.advertisement.sliderImages[index] = `${imageUrl}`;
-  //       this.sliderImages[index] = sliderImageFile;
-  //     }
-  //   }
-  // }
   submitNewAd(stepper: MatStepper) {
     if (this.form.valid) {
       const userId = this.storageService?.getUserId();
@@ -372,12 +343,14 @@ export class NewAdvertisementComponent {
     }
   }
   submitNewTopAd() {}
-  files: File[] = [];
 
-  onFilesAdded(event: any) {
+  onFilesAdded(event: any): void {
     const newFiles: File[] = event.addedFiles;
-    this.files = [...this.files, ...newFiles];
-    if (this.files.length > this.maxAdvertisementSliderImage) {
+
+    // Calculate how many files can be added to reach the maximum limit
+    const remainingSlots = this.maxAdvertisementSliderImage - this.files.length;
+
+    if (remainingSlots <= 0) {
       this.toastService.error(
         `You can upload only ${this.maxAdvertisementSliderImage} images`,
         'Error',
@@ -388,51 +361,109 @@ export class NewAdvertisementComponent {
           progressBar: true,
         }
       );
+    } else {
+      // Filter out invalid files asynchronously
+      this.filterValidFiles(newFiles).then((validFiles) => {
+        // Check if adding new files would exceed the remaining slots
+        this.files = [...this.files, ...validFiles.slice(0, remainingSlots)];
+
+        // Clear existing slider image data
+        this.advertisement.sliderImageFiles = [];
+        this.advertisement.sliderImages = [];
+
+        // Process each file
+        for (const sliderImageFile of this.files) {
+          if (sliderImageFile) {
+            const imageUrl = URL.createObjectURL(sliderImageFile);
+            this.advertisement.sliderImageFiles.push(sliderImageFile);
+            this.advertisement.sliderImages.push(`${imageUrl}`);
+          }
+        }
+      });
     }
+  }
 
-    this.files = this.files.slice(0, this.maxAdvertisementSliderImage);
-    this.advertisement.sliderImageFiles = [];
-    this.advertisement.sliderImages = [];
+  async filterValidFiles(files: File[]): Promise<File[]> {
+    const validFiles: File[] = [];
 
-    for (const sliderImageFile of this.files) {
-      if (sliderImageFile) {
-        this.handleFile(sliderImageFile);
+    for (const file of files) {
+      if (await this.isValidFile(file)) {
+        validFiles.push(file);
       }
     }
+
+    return validFiles;
   }
-  handleFile(file: File) {
-    const maxFileSize = this.commonUtility._sliderPhotoMaxSize;
-    const allowedFileTypes = this.commonUtility._imageMimeTypes;
 
-    const fileType = file?.name?.split('.').pop()?.toLowerCase();
-    const fileSize = file?.size;
+  isValidFile(file: File): Promise<boolean> {
+    return new Promise((resolve) => {
+      const maxFileSize = this.commonUtility._sliderPhotoMaxSize;
+      const allowedFileTypes = this.commonUtility._imageMimeTypes;
+      const fileType = file?.name?.split('.').pop()?.toLowerCase();
+      const fileSize = file?.size;
+      const [minWidth, maxWidth] =
+        this.commonUtility._sliderPhotoMinMaxWidthHeightPixel[0];
+      const [minHeight, maxHeight] =
+        this.commonUtility._sliderPhotoMinMaxWidthHeightPixel[1];
 
-    if (fileType && allowedFileTypes && !allowedFileTypes.includes(fileType)) {
-      this.toastService.error(
-        'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
-          allowedFileTypes.join(', '),
-        'Wrong File Type',
-        {
-          /* Your toast options */
+      if (!this.isValidFileType(fileType, allowedFileTypes)) {
+        this.handleImageError(
+          'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+            allowedFileTypes.join(', '),
+          'Wrong File Type'
+        );
+        resolve(false);
+      } else if (!this.isValidFileSize(fileSize, maxFileSize)) {
+        this.handleImageError(
+          `File size cannot be empty and cannot exceed the maximum limit of ${maxFileSize}`,
+          'Wrong File Size'
+        );
+        resolve(false);
+      }
+
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+
+      img.onload = () => {
+        const imageWidth = img.width;
+        const imageHeight = img.height;
+
+        if (
+          imageWidth < minWidth ||
+          imageWidth > maxWidth ||
+          imageHeight < minHeight ||
+          imageHeight > maxHeight
+        ) {
+          this.handleImageError(
+            `Image dimensions must be between ${minWidth}x${minHeight} and ${maxWidth}x${maxHeight} pixels.`,
+            'Invalid Image Dimensions'
+          );
+          resolve(false);
+        } else {
+          file['width'] = imageWidth;
+          file['height'] = imageHeight;
+          resolve(true);
         }
-      );
-    } else if (!fileSize || fileSize > maxFileSize) {
-      this.toastService.error(
-        `File size cannot be empty and cannot exceed the maximum limit of ${maxFileSize}`,
-        'Wrong File Size',
-        {
-          /* Your toast options */
-        }
-      );
-    } else {
-      const imageUrl = URL.createObjectURL(file);
-
-      // this.sliderImages.push(file);
-      this.advertisement.sliderImageFiles.push(file);
-
-      this.advertisement.sliderImages.push(`${imageUrl}`);
-    }
+      };
+    });
   }
+
+  private isValidFileType(
+    fileType: string,
+    allowedFileTypes: string[] | undefined
+  ): boolean {
+    return (
+      !!fileType && !!allowedFileTypes && allowedFileTypes.includes(fileType)
+    );
+  }
+
+  private isValidFileSize(
+    fileSize: number | undefined,
+    maxFileSize: number
+  ): boolean {
+    return !!fileSize && fileSize <= maxFileSize;
+  }
+
   onFileDeleted(index: number) {
     // Delete the file at the specified index
     this.files.splice(index, 1);
