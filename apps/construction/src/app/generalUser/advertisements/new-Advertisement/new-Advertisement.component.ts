@@ -149,12 +149,25 @@ export class NewAdvertisementComponent {
   getObjectURL(file: File): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
   }
+  deleteHeaderImage() {
+    this.headerImageFile = null;
+    this.advertisement.headerImage = null;
+    this.advertisement.headerImageUrl = null;
+  }
   headerImageHandler(event: any) {
     const headerImageFile = event?.target?.files[0];
     const imageUrl = URL.createObjectURL(headerImageFile);
     this.advertisement.headerImageUrl = `url(${imageUrl})`;
     this.advertisement.headerImage = imageUrl;
     const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
+    const headerImageMinWidth =
+      this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[0][0];
+    const headerImageMaxWidth =
+      this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[0][1];
+    const headerImageMinHeight =
+      this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[1][0];
+    const headerImageMaxHeight =
+      this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[1][1];
 
     const allowedFileTypes = this.commonUtility._imageMimeTypes;
     if (headerImageFile) {
