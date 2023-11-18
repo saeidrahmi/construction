@@ -52,15 +52,7 @@ export class UserMessagesComponent {
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
       }),
-      catchError((err) => {
-        this.toastService.error('Adding failed', 'Failed', {
-          timeOut: 3000,
-          positionClass: 'toast-top-right',
-          closeButton: true,
-          progressBar: true,
-        });
-        return of(err);
-      }),
+
       switchMap(() =>
         this.apiService.getUserNumberOfNewMessages(
           this.encryptionService.encryptItem(this.userId())
@@ -99,19 +91,7 @@ export class UserMessagesComponent {
               progressBar: true,
             });
           }),
-          catchError((err) => {
-            this.toastService.error(
-              'User Deletion failed. ' + err,
-              'List failure',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
-          }),
+
           switchMap(() => this.getAdvertisementMessges$)
         )
         .subscribe();
@@ -126,16 +106,6 @@ export class UserMessagesComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         take(1),
-
-        catchError((err) => {
-          this.toastService.error('Adding failed', 'Failed', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          });
-          return of(err);
-        }),
         switchMap(() => this.getAdvertisementMessges$)
       )
       .subscribe();

@@ -73,15 +73,6 @@ export class UsersComponent {
           this.dataSource = new MatTableDataSource(users);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
-        }),
-        catchError((err) => {
-          this.toastService.error('Users list failed. ' + err, 'List failure', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          });
-          return of(err);
         })
       )
       .subscribe();
@@ -129,19 +120,6 @@ export class UsersComponent {
               closeButton: true,
               progressBar: true,
             });
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'User Deletion failed. ' + err,
-              'List failure',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();
@@ -163,19 +141,6 @@ export class UsersComponent {
             closeButton: true,
             progressBar: true,
           });
-        }),
-        catchError((err) => {
-          this.toastService.error(
-            'User update failed. ' + err,
-            'List failure',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
         })
       )
       .subscribe();

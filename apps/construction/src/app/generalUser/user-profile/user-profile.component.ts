@@ -191,19 +191,6 @@ export class UserProfileComponent {
               closeButton: true,
               progressBar: true,
             });
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'Update failed due to server error. ' + err,
-              'No update',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();

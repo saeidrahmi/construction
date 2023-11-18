@@ -52,15 +52,6 @@ export class ListPlansComponent {
       this.dataSource = new MatTableDataSource(plans);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-    }),
-    catchError((err) => {
-      this.toastService.error('Users list failed. ' + err, 'List failure', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-        closeButton: true,
-        progressBar: true,
-      });
-      return of(err);
     })
   );
 
@@ -90,20 +81,7 @@ export class ListPlansComponent {
         tap(() => {
           //this.getPlans$.subscribe();
         }),
-        switchMap(() => this.getPlans$),
-        catchError((err) => {
-          this.toastService.error(
-            'Plan update failed. ' + err,
-            'List failure',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
-        })
+        switchMap(() => this.getPlans$)
       )
       .subscribe();
   }
@@ -116,20 +94,7 @@ export class ListPlansComponent {
         tap(() => {
           //this.getPlans$.subscribe();
         }),
-        switchMap(() => this.getPlans$),
-        catchError((err) => {
-          this.toastService.error(
-            'Plan Delete failed. ' + err,
-            'Delete failure',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
-        })
+        switchMap(() => this.getPlans$)
       )
       .subscribe();
   }

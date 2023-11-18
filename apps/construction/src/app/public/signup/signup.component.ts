@@ -74,9 +74,6 @@ export class SignupComponent {
         take(1),
         tap((info: any) => {
           this.info = info;
-        }),
-        catchError((err) => {
-          return of(err);
         })
       )
       .subscribe();

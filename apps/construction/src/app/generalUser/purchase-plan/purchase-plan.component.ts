@@ -23,15 +23,6 @@ export class PurchasePlanComponent {
     takeUntilDestroyed(),
     tap((plans: any) => {
       this.listPlans = plans;
-    }),
-    catchError((err) => {
-      this.toastService.error('Plan list failed. ' + err, 'Plan failure', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-        closeButton: true,
-        progressBar: true,
-      });
-      return of(err);
     })
   );
   listPlans: any;
@@ -46,9 +37,6 @@ export class PurchasePlanComponent {
         take(1),
         tap((info: any) => {
           this.tax = info.tax;
-        }),
-        catchError((err) => {
-          return of(err);
         })
       )
       .subscribe();
@@ -86,9 +74,6 @@ export class PurchasePlanComponent {
               closeButton: true,
               progressBar: true,
             });
-          }),
-          catchError((err) => {
-            return of(err);
           })
         )
         .subscribe();

@@ -107,20 +107,6 @@ export class CompleteResetPasswordComponent implements OnInit {
             finalize(() => this.storageService.updateIsLoading(false)),
             tap((response) => {
               this.tokenValid.set(response);
-            }),
-            catchError((err) => {
-              this.tokenValid.set(false);
-              this.toastService.error(
-                'Plan list failed. ' + err,
-                'Plan failure',
-                {
-                  timeOut: 3000,
-                  positionClass: 'toast-top-right',
-                  closeButton: true,
-                  progressBar: true,
-                }
-              );
-              return of(false);
             })
           )
           .subscribe();
@@ -174,19 +160,6 @@ export class CompleteResetPasswordComponent implements OnInit {
               progressBar: true,
             });
             this.router.navigate(['/login']);
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'Plan list failed. ' + err,
-              'Plan failure',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();

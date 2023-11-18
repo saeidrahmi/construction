@@ -48,20 +48,6 @@ export class CreatePlanComponent {
         take(1),
         tap((setting: AdminSettingsInterface) => {
           this.setting = setting;
-        }),
-        catchError((err) => {
-          this.settingError = true;
-          this.toastService.error(
-            'Getting Settings failed. ' + err,
-            'List failure',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
         })
       )
       .subscribe();
@@ -171,19 +157,6 @@ export class CreatePlanComponent {
                 progressBar: true,
               }
             );
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'Create Plan failed. ' + err,
-              'Create Plan failure',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();

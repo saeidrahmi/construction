@@ -90,51 +90,21 @@ export class UserServicesComponent {
     this.apiService
       .getUserServices(this.storageService?.getUserId()())
       .pipe(first())
-      .subscribe(
-        (list: string[]) => {
-          this.myServices = list;
-        },
-        (err) => {
-          this.toastService.error(
-            'Failed getting user servcies due to server error. ' + err,
-            'No update',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
-        }
-      );
+      .subscribe((list: string[]) => {
+        this.myServices = list;
+      });
     this.apiService
       .getUserServiceLocations(this.storageService?.getUserId()())
       .pipe(first())
-      .subscribe(
-        (info: any) => {
-          this.locationType = info.serviceCoverageType;
-          if (this.locationType === 'province') {
-            this.myProvinces = info.provinces;
-          }
-          if (this.locationType === 'city') {
-            this.myCites = info.cities;
-          }
-        },
-        (err) => {
-          this.toastService.error(
-            'Failed getting user servcies location due to server error. ' + err,
-            'No update',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
+      .subscribe((info: any) => {
+        this.locationType = info.serviceCoverageType;
+        if (this.locationType === 'province') {
+          this.myProvinces = info.provinces;
         }
-      );
+        if (this.locationType === 'city') {
+          this.myCites = info.cities;
+        }
+      });
     this.filteredServices = this.serviceCtrl.valueChanges.pipe(
       startWith(null),
       map((item: string | null) =>
@@ -191,19 +161,6 @@ export class UserServicesComponent {
                 progressBar: true,
               }
             );
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'Update failed due to server error. ' + err,
-              'No update',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();
@@ -234,19 +191,6 @@ export class UserServicesComponent {
                 progressBar: true,
               }
             );
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'Update failed due to server error. ' + err,
-              'No update',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();
@@ -283,19 +227,6 @@ export class UserServicesComponent {
                 progressBar: true,
               }
             );
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'Update failed due to server error. ' + err,
-              'No update',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();
@@ -627,19 +558,6 @@ export class UserServicesComponent {
               progressBar: true,
             }
           );
-        }),
-        catchError((err) => {
-          this.toastService.error(
-            'Location type failed due to server error. ' + err,
-            'No update',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
         })
       )
       .subscribe();
@@ -659,19 +577,6 @@ export class UserServicesComponent {
             closeButton: true,
             progressBar: true,
           });
-        }),
-        catchError((err) => {
-          this.toastService.error(
-            'Provinces failed due to server error. ' + err,
-            'No update',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
         })
       )
       .subscribe();
@@ -696,19 +601,6 @@ export class UserServicesComponent {
             closeButton: true,
             progressBar: true,
           });
-        }),
-        catchError((err) => {
-          this.toastService.error(
-            'Cities update failed due to server error. ' + err,
-            'No update',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
         })
       )
       .subscribe();

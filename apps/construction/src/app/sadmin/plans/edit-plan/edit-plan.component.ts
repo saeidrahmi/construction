@@ -50,20 +50,6 @@ export class EditPlanComponent {
         take(1),
         tap((setting: AdminSettingsInterface) => {
           this.setting = setting;
-        }),
-        catchError((err) => {
-          this.settingError = true;
-          this.toastService.error(
-            'Getting Settings failed. ' + err,
-            'List failure',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
         })
       )
       .subscribe();
@@ -78,20 +64,6 @@ export class EditPlanComponent {
             tap((plan: any) => {
               this.planId = planId;
               this.plan = plan;
-            }),
-            catchError((err) => {
-              this.settingError = true;
-              this.toastService.error(
-                'Getting Plan info failed. ' + err,
-                'List failure',
-                {
-                  timeOut: 3000,
-                  positionClass: 'toast-top-right',
-                  closeButton: true,
-                  progressBar: true,
-                }
-              );
-              return of(err);
             })
           )
         )
@@ -200,19 +172,6 @@ export class EditPlanComponent {
                 progressBar: true,
               }
             );
-          }),
-          catchError((err) => {
-            this.toastService.error(
-              'Update Plan failed. ' + err,
-              'Update Plan failure',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
-            return of(err);
           })
         )
         .subscribe();

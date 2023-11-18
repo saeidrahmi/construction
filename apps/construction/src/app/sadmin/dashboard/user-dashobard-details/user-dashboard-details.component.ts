@@ -115,19 +115,7 @@ export class UserDashboardDetailsComponent {
             (entry) => entry.userCount
           );
         }),
-        catchError((err) => {
-          this.toastService.error(
-            'Getting Settings failed. ' + err,
-            'List failure',
-            {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
-          return of(err);
-        }),
+
         switchMap(() => {
           return this.apiService
             .getUserDashboardAdminDetailsBasedOnRegistrationAndPlanType()

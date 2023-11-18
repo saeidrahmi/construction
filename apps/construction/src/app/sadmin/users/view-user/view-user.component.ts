@@ -52,15 +52,6 @@ export class ViewUserComponent {
               (plan) => plan.userPlanActive === 1
             )[0];
             console.log(userInfo);
-          }),
-          catchError((err) => {
-            this.toastService.error('Update failed. ' + err, 'Update failure', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
-            return of(err);
           })
         )
         .subscribe();

@@ -89,15 +89,6 @@ export class RegisterComponent {
     takeUntilDestroyed(),
     tap((plans: any) => {
       this.listPlans = plans;
-    }),
-    catchError((err) => {
-      this.toastService.error('Users list failed. ' + err, 'List failure', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-        closeButton: true,
-        progressBar: true,
-      });
-      return of(err);
     })
   );
   listPlans: any;
@@ -177,9 +168,6 @@ export class RegisterComponent {
         take(1),
         tap((info: any) => {
           this.tax = info.tax;
-        }),
-        catchError((err) => {
-          return of(err);
         })
       )
       .subscribe();

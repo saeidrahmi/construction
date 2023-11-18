@@ -154,16 +154,6 @@ export class AdminAdvertisementDetailsViewComponent {
               closeButton: true,
               progressBar: true,
             });
-          }),
-          catchError((err) => {
-            this.heartColor = '';
-            this.toastService.error('Adding failed', 'Failed', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
-            return of(err);
           })
         )
 
@@ -215,16 +205,6 @@ export class AdminAdvertisementDetailsViewComponent {
               closeButton: true,
               progressBar: true,
             });
-          }),
-          catchError((err) => {
-            this.heartColor = '';
-            this.toastService.error('Adding failed', 'Failed', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
-            return of(err);
           })
         )
 
@@ -258,15 +238,6 @@ export class AdminAdvertisementDetailsViewComponent {
                 closeButton: true,
                 progressBar: true,
               });
-            }),
-            catchError((err) => {
-              this.toastService.error('Server Error ' + err, 'Failed', {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              });
-              return of(err);
             })
           )
 

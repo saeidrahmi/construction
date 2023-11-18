@@ -25,12 +25,8 @@ export class ListPlansComponent {
       .getAllActivePlans()
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-
         tap((plans) => {
           this.listPlans = plans;
-        }),
-        catchError((err) => {
-          return of(err);
         })
       )
       .subscribe();

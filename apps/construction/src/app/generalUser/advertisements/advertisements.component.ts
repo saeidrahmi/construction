@@ -108,15 +108,7 @@ export class AdvertisementsComponent {
             progressBar: true,
           });
         }),
-        catchError((err) => {
-          this.toastService.error('Update failed. ' + err, 'Plan failure', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          });
-          return of(err);
-        }),
+
         switchMap(() => this.getAds$)
       )
       .subscribe();
@@ -139,15 +131,7 @@ export class AdvertisementsComponent {
             progressBar: true,
           });
         }),
-        catchError((err) => {
-          this.toastService.error('Deleted failed. ' + err, 'Plan failure', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          });
-          return of(err);
-        }),
+
         switchMap(() => this.getAds$)
       )
       .subscribe();
@@ -182,19 +166,6 @@ export class AdvertisementsComponent {
                     closeButton: true,
                     progressBar: true,
                   });
-                }),
-                catchError((err) => {
-                  this.toastService.error(
-                    'Deleted failed. ' + err,
-                    'Plan failure',
-                    {
-                      timeOut: 3000,
-                      positionClass: 'toast-top-right',
-                      closeButton: true,
-                      progressBar: true,
-                    }
-                  );
-                  return of(err);
                 })
               );
           } else {
