@@ -32,13 +32,10 @@ export class PromoteToAdComponent {
         .getApplicationSetting()
         .pipe(
           takeUntilDestroyed(),
-          take(1),
+
           tap((info: any) => {
             this.topAdPrice = info.topAdvertisementPrice;
             this.tax = info.tax;
-          }),
-          catchError((err) => {
-            return of(err);
           })
         )
         .subscribe();
@@ -63,7 +60,6 @@ export class PromoteToAdComponent {
       )
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
         tap(() => {
           this.router.navigate(['/general/user-advertisements']);
           this.toastService.success('Updated. ', 'Success', {

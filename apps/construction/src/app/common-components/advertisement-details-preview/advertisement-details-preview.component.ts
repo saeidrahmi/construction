@@ -49,14 +49,12 @@ export class AdvertisementDetailsPreviewComponent {
       .getPreNewAdInfo(this.encryptionService.encryptItem(userId()))
       .pipe(
         takeUntilDestroyed(),
-        take(1),
         tap((info: any) => {
           this.registeredDate = new Date(info?.registeredDate);
           this.acitveAds = info.acitveAds;
           this.rate = info.userRate;
           this.myServices = info?.services;
           this.locationType = info?.locations?.serviceCoverageType;
-
           if (this.locationType === 'province') {
             this.myLocations = info?.locations?.provinces;
           } else if (this.locationType === 'city') {
@@ -64,9 +62,6 @@ export class AdvertisementDetailsPreviewComponent {
           } else if (this.locationType === 'country') {
             this.myLocations.push('All over Canada');
           }
-        }),
-        catchError((err) => {
-          return of(err);
         })
       )
       .subscribe();

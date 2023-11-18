@@ -99,12 +99,12 @@ export class CompleteResetPasswordComponent implements OnInit {
           this.token as string,
           'userId'
         );
-        this.storageService.updateIsLoading(true);
+
         this.apiService
           .checkUserToken(this.token)
           .pipe(
             takeUntilDestroyed(this.destroyRef),
-            finalize(() => this.storageService.updateIsLoading(false)),
+
             tap((response) => {
               this.tokenValid.set(response);
             })
@@ -151,8 +151,8 @@ export class CompleteResetPasswordComponent implements OnInit {
         .completeResetPassword(data)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          finalize(() => {}),
-          tap((response) => {
+
+          tap(() => {
             this.toastService.success('Plan purchased. ', 'Success', {
               timeOut: 3000,
               positionClass: 'toast-top-right',

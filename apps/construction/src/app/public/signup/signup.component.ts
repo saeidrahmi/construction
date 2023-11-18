@@ -71,7 +71,7 @@ export class SignupComponent {
       .getFreeTrialInfo()
       .pipe(
         takeUntilDestroyed(),
-        take(1),
+
         tap((info: any) => {
           this.info = info;
         })

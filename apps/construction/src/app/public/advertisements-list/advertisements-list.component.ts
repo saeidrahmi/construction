@@ -45,7 +45,7 @@ export class AdvertisementsListComponent {
       .getAllAdvertisements()
       .pipe(
         takeUntilDestroyed(),
-        take(1),
+
         tap((list: any) => {
           this.allAdvertisements = list;
 

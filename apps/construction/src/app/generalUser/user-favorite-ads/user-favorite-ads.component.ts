@@ -36,7 +36,6 @@ export class UserFavoriteAdvertisementsComponent {
     )
     .pipe(
       takeUntilDestroyed(this.destroyRef),
-      take(1),
       tap((list: AdvertisementInterface[]) => {
         this.advertisements = list;
       })

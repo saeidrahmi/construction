@@ -89,13 +89,13 @@ export class UserServicesComponent {
     this.constructionServices = this.userService.getConstructionServices();
     this.apiService
       .getUserServices(this.storageService?.getUserId()())
-      .pipe(first())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((list: string[]) => {
         this.myServices = list;
       });
     this.apiService
       .getUserServiceLocations(this.storageService?.getUserId()())
-      .pipe(first())
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((info: any) => {
         this.locationType = info.serviceCoverageType;
         if (this.locationType === 'province') {
@@ -239,90 +239,13 @@ export class UserServicesComponent {
     alert('Adding city not allowed. Please select from the list.');
     event.chipInput!.clear();
     this.cityCtrl.setValue(null);
-    // const value = (event.value || '').trim();
-    // if (value && this.myCites.includes(value)) {
-    //   this.toastService.error('Service already added. ', 'No update', {
-    //     timeOut: 3000,
-    //     positionClass: 'toast-top-right',
-    //     closeButton: true,
-    //     progressBar: true,
-    //   });
-    // }
-    // // Add service
-    // else {
-    //   this.myCites.push(value);
-    //   // this.apiService
-    //   //   .addUserServices(this.storageService?.getUserId()(), value)
-    //   //   .pipe(
-    //   //     takeUntilDestroyed(this.destroyRef),
-    //   //     tap(() => {
-    //   //       this.toastService.success(
-    //   //         'Services updated.',
-    //   //         'Update Successful',
-    //   //         {
-    //   //           timeOut: 3000,
-    //   //           positionClass: 'toast-top-right',
-    //   //           closeButton: true,
-    //   //           progressBar: true,
-    //   //         }
-    //   //       );
-    //   //     }),
-    //   //     catchError((err) => {
-    //   //       this.toastService.error(
-    //   //         'Update failed due to server error. ' + err,
-    //   //         'No update',
-    //   //         {
-    //   //           timeOut: 3000,
-    //   //           positionClass: 'toast-top-right',
-    //   //           closeButton: true,
-    //   //           progressBar: true,
-    //   //         }
-    //   //       );
-    //   //       return of(err);
-    //   //     })
-    //   //   )
-    //   //   .subscribe();
-    // }
-    // // Clear the input value
-    // event.chipInput!.clear();
-    // this.cityCtrl.setValue(null);
   }
 
   removeCity(item: string): void {
     const index = this.myCites.indexOf(item);
     if (index >= 0) {
       this.myCites.splice(index, 1);
-      // this.apiService
-      //   .removeUserServices(this.storageService?.getUserId()(), item)
-      //   .pipe(
-      //     takeUntilDestroyed(this.destroyRef),
-      //     tap(() => {
-      //       this.toastService.success(
-      //         'Services updated.',
-      //         'Update Successful',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //     }),
-      //     catchError((err) => {
-      //       this.toastService.error(
-      //         'Update failed due to server error. ' + err,
-      //         'No update',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //       return of(err);
-      //     })
-      //   )
-      //   .subscribe();
+
       this.announcer.announce(`Removed ${item}`);
     }
   }
@@ -338,40 +261,6 @@ export class UserServicesComponent {
       });
     else {
       this.myCites.push(value);
-      // this.apiService
-      //   .addUserServices(
-      //     this.storageService?.getUserId()(),
-      //     event.option.viewValue
-      //   )
-      //   .pipe(
-      //     takeUntilDestroyed(this.destroyRef),
-      //     tap(() => {
-      //       this.toastService.success(
-      //         'Services updated.',
-      //         'Update Successful',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //     }),
-      //     catchError((err) => {
-      //       this.toastService.error(
-      //         'Update failed due to server error. ' + err,
-      //         'No update',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //       return of(err);
-      //     })
-      //   )
-      //   .subscribe();
     }
     this.cityInput.nativeElement.value = '';
     this.cityCtrl.setValue(null);
@@ -380,90 +269,12 @@ export class UserServicesComponent {
     alert('Adding new province not allowed. Please select from the list.');
     event.chipInput!.clear();
     this.provinceCtrl.setValue(null);
-    // const value = (event.value || '').trim();
-    // if (value && this.myProvinces.includes(value)) {
-    //   this.toastService.error('Service already added. ', 'No update', {
-    //     timeOut: 3000,
-    //     positionClass: 'toast-top-right',
-    //     closeButton: true,
-    //     progressBar: true,
-    //   });
-    // }
-    // // Add service
-    // else {
-    //   this.myProvinces.push(value);
-    //   // this.apiService
-    //   //   .addUserServices(this.storageService?.getUserId()(), value)
-    //   //   .pipe(
-    //   //     takeUntilDestroyed(this.destroyRef),
-    //   //     tap(() => {
-    //   //       this.toastService.success(
-    //   //         'Services updated.',
-    //   //         'Update Successful',
-    //   //         {
-    //   //           timeOut: 3000,
-    //   //           positionClass: 'toast-top-right',
-    //   //           closeButton: true,
-    //   //           progressBar: true,
-    //   //         }
-    //   //       );
-    //   //     }),
-    //   //     catchError((err) => {
-    //   //       this.toastService.error(
-    //   //         'Update failed due to server error. ' + err,
-    //   //         'No update',
-    //   //         {
-    //   //           timeOut: 3000,
-    //   //           positionClass: 'toast-top-right',
-    //   //           closeButton: true,
-    //   //           progressBar: true,
-    //   //         }
-    //   //       );
-    //   //       return of(err);
-    //   //     })
-    //   //   )
-    //   //   .subscribe();
-    // }
-    // // Clear the input value
-    // event.chipInput!.clear();
-    // this.provinceCtrl.setValue(null);
   }
 
   removeProvince(item: string): void {
     const index = this.myProvinces.indexOf(item);
     if (index >= 0) {
       this.myProvinces.splice(index, 1);
-      // this.apiService
-      //   .removeUserServices(this.storageService?.getUserId()(), item)
-      //   .pipe(
-      //     takeUntilDestroyed(this.destroyRef),
-      //     tap(() => {
-      //       this.toastService.success(
-      //         'Services updated.',
-      //         'Update Successful',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //     }),
-      //     catchError((err) => {
-      //       this.toastService.error(
-      //         'Update failed due to server error. ' + err,
-      //         'No update',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //       return of(err);
-      //     })
-      //   )
-      //   .subscribe();
       this.announcer.announce(`Removed ${item}`);
     }
   }
@@ -479,40 +290,6 @@ export class UserServicesComponent {
       });
     else {
       this.myProvinces.push(value);
-      // this.apiService
-      //   .addUserServices(
-      //     this.storageService?.getUserId()(),
-      //     event.option.viewValue
-      //   )
-      //   .pipe(
-      //     takeUntilDestroyed(this.destroyRef),
-      //     tap(() => {
-      //       this.toastService.success(
-      //         'Services updated.',
-      //         'Update Successful',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //     }),
-      //     catchError((err) => {
-      //       this.toastService.error(
-      //         'Update failed due to server error. ' + err,
-      //         'No update',
-      //         {
-      //           timeOut: 3000,
-      //           positionClass: 'toast-top-right',
-      //           closeButton: true,
-      //           progressBar: true,
-      //         }
-      //       );
-      //       return of(err);
-      //     })
-      //   )
-      //   .subscribe();
     }
     this.provinceInput.nativeElement.value = '';
     this.provinceCtrl.setValue(null);

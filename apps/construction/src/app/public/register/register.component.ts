@@ -255,7 +255,7 @@ export class RegisterComponent {
         )
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          finalize(() => this.storageService.updateIsLoading(false)),
+
           tap((response) => {
             this.storageService.updateStateLoginSuccessful(response);
             this.userRouting.navigateToUserMainPage();

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
 import { Router } from '@angular/router';
@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
   templateUrl: './my-bids.component.html',
   styleUrls: ['./my-bids.component.css'],
 })
-export class MyBidsComponent implements OnInit {
+export class MyBidsComponent {
   apiService = inject(ApiService);
   storageService = inject(StorageService);
   router = inject(Router);
@@ -18,6 +18,4 @@ export class MyBidsComponent implements OnInit {
     if (this.plan()?.createBidsIncluded != 1)
       this.router.navigate(['/general/dashboard']);
   }
-
-  ngOnInit() {}
 }

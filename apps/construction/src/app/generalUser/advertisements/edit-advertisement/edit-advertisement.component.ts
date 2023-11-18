@@ -72,7 +72,7 @@ export class EditAdvertisementComponent {
           )
           .pipe(
             takeUntilDestroyed(this.destroyRef),
-            take(1),
+
             tap((results: any) => {
               if (results?.selectAdResult?.length < 1)
                 this.router.navigate(['/general/user-advertisements']);
@@ -139,24 +139,17 @@ export class EditAdvertisementComponent {
                   }
                 });
               }
-            }),
-            catchError((err) => {
-              return of(err);
             })
           );
       }),
       switchMap(() =>
         this.apiService.getApplicationSetting().pipe(
           takeUntilDestroyed(this.destroyRef),
-          take(1),
           tap((info: any) => {
             // this.topAdPrice = info.topAdvertisementPrice;
             // this.tax = info.tax;
             this.maxAdvertisementSliderImage = info.maxAdvertisementSliderImage;
             this.userAdvertisementDuration = info.userAdvertisementDuration;
-          }),
-          catchError((err) => {
-            return of(err);
           })
         )
       )
@@ -328,9 +321,8 @@ export class EditAdvertisementComponent {
         .editAdvertisement(formData)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          tap((info: any) => {
+          tap(() => {
             this.router.navigate(['/general/user-advertisements']);
-
             this.toastService.success(
               'Saved Successfully. ',
               'Saved Successfully',

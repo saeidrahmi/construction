@@ -78,7 +78,7 @@ export class UserAdvertisementDetailsViewComponent {
         )
         .pipe(
           takeUntilDestroyed(),
-          take(1),
+
           tap((info: any) => {
             if (info?.selectAdResult?.length < 1)
               this.advertisementExists = false;
@@ -111,9 +111,6 @@ export class UserAdvertisementDetailsViewComponent {
               }
             }
           }),
-          catchError((err) => {
-            return of(err);
-          }),
 
           switchMap((info) => {
             return this.apiService
@@ -122,7 +119,7 @@ export class UserAdvertisementDetailsViewComponent {
                 this.encryptionService.encryptItem(this.userId())
               )
               .pipe(
-                take(1),
+                takeUntilDestroyed(),
                 tap((isFavorite) => {
                   if (isFavorite) this.heartColor = 'red';
                   else this.heartColor = '';
@@ -205,7 +202,6 @@ export class UserAdvertisementDetailsViewComponent {
       )
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
         tap((info: any) => {
           if (info === 'inserted') this.heartColor = 'red';
           else this.heartColor = '';

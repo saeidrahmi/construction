@@ -45,7 +45,7 @@ export class UserMessagesComponent {
     )
     .pipe(
       takeUntilDestroyed(this.destroyRef),
-      take(1),
+
       tap((messages: any) => {
         console.log(messages, 'messages');
         this.dataSource = new MatTableDataSource(messages);
@@ -105,7 +105,7 @@ export class UserMessagesComponent {
       .deleteUserAllMessages(this.encryptionService.encryptItem(this.userId()))
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        take(1),
+
         switchMap(() => this.getAdvertisementMessges$)
       )
       .subscribe();

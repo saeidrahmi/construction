@@ -110,7 +110,6 @@ export class ResetExpiredPasswordComponent implements OnInit {
   changePassword(): void {
     this.formErrors = [];
     if (this.form.valid) {
-      this.storageService.updateIsLoading(true);
       this.serverError = '';
 
       let data: any = {
@@ -127,9 +126,7 @@ export class ResetExpiredPasswordComponent implements OnInit {
         .changePassword(data)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          finalize(() => {
-            this.storageService.updateIsLoading(false);
-          }),
+
           tap(() => {
             this.storageService.updateLoginFlag(true);
             this.storageService.updatePasswordResetRequiredFlag(false);

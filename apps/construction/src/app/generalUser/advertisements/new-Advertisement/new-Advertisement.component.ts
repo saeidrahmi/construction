@@ -76,15 +76,11 @@ export class NewAdvertisementComponent {
       .getApplicationSetting()
       .pipe(
         takeUntilDestroyed(),
-        take(1),
         tap((info: any) => {
           this.topAdPrice = info.topAdvertisementPrice;
           this.tax = info.tax;
           this.maxAdvertisementSliderImage = info.maxAdvertisementSliderImage;
           this.userAdvertisementDuration = info.userAdvertisementDuration;
-        }),
-        catchError((err) => {
-          return of(err);
         })
       )
       .subscribe();
@@ -327,7 +323,7 @@ export class NewAdvertisementComponent {
         .saveUserRegularAd(formData)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          tap((info: any) => {
+          tap(() => {
             this.headerImageFile = null;
             //this.sliderImages = [];
             this.form.reset();

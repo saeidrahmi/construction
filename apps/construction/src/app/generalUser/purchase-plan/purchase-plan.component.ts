@@ -34,7 +34,7 @@ export class PurchasePlanComponent {
       .getTax()
       .pipe(
         takeUntilDestroyed(),
-        take(1),
+
         tap((info: any) => {
           this.tax = info.tax;
         })

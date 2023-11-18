@@ -81,7 +81,6 @@ export class AdvertisementDetailsViewComponent {
         .getAdvertisementDetails(adObject?.advertisementIdSelected)
         .pipe(
           takeUntilDestroyed(),
-          take(1),
           tap((info: any) => {
             if (info?.selectAdResult?.length < 1)
               this.advertisementExists = false;
@@ -91,13 +90,11 @@ export class AdvertisementDetailsViewComponent {
               this.headerImage = info?.selectAdResult[0]?.headerImage;
               const selectAdResult = info?.selectAdResult;
               this.sliderImages = [];
-
               selectAdResult.forEach((item) => {
                 if (item?.userAdvertisementImage) {
                   this.sliderImages.push(item?.userAdvertisementImage);
                 }
               });
-
               this.userInfo = info?.userInfo;
               console.log(this.userInfo, 'info');
               this.registeredDate = new Date(info?.registeredDate);
@@ -115,7 +112,7 @@ export class AdvertisementDetailsViewComponent {
             }
           }),
 
-          switchMap((info) => {
+          switchMap(() => {
             if (this.isLoggedIn())
               return this.apiService
                 .isUserFavoriteAd(
@@ -123,7 +120,7 @@ export class AdvertisementDetailsViewComponent {
                   this.encryptionService.encryptItem(this.userId())
                 )
                 .pipe(
-                  take(1),
+                  takeUntilDestroyed(),
                   tap((isFavorite) => {
                     if (isFavorite) this.heartColor = 'red';
                     else this.heartColor = '';
@@ -150,7 +147,7 @@ export class AdvertisementDetailsViewComponent {
         )
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          take(1),
+
           tap((info: any) => {
             this.rate = info;
             this.toastService.success('success', 'success', {
@@ -204,7 +201,7 @@ export class AdvertisementDetailsViewComponent {
         )
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-          take(1),
+
           tap((info: any) => {
             if (info === 'inserted') this.heartColor = 'red';
             else this.heartColor = '';
@@ -243,7 +240,7 @@ export class AdvertisementDetailsViewComponent {
           )
           .pipe(
             takeUntilDestroyed(this.destroyRef),
-            take(1),
+
             tap((info: any) => {
               this.toastService.success('success', 'success', {
                 timeOut: 3000,
