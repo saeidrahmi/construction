@@ -1,12 +1,10 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AdminSettingsInterface } from 'libs/common/src/models/admin-settings';
 import { ToastrService } from 'ngx-toastr';
-import { take, tap, catchError, of } from 'rxjs';
+import { tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
 import { Router } from '@angular/router';
-
 @Component({
   selector: 'construction-dashboard',
   templateUrl: './dashboard.component.html',

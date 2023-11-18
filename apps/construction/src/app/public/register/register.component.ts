@@ -5,18 +5,11 @@ import {
   FormBuilder,
   FormControl,
   Validators,
-  ValidatorFn,
   AbstractControl,
-  ValidationErrors,
   ReactiveFormsModule,
   FormsModule,
 } from '@angular/forms';
-import {
-  ActivatedRoute,
-  Router,
-  RouterLink,
-  RouterModule,
-} from '@angular/router';
+import { ActivatedRoute, RouterLink, RouterModule } from '@angular/router';
 
 import { takeUntil, tap, catchError, of, finalize, take } from 'rxjs';
 import { CommonUtilityService } from '../../services/common-utility.service';
@@ -25,7 +18,7 @@ import { ApiService } from '../../services/api.service';
 import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
 import { FormErrorsComponent } from '../form-errors.component';
 import { SpinnerComponent } from '../spinner/spinner.component';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EnvironmentInfo } from 'libs/common/src/models/common';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormService } from '../../services/form.service';
@@ -69,7 +62,6 @@ import { PlanComponent } from '../../common-components/plan/plan.component';
 export class RegisterComponent {
   env: EnvironmentInfo = new EnvironmentInfo();
   userId: string = '';
-
   password: string = '';
   confirmPassword: string = '';
   serverError: string = '';
@@ -84,7 +76,6 @@ export class RegisterComponent {
   options: string[] = ['Personal purpose', 'Business purpose'];
   tokenValid = signal<boolean>(false);
   token: string | null = '';
-
   getPlans$ = this.apiService.getAllActivePlans().pipe(
     takeUntilDestroyed(),
     tap((plans: any) => {

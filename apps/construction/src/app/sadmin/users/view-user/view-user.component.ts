@@ -1,12 +1,11 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { tap, catchError, of } from 'rxjs';
-import { UserPermissionsInterface } from '../../../models/user-permissions';
+import { tap } from 'rxjs';
 import { ImageService } from '../../../services/image-service';
 
 @Component({

@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../../services/api.service';
@@ -6,12 +6,8 @@ import { EncryptionService } from '../../services/encryption-service';
 import { FormService } from '../../services/form.service';
 import { StorageService } from '../../services/storage.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { take, tap, catchError, of, switchMap } from 'rxjs';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
+import { tap, switchMap } from 'rxjs';
 import { AdvertisementInterface } from '../../models/advertisement';
-
 @Component({
   selector: 'app-user-favorite-ads-messages',
   templateUrl: './user-favorite-ads.component.html',
@@ -55,7 +51,7 @@ export class UserFavoriteAdvertisementsComponent {
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
-            this.toastService.success('User updated.', 'Update Successful', {
+            this.toastService.success('Deleted Successfully.', 'Successful', {
               timeOut: 3000,
               positionClass: 'toast-top-right',
               closeButton: true,

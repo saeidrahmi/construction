@@ -8,16 +8,12 @@ import {
 } from '@angular/forms';
 import { FormService } from '../../../services/form.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { MatTableDataSource } from '@angular/material/table';
-import { UserApiResponseInterface } from 'libs/common/src/models/user-response';
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of, take } from 'rxjs';
+import { tap } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { StorageService } from '../../../services/storage.service';
-import { left } from '@popperjs/core';
 import { PlanInterface } from '../../../models/plan';
 import { Router } from '@angular/router';
-
 @Component({
   selector: 'app-createPlan',
   templateUrl: './createPlan.component.html',
@@ -147,16 +143,12 @@ export class CreatePlanComponent {
           takeUntilDestroyed(this.destroyRef),
           tap((plan: PlanInterface) => {
             this.plan = plan;
-            this.toastService.success(
-              'Create Plan.',
-              'Create Plan Successful',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
+            this.toastService.success('Plan created successfully.', 'Success', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
           })
         )
         .subscribe();

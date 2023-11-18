@@ -29,6 +29,7 @@ import * as moment from 'moment';
 export class ApiService {
   env: EnvironmentInfo = new EnvironmentInfo();
   apiTimeoutValue = this.env.apiTimeoutValue();
+  apiLongSearchTimeoutValue = this.env.apiLongSearchTimeoutValue();
   toastrTimeoutValue = this.env.toastrTimeoutValue();
   storageService = inject(StorageService);
   toastService = inject(ToastrService);
@@ -62,6 +63,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -109,6 +111,7 @@ export class ApiService {
         })
         .pipe(
           take(1),
+          timeout(this.apiTimeoutValue),
           finalize(() => {
             this.spinner.hide();
             this.storageService.updateStateLogoutSuccessful();
@@ -129,6 +132,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -166,6 +170,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -192,6 +197,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -221,11 +227,12 @@ export class ApiService {
     //   .post<any>(this.backendApiUrl + '/users/complete-reset-password', data, {
     //     headers,
     //   })
-    //   .pipe(take(1), delay(300));
+    //   .pipe(take(1), timeout(this.apiTimeoutValue),  delay(300));
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/complete-reset-password', data)
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -248,6 +255,7 @@ export class ApiService {
       .pipe(
         take(1),
         timeout(this.apiTimeoutValue),
+
         finalize(() => {
           this.spinner.hide();
         }),
@@ -274,6 +282,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -304,6 +313,7 @@ export class ApiService {
       .pipe(
         take(1),
         timeout(this.apiTimeoutValue),
+
         finalize(() => {
           this.spinner.hide();
         }),
@@ -331,6 +341,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -362,6 +373,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -393,6 +405,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -424,6 +437,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -460,6 +474,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -492,6 +507,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -519,6 +535,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -545,6 +562,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -571,6 +589,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -591,6 +610,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/admin/list-plans')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -615,6 +635,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/list-plans')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -639,6 +660,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/list-paid-plans')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -669,6 +691,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -695,6 +718,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -715,6 +739,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/admin/dashboard')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -739,6 +764,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/get-free-trial-info')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -763,6 +789,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/get-top-ad-info')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -787,6 +814,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/users/get-application-settings')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -813,6 +841,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -843,6 +872,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -867,6 +897,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/get-tax')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -896,6 +927,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -933,6 +965,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -959,6 +992,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -989,6 +1023,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1020,6 +1055,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1048,6 +1084,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1075,6 +1112,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1102,6 +1140,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1129,6 +1168,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1151,6 +1191,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1181,6 +1222,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1205,6 +1247,7 @@ export class ApiService {
       .post<any>(this.backendApiUrl + '/users/save-user-regular-ad', data)
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1229,6 +1272,7 @@ export class ApiService {
       .post<any>(this.backendApiUrl + '/users/edit-advertisement', data)
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1255,6 +1299,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1284,6 +1329,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1316,6 +1362,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1351,6 +1398,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1385,6 +1433,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1412,6 +1461,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1438,6 +1488,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1464,6 +1515,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1491,6 +1543,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1521,6 +1574,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1546,6 +1600,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/public/list-advertisements')
       .pipe(
         take(1),
+        timeout(this.apiLongSearchTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1572,6 +1627,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1602,6 +1658,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1632,6 +1689,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1660,6 +1718,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1688,6 +1747,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1722,6 +1782,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1751,6 +1812,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1788,6 +1850,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1817,6 +1880,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1850,6 +1914,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1885,6 +1950,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1911,6 +1977,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1937,6 +2004,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1963,6 +2031,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -1989,6 +2058,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
         finalize(() => {
           this.spinner.hide();
@@ -2016,6 +2086,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -2038,6 +2109,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -2062,6 +2134,7 @@ export class ApiService {
       .post<any>(this.backendApiUrl + '/admin/update-user-permissions', data)
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
         finalize(() => {
           this.spinner.hide();
@@ -2089,6 +2162,7 @@ export class ApiService {
       })
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -2113,6 +2187,7 @@ export class ApiService {
       .get<any>(this.backendApiUrl + '/admin/get-user-dashboard-details')
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -2140,6 +2215,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -2166,6 +2242,7 @@ export class ApiService {
       )
       .pipe(
         take(1),
+        timeout(this.apiTimeoutValue),
         finalize(() => {
           this.spinner.hide();
         }),

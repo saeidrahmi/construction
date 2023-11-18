@@ -3,7 +3,7 @@ import { Component, DestroyRef, inject } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { finalize, tap, catchError, of } from 'rxjs';
+import { tap } from 'rxjs';
 import { PlanComponent } from '../../common-components/plan/plan.component';
 import { RouterModule } from '@angular/router';
 

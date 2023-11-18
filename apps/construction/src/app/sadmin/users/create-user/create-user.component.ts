@@ -1,5 +1,5 @@
 import { CommonUtilityService } from '../../../services/common-utility.service';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { StorageService } from '../../../services/storage.service';
@@ -12,13 +12,10 @@ import {
 import { EnvironmentInfo } from 'libs/common/src/models/common';
 import { FormService } from '../../../services/form.service';
 import { UserPermissionsInterface } from '../../../models/user-permissions';
-import { catchError, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AdminSettingsInterface } from 'libs/common/src/models/admin-settings';
-import { of } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../../services/encryption-service';
-
 @Component({
   selector: 'app-create-user',
   templateUrl: './create-user.component.html',
@@ -112,12 +109,16 @@ export class CreateUserComponent {
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
-            this.toastService.success('Updated.', 'Update Successful', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
+            this.toastService.success(
+              'New user created successfully.',
+              'Success',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
           })
         )
         .subscribe();

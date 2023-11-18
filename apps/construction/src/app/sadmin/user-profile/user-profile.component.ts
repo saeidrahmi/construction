@@ -1,5 +1,5 @@
 import { ImageService } from './../../services/image-service';
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,25 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  Observable,
-  catchError,
-  finalize,
-  first,
-  of,
-  switchMap,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
 import { ValidatorsService } from '../../services/validators.service';
 import { FormService } from '../../services/form.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UserInterface } from '../../models/user';
 import { CommonUtilityService } from '../../services/common-utility.service';
-import { TitleCasePipe } from '@angular/common';
-import { CountryInterface } from '../../models/country';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../services/encryption-service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -71,7 +59,6 @@ export class UserProfileComponent {
       fax: new FormControl(this.user()?.fax, []),
       province: new FormControl('', [Validators.required]),
       city: new FormControl('', [Validators.required]),
-
       postalCode: new FormControl(
         this.user()?.postalCode?.toLocaleUpperCase(),
         [Validators.required]
@@ -167,16 +154,12 @@ export class UserProfileComponent {
         )
         .subscribe();
     } else {
-      this.toastService.warning(
-        'No change to existing profile to update.',
-        'No update',
-        {
-          timeOut: 3000,
-          positionClass: 'toast-top-right',
-          closeButton: true,
-          progressBar: true,
-        }
-      );
+      this.toastService.error('Nothing to update.', 'Error', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        closeButton: true,
+        progressBar: true,
+      });
     }
   }
 
@@ -209,7 +192,7 @@ export class UserProfileComponent {
         this.profileImageFile?.size > maxFileSize
       ) {
         this.toastService.error(
-          'File size can not be empty and can not exceeds the maximum limit of 1 MB',
+          `File size can not be empty and can not exceeds the maximum limit of ${maxFileSize}`,
           'Wrong File Size',
           {
             timeOut: 3000,

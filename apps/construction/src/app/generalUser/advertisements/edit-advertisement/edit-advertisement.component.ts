@@ -1,8 +1,8 @@
 import { ImageService } from './../../../services/image-service';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of, first, take, switchMap } from 'rxjs';
+import { tap, first, switchMap } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
@@ -32,7 +32,6 @@ export class EditAdvertisementComponent {
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   imageService = inject(ImageService);
-
   fb = inject(FormBuilder);
   form: FormGroup;
   formErrors: string[] = [];
@@ -120,18 +119,7 @@ export class EditAdvertisementComponent {
                       type: 'image/jpeg',
                     });
 
-                    // const blob = new Blob(
-                    //   [new Uint8Array(item?.userAdvertisementImage)],
-                    //   {
-                    //     type: 'image/jpeg',
-                    //   }
-                    // ); // Adjust 'image/jpeg' to the correct image MIME type
-                    // const imageUrl = URL.createObjectURL(blob);
-                    // this.sliderImages.push(imageUrl);
-                    // this.advertisement.sliderImages.push(imageUrl);
                     const imageUrl = URL.createObjectURL(temporaryFile);
-
-                    // this.sliderImages.push(sliderImageFile);
                     this.advertisement.sliderImageFiles.push(temporaryFile);
                     this.files.push(temporaryFile);
 
@@ -146,8 +134,6 @@ export class EditAdvertisementComponent {
         this.apiService.getApplicationSetting().pipe(
           takeUntilDestroyed(this.destroyRef),
           tap((info: any) => {
-            // this.topAdPrice = info.topAdvertisementPrice;
-            // this.tax = info.tax;
             this.maxAdvertisementSliderImage = info.maxAdvertisementSliderImage;
             this.userAdvertisementDuration = info.userAdvertisementDuration;
           })
@@ -323,16 +309,12 @@ export class EditAdvertisementComponent {
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
             this.router.navigate(['/general/user-advertisements']);
-            this.toastService.success(
-              'Saved Successfully. ',
-              'Saved Successfully',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
+            this.toastService.success('Saved Successfully. ', 'Successful', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
           })
         )
         .subscribe();

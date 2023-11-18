@@ -2,7 +2,6 @@ import {
   Component,
   DestroyRef,
   Inject,
-  Input,
   Renderer2,
   inject,
 } from '@angular/core';

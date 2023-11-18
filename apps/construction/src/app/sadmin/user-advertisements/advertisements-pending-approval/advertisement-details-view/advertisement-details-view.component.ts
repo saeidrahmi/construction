@@ -1,29 +1,23 @@
-import { isUserLoggedIn } from './../../../../services/user-gaurds';
 import { ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, Input, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { AdvertisementInterface } from '../../../../models/advertisement';
 import { StorageService } from '../../../../services/storage.service';
 import { UserService } from '../../../../services/user-service';
-import { RatingModule } from 'ngx-bootstrap/rating';
 import {
   FormBuilder,
   FormControl,
   FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
 import { EnvironmentInfo } from 'libs/common/src/models/common';
 import { ImageService } from '../../../../services/image-service';
 import { ApiService } from '../../../../services/api.service';
-import { catchError, first, map, of, take, tap, switchMap } from 'rxjs';
+import { of, tap, switchMap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormService } from '../../../../services/form.service';
-import { FormErrorsComponent } from '../../../../public/form-errors.component';
 
 @Component({
   selector: 'app-admin-advertisement-details-view',
@@ -91,7 +85,7 @@ export class AdminAdvertisementDetailsViewComponent {
               });
 
               this.userInfo = info?.userInfo;
-              console.log(this.userInfo, 'info');
+
               this.registeredDate = new Date(info?.registeredDate);
               this.acitveAds = info.acitveAds;
               this.rate = info.userRate;
@@ -145,7 +139,7 @@ export class AdminAdvertisementDetailsViewComponent {
 
           tap((info: any) => {
             this.rate = info;
-            this.toastService.success('success', 'success', {
+            this.toastService.success('User rated successfully', 'Success', {
               timeOut: 3000,
               positionClass: 'toast-top-right',
               closeButton: true,
@@ -156,7 +150,7 @@ export class AdminAdvertisementDetailsViewComponent {
 
         .subscribe();
     else
-      this.toastService.error('Please login first', 'Failed', {
+      this.toastService.error('Please login first', 'Error', {
         timeOut: 3000,
         positionClass: 'toast-top-right',
         closeButton: true,
@@ -196,18 +190,22 @@ export class AdminAdvertisementDetailsViewComponent {
           tap((info: any) => {
             if (info === 'inserted') this.heartColor = 'red';
             else this.heartColor = '';
-            this.toastService.success(info + ' success', 'success', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
+            this.toastService.success(
+              info + 'Completed successfully',
+              'Success',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
           })
         )
 
         .subscribe();
     else
-      this.toastService.error('Please login first', 'Failed', {
+      this.toastService.error('Please login first', 'Error', {
         timeOut: 3000,
         positionClass: 'toast-top-right',
         closeButton: true,
@@ -240,7 +238,7 @@ export class AdminAdvertisementDetailsViewComponent {
 
           .subscribe();
       else
-        this.toastService.error('Please login first', 'Failed', {
+        this.toastService.error('Please login first', 'Error', {
           timeOut: 3000,
           positionClass: 'toast-top-right',
           closeButton: true,

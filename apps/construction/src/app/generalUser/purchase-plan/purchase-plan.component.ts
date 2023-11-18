@@ -1,8 +1,8 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of, finalize, take } from 'rxjs';
+import { tap } from 'rxjs';
 import { PlanInterface } from '../../models/plan';
 import { StorageService } from '../../services/storage.service';
 import { EncryptionService } from '../../services/encryption-service';
@@ -68,12 +68,16 @@ export class PurchasePlanComponent {
           takeUntilDestroyed(this.destroyRef),
           tap((response) => {
             this.storageService.updatePlan(response?.plan);
-            this.toastService.success('Plan purchased. ', 'Success', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
+            this.toastService.success(
+              'Plan Purchase Successful. ',
+              'Successful',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
           })
         )
         .subscribe();

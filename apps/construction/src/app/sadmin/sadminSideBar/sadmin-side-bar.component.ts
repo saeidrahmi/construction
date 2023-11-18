@@ -2,7 +2,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from './../../services/storage.service';
 import { Component, DestroyRef, inject } from '@angular/core';
-
 @Component({
   selector: 'construction-sadmin-side-bar',
   templateUrl: './sadmin-side-bar.component.html',
@@ -13,7 +12,6 @@ export class SAdminSideBarComponent {
   userPermissions = this.storageService.getUserPermissions();
   userRole = this.storageService.getUserRole();
   apiService = inject(ApiService);
-
   destroyRef = inject(DestroyRef);
   logout() {
     this.storageService.updateIsLoading(true);

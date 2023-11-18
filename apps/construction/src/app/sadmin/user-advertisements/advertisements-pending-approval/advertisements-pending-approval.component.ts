@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { take, tap, catchError, of, switchMap, map } from 'rxjs';
+import { tap, catchError, of, switchMap } from 'rxjs';
 import { AdvertisementInterface } from '../../../models/advertisement';
 import { AdvertisementCommunicationService } from '../../../services/advertisementServcie';
 import { CommonUtilityService } from '../../../services/common-utility.service';
@@ -32,7 +32,6 @@ export class AdvertisementsPendingApprovalComponent {
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   userService = inject(UserService);
-
   fb = inject(FormBuilder);
   storageService = inject(StorageService);
   advertisementCommunicationService = inject(AdvertisementCommunicationService);
@@ -87,7 +86,7 @@ export class AdvertisementsPendingApprovalComponent {
         takeUntilDestroyed(this.destroyRef),
 
         tap((list: any) => {
-          this.toastService.success('Updated. ', 'Success', {
+          this.toastService.success('Ad. approved successfully. ', 'Success', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,
@@ -107,7 +106,7 @@ export class AdvertisementsPendingApprovalComponent {
         takeUntilDestroyed(this.destroyRef),
 
         tap(() => {
-          this.toastService.success('Deleted. ', 'Success', {
+          this.toastService.success('Ad. rejected successfully. ', 'Success', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,

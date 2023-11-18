@@ -1,5 +1,4 @@
 import { HttpClient } from '@angular/common/http';
-import { SubHeaderComponent } from './../../public/sub-header/sub-header.component';
 import { UserService } from './../../services/user-service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import {
@@ -13,16 +12,7 @@ import {
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import {
-  Observable,
-  startWith,
-  map,
-  catchError,
-  of,
-  tap,
-  first,
-  take,
-} from 'rxjs';
+import { Observable, startWith, map, tap } from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
@@ -79,8 +69,7 @@ export class UserServicesComponent {
   constructor(
     private userService: UserService,
     private apiService: ApiService,
-    private fb: FormBuilder,
-    private http: HttpClient
+    private fb: FormBuilder
   ) {
     this.form = this.fb.group({
       city: new FormControl(),
@@ -136,7 +125,7 @@ export class UserServicesComponent {
   addService(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value && this.myServices.includes(value)) {
-      this.toastService.error('Service already added. ', 'No update', {
+      this.toastService.error('Service exists. ', 'Error', {
         timeOut: 3000,
         positionClass: 'toast-top-right',
         closeButton: true,
@@ -181,16 +170,12 @@ export class UserServicesComponent {
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
-            this.toastService.success(
-              'Services updated.',
-              'Update Successful',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
+            this.toastService.success('Services removed.', 'Successful', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
           })
         )
         .subscribe();
@@ -201,7 +186,7 @@ export class UserServicesComponent {
   selectedService(event: MatAutocompleteSelectedEvent): void {
     const value = event.option.viewValue;
     if (this.myServices.includes(value))
-      this.toastService.error('Service already added. ', 'No update', {
+      this.toastService.error('Service exist. ', 'Error', {
         timeOut: 3000,
         positionClass: 'toast-top-right',
         closeButton: true,
@@ -282,7 +267,7 @@ export class UserServicesComponent {
   selectProvince(event: MatAutocompleteSelectedEvent): void {
     const value = event.option.viewValue;
     if (this.myProvinces.includes(value))
-      this.toastService.error('City already added. ', 'No update', {
+      this.toastService.error('Province already added. ', 'No update', {
         timeOut: 3000,
         positionClass: 'toast-top-right',
         closeButton: true,

@@ -320,7 +320,7 @@ async function getAllUsersAdvertisementsPendingApproval(req, res) {
 async function approveAdvertisement(req, res) {
   try {
     const userAdvertisementId = req.body.userAdvertisementId;
-    console.log(userAdvertisementId);
+
     const selectQuery = `UPDATE userAdvertisements set   approvedByAdmin = 1,  rejected=0 , rejectedReason='' where userAdvertisementId =?`;
     const selectResult = await executeQuery(selectQuery, [userAdvertisementId]);
     return res.status(200).json(selectResult);
@@ -334,7 +334,7 @@ async function rejectAdvertisement(req, res) {
   try {
     const userAdvertisementId = req.body.userAdvertisementId;
     const reason = req.body.rejectReason;
-    console.log(userAdvertisementId);
+
     const selectQuery = `UPDATE userAdvertisements set   approvedByAdmin = 0,  rejected=1 , rejectedReason=? where userAdvertisementId =?`;
     const selectResult = await executeQuery(selectQuery, [
       reason,
@@ -505,7 +505,6 @@ async function createNewUserController(req, res) {
 
       const [result] = await connection.execute(query, values);
 
-      console.log(result);
       if (result.affectedRows === 0) {
         await connection.rollback();
         return res
@@ -576,9 +575,8 @@ async function updateUserPermissionController(req, res) {
     viewPendingAdvertisements=?,approveAdvertisement=?,allowPlanActions=?,
     allowUserActions=? , viewRfps=?, approvedRfps=? WHERE userId =?`;
 
-    console.log(updateQuery, values);
     const updateResult = await executeQuery(updateQuery, values);
-    console.log(updateResult);
+
     if (updateResult.affectedRows > 0) {
       return res.status(200).json(userPermissions);
     } else

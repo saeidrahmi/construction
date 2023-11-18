@@ -1,16 +1,15 @@
 import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../../services/api.service';
 import { EncryptionService } from '../../services/encryption-service';
 import { FormService } from '../../services/form.service';
 import { StorageService } from '../../services/storage.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { take, tap, catchError, of, switchMap } from 'rxjs';
+import { tap, switchMap } from 'rxjs';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { UserApiResponseInterface } from 'libs/common/src/models/user-response';
 
 @Component({
   selector: 'app-user-messages',
@@ -47,7 +46,6 @@ export class UserMessagesComponent {
       takeUntilDestroyed(this.destroyRef),
 
       tap((messages: any) => {
-        console.log(messages, 'messages');
         this.dataSource = new MatTableDataSource(messages);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
@@ -71,7 +69,6 @@ export class UserMessagesComponent {
     }
   }
   deleteMessage(row: any) {
-    console.log(row, 'row');
     if (row.messageId) {
       this.storageService.updateIsLoading(true);
       this.apiService
@@ -84,12 +81,16 @@ export class UserMessagesComponent {
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
-            this.toastService.success('User updated.', 'Update Successful', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
+            this.toastService.success(
+              'Message deleted successfully.',
+              'Successful',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
           }),
 
           switchMap(() => this.getAdvertisementMessges$)

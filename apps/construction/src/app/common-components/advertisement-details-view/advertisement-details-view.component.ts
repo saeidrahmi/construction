@@ -96,7 +96,7 @@ export class AdvertisementDetailsViewComponent {
                 }
               });
               this.userInfo = info?.userInfo;
-              console.log(this.userInfo, 'info');
+
               this.registeredDate = new Date(info?.registeredDate);
               this.acitveAds = info.acitveAds;
               this.rate = info.userRate;

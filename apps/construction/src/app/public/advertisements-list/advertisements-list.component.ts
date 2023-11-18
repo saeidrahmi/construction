@@ -1,12 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { ToastrService } from 'ngx-toastr';
-import { take, tap, catchError, of } from 'rxjs';
-import { AdvertisementCommunicationService } from '../../services/advertisementServcie';
+import { tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { ImageService } from '../../services/image-service';
@@ -33,11 +32,9 @@ export class AdvertisementsListComponent {
   apiService = inject(ApiService);
   userService = inject(UserService);
   storageService = inject(StorageService);
-
   commonUtility = inject(CommonUtilityService);
   destroyRef = inject(DestroyRef);
   allAdvertisements: any[] = [];
-
   user = this.storageService?.getUser();
   currentDate = new Date();
   constructor() {

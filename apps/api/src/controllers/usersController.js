@@ -738,7 +738,7 @@ async function completeResetPasswordController(req, res) {
       `SELECT password,previousPassword FROM users WHERE userId = ? and jwtToken = ?`,
       [userId, token]
     );
-    console.log('here', existingUser);
+
     if (
       existingUser.length > 0 &&
       existingUser[0].previousPassword &&
@@ -1306,7 +1306,7 @@ async function canUserAdvertiseController(req, res) {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const selectQuery1 = `SELECT userPlans.userPlanId ,plans.numberOfAdvertisements FROM userPlans JOIN plans ON userPlans.planId  = plans.planId  WHERE  userPlans.userId = ? and userPlans.userPlanActive=1  `;
     const selectResult1 = await executeQuery(selectQuery1, [userId]);
-    console.log(selectResult1);
+
     if (selectResult1?.length > 0) {
       const selectQuery = `select count(*) as count from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId  where userAdvertisements.userPlanId=? `;
       const selectResult = await executeQuery(selectQuery, [
@@ -2434,7 +2434,7 @@ async function promoteTopAdvertisementController(req, res) {
     const [updateResult] = await connection.execute(updateQuery, [
       userAdvertisementId,
     ]);
-    console.log('her1', updateResult);
+
     if (updateResult.affectedRows === 0) {
       await connection.rollback();
       return res.status(500).json({
@@ -2452,7 +2452,7 @@ async function promoteTopAdvertisementController(req, res) {
         totalPayment: paymentInfo.totalPayment,
       }
     );
-    console.log('her');
+
     if (!insertPaymentResult) {
       await connection.rollback();
       return res.status(500).json({

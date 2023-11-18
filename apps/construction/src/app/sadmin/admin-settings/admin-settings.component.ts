@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormGroup,
@@ -8,7 +8,6 @@ import {
 } from '@angular/forms';
 import { FormService } from '../../services/form.service';
 import { AdminSettingsInterface } from 'libs/common/src/models/admin-settings';
-import { UserApiResponseInterface } from 'libs/common/src/models/user-response';
 import { ToastrService } from 'ngx-toastr';
 import { tap, catchError, of, take } from 'rxjs';
 import { ApiService } from '../../services/api.service';
@@ -25,9 +24,7 @@ export class AdminSettingsComponent {
   setting: AdminSettingsInterface = {};
   apiService = inject(ApiService);
   toastService = inject(ToastrService);
-
   destroyRef = inject(DestroyRef);
-
   planType = '';
   storageService = inject(StorageService);
   router = inject(Router);
@@ -90,7 +87,7 @@ export class AdminSettingsComponent {
           tap((setting: AdminSettingsInterface) => {
             this.setting = setting;
             this.initialSetting = setting;
-            this.toastService.success('Updated.', 'Update Successful', {
+            this.toastService.success('Update Successful.', 'Success', {
               timeOut: 3000,
               positionClass: 'toast-top-right',
               closeButton: true,

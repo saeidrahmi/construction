@@ -46,12 +46,7 @@ export class SignupComponent {
   destroyRef = inject(DestroyRef);
   serverError: any;
   info!: any;
-  constructor(
-    private route: ActivatedRoute,
-    private fb: FormBuilder,
-    private commonUtility: CommonUtilityService,
-    private router: Router
-  ) {
+  constructor(private route: ActivatedRoute, private fb: FormBuilder) {
     // this.userId = this.route.snapshot.queryParams['email'];
     this.route.queryParams.pipe(takeUntilDestroyed()).subscribe((params) => {
       this.userId = params['email'];

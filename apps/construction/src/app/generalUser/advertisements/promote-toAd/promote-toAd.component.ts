@@ -1,10 +1,10 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
-import { catchError, of, take, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -62,7 +62,7 @@ export class PromoteToAdComponent {
         takeUntilDestroyed(this.destroyRef),
         tap(() => {
           this.router.navigate(['/general/user-advertisements']);
-          this.toastService.success('Updated. ', 'Success', {
+          this.toastService.success('Saved Successfully.', 'Successful', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,

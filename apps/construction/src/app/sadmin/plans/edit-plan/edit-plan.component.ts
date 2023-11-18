@@ -9,14 +9,11 @@ import {
 } from '@angular/forms';
 import { FormService } from '../../../services/form.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of, take, map, switchMap } from 'rxjs';
+import { tap, map, switchMap } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { StorageService } from '../../../services/storage.service';
-
 import { PlanInterface } from '../../../models/plan';
-
 @Component({
   selector: 'app-edit-plan',
   templateUrl: './edit-plan.component.html',
@@ -36,7 +33,6 @@ export class EditPlanComponent {
   setting: AdminSettingsInterface = {};
   settingError = false;
   planId: any;
-
   router = inject(Router);
   userPermissions = this.storageService.getUserPermissions();
   userRole = this.storageService.getUserRole();
@@ -162,16 +158,12 @@ export class EditPlanComponent {
           takeUntilDestroyed(this.destroyRef),
           tap((plan: PlanInterface) => {
             this.plan = plan;
-            this.toastService.success(
-              'Update Plan.',
-              'Update Plan Successful',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
+            this.toastService.success('Plan updated successfully.', 'Success', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
           })
         )
         .subscribe();

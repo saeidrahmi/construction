@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of, filter } from 'rxjs';
+import { tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { EncryptionService } from '../../services/encryption-service';
 import { StorageService } from '../../services/storage.service';

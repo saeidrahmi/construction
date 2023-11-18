@@ -3,7 +3,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { tap, catchError, of, switchMap } from 'rxjs';
+import { tap, switchMap } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { StorageService } from '../../../services/storage.service';
@@ -54,14 +54,12 @@ export class ListPlansComponent {
       this.dataSource.sort = this.sort;
     })
   );
-
   userPermissions = this.storageService.getUserPermissions();
   userRole = this.storageService.getUserRole();
   constructor() {
     if (this.userRole() != 'SAdmin' && !this.userPermissions().listPlans)
       this.router.navigate(['/admin/user-profile']);
     // Assign the data to the data source for the table to render
-
     this.getPlans$.subscribe();
   }
 
@@ -72,7 +70,6 @@ export class ListPlansComponent {
       this.dataSource.paginator.firstPage();
     }
   }
-
   changePlanStatus(planId: string, activate: boolean) {
     this.apiService
       .updatePlanActivationStatus(planId, activate)

@@ -1,19 +1,11 @@
-import {
-  Component,
-  DestroyRef,
-  OnInit,
-  ViewChild,
-  inject,
-} from '@angular/core';
+import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-
 import { BaseChartDirective } from 'ng2-charts';
 import { ToastrService } from 'ngx-toastr';
-import { take, tap, catchError, of, switchMap } from 'rxjs';
+import { tap, switchMap } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { StorageService } from '../../../services/storage.service';
 import { ChartOptions } from 'chart.js';
-
 @Component({
   selector: 'app-user-dashboard-details',
   templateUrl: './user-dashboard-details.component.html',
@@ -25,7 +17,6 @@ export class UserDashboardDetailsComponent {
   storageService = inject(StorageService);
   destroyRef = inject(DestroyRef);
   @ViewChild(BaseChartDirective) chart: BaseChartDirective | undefined;
-
   barChartOptions: any = {
     responsive: true,
   };
@@ -35,7 +26,6 @@ export class UserDashboardDetailsComponent {
   barChartDetailsDailyLabels: string[] = [];
   barChartDetailsMonthlyLabels: string[] = [];
   barChartYearlyDetailsLabels: string[] = [];
-
   barChartType = 'bar';
   barChartLegend = true;
   barChartDataDaily: any[] = [{ data: [], label: 'Daily Registrations' }];

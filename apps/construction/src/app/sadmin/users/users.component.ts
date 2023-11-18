@@ -1,23 +1,15 @@
-import {
-  AfterViewInit,
-  Component,
-  DestroyRef,
-  ViewChild,
-  inject,
-} from '@angular/core';
+import { Component, DestroyRef, ViewChild, inject } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { tap, catchError, of } from 'rxjs';
+import { tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { ToastrService } from 'ngx-toastr';
 import { StorageService } from '../../services/storage.service';
 import { UserApiResponseInterface } from 'libs/common/src/models/user-response';
 import { ImageService } from '../../services/image-service';
 import { Router } from '@angular/router';
-
 @Component({
   selector: 'construction-users',
   templateUrl: './users.component.html',
@@ -78,7 +70,6 @@ export class UsersComponent {
       .subscribe();
   }
   viewUserInfo(user: any) {
-    console.log(user);
     this.storageService.updateUserSelected(user);
     this.router.navigate(['/admin/view-user']);
   }
@@ -114,12 +105,16 @@ export class UsersComponent {
             this.dataSource = new MatTableDataSource(users);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
-            this.toastService.success('User updated.', 'Update Successful', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
+            this.toastService.success(
+              'Account deleted successfully.',
+              'Success',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
           })
         )
         .subscribe();
@@ -135,7 +130,7 @@ export class UsersComponent {
           this.dataSource = new MatTableDataSource(users);
           this.dataSource.paginator = this.paginator;
           this.dataSource.sort = this.sort;
-          this.toastService.success('User updated.', 'Update Successful', {
+          this.toastService.success('Account status updated.', 'Success', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,

@@ -1,21 +1,9 @@
-import { UserInterface } from '../../models/user';
-import {
-  Component,
-  OnInit,
-  inject,
-  DestroyRef,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, signal } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
   FormControl,
   Validators,
-  ValidatorFn,
-  AbstractControl,
-  ValidationErrors,
   ReactiveFormsModule,
   FormsModule,
 } from '@angular/forms';
@@ -26,7 +14,7 @@ import {
   RouterModule,
 } from '@angular/router';
 
-import { takeUntil, tap, catchError, of, finalize } from 'rxjs';
+import { tap } from 'rxjs';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
@@ -40,7 +28,6 @@ import { FormService } from '../../services/form.service';
 import { StorageService } from '../../services/storage.service';
 import { UserRoutingService } from '../../services/user-routing.service';
 import { ValidatorsService } from '../../services/validators.service';
-import { UserService } from '../../services/user-service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -153,12 +140,16 @@ export class CompleteResetPasswordComponent implements OnInit {
           takeUntilDestroyed(this.destroyRef),
 
           tap(() => {
-            this.toastService.success('Plan purchased. ', 'Success', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
+            this.toastService.success(
+              'Password reset successful. ',
+              'Success',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
             this.router.navigate(['/login']);
           })
         )

@@ -53,7 +53,7 @@ function verifyToken(allowedRoles) {
 function verifyTokenWithNoRole() {
   return async function (req, res, next) {
     try {
-      // console.log('here oiajsdi', req);
+
       const authorizationHeader = req.headers.authorization;
 
       if (

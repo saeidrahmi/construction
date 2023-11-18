@@ -1,12 +1,9 @@
-import { Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
 import { Component, Input, inject } from '@angular/core';
 import { AdvertisementInterface } from '../../../../models/advertisement';
 import { StorageService } from '../../../../services/storage.service';
 import { UserService } from '../../../../services/user-service';
-
-import { FormsModule } from '@angular/forms';
-
 @Component({
   selector: 'app-admin-advertisement-view',
   templateUrl: './advertisement-view.component.html',
@@ -14,13 +11,11 @@ import { FormsModule } from '@angular/forms';
 })
 export class AdminAdvertisementViewComponent {
   @Input('advertisement') advertisement: AdvertisementInterface = {};
-
   storageService = inject(StorageService);
   userService = inject(UserService);
   router = inject(Router);
   user = this.storageService.getUser();
   isUserLoggedIn = this.storageService.isUserLoggedIn();
-
   constructor() {}
 
   navigateDetails(userAdvertisementId) {

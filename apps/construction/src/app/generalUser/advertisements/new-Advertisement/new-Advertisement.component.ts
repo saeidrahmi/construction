@@ -1,7 +1,7 @@
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of, first, take, switchMap } from 'rxjs';
+import { tap, catchError, of, switchMap } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
@@ -329,16 +329,12 @@ export class NewAdvertisementComponent {
             this.form.reset();
             stepper.reset();
             this.storageService.clearAdvertisementInfo();
-            this.toastService.success(
-              'Saved Successfully. ',
-              'Saved Successfully',
-              {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              }
-            );
+            this.toastService.success('Saved Successfully. ', 'Successful', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
           }),
 
           switchMap(() => this.getUserAdvertiseInfo$)
@@ -370,8 +366,8 @@ export class NewAdvertisementComponent {
     this.files = [...this.files, ...newFiles];
     if (this.files.length > this.maxAdvertisementSliderImage) {
       this.toastService.error(
-        `You can upload only ${this.maxAdvertisementSliderImage}`,
-        'Server failure',
+        `You can upload only ${this.maxAdvertisementSliderImage} images`,
+        'Error',
         {
           timeOut: 3000,
           positionClass: 'toast-top-right',
@@ -409,7 +405,7 @@ export class NewAdvertisementComponent {
       );
     } else if (!fileSize || fileSize > maxFileSize) {
       this.toastService.error(
-        'File size cannot be empty and cannot exceed the maximum limit of 1 MB',
+        `File size cannot be empty and cannot exceed the maximum limit of ${maxFileSize}`,
         'Wrong File Size',
         {
           /* Your toast options */

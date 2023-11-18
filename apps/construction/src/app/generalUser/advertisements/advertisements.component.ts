@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
-import { take, tap, catchError, of, switchMap, map } from 'rxjs';
+import { tap, switchMap } from 'rxjs';
 import { AdvertisementInterface } from '../../models/advertisement';
 import { AdvertisementCommunicationService } from '../../services/advertisementServcie';
 import { CommonUtilityService } from '../../services/common-utility.service';
@@ -96,7 +96,7 @@ export class AdvertisementsComponent {
         takeUntilDestroyed(this.destroyRef),
 
         tap(() => {
-          this.toastService.success('Updated. ', 'Success', {
+          this.toastService.success('Saved Successfully. ', 'Successful', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,
@@ -117,9 +117,8 @@ export class AdvertisementsComponent {
 
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-
         tap((list: any) => {
-          this.toastService.success('Deleted. ', 'Success', {
+          this.toastService.success('Deleted successfully. ', 'Successful', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,
@@ -154,18 +153,22 @@ export class AdvertisementsComponent {
               .pipe(
                 takeUntilDestroyed(this.destroyRef),
                 tap((list: any) => {
-                  this.toastService.success('Deleted. ', 'Success', {
-                    timeOut: 3000,
-                    positionClass: 'toast-top-right',
-                    closeButton: true,
-                    progressBar: true,
-                  });
+                  this.toastService.success(
+                    'Ad. posted successfully. ',
+                    'Successful',
+                    {
+                      timeOut: 3000,
+                      positionClass: 'toast-top-right',
+                      closeButton: true,
+                      progressBar: true,
+                    }
+                  );
                 })
               );
           } else {
             this.toastService.error(
               'You have no sufficient balance to create new advertisement. please purchase a plan . ',
-              'Plan failure',
+              'Error',
               {
                 timeOut: 3000,
                 positionClass: 'toast-top-right',

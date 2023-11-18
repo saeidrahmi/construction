@@ -1,21 +1,14 @@
 import { CommonUtilityService } from '../../../services/common-utility.service';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
 import { StorageService } from '../../../services/storage.service';
-import {
-  FormGroup,
-  FormControl,
-  Validators,
-  FormBuilder,
-} from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder } from '@angular/forms';
 import { EnvironmentInfo } from 'libs/common/src/models/common';
 import { FormService } from '../../../services/form.service';
 import { UserPermissionsInterface } from '../../../models/user-permissions';
-import { catchError, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AdminSettingsInterface } from 'libs/common/src/models/admin-settings';
-import { of } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../../services/encryption-service';
 
@@ -35,13 +28,11 @@ export class ChangeUserPermissionComponent {
   form: FormGroup;
   selectedRole: string;
   env: EnvironmentInfo = new EnvironmentInfo();
-
   roles = this.env.getRoles();
   formService = inject(FormService);
   userPermissions: UserPermissionsInterface = {};
   userPermission = this.storageService.getUserPermissions();
   userRole = this.storageService.getUserRole();
-
   getUserIdEdited = this.storageService.getUserIdEdited();
   constructor(private fb: FormBuilder) {
     if (
@@ -119,7 +110,7 @@ export class ChangeUserPermissionComponent {
         tap((userPermissions: any) => {
           this.userPermission = userPermissions;
           // this.router.navigate(['/admin/users']);
-          this.toastService.success('Updated.', 'Update Successful', {
+          this.toastService.success('Updated Successfully.', 'Success', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,

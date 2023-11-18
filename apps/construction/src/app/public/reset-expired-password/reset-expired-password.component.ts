@@ -1,46 +1,28 @@
-import { UserInterface } from '../../models/user';
-import {
-  Component,
-  OnInit,
-  inject,
-  DestroyRef,
-  signal,
-  Signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import {
   FormGroup,
   FormBuilder,
   FormControl,
   Validators,
-  ValidatorFn,
-  AbstractControl,
-  ValidationErrors,
   ReactiveFormsModule,
   FormsModule,
 } from '@angular/forms';
-import {
-  ActivatedRoute,
-  Router,
-  RouterLink,
-  RouterModule,
-} from '@angular/router';
+import { RouterLink, RouterModule } from '@angular/router';
 
-import { takeUntil, tap, catchError, of, finalize } from 'rxjs';
+import { tap, catchError, of } from 'rxjs';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../services/api.service';
 import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
 import { FormErrorsComponent } from '../form-errors.component';
 import { SpinnerComponent } from '../spinner/spinner.component';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { EnvironmentInfo } from 'libs/common/src/models/common';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { FormService } from '../../services/form.service';
 import { StorageService } from '../../services/storage.service';
 import { UserRoutingService } from '../../services/user-routing.service';
 import { ValidatorsService } from '../../services/validators.service';
-import { UserService } from '../../services/user-service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -76,14 +58,12 @@ export class ResetExpiredPasswordComponent implements OnInit {
   userRouting = inject(UserRoutingService);
   storageService = inject(StorageService);
   loading = this.storageService.isLoading();
-
   constructor(
     private fb: FormBuilder,
     private apiService: ApiService,
     private formService: FormService,
     public commonUtility: CommonUtilityService
   ) {}
-
   ngOnInit(): void {
     this.form = this.fb.group({
       currentPassword: new FormControl('', [Validators.required]),
@@ -133,8 +113,8 @@ export class ResetExpiredPasswordComponent implements OnInit {
             this.storageService.updatePasswordResetDateFlag(new Date());
             this.userRouting.navigateToUserMainPage();
             this.toastService.success(
-              'Saved Successfully. ',
-              'Saved Successfully',
+              'Password reset Successful. ',
+              'Successful',
               {
                 timeOut: 3000,
                 positionClass: 'toast-top-right',
