@@ -41,6 +41,7 @@ import { StorageService } from '../../services/storage.service';
 import { UserRoutingService } from '../../services/user-routing.service';
 import { ValidatorsService } from '../../services/validators.service';
 import { UserService } from '../../services/user-service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'construction-change-password',
@@ -69,12 +70,14 @@ export class CompleteResetPasswordComponent implements OnInit {
   useCase: string = 'Personal purpose';
   form!: FormGroup;
   destroyRef = inject(DestroyRef);
+  toastService = inject(ToastrService);
   validatorsService = inject(ValidatorsService);
   userRouting = inject(UserRoutingService);
   storageService = inject(StorageService);
   options: string[] = ['Personal purpose', 'Business purpose'];
   token: string | null = '';
   tokenValid = signal<boolean>(false);
+  showPassword: boolean = false;
   loading = this.storageService.isLoading();
   constructor(
     private route: ActivatedRoute,
@@ -106,8 +109,17 @@ export class CompleteResetPasswordComponent implements OnInit {
               this.tokenValid.set(response);
             }),
             catchError((err) => {
-              this.serverError = err;
               this.tokenValid.set(false);
+              this.toastService.error(
+                'Plan list failed. ' + err,
+                'Plan failure',
+                {
+                  timeOut: 3000,
+                  positionClass: 'toast-top-right',
+                  closeButton: true,
+                  progressBar: true,
+                }
+              );
               return of(false);
             })
           )
@@ -155,10 +167,25 @@ export class CompleteResetPasswordComponent implements OnInit {
           takeUntilDestroyed(this.destroyRef),
           finalize(() => {}),
           tap((response) => {
+            this.toastService.success('Plan purchased. ', 'Success', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
             this.router.navigate(['/login']);
           }),
           catchError((err) => {
-            this.serverError = err;
+            this.toastService.error(
+              'Plan list failed. ' + err,
+              'Plan failure',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
             return of(err);
           })
         )
@@ -168,5 +195,8 @@ export class CompleteResetPasswordComponent implements OnInit {
         this.form
       );
     }
+  }
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
   }
 }

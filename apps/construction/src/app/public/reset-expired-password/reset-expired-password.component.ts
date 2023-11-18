@@ -65,6 +65,8 @@ export class ResetExpiredPasswordComponent implements OnInit {
   password = '';
   currentPassword = '';
   confirmPassword = '';
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
   serverError = '';
   formErrors: string[] = [];
   form!: FormGroup;
@@ -97,6 +99,12 @@ export class ResetExpiredPasswordComponent implements OnInit {
       confirmPassword: new FormControl('', [Validators.required]),
     });
     this.form.setValidators([this.validatorsService.matchPassword]);
+  }
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   changePassword(): void {

@@ -41,6 +41,7 @@ import { StorageService } from '../../services/storage.service';
 import { UserRoutingService } from '../../services/user-routing.service';
 import { ValidatorsService } from '../../services/validators.service';
 import { UserService } from '../../services/user-service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'construction-change-password',
@@ -66,13 +67,16 @@ export class ChangePasswordComponent implements OnInit {
   confirmPassword: string = '';
   serverError: string = '';
   formErrors: string[] = [];
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
+
   form!: FormGroup;
   destroyRef = inject(DestroyRef);
+  toastService = inject(ToastrService);
   validatorsService = inject(ValidatorsService);
   userRouting = inject(UserRoutingService);
   storageService = inject(StorageService);
   loading = this.storageService.isLoading();
-  changeSuccuss: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -124,10 +128,24 @@ export class ChangePasswordComponent implements OnInit {
             this.storageService.updateIsLoading(false);
           }),
           tap((response) => {
-            this.changeSuccuss = true;
+            this.toastService.success('Plan purchased. ', 'Success', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
           }),
           catchError((err) => {
-            this.serverError = err;
+            this.toastService.error(
+              'Plan list failed. ' + err,
+              'Plan failure',
+              {
+                timeOut: 3000,
+                positionClass: 'toast-top-right',
+                closeButton: true,
+                progressBar: true,
+              }
+            );
             return of(err);
           })
         )
@@ -137,5 +155,12 @@ export class ChangePasswordComponent implements OnInit {
         this.form
       );
     }
+  }
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
+  toggleConfirmPasswordVisibility() {
+    this.showConfirmPassword = !this.showConfirmPassword;
   }
 }

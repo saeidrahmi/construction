@@ -742,7 +742,9 @@ async function completeResetPasswordController(req, res) {
     if (
       existingUser.length > 0 &&
       existingUser[0].previousPassword &&
-      password === decryptItem(existingUser[0]?.previousPassword, dbSecretKey)
+      (password ===
+        decryptItem(existingUser[0]?.previousPassword, dbSecretKey) ||
+        password === decryptItem(existingUser[0]?.password, dbSecretKey))
     ) {
       return res.status(500).json({
         errorMessage: 'Failed to change the password. Please try again.',
@@ -920,8 +922,9 @@ async function changePasswordController(req, res) {
     ) {
       if (
         existingUser[0].previousPassword &&
-        newPassword ===
-          decryptItem(existingUser[0]?.previousPassword, dbSecretKey)
+        (newPassword ===
+          decryptItem(existingUser[0]?.previousPassword, dbSecretKey) ||
+          newPassword === decryptItem(existingUser[0].password, dbSecretKey))
       ) {
         return res.status(500).json({
           errorMessage: 'Failed to change the password. Please try again.',
