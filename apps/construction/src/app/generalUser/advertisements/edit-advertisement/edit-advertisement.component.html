@@ -76,10 +76,43 @@
                               (change)="headerImageHandler($event)"
                             />
                             <div id="fileHelpBlock" class="form-text">
-                              <span class="small-text">
-                                Max image size for profile pictures is 180 by
-                                180 pixels with a maximum file size of 1 MB
-                                (megabyte).</span
+                              <span class="small-text mx-2">
+                                Acceptable image file ({{
+                                  this.commonUtility._imageMimeTypes
+                                }}). <br
+                              /></span>
+                              <span class="small-text mx-2">
+                                Header image width should be between
+                                {{
+                                  this.commonUtility
+                                    ._advertisementHeaderMinMaxWidthHeightPixel[0][0]
+                                }}
+                                -
+                                {{
+                                  this.commonUtility
+                                    ._advertisementHeaderMinMaxWidthHeightPixel[0][1]
+                                }}
+                                pixels. Header image height should be between
+                                {{
+                                  this.commonUtility
+                                    ._advertisementHeaderMinMaxWidthHeightPixel[1][0]
+                                }}
+                                -
+                                {{
+                                  this.commonUtility
+                                    ._advertisementHeaderMinMaxWidthHeightPixel[1][1]
+                                }}
+                                pixels. <br />
+                              </span>
+                              <span class="small-text mx-2">
+                                Maximum file size of
+                                {{
+                                  utilityService.convertBytesToKbOrMb(
+                                    this.commonUtility
+                                      ._advertisementHeaderMaxSize
+                                  )
+                                }}
+                                .</span
                               >
                             </div>
                           </div>
@@ -96,6 +129,7 @@
                                     <th>File name</th>
                                     <th>File type</th>
                                     <th>File size</th>
+                                    <th>Dimensions</th>
 
                                     <th>Action</th>
                                   </tr>
@@ -111,7 +145,13 @@
                                         )
                                       }}
                                     </td>
-
+                                    <td>
+                                      {{
+                                        headerImageFile.width +
+                                          ' X ' +
+                                          headerImageFile.height
+                                      }}
+                                    </td>
                                     <td>
                                       <button (click)="deleteHeaderImage()">
                                         Delete
@@ -119,7 +159,7 @@
                                     </td>
                                   </tr>
                                   <tr>
-                                    <td colspan="4" style="text-align: center">
+                                    <td colspan="5" style="text-align: center">
                                       <img
                                         [src]="this.advertisement?.headerImage"
                                         style="
@@ -303,10 +343,51 @@
                         <div class="row">
                           <div class="col">
                             <h5>Slider Images</h5>
-                            <h6>
-                              You can upload up to
-                              {{ maxAdvertisementSliderImage }} images
-                            </h6>
+                            <div id="fileHelpBlock" class="form-text">
+                              <span class="small-text mx-2">
+                                You can upload up to
+                                {{ maxAdvertisementSliderImage }} images
+                              </span>
+                              <br />
+
+                              <span class="small-text mx-2">
+                                Acceptable image file ({{
+                                  this.commonUtility._imageMimeTypes
+                                }}). <br
+                              /></span>
+                              <span class="small-text mx-2">
+                                Slider image width should be between
+                                {{
+                                  this.commonUtility
+                                    ._sliderPhotoMinMaxWidthHeightPixel[0][0]
+                                }}
+                                -
+                                {{
+                                  this.commonUtility
+                                    ._sliderPhotoMinMaxWidthHeightPixel[0][1]
+                                }}
+
+                                Height should be between
+                                {{
+                                  this.commonUtility
+                                    ._sliderPhotoMinMaxWidthHeightPixel[1][0]
+                                }}
+                                -
+                                {{
+                                  this.commonUtility
+                                    ._sliderPhotoMinMaxWidthHeightPixel[1][1]
+                                }}. <br />
+                              </span>
+                              <span class="small-text mx-2">
+                                Maximum file size of
+                                {{
+                                  utilityService.convertBytesToKbOrMb(
+                                    this.commonUtility._sliderPhotoMaxSize
+                                  )
+                                }}
+                                .</span
+                              >
+                            </div>
                           </div>
                         </div>
                         <div class="row">
@@ -328,6 +409,7 @@
                                     <th>File name</th>
                                     <th>File type</th>
                                     <th>File size</th>
+                                    <th>Dimensions</th>
 
                                     <th>Action</th>
                                   </tr>
@@ -350,7 +432,9 @@
                                           )
                                         }}
                                       </td>
-
+                                      <td>
+                                        {{ file.width + ' X ' + file.height }}
+                                      </td>
                                       <td>
                                         <button (click)="onFileDeleted(i)">
                                           Delete

@@ -82,24 +82,34 @@ export class EditAdvertisementComponent {
                 this.sliderImages = [];
 
                 if (results[0].headerImage) {
-                  const uint8Array = new Uint8Array(
-                    results[0].headerImage.data
-                  );
                   const blob = new Blob(
                     [new Uint8Array(results[0].headerImage.data)],
                     {
                       type: 'image/jpeg',
                     }
-                  ); // Adjust 'image/jpeg' to the correct image MIME type
-                  const imageUrl = URL.createObjectURL(blob);
-                  this.advertisement.headerImageUrl = `url(${imageUrl})`;
-                  this.advertisement.headerImage = imageUrl;
+                  );
 
                   const temporaryFile = new File([blob], 'example.jpg', {
                     type: 'image/jpeg',
                   });
 
-                  this.headerImageFile = temporaryFile;
+                  // Create an Image object to get the dimensions
+                  const img = new Image();
+                  img.src = URL.createObjectURL(blob);
+
+                  img.onload = () => {
+                    // Set the dimensions on the headerImageFile
+                    temporaryFile['width'] = img.width;
+                    temporaryFile['height'] = img.height;
+
+                    // Now you can use temporaryFile with its dimensions
+                    this.headerImageFile = temporaryFile;
+                  };
+
+                  // Set the header image URL
+                  const imageUrl = URL.createObjectURL(blob);
+                  this.advertisement.headerImageUrl = `url(${imageUrl})`;
+                  this.advertisement.headerImage = imageUrl;
                 }
 
                 //this.advertisement.dateCreated = new Date();
@@ -211,48 +221,122 @@ export class EditAdvertisementComponent {
     this.advertisement.headerImage = null;
     this.advertisement.headerImageUrl = null;
   }
-  headerImageHandler(event: any) {
-    const headerImageFile = event?.target?.files[0];
-    const imageUrl = URL.createObjectURL(headerImageFile);
-    this.advertisement.headerImageUrl = `url(${imageUrl})`;
-    this.advertisement.headerImage = imageUrl;
-    const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
+  // headerImageHandler(event: any) {
+  //   const headerImageFile = event?.target?.files[0];
+  //   const imageUrl = URL.createObjectURL(headerImageFile);
+  //   this.advertisement.headerImageUrl = `url(${imageUrl})`;
+  //   this.advertisement.headerImage = imageUrl;
+  //   const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
 
-    const allowedFileTypes = this.commonUtility._imageMimeTypes;
+  //   const allowedFileTypes = this.commonUtility._imageMimeTypes;
+  //   if (headerImageFile) {
+  //     const fileType = headerImageFile?.name?.split('.')?.pop()?.toLowerCase();
+  //     if (fileType && !allowedFileTypes?.includes(fileType)) {
+  //       this.toastService.error(
+  //         'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+  //           allowedFileTypes.join(', '),
+  //         'Wrong File Type',
+  //         {
+  //           timeOut: 3000,
+  //           positionClass: 'toast-top-right',
+  //           closeButton: true,
+  //           progressBar: true,
+  //         }
+  //       );
+  //       //this.form.get('photo')?.setValue('');
+  //       this.headerImageFile = null;
+  //     }
+  //     if (headerImageFile?.size == 0 || headerImageFile?.size > maxFileSize) {
+  //       this.toastService.error(
+  //         'File size can not be empty and can not exceeds the maximum limit of 1 MB',
+  //         'Wrong File Size',
+  //         {
+  //           timeOut: 3000,
+  //           positionClass: 'toast-top-right',
+  //           closeButton: true,
+  //           progressBar: true,
+  //         }
+  //       );
+  //       //this.form.get('headerImage')?.setValue('');
+  //       this.headerImageFile = null;
+  //     } else {
+  //       // file ok
+  //       this.headerImageFile = headerImageFile;
+  //     }
+  //   }
+  // }
+  private handleImageError(message: string, title: string): void {
+    this.toastService.error(message, title, {
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      closeButton: true,
+      progressBar: true,
+    });
+    this.headerImageFile = null;
+  }
+
+  headerImageHandler(event: any): void {
+    const headerImageFile = event?.target?.files[0];
+
     if (headerImageFile) {
       const fileType = headerImageFile?.name?.split('.')?.pop()?.toLowerCase();
+      const allowedFileTypes = this.commonUtility._imageMimeTypes;
+      const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
+
+      // Check file type
       if (fileType && !allowedFileTypes?.includes(fileType)) {
-        this.toastService.error(
+        this.handleImageError(
           'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
             allowedFileTypes.join(', '),
-          'Wrong File Type',
-          {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          }
+          'Wrong File Type'
         );
-        //this.form.get('photo')?.setValue('');
-        this.headerImageFile = null;
+        return;
       }
-      if (headerImageFile?.size == 0 || headerImageFile?.size > maxFileSize) {
-        this.toastService.error(
-          'File size can not be empty and can not exceeds the maximum limit of 1 MB',
-          'Wrong File Size',
-          {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          }
+
+      // Check file size
+      if (headerImageFile.size === 0 || headerImageFile.size > maxFileSize) {
+        this.handleImageError(
+          `File size can not be empty and cannot exceed the maximum limit of ${this.utilityService.convertBytesToKbOrMb(
+            maxFileSize
+          )}`,
+          'Wrong File Size'
         );
-        //this.form.get('headerImage')?.setValue('');
-        this.headerImageFile = null;
-      } else {
-        // file ok
-        this.headerImageFile = headerImageFile;
+        return;
       }
+
+      // Check image dimensions
+      const [minWidth, maxWidth] =
+        this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[0];
+      const [minHeight, maxHeight] =
+        this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[1];
+
+      const img = new Image();
+      img.src = URL.createObjectURL(headerImageFile);
+
+      img.onload = () => {
+        const imageWidth = img.width;
+
+        const imageHeight = img.height;
+
+        if (
+          imageWidth < minWidth ||
+          imageWidth > maxWidth ||
+          imageHeight < minHeight ||
+          imageHeight > maxHeight
+        ) {
+          this.handleImageError(
+            `Image dimensions must be between ${minWidth}x${minHeight} and ${maxWidth}x${maxHeight} pixels.`,
+            'Invalid Image Dimensions'
+          );
+        } else {
+          // Image is within the specified dimensions
+          this.advertisement.headerImageUrl = `url(${img.src})`;
+          this.advertisement.headerImage = img.src;
+          this.headerImageFile = headerImageFile;
+          this.headerImageFile['width'] = imageWidth;
+          this.headerImageFile['height'] = imageHeight;
+        }
+      };
     }
   }
 

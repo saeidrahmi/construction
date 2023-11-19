@@ -109,42 +109,42 @@ export class NewAdvertisementComponent {
           showChat: new FormControl('', []),
           sliderImages: new FormArray([]),
         }),
-        this.fb.group({
-          sliderImages: new FormArray([]),
-        }),
+        // this.fb.group({
+        //   sliderImages: new FormArray([]),
+        // }),
       ]),
     });
   }
   get formArray(): AbstractControl | null {
     return this.form?.get('formArray');
   }
-  getClienttFormArrayControls() {
-    return (this.formArray?.get([2]).get('sliderImages') as FormArray).controls;
-  }
+  // getClienttFormArrayControls() {
+  //   return (this.formArray?.get([2]).get('sliderImages') as FormArray).controls;
+  // }
   goForward(stepper: MatStepper, index: number) {
     this.formErrors = this.formService.getFormValidationErrorMessages(
       this.formArray?.get([index]) as FormGroup
     );
     stepper.next();
   }
-  removeClientFormGroup(index: number) {
-    (this.formArray?.get([2]).get('sliderImages') as FormArray).removeAt(index);
-    this.advertisement.sliderImages?.splice(index, 1);
-    this.sliderImages?.splice(index, 1);
-  }
-  addClientFormControl() {
-    (this.formArray?.get([2]).get('sliderImages') as FormArray).push(
-      new FormGroup({
-        sliderImage: new FormControl('', [Validators.required]),
-        // sliderTitle: new FormControl('', [Validators.required]),
-        // sliderDescription: new FormControl('', [Validators.required]),
-      })
-    );
-  }
-  preview() {
-    this.advertisementCommunicationService.sendMessage(this.advertisement);
-    this.router.navigate(['/general/preview-advertisement']);
-  }
+  // removeClientFormGroup(index: number) {
+  //   (this.formArray?.get([2]).get('sliderImages') as FormArray).removeAt(index);
+  //   this.advertisement.sliderImages?.splice(index, 1);
+  //   this.sliderImages?.splice(index, 1);
+  // }
+  // addClientFormControl() {
+  //   (this.formArray?.get([2]).get('sliderImages') as FormArray).push(
+  //     new FormGroup({
+  //       sliderImage: new FormControl('', [Validators.required]),
+  //       // sliderTitle: new FormControl('', [Validators.required]),
+  //       // sliderDescription: new FormControl('', [Validators.required]),
+  //     })
+  //   );
+  // }
+  // preview() {
+  //   this.advertisementCommunicationService.sendMessage(this.advertisement);
+  //   this.router.navigate(['/general/preview-advertisement']);
+  // }
   getObjectURL(file: File): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
   }

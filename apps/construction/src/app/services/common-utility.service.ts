@@ -14,13 +14,13 @@ export class CommonUtilityService {
   _companyLogoMaxSize = 100 * 1024; // 100 KB
   _advertisementHeaderMaxSize = 100 * 1024; // 100 KB
   _advertisementHeaderMinMaxWidthHeightPixel = [
-    [140, 200], // width: 140-200,
-    [140, 200], // height: 140-200,
+    [150, 300], // width: 140-200,
+    [150, 300], // height: 140-200,
   ];
   _profilePhotoMaxSize = 1 * 1024 * 1024; // 1 MB
   _profilePhotoMinMaxWidthHeightPixel = [
-    [140, 200],
-    [140, 200],
+    [200, 200],
+    [200, 200],
   ];
   _sliderPhotoMaxSize = 1 * 1024 * 1024;
   _sliderPhotoMinMaxWidthHeightPixel = [
