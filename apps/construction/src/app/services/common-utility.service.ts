@@ -17,10 +17,10 @@ export class CommonUtilityService {
     [150, 300], // width: 140-200,
     [150, 300], // height: 140-200,
   ];
-  _profilePhotoMaxSize = 1 * 1024 * 1024; // 1 MB
+  _profilePhotoMaxSize = 100 * 1024; // 1 * 1024 * 1024; // 1 MB
   _profilePhotoMinMaxWidthHeightPixel = [
-    [200, 200],
-    [200, 200],
+    [100, 250],
+    [100, 250],
   ];
   _sliderPhotoMaxSize = 1 * 1024 * 1024;
   _sliderPhotoMinMaxWidthHeightPixel = [

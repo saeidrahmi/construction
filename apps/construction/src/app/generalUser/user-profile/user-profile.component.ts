@@ -47,6 +47,7 @@ export class UserProfileComponent {
   profileImageFile: any;
   logoImageFile: any;
   profileImageObjectUrl!: SafeUrl;
+  profileImageSrc: string;
   constructor(private fb: FormBuilder, public imageService: ImageService) {
     this.getCurrentLocation();
     this.form = this.fb.group({
@@ -229,15 +230,15 @@ export class UserProfileComponent {
       }
     });
   }
+  deleteHeaderImage() {
+    this.profileImageFile = null;
+  }
   profileImageHandler(event: any) {
-    this.profileImageFile = event?.target?.files[0];
+    const profileImageFile = event?.target?.files[0];
     const maxFileSize = this.commonUtility._profilePhotoMaxSize;
     const allowedFileTypes = this.commonUtility._imageMimeTypes;
-    if (this.profileImageFile) {
-      const fileType = this.profileImageFile?.name
-        ?.split('.')
-        ?.pop()
-        ?.toLowerCase();
+    if (profileImageFile) {
+      const fileType = profileImageFile?.name?.split('.')?.pop()?.toLowerCase();
       if (fileType && !allowedFileTypes?.includes(fileType)) {
         this.toastService.error(
           'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
@@ -252,13 +253,14 @@ export class UserProfileComponent {
         );
         this.form.get('photo')?.setValue('');
         this.profileImageFile = null;
-      }
-      if (
-        this.profileImageFile?.size == 0 ||
-        this.profileImageFile?.size > maxFileSize
+      } else if (
+        profileImageFile?.size == 0 ||
+        profileImageFile?.size > maxFileSize
       ) {
         this.toastService.error(
-          `File size can not be empty and can not exceeds the maximum limit of ${maxFileSize}`,
+          `File size can not be empty and can not exceeds the maximum limit of ${this.commonUtility.convertBytesToKbOrMb(
+            maxFileSize
+          )}`,
           'Wrong File Size',
           {
             timeOut: 3000,
@@ -270,53 +272,95 @@ export class UserProfileComponent {
         this.form.get('photo')?.setValue('');
         this.profileImageFile = null;
       } else {
-        // file ok
+        // Check image dimensions
+
+        const [minWidth, maxWidth] =
+          this.commonUtility._profilePhotoMinMaxWidthHeightPixel[0];
+        const [minHeight, maxHeight] =
+          this.commonUtility._profilePhotoMinMaxWidthHeightPixel[1];
+
+        const img = new Image();
+        img.src = URL.createObjectURL(profileImageFile);
+
+        img.onload = () => {
+          const imageWidth = img.width;
+
+          const imageHeight = img.height;
+
+          if (
+            imageWidth < minWidth ||
+            imageWidth > maxWidth ||
+            imageHeight < minHeight ||
+            imageHeight > maxHeight
+          ) {
+            this.handleImageError(
+              `Image dimensions must be between ${minWidth}x${minHeight} and ${maxWidth}x${maxHeight} pixels.`,
+              'Invalid Image Dimensions'
+            );
+            this.form.get('photo')?.setValue('');
+            this.profileImageFile = null;
+          } else {
+            this.profileImageFile = profileImageFile;
+            this.profileImageSrc = img.src;
+            this.profileImageFile['width'] = imageWidth;
+            this.profileImageFile['height'] = imageHeight;
+          }
+        };
       }
     }
   }
-  // companyLogoHandler(event: any) {
-  //   this.logoImageFile = event?.target?.files[0];
-  //   const maxFileSize = this.commonUtility._companyLogoMaxSize;
-  //   const allowedFileTypes = this.commonUtility._imageMimeTypes;
-  //   if (this.logoImageFile) {
-  //     const fileType = this.logoImageFile?.name
-  //       ?.split('.')
-  //       ?.pop()
-  //       ?.toLowerCase();
-  //     if (fileType && !allowedFileTypes?.includes(fileType)) {
-  //       this.toastService.error(
-  //         'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
-  //           allowedFileTypes.join(', '),
-  //         'Wrong File Type',
-  //         {
-  //           timeOut: 3000,
-  //           positionClass: 'toast-top-right',
-  //           closeButton: true,
-  //           progressBar: true,
-  //         }
-  //       );
-  //       this.form.get('photo')?.setValue('');
-  //       this.logoImageFile = null;
-  //     }
-  //     if (
-  //       this.logoImageFile?.size == 0 ||
-  //       this.logoImageFile?.size > maxFileSize
-  //     ) {
-  //       this.toastService.error(
-  //         'File size can not be empty and can not exceeds the maximum limit of 1 MB',
-  //         'Wrong File Size',
-  //         {
-  //           timeOut: 3000,
-  //           positionClass: 'toast-top-right',
-  //           closeButton: true,
-  //           progressBar: true,
-  //         }
-  //       );
-  //       this.form.get('photo')?.setValue('');
-  //       this.logoImageFile = null;
-  //     } else {
-  //       // file ok
-  //     }
-  //   }
-  // }
+  private handleImageError(message: string, title: string): void {
+    this.toastService.error(message, title, {
+      timeOut: 3000,
+      positionClass: 'toast-top-right',
+      closeButton: true,
+      progressBar: true,
+    });
+  }
 }
+
+// companyLogoHandler(event: any) {
+//   this.logoImageFile = event?.target?.files[0];
+//   const maxFileSize = this.commonUtility._companyLogoMaxSize;
+//   const allowedFileTypes = this.commonUtility._imageMimeTypes;
+//   if (this.logoImageFile) {
+//     const fileType = this.logoImageFile?.name
+//       ?.split('.')
+//       ?.pop()
+//       ?.toLowerCase();
+//     if (fileType && !allowedFileTypes?.includes(fileType)) {
+//       this.toastService.error(
+//         'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+//           allowedFileTypes.join(', '),
+//         'Wrong File Type',
+//         {
+//           timeOut: 3000,
+//           positionClass: 'toast-top-right',
+//           closeButton: true,
+//           progressBar: true,
+//         }
+//       );
+//       this.form.get('photo')?.setValue('');
+//       this.logoImageFile = null;
+//     }
+//     if (
+//       this.logoImageFile?.size == 0 ||
+//       this.logoImageFile?.size > maxFileSize
+//     ) {
+//       this.toastService.error(
+//         'File size can not be empty and can not exceeds the maximum limit of 1 MB',
+//         'Wrong File Size',
+//         {
+//           timeOut: 3000,
+//           positionClass: 'toast-top-right',
+//           closeButton: true,
+//           progressBar: true,
+//         }
+//       );
+//       this.form.get('photo')?.setValue('');
+//       this.logoImageFile = null;
+//     } else {
+//       // file ok
+//     }
+//   }
+// }

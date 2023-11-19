@@ -89,7 +89,7 @@ export class EditAdvertisementComponent {
                     }
                   );
 
-                  const temporaryFile = new File([blob], 'example.jpg', {
+                  const temporaryFile = new File([blob], 'image.jpg', {
                     type: 'image/jpeg',
                   });
 
@@ -125,7 +125,7 @@ export class EditAdvertisementComponent {
                     const blob = new Blob([uint8Array], {
                       type: 'image/jpeg' /* specify MIME type if known */,
                     });
-                    const temporaryFile = new File([blob], 'example.jpg', {
+                    const temporaryFile = new File([blob], 'image.jpg', {
                       type: 'image/jpeg',
                     });
 
