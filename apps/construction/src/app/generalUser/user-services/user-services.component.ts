@@ -12,7 +12,7 @@ import {
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { Observable, startWith, map, tap } from 'rxjs';
+import { Observable, startWith, map, tap, take } from 'rxjs';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
@@ -22,6 +22,7 @@ import { CommonUtilityService } from '../../services/common-utility.service';
 import { ThemePalette } from '@angular/material/core';
 import { CountryInterface } from '../../models/country';
 import { EncryptionService } from '../../services/encryption-service';
+import { CanadaInterface } from '../../models/canada';
 export interface Task {
   name: string;
   completed: boolean;
@@ -49,9 +50,7 @@ export class UserServicesComponent {
   destroyRef = inject(DestroyRef);
   commonUtility = inject(CommonUtilityService);
   encryptionService = inject(EncryptionService);
-  canadaCountryInfo = this.commonUtility.getCanada();
-  canadaCites = this.commonUtility.getCities();
-  canadaProvinces = this.commonUtility.getFullProvinces();
+
   toastService = inject(ToastrService);
   selectedCity = '';
   locationType = '';
@@ -66,11 +65,27 @@ export class UserServicesComponent {
   canadaInfo: CountryInterface[] = [];
   form: FormGroup;
   countryWide: boolean;
+  http = inject(HttpClient);
+  canadaData: CanadaInterface[] = [];
+  canadaProvinces: string[] = [];
+  canadaCites: string[] = [];
   constructor(
     private userService: UserService,
     private apiService: ApiService,
     private fb: FormBuilder
   ) {
+    this.http
+      .get<CanadaInterface[]>('../../assets/canadian-cities.json')
+      .pipe(
+        take(1),
+        takeUntilDestroyed(),
+        tap((response) => {
+          const data = JSON.parse(JSON.stringify(response));
+          this.canadaData = data;
+          this.canadaProvinces = this.canadaData.map((entry) => entry.province);
+        })
+      )
+      .subscribe();
     this.form = this.fb.group({
       city: new FormControl(),
       countryWide: new FormControl(),
@@ -103,7 +118,7 @@ export class UserServicesComponent {
     this.filteredCities = this.cityCtrl.valueChanges.pipe(
       startWith(null),
       map((item: string | null) =>
-        item ? this._filterCity(item) : this.canadaCites().slice()
+        item ? this._filterCity(item) : this.canadaCites.slice()
       )
     );
     this.filteredProvinces = this.cityCtrl.valueChanges.pipe(
@@ -114,12 +129,12 @@ export class UserServicesComponent {
     );
   }
   selectedProvinceAction() {
-    const data = this.canadaCountryInfo().find(
-      (item) =>
-        item.province?.toLocaleLowerCase() ==
+    const provinceData = this.canadaData?.find(
+      (entry) =>
+        entry?.province?.toLocaleLowerCase() ===
         this.selectedProvince?.toLocaleLowerCase()
     );
-    if (!!data && 'cities' in data) this.cities?.set(data.cities);
+    this.canadaCites = provinceData ? provinceData.cities : [];
   }
 
   addService(event: MatChipInputEvent): void {
@@ -290,7 +305,7 @@ export class UserServicesComponent {
   private _filterCity(value: string): string[] {
     const filterValue = value.toLowerCase();
 
-    return this.canadaCites().filter((item) =>
+    return this.canadaCites.filter((item) =>
       item.toLowerCase().includes(filterValue)
     );
   }

@@ -6,7 +6,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { tap } from 'rxjs';
+import { take, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { StorageService } from '../../services/storage.service';
 import { ValidatorsService } from '../../services/validators.service';
@@ -16,6 +16,8 @@ import { CommonUtilityService } from '../../services/common-utility.service';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../services/encryption-service';
 import { SafeUrl } from '@angular/platform-browser';
+import { HttpClient } from '@angular/common/http';
+import { CanadaInterface } from '../../models/canada';
 @Component({
   selector: 'construction-app-user-profile',
   templateUrl: './user-profile.component.html',
@@ -40,15 +42,32 @@ export class UserProfileComponent {
   serverUpdateError: any;
   selectedCity = '';
   selectedProvince = '';
-  cities = signal<string[]>([]);
-  canadaCountryInfo = this.commonUtility.getCanada();
   googleAddresses!: any;
   addressObject!: any;
   profileImageFile: any;
   logoImageFile: any;
   profileImageObjectUrl!: SafeUrl;
   profileImageSrc: string;
+  http = inject(HttpClient);
+  canadaData: CanadaInterface[] = [];
+  canadaProvinces: string[] = [];
+  cities: string[] = [];
   constructor(private fb: FormBuilder, public imageService: ImageService) {
+    this.http
+      .get<CanadaInterface[]>('../../assets/canadian-cities.json')
+      .pipe(
+        take(1),
+        takeUntilDestroyed(),
+        tap((response) => {
+          const data = JSON.parse(JSON.stringify(response));
+          this.canadaData = data;
+          this.canadaProvinces = this.canadaData.map((entry) => entry.province);
+          this.selectedProvince = this.user()?.province as string;
+          this.selectedProvinceAction();
+          this.selectedCity = this.user()?.city as string;
+        })
+      )
+      .subscribe();
     this.getCurrentLocation();
     this.form = this.fb.group({
       photo: new FormControl(),
@@ -72,21 +91,17 @@ export class UserProfileComponent {
         [Validators.required]
       ),
     });
-    this.selectedProvince = this.user()?.province as string;
-    this.selectedProvinceAction();
-    this.selectedCity = this.user()?.city as string;
 
     this.initialFormValue = this.form.value;
   }
   selectedProvinceAction() {
-    const data = this.canadaCountryInfo().find(
-      (item) =>
-        item.province?.toLocaleLowerCase() ==
+    const provinceData = this.canadaData?.find(
+      (entry) =>
+        entry?.province?.toLocaleLowerCase() ===
         this.selectedProvince?.toLocaleLowerCase()
     );
-    if (!!data && 'cities' in data) this.cities?.set(data.cities);
+    this.cities = provinceData ? provinceData.cities : [];
   }
-
   deleteUserProfileImage() {
     const userId = this.storageService?.getUserId();
     this.apiService

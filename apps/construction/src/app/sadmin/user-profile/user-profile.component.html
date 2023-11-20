@@ -188,11 +188,8 @@
               (change)="selectedProvinceAction()"
             >
               <option selected>Select Province</option>
-              <option
-                [value]="item.province"
-                *ngFor="let item of this.canadaCountryInfo()"
-              >
-                {{ item.province }}
+              <option [value]="item" *ngFor="let item of this.canadaProvinces">
+                {{ item }}
               </option>
             </select>
           </div>
@@ -206,7 +203,7 @@
               aria-label="Default select city"
               [(ngModel)]="selectedCity"
             >
-              <option [value]="city" *ngFor="let city of cities()">
+              <option [value]="city" *ngFor="let city of cities">
                 {{ city }}
               </option>
             </select>

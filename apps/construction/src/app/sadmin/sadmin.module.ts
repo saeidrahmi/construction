@@ -40,6 +40,7 @@ import { MyPlansComponent } from '../common-components/my-plans/myplans.componen
 import { NgChartsModule } from 'ng2-charts';
 import { UserDashboardDetailsComponent } from './dashboard/user-dashobard-details/user-dashboard-details.component';
 import { SalesDashboardComponent } from './dashboard/sales-dashboard/sales-dashboard.component';
+import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
 
 @NgModule({
   declarations: [
@@ -88,6 +89,7 @@ import { SalesDashboardComponent } from './dashboard/sales-dashboard/sales-dashb
     FormsModule,
     MatCheckboxModule,
     MyPlansComponent,
+    PhoneNumberPipe,
   ],
 })
 export class AdminModule {}

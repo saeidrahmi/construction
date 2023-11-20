@@ -24,6 +24,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormService } from '../../services/form.service';
 import { FormErrorsComponent } from '../../public/form-errors.component';
+import { PhoneNumberPipe } from '../../pipes/phone-number.pipe';
 
 @Component({
   selector: 'app-advertisement-details-view',
@@ -36,6 +37,7 @@ import { FormErrorsComponent } from '../../public/form-errors.component';
     FormsModule,
     ReactiveFormsModule,
     FormErrorsComponent,
+    PhoneNumberPipe,
   ],
 })
 export class AdvertisementDetailsViewComponent {

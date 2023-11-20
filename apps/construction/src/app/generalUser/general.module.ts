@@ -54,6 +54,7 @@ import { MyBidsComponent } from './my-bids/my-bids.component';
 import { ViewBidComponent } from './my-bids/view-bid/view-bid.component';
 import { MyRFPComponent } from './rfps/my-rfp.component';
 import { NewRFPComponent } from './rfps/new-rfp/new-rfp.component';
+import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
 
 @NgModule({
   declarations: [
@@ -118,6 +119,7 @@ import { NewRFPComponent } from './rfps/new-rfp/new-rfp.component';
     MatInputModule,
     RatingModule,
     NgxDropzoneModule,
+    PhoneNumberPipe,
   ],
   providers: [],
 })

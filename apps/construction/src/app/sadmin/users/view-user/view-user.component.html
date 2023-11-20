@@ -263,7 +263,9 @@
                               </h5>
                               <hr />
                               <h6>
-                                {{ this.getUserSelected()?.phone }}
+                                {{
+                                  this.getUserSelected()?.phone | phoneNumber
+                                }}
                               </h6>
                             </div>
                           </div>
