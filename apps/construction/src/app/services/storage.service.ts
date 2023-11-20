@@ -176,6 +176,11 @@ export class StorageService {
       return { ...state, user: { ...state.user, error: '' } };
     });
   }
+  removeUserProfileImage() {
+    this.store.update((state) => {
+      return { ...state, user: { ...state.user, profileImage: null } };
+    });
+  }
   updateLoginFlag(flag: boolean) {
     this.store.update((state) => {
       return { ...state, user: { ...state.user, loggedIn: flag } };

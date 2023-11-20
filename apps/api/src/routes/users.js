@@ -54,6 +54,7 @@ const {
   canUserEditAdvertisementController,
   editAdvertisementController,
   repostAdvertisementController,
+  deleteUserProfilePhotoController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -88,6 +89,11 @@ router.post(
 );
 router.post('/token', refreshTokenController);
 router.post('/change-password', verifyAllToken, changePasswordController);
+router.post(
+  '/remove-user-profile-photo',
+  verifyAllToken,
+  deleteUserProfilePhotoController
+);
 router.post(
   '/list-user-services',
   verifyGeneralToken,

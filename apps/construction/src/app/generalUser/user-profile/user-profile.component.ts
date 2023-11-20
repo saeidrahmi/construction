@@ -87,11 +87,35 @@ export class UserProfileComponent {
     if (!!data && 'cities' in data) this.cities?.set(data.cities);
   }
 
+  deleteUserProfileImage() {
+    const userId = this.storageService?.getUserId();
+    this.apiService
+      .deleteUserProfileImage(this.encryptionService.encryptItem(userId()))
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((deleted) => {
+          if (deleted) {
+            this.toastService.success('Profile Photo removed.', 'Success', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
+            this.storageService.removeUserProfileImage();
+          } else
+            this.toastService.error('Profile Photo deletion failed.', 'Error', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
+        })
+      )
+      .subscribe();
+  }
   submit() {
     const currentFormValue = this.form.value;
-    const hasChanged =
-      JSON.stringify(currentFormValue) !==
-      JSON.stringify(this.initialFormValue);
+
     this.updateCompleted = false;
     this.formErrors = [];
     this.serverUpdateError = '';
@@ -99,7 +123,7 @@ export class UserProfileComponent {
       this.formErrors = this.formService.getFormValidationErrorMessages(
         this.form
       );
-    } else if (this.form.valid && hasChanged) {
+    } else if (this.form.valid) {
       this.initialFormValue = currentFormValue;
       this.storageService.updateIsLoading(true);
       const userId = this.storageService?.getUserId();
@@ -172,6 +196,8 @@ export class UserProfileComponent {
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
+            this.profileImageFile = null;
+            this.form.get('photo')?.setValue('');
             this.toastService.success('Profile updated.', 'Update Successful', {
               timeOut: 3000,
               positionClass: 'toast-top-right',

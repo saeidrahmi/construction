@@ -2196,6 +2196,23 @@ async function deleteAllUserMessagesController(req, res) {
     });
   }
 }
+async function deleteUserProfilePhotoController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId];
+    const selectQuery = `update users set profileImage= null where userId=?`;
+    const selectResult = await executeQuery(selectQuery, values);
+    if (selectResult?.affectedRows > 0) return res.status(200).json(true);
+    else
+      return res.status(500).json({
+        errorMessage: 'Failed to delete the information. Please try again.',
+      });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to delete the information. Please try again.',
+    });
+  }
+}
 
 async function getUserNumberOfNewMessages(connection, data) {
   const selectQuery = `select count(*) as nbr_messages  from userAdvertisementsMessages where userId=? and viewed=0`;
@@ -2479,6 +2496,7 @@ async function promoteTopAdvertisementController(req, res) {
 }
 
 module.exports = {
+  deleteUserProfilePhotoController,
   promoteTopAdvertisementController,
   repostAdvertisementController,
   getAdvertisementEditInfoController,

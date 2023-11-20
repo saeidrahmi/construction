@@ -303,14 +303,27 @@
       </form>
     </div>
     <div class="col-3 border-start" *ngIf="user()?.profileImage">
-      <img
-        #imageElement
-        class="rounded mx-auto d-block"
-        [src]="imageService.bufferToSafeUrl(user()?.profileImage)"
-        alt="Image"
-        width="200px"
-        height="200px"
-      />
+      <div class="card" aria-hidden="true">
+        <div class="card-body text-center">
+          <h6 class="card-title">
+            <span class="col-12">User Profile</span>
+          </h6>
+          <hr />
+          <img
+            #imageElement
+            class="rounded mx-auto d-block"
+            [src]="imageService.bufferToSafeUrl(user()?.profileImage)"
+            alt="Image"
+            width="200px"
+            height="200px"
+          />
+          <hr />
+          <button class="submit-button my-2" (click)="deleteUserProfileImage()">
+            Delete Profile Photo
+          </button>
+        </div>
+      </div>
+
       <!-- <br />
       <br />
       <h3>Company Logo</h3>
