@@ -51,6 +51,18 @@ export class AdvertisementsPendingApprovalComponent {
     takeUntilDestroyed(this.destroyRef),
 
     tap((list: any) => {
+      // this.allAdvertisements = list;
+      list.map((ad) => {
+        if (ad?.headerImage) {
+          const blob = new Blob([new Uint8Array(ad.headerImage.data)], {
+            type: 'image/jpeg',
+          });
+
+          // Set the header image URL
+          const imageUrl = URL.createObjectURL(blob);
+          ad.headerImage = `url(${imageUrl})`;
+        }
+      });
       this.allAdvertisements = list;
     }),
     catchError((err) => {
@@ -61,7 +73,6 @@ export class AdvertisementsPendingApprovalComponent {
         takeUntilDestroyed(this.destroyRef),
 
         tap((info: any) => {
-          7;
           this.userAdvertisementDuration = info.userAdvertisementDuration;
         })
       )

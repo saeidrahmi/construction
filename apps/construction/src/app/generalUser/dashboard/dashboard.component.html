@@ -1,26 +1,3 @@
-<!-- <div class="container-fluid ">
-    <div class="row">
-        <div class="col">
-
-            <div class="card" aria-hidden="true">
-
-                <div class="card-body">
-                    <h5 class="card-title placeholder-glow">
-                        <span class="placeholder col-6"></span>
-                    </h5>
-                    <p class="card-text placeholder-glow">
-                        <span class="placeholder col-7"></span>
-                        <span class="placeholder col-4"></span>
-                        <span class="placeholder col-4"></span>
-                        <span class="placeholder col-6"></span>
-                        <span class="placeholder col-8"></span>
-                    </p>
-                    <a class="btn btn-secondary placeholder col-6"></a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div> -->
 <div class="container-fluid">
   <div class="row">
     <div class="col">
@@ -32,118 +9,171 @@
           <hr />
           <div class="container-fluid">
             <div class="row">
-              <div class="col-4">
+              <div class="col">
                 <div class="card" aria-hidden="true">
                   <div class="card-body">
-                    <h4 class="card-title text-center">Users</h4>
+                    <h4 class="card-title text-center">Important</h4>
                     <hr />
 
-                    <ul class="list-group">
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Users
-                        <span class="badge bg-primary rounded-pill"> fgds</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Active Users
-                        <span class="badge bg-primary rounded-pill">
-                          asdfsa</span
-                        >
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Inactive Users
-                        <span class="badge bg-primary rounded-pill"> asdf</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of closed account Users
-                        <span class="badge bg-primary rounded-pill">
-                          asdfa</span
-                        >
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Currently logged in Users
-                        <span class="badge bg-primary rounded-pill"> asdf</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of free Users
-                        <span class="badge bg-primary rounded-pill"> a </span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of paid Users
-                        <span class="badge bg-primary rounded-pill"> a</span>
-                      </li>
-                    </ul>
+                    <div class="alert alert-danger" role="alert">
+                      Please ensure that your
+                      <a routerLink="/general/user-profile">profile</a> and
+                      <a routerLink="/general/user-services">services</a>
+                      information are updated for an enhanced user experience.
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="col-4">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
                 <div class="card" aria-hidden="true">
                   <div class="card-body">
-                    <h4 class="card-title text-center">Financial</h4>
+                    <h4 class="card-title text-center">Messages</h4>
                     <hr />
 
-                    <ul class="list-group">
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
+                    <div class="alert alert-danger" role="alert">
+                      You have
+                      {{
+                        userNewMessagesNbr() && userNewMessagesNbr() > 0
+                          ? userNewMessagesNbr()
+                          : 'no'
+                      }}
+                      new messages to view.
+                      <a routerLink="/general/user-messages"
+                        >Click here to view all messages.</a
                       >
-                        Total Revenue
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Revenue this month
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Currently logged in Users
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                    </ul>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div class="col-4">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" *ngIf="daysUntilPasswordExpiration < 15">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
                 <div class="card" aria-hidden="true">
                   <div class="card-body">
-                    <h4 class="card-title text-center">Plans</h4>
+                    <h4 class="card-title text-center">Password Reset</h4>
                     <hr />
 
-                    <ul class="list-group">
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Sales per plan
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of purchased plans
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                      <li
-                        class="list-group-item d-flex justify-content-between align-items-center"
-                      >
-                        Number of Currently logged in Users
-                        <span class="badge bg-primary rounded-pill"> 255</span>
-                      </li>
-                    </ul>
+                    <div class="alert alert-danger" role="alert">
+                      Your password will expire in
+                      {{ daysUntilPasswordExpiration }} days. Please
+                      <a routerLink="/general/change-password">change</a> your
+                      password.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body">
+                    <h4 class="card-title text-center">Account Balance</h4>
+                    <hr />
+                    <div
+                      *ngIf="
+                        canAdvertise;
+                        then canAdvertiseSection;
+                        else noAdvertise
+                      "
+                    ></div>
+                    <ng-template #noAdvertise>
+                      <div class="alert alert-danger" role="alert">
+                        You are currently unable to create advertisements.
+                        Please recharge your account by
+                        <a
+                          class="nav-link text-success"
+                          [routerLink]="'/general/purchase-plan'"
+                          routerLinkActive="active"
+                          [routerLinkActiveOptions]="{ exact: true }"
+                          >purchasing</a
+                        >
+                        a new plan.
+                      </div>
+                    </ng-template>
+                    <ng-template #canAdvertiseSection>
+                      <div class="row">
+                        <div class="col-3">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h6 class="card-title">
+                                <span class="col-12"
+                                  >Purchased Plan Advertisements</span
+                                >
+                              </h6>
+                              <hr />
+                              <h4>
+                                {{ generalInfo?.allowedOriginalAdvertisements }}
+                              </h4>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-3">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h6 class="card-title">
+                                <span class="col-12">Used Advertisements</span>
+                              </h6>
+                              <hr />
+                              <h4>{{ generalInfo?.usedAdvertisements }}</h4>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-3">
+                          <div class="card" aria-hidden="true">
+                            <div class="card-body text-center">
+                              <h6 class="card-title">
+                                <span class="col-12"
+                                  >Remained Advertisements</span
+                                >
+                              </h6>
+                              <hr />
+                              <h4
+                                [ngClass]="
+                                  generalInfo?.remainedAdvertisements > 0
+                                    ? 'text-success'
+                                    : 'text-danger'
+                                "
+                              >
+                                {{ generalInfo?.remainedAdvertisements }}
+                              </h4>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </ng-template>
                   </div>
                 </div>
               </div>

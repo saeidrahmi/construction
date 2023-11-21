@@ -34,6 +34,10 @@ export class StorageService {
   getUserNewMessagesNbr(): Signal<number | undefined> {
     return computed(() => this.store()?.general?.newMessagesNbr);
   }
+  getExpirationPeriodInDays(): Signal<number | undefined> {
+    return computed(() => this.store()?.general?.expirationPeriodInDays);
+  }
+
   isUserLoggedIn(): Signal<boolean | undefined> {
     return computed(() => this.store()?.user?.loggedIn);
   }
@@ -235,7 +239,11 @@ export class StorageService {
         user: user,
         advertisement: null,
         plan: null,
-        general: { ...state.general, newMessagesNbr: null },
+        general: {
+          ...state.general,
+          newMessagesNbr: null,
+          expirationPeriodInDays: null,
+        },
       };
     });
   }
@@ -277,7 +285,11 @@ export class StorageService {
         ...state,
         user: user,
         plan: response?.plan,
-        general: { ...state.general, newMessagesNbr: response?.newMessagesNbr },
+        general: {
+          ...state.general,
+          newMessagesNbr: response?.newMessagesNbr,
+          expirationPeriodInDays: response?.expirationPeriodInDays,
+        },
       };
     });
   }
