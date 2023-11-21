@@ -234,7 +234,7 @@
                       <li class="list-group-item">
                         <rating
                           [(ngModel)]="rate"
-                          [max]="max"
+                          [max]="commonUtility.getMaxUserRating()"
                           [readonly]="true"
                         ></rating>
                       </li>
@@ -276,7 +276,10 @@
                         <i class="bi bi-chat-heart"
                           ><span class="mx-2">Listing</span></i
                         >
-                        <span class="badge bg-primary rounded-pill"
+                        <span
+                          class="badge bg-primary rounded-pill"
+                          style="cursor: pointer"
+                          (click)="naviagteUserAds(advertisement?.userId)"
                           >{{ acitveAds }}
                         </span>
                       </li>

@@ -2290,4 +2290,34 @@ export class ApiService {
         })
       );
   }
+  listUserActiveAdvertisementsController(userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/public/list-user-active-advertisements',
+        {
+          userId: userId,
+        }
+      )
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Error while retrieving advertisements',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
 }

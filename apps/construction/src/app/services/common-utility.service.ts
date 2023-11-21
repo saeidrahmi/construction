@@ -5,6 +5,7 @@ import jwt_decode from 'jwt-decode';
   providedIn: 'root',
 })
 export class CommonUtilityService {
+  _maxUserRating = 10;
   _imageMimeTypes = ['png', 'jpg', 'gif', 'bmp', 'jpeg'];
   _companyLogoMaxSize = 100 * 1024; // 100 KB
   _advertisementHeaderMaxSize = 100 * 1024; // 100 KB
@@ -24,6 +25,9 @@ export class CommonUtilityService {
   ];
 
   constructor() {}
+  getMaxUserRating() {
+    return this._maxUserRating;
+  }
 
   isTokenValid(token: string): boolean {
     try {

@@ -1,6 +1,7 @@
 export interface AdvertisementInterface {
   userAdvertisementId?: any;
   userPlanId?: any;
+  userId?: string;
   title?: string;
   city?: string;
   headerImage?: string;
@@ -18,6 +19,8 @@ export interface AdvertisementInterface {
   showPicture?: boolean;
   showChat?: boolean;
   numberOfVisits?: number;
+  userRating?: number;
+  userProfileImage?: any;
   sliderImages?: string[];
   sliderImageFiles?: File[];
 }

@@ -20,6 +20,7 @@ import { EncryptionService } from '../../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormService } from '../../../services/form.service';
+import { CommonUtilityService } from '../../../services/common-utility.service';
 
 @Component({
   selector: 'app-user-advertisement-details-view',
@@ -30,6 +31,7 @@ export class UserAdvertisementDetailsViewComponent {
   advertisement: AdvertisementInterface = {};
   env: EnvironmentInfo = new EnvironmentInfo();
   storageService = inject(StorageService);
+  commonUtility = inject(CommonUtilityService);
   userService = inject(UserService);
   imageService = inject(ImageService);
   toastService = inject(ToastrService);

@@ -1450,7 +1450,7 @@ async function getAdvertisementDetailsController(req, res) {
 
     // get Ad details
 
-    const selectAdQuery = `SELECT userAdvertisements.*, userAdvertisementImages.userAdvertisementImage
+    const selectAdQuery = `SELECT userAdvertisements.*, userPlans.userId,userAdvertisementImages.userAdvertisementImage
                           FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           LEFT JOIN userAdvertisementImages ON userAdvertisements.userAdvertisementId = userAdvertisementImages.userAdvertisementId
@@ -1468,7 +1468,8 @@ async function getAdvertisementDetailsController(req, res) {
     const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
     const selectRatingResult = await executeQuery(selectRatingQuery, [userId]);
     // get number of active ads
-    const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
+    const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where
+                                  userAdvertisements.active=1 and userAdvertisements.rejected=0 and  userAdvertisements.deleted=0 and userAdvertisements.approvedByAdmin=1  and userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
     const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
       userId,
     ]);

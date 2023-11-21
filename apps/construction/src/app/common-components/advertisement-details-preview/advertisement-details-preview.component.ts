@@ -13,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
+import { CommonUtilityService } from '../../services/common-utility.service';
 
 @Component({
   selector: 'app-advertisement-details-preview',
@@ -28,7 +29,7 @@ export class AdvertisementDetailsPreviewComponent {
   userService = inject(UserService);
   imageService = inject(ImageService);
   toastService = inject(ToastrService);
-
+  commonUtility = inject(CommonUtilityService);
   apiService = inject(ApiService);
   encryptionService = inject(EncryptionService);
   user = this.storageService.getUser();

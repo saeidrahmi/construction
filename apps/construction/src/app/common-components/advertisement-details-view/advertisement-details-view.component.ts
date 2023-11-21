@@ -1,5 +1,5 @@
 import { isUserLoggedIn } from './../../services/user-gaurds';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, Input, inject } from '@angular/core';
 import { AdvertisementInterface } from '../../models/advertisement';
@@ -25,6 +25,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { FormService } from '../../services/form.service';
 import { FormErrorsComponent } from '../../public/form-errors.component';
 import { PhoneNumberPipe } from '../../pipes/phone-number.pipe';
+import { CommonUtilityService } from '../../services/common-utility.service';
 
 @Component({
   selector: 'app-advertisement-details-view',
@@ -46,6 +47,8 @@ export class AdvertisementDetailsViewComponent {
   storageService = inject(StorageService);
   userService = inject(UserService);
   imageService = inject(ImageService);
+  router = inject(Router);
+  commonUtility = inject(CommonUtilityService);
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   route = inject(ActivatedRoute);
@@ -89,6 +92,7 @@ export class AdvertisementDetailsViewComponent {
             else {
               this.advertisementExists = true;
               this.advertisement = info?.selectAdResult[0];
+              console.log('adver', this.advertisement);
               this.headerImage = info?.selectAdResult[0]?.headerImage;
               const selectAdResult = info?.selectAdResult;
               this.sliderImages = [];
@@ -122,7 +126,7 @@ export class AdvertisementDetailsViewComponent {
                   this.encryptionService.encryptItem(this.userId())
                 )
                 .pipe(
-                  takeUntilDestroyed(),
+                  takeUntilDestroyed(this.destroyRef),
                   tap((isFavorite) => {
                     if (isFavorite) this.heartColor = 'red';
                     else this.heartColor = '';
@@ -138,6 +142,10 @@ export class AdvertisementDetailsViewComponent {
     this.messageForm = this.fb.group({
       message: new FormControl('', [Validators.required]),
     });
+  }
+  naviagteUserAds(userId: string) {
+    this.storageService.updateUserIdSelected(userId);
+    this.router.navigate(['/user-advertisements']);
   }
   confirmSelection(event: KeyboardEvent) {
     if (this.isLoggedIn())

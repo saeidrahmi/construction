@@ -11,11 +11,9 @@ async function freeTrialInfoController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult[0]);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        errorMessage: 'Failed to retrieve information. Please try again later.',
-      });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function getTaxController(req, res) {
@@ -24,11 +22,9 @@ async function getTaxController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult[0]);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        errorMessage: 'Failed to retrieve information. Please try again later.',
-      });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function getTopAdInfoController(req, res) {
@@ -37,11 +33,9 @@ async function getTopAdInfoController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult[0]);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        errorMessage: 'Failed to retrieve information. Please try again later.',
-      });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function listPlansController(req, res) {
@@ -50,11 +44,9 @@ async function listPlansController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        errorMessage: 'Failed to retrieve information. Please try again later.',
-      });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function listPaidPlansController(req, res) {
@@ -63,34 +55,55 @@ async function listPaidPlansController(req, res) {
     const selectResult = await executeQuery(selectQuery, []);
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        errorMessage: 'Failed to retrieve information. Please try again later.',
-      });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 async function listAdvertisementsController(req, res) {
   try {
-    const selectAdQuery = `SELECT userAdvertisements.*, users.city
+    const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
+                          (SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = users.userId) as userRating
                           FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           JOIN users ON userPlans.userId = users.userId
-                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1  and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE() `;
+                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1
+                           and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
+                           ORDER BY userAdvertisements.dateCreated DESC `;
 
     const selectResult = await executeQuery(selectAdQuery, []);
 
     return res.status(200).json(selectResult);
   } catch (error) {
-    return res
-      .status(500)
-      .json({
-        errorMessage: 'Failed to retrieve information. Please try again later.',
-      });
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
+async function listUserActiveAdvertisementsController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
+                          (SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = users.userId) as userRating
+                          FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          JOIN users ON userPlans.userId = users.userId
+                          WHERE users.userId = ? and userAdvertisements.deleted = 0 and userAdvertisements.active = 1
+                           and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
+                           ORDER BY userAdvertisements.dateCreated DESC `;
+
+    const selectActiveAdsResult = await executeQuery(selectAdQuery, [userId]);
+
+    return res.status(200).json(selectActiveAdsResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
   }
 }
 
 module.exports = {
+  listUserActiveAdvertisementsController,
   freeTrialInfoController,
   listPlansController,
   listPaidPlansController,

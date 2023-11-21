@@ -59,6 +59,14 @@ export const appRoutes: Route[] = [
         (com) => com.AdvertisementsListComponent
       ),
   },
+
+  {
+    path: 'user-advertisements',
+    loadComponent: () =>
+      import(
+        './public/user-advertisements/user-advertisements-list.component'
+      ).then((com) => com.UserAdvertisementsListComponent),
+  },
   {
     path: 'view-advertisement-details',
     loadComponent: () =>

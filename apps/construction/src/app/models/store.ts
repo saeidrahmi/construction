@@ -10,4 +10,5 @@ export interface StoreInterface {
   advertisement?: AdvertisementStateInterface;
   userIdEdited?: string;
   userSelected?: any;
+  userIdSelected?: string;
 }

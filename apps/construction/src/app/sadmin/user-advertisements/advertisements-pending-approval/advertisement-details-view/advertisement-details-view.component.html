@@ -234,7 +234,7 @@
                       <li class="list-group-item">
                         <rating
                           [(ngModel)]="rate"
-                          [max]="max"
+                          [max]="commonUtility.getMaxUserRating()"
                           [readonly]="true"
                         ></rating>
                       </li>
@@ -246,7 +246,7 @@
                         >
                         <rating
                           [(ngModel)]="userRate"
-                          [max]="max"
+                          [max]="commonUtility.getMaxUserRating()"
                           [readonly]="false"
                           (click)="confirmSelection($event)"
                         ></rating>

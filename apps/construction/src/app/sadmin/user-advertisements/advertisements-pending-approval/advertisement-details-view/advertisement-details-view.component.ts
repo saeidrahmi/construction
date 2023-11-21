@@ -18,6 +18,7 @@ import { EncryptionService } from '../../../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormService } from '../../../../services/form.service';
+import { CommonUtilityService } from 'apps/construction/src/app/services/common-utility.service';
 
 @Component({
   selector: 'app-admin-advertisement-details-view',
@@ -31,6 +32,7 @@ export class AdminAdvertisementDetailsViewComponent {
   userService = inject(UserService);
   imageService = inject(ImageService);
   toastService = inject(ToastrService);
+  commonUtility = inject(CommonUtilityService);
   apiService = inject(ApiService);
   route = inject(ActivatedRoute);
   formService = inject(FormService);
