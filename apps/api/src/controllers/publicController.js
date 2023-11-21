@@ -82,7 +82,20 @@ async function listAdvertisementsController(req, res) {
 }
 async function listUserActiveAdvertisementsController(req, res) {
   try {
-    let userId = decryptItem(req.body.userId, webSecretKey);
+    // let userId = decryptItem(req.body.userId, webSecretKey);
+    let userAdvertisementId = req.body.userAdvertisementId;
+    const selectUserQuery = `select userPlans.userId as userId from userAdvertisements
+                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                           where userAdvertisements.userAdvertisementId = ? `;
+    const selectUserResult = await executeQuery(selectUserQuery, [
+      userAdvertisementId,
+    ]);
+
+    if (selectUserResult.length === 0)
+      return res.status(500).json({
+        errorMessage: 'Failed to retrieve information. Please try again later.',
+      });
+
     const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
                           (SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = users.userId) as userRating
                           FROM userAdvertisements
@@ -92,7 +105,9 @@ async function listUserActiveAdvertisementsController(req, res) {
                            and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
                            ORDER BY userAdvertisements.dateCreated DESC `;
 
-    const selectActiveAdsResult = await executeQuery(selectAdQuery, [userId]);
+    const selectActiveAdsResult = await executeQuery(selectAdQuery, [
+      selectUserResult[0].userId,
+    ]);
 
     return res.status(200).json(selectActiveAdsResult);
   } catch (error) {

@@ -1450,7 +1450,7 @@ async function getAdvertisementDetailsController(req, res) {
 
     // get Ad details
 
-    const selectAdQuery = `SELECT userAdvertisements.*, userPlans.userId,userAdvertisementImages.userAdvertisementImage
+    const selectAdQuery = `SELECT userAdvertisements.*,userAdvertisementImages.userAdvertisementImage
                           FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           LEFT JOIN userAdvertisementImages ON userAdvertisements.userAdvertisementId = userAdvertisementImages.userAdvertisementId

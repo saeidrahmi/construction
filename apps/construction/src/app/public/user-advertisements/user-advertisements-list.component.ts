@@ -40,13 +40,12 @@ export class UserAdvertisementsListComponent {
   user = this.storageService?.getUser();
   currentDate = new Date();
   constructor() {
-    const userId = this.storageService.getUserIdSelected();
-    console.log(userId(), 'userid');
-    if (userId())
+    const userAdvertisementId =
+      this.storageService.getSelectedAdvertisementId();
+
+    if (userAdvertisementId())
       this.apiService
-        .listUserActiveAdvertisementsController(
-          this.encryptionService.encryptItem(userId())
-        )
+        .listUserActiveAdvertisementsController(userAdvertisementId())
         .pipe(
           takeUntilDestroyed(),
           tap((list: any) => {

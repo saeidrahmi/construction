@@ -2290,13 +2290,15 @@ export class ApiService {
         })
       );
   }
-  listUserActiveAdvertisementsController(userId: any): Observable<any> {
+  listUserActiveAdvertisementsController(
+    userAdvertisementId: any
+  ): Observable<any> {
     this.spinner.show();
     return this.httpClient
       .post<any>(
         this.backendApiUrl + '/public/list-user-active-advertisements',
         {
-          userId: userId,
+          userAdvertisementId: userAdvertisementId,
         }
       )
       .pipe(

@@ -279,7 +279,9 @@
                         <span
                           class="badge bg-primary rounded-pill"
                           style="cursor: pointer"
-                          (click)="naviagteUserAds(advertisement?.userId)"
+                          (click)="
+                            naviagteUserAds(advertisement?.userAdvertisementId)
+                          "
                           >{{ acitveAds }}
                         </span>
                       </li>

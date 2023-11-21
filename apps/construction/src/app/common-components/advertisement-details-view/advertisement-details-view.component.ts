@@ -92,7 +92,7 @@ export class AdvertisementDetailsViewComponent {
             else {
               this.advertisementExists = true;
               this.advertisement = info?.selectAdResult[0];
-              console.log('adver', this.advertisement);
+
               this.headerImage = info?.selectAdResult[0]?.headerImage;
               const selectAdResult = info?.selectAdResult;
               this.sliderImages = [];
@@ -143,8 +143,8 @@ export class AdvertisementDetailsViewComponent {
       message: new FormControl('', [Validators.required]),
     });
   }
-  naviagteUserAds(userId: string) {
-    this.storageService.updateUserIdSelected(userId);
+  naviagteUserAds(id: string) {
+    this.storageService.updateSelectedAdvertisementId(id);
     this.router.navigate(['/user-advertisements']);
   }
   confirmSelection(event: KeyboardEvent) {

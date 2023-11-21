@@ -1,7 +1,6 @@
 export interface AdvertisementInterface {
   userAdvertisementId?: any;
   userPlanId?: any;
-  userId?: string;
   title?: string;
   city?: string;
   headerImage?: string;
