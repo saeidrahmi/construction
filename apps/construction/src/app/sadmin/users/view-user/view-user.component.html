@@ -26,6 +26,7 @@
             role="tab"
             aria-controls="profile-tab-pane"
             aria-selected="false"
+            *ngIf="!getUserSelected()?.role?.toLowerCase()?.includes('admin')"
           >
             User Advertisements
           </button>
@@ -40,6 +41,7 @@
             role="tab"
             aria-controls="contact-tab-pane"
             aria-selected="false"
+            *ngIf="!getUserSelected()?.role?.toLowerCase()?.includes('admin')"
           >
             Plans
           </button>
@@ -54,6 +56,7 @@
             role="tab"
             aria-controls="payment-tab-pane"
             aria-selected="false"
+            *ngIf="!getUserSelected()?.role?.toLowerCase()?.includes('admin')"
           >
             Payments
           </button>
@@ -69,6 +72,7 @@
             role="tab"
             aria-controls="rfp-tab-pane"
             aria-selected="false"
+            *ngIf="!getUserSelected()?.role?.toLowerCase()?.includes('admin')"
           >
             RFPs
           </button>
@@ -359,6 +363,7 @@
           role="tabpanel"
           aria-labelledby="profile-tab"
           tabindex="0"
+          *ngIf="!getUserSelected()?.role?.toLowerCase()?.includes('admin')"
         >
           <div class="container-fluid">
             <div class="row my-2">
@@ -392,6 +397,7 @@
           role="tabpanel"
           aria-labelledby="contact-tab"
           tabindex="0"
+          *ngIf="!getUserSelected()?.role?.toLowerCase()?.includes('admin')"
         >
           <div class="container my-3">
             <div class="row">
@@ -492,6 +498,7 @@
           role="tabpanel"
           aria-labelledby="payment-tab"
           tabindex="0"
+          *ngIf="!getUserSelected()?.role?.toLowerCase()?.includes('admin')"
         >
           ...payment
         </div>
@@ -501,6 +508,7 @@
           role="tabpanel"
           aria-labelledby="rfp-tab"
           tabindex="0"
+          *ngIf="!getUserSelected()?.role?.toLowerCase()?.includes('admin')"
         >
           ...rfp
         </div>

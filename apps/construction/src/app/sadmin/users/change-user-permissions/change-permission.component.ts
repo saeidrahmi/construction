@@ -44,13 +44,25 @@ export class ChangeUserPermissionComponent {
       .getUserPermissions(
         this.encryptionService.encryptItem(this.getUserIdEdited())
       )
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap((permissions: UserPermissionsInterface) => {
-          this.userPermissions = permissions;
-        })
-      )
-      .subscribe();
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((permissions: UserPermissionsInterface) => {
+        if (permissions) this.userPermissions = permissions;
+        else
+          this.userPermissions = {
+            viewDashboard: false,
+            updateAdminSettings: false,
+            createUser: false,
+            viewUsers: false,
+            createPlan: false,
+            listPlans: false,
+            viewPendingAdvertisements: false,
+            approveAdvertisement: false,
+            allowPlanActions: false,
+            allowUserActions: false,
+            viewRfps: false,
+            approvedRfps: false,
+          };
+      });
     this.form = this.fb.group({
       viewDashboard: new FormControl(this.userPermissions?.viewDashboard, []),
       updateAdminSettings: new FormControl(
@@ -105,19 +117,16 @@ export class ChangeUserPermissionComponent {
 
     this.apiService
       .updateUserPermissions(data)
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap((userPermissions: any) => {
-          this.userPermission = userPermissions;
-          // this.router.navigate(['/admin/users']);
-          this.toastService.success('Updated Successfully.', 'Success', {
-            timeOut: 3000,
-            positionClass: 'toast-top-right',
-            closeButton: true,
-            progressBar: true,
-          });
-        })
-      )
-      .subscribe();
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((userPermissions: any) => {
+        this.userPermission = userPermissions;
+        // this.router.navigate(['/admin/users']);
+        this.toastService.success('Updated Successfully.', 'Success', {
+          timeOut: 3000,
+          positionClass: 'toast-top-right',
+          closeButton: true,
+          progressBar: true,
+        });
+      });
   }
 }

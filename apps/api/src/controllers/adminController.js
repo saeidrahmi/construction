@@ -455,7 +455,6 @@ async function createNewUserController(req, res) {
     const userPermissions = req.body.user.userPermissions;
     const userId = decryptItem(user.userId, webSecretKey);
     const password = decryptItem(user.password, webSecretKey);
-
     const values = [
       userId,
       user.role,
@@ -467,13 +466,14 @@ async function createNewUserController(req, res) {
 
       encryptItem(password, dbSecretKey),
       1,
+      encryptItem(password, dbSecretKey),
     ];
     connection = await connectToDatabase();
     await connection.beginTransaction();
 
     // No results
-    const query = `INSERT INTO users( userId, role, firstName, lastName, registeredDate,   active, registered,   password, passwordResetRequired)
-                   values(?,?,?,?,?,?,?,?,?)`;
+    const query = `INSERT INTO users( userId, role, firstName, lastName, registeredDate,   active, registered,   password, passwordResetRequired,previousPassword)
+                   values(?,?,?,?,?,?,?,?,?,?)`;
 
     const [result] = await connection.execute(query, values);
 
@@ -481,11 +481,11 @@ async function createNewUserController(req, res) {
       await connection.rollback();
       return res
         .status(500)
-        .json({ errorMessage: 'Error creating plan. Please try again.' });
+        .json({ errorMessage: 'Error creating user. Please try again.' });
     }
 
     if (user.role === 'Admin') {
-      const query = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan, listPlans, viewPendingAdvertisements, approveAdvertisement,allowUserActions,allowPlanActions,viewRfps,approvedRfps userId)
+      const query = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan, listPlans, viewPendingAdvertisements, approveAdvertisement,allowUserActions,allowPlanActions,viewRfps,approvedRfps, userId)
                    values(?,?,?,?,?,?,?,?,?,?,?,?,?)`;
       const values = [
         userPermissions.viewDashboard,
@@ -509,7 +509,7 @@ async function createNewUserController(req, res) {
         await connection.rollback();
         return res
           .status(500)
-          .json({ errorMessage: 'Error creating plan. Please try again.' });
+          .json({ errorMessage: 'Error creating user. Please try again.' });
       }
     }
 
@@ -521,7 +521,7 @@ async function createNewUserController(req, res) {
     if (connection) await connection.rollback();
     return res
       .status(500)
-      .json({ errorMessage: 'Error creating plan. Please try again.' });
+      .json({ errorMessage: 'Error creating user. Please try again.' });
   } finally {
     if (connection) {
       try {
@@ -539,21 +539,22 @@ async function getUserPermissionController(req, res) {
     const selectResult = await executeQuery(selectQuery, [userId]);
     if (selectResult.length > 0) {
       delete selectResult[0].userId;
-      return res.status(200).json(selectResult[0]);
-    } else
-      return res.status(500).json({
-        errorMessage: 'Failed to retrieve information. Please try again later.',
-      });
+    }
+
+    return res.status(200).json(selectResult[0]);
   } catch (error) {
     return res.status(500).json({
       errorMessage: 'Failed to retrieve information. Please try again later.',
     });
   }
 }
+// refactored
 async function updateUserPermissionController(req, res) {
   try {
     const userId = decryptItem(req.body.userId, webSecretKey);
     const userPermissions = req.body.userPermissions;
+    const selectQuery = `select * From userPermissions where userId =?`;
+    const selectResult = await executeQuery(selectQuery, [userId]);
     const values = [
       userPermissions.viewDashboard,
       userPermissions.updateAdminSettings,
@@ -569,20 +570,33 @@ async function updateUserPermissionController(req, res) {
       userPermissions.approvedRfps,
       userId,
     ];
+    if (selectResult.length > 0) {
+      const updateQuery = `UPDATE userPermissions SET  viewDashboard=?,updateAdminSettings=?,
+                            createUser=?,viewUsers=?,createPlan=?,listPlans=?,
+                            viewPendingAdvertisements=?,approveAdvertisement=?,allowPlanActions=?,
+                            allowUserActions=? , viewRfps=?, approvedRfps=? WHERE userId =?`;
+      const updateResult = await executeQuery(updateQuery, values);
+      if (updateResult.affectedRows < 1) {
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again later.',
+        });
+      }
 
-    const updateQuery = `UPDATE userPermissions SET  viewDashboard=?,updateAdminSettings=?,
-    createUser=?,viewUsers=?,createPlan=?,listPlans=?,
-    viewPendingAdvertisements=?,approveAdvertisement=?,allowPlanActions=?,
-    allowUserActions=? , viewRfps=?, approvedRfps=? WHERE userId =?`;
-
-    const updateResult = await executeQuery(updateQuery, values);
-
-    if (updateResult.affectedRows > 0) {
       return res.status(200).json(userPermissions);
-    } else
-      return res.status(500).json({
-        errorMessage: 'Failed to update information. Please try again later.',
-      });
+    } else {
+      const insertQuery = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan,
+        listPlans, viewPendingAdvertisements, approveAdvertisement,allowUserActions,allowPlanActions,viewRfps,approvedRfps, userId)
+                   values(?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+
+      const insertResult = await executeQuery(insertQuery, values);
+      console.log(insertResult);
+      if (insertResult.affectedRows === 0) {
+        return res
+          .status(500)
+          .json({ errorMessage: 'Error updating user. Please try again.' });
+      }
+      return res.status(200).json(userPermissions);
+    }
   } catch (error) {
     return res.status(500).json({
       errorMessage: 'Failed to update information. Please try again later.',

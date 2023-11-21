@@ -83,7 +83,8 @@ export class ApiService {
             progressBar: true,
           }); // Display an error toast
           this.storageService.updateStateLoginFailure(error?.message);
-          return of(error.message);
+
+          throw error.message;
         })
       );
   }
@@ -143,7 +144,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -181,7 +182,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -208,7 +209,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -243,7 +244,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -269,7 +270,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -297,7 +298,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -328,7 +329,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -356,7 +357,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -388,7 +389,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -420,7 +421,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -452,7 +453,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -485,7 +486,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -518,7 +519,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -550,7 +551,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -577,7 +578,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -600,7 +601,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -625,7 +626,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -650,7 +651,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -675,7 +676,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -706,7 +707,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -729,7 +730,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -754,7 +755,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -779,7 +780,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -804,7 +805,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -829,7 +830,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -856,7 +857,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -887,7 +888,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -908,7 +909,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -938,7 +939,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -980,7 +981,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1007,7 +1008,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1038,7 +1039,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1070,7 +1071,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1099,7 +1100,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1127,7 +1128,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1155,7 +1156,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1179,7 +1180,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1206,7 +1207,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1237,7 +1238,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1262,7 +1263,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1287,7 +1288,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1310,7 +1311,7 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1344,7 +1345,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1377,7 +1378,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1413,7 +1414,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1448,7 +1449,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1476,7 +1477,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1503,7 +1504,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1530,7 +1531,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1558,7 +1559,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1589,7 +1590,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1615,7 +1616,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1642,7 +1643,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1673,7 +1674,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1704,7 +1705,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1733,7 +1734,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1762,7 +1763,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1797,7 +1798,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1827,7 +1828,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1865,7 +1866,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1895,7 +1896,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1929,7 +1930,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1965,7 +1966,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -1992,7 +1993,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2019,7 +2020,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2046,7 +2047,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2074,7 +2075,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2097,7 +2098,8 @@ export class ApiService {
             closeButton: true,
             progressBar: true,
           });
-          return of(error);
+          //throw error;
+          throw error;
         })
       );
   }
@@ -2124,7 +2126,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2135,7 +2137,6 @@ export class ApiService {
       .pipe(
         take(1),
         timeout(this.apiTimeoutValue),
-        tap((nbr) => this.storageService.updateUserNewMessagesNbr(nbr)),
         finalize(() => {
           this.spinner.hide();
         }),
@@ -2150,7 +2151,8 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
+          // throw error;
         })
       );
   }
@@ -2177,7 +2179,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2202,7 +2204,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2230,7 +2232,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2257,7 +2259,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
@@ -2284,7 +2286,7 @@ export class ApiService {
               progressBar: true,
             }
           );
-          return of(error);
+          throw error;
         })
       );
   }
