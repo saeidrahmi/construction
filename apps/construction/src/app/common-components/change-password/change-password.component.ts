@@ -128,6 +128,7 @@ export class ChangePasswordComponent implements OnInit {
             this.storageService.updateIsLoading(false);
           }),
           tap((response) => {
+            this.storageService.updateUserLastPasswordResetDate(new Date());
             this.toastService.success('Plan purchased. ', 'Success', {
               timeOut: 3000,
               positionClass: 'toast-top-right',

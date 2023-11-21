@@ -180,6 +180,11 @@ export class StorageService {
       return { ...state, user: { ...state.user, error: '' } };
     });
   }
+  updateUserLastPasswordResetDate(date: Date) {
+    this.store.update((state) => {
+      return { ...state, user: { ...state.user, lastPasswordResetDate: date } };
+    });
+  }
   removeUserProfileImage() {
     this.store.update((state) => {
       return { ...state, user: { ...state.user, profileImage: null } };
