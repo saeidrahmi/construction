@@ -8,7 +8,7 @@ const {
 } = require('./utilityService'); // Import necessary helper functions
 const connectToDatabase = require('../db');
 const { sendTemporaryPasswordEmail } = require('../../nodemailer');
-
+const { getUserRatings } = require('./common-queries');
 import { AdminSettingsInterface } from '../../../../libs/common/src/models/admin-settings';
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
 const env = new EnvironmentInfo();
@@ -384,14 +384,9 @@ async function getAdvertisementDetailsController(req, res) {
       userId,
     ]);
     // get user rating
-    const selectRatingQuery = `SELECT AVG(overallCustomerSatisfaction) AS average_overall_rating,
-                              AVG(cleanliness) AS average_cleanliness,AVG(flexibility) AS average_flexibility,AVG(qualityOfWork) AS average_qualityOfWork,
-                              AVG(performance) AS average_performance,
-                              AVG(timeliness) AS average_timeliness,AVG(communicationSkills) AS average_communicationSkills,
-                              AVG(costManagement) AS average_costManagement,AVG(professionalism) AS average_professionalism,
-                              AVG(safety) AS average_safety,AVG(materialsAndEquipment) AS average_materialsAndEquipment
-                              FROM userRatings WHERE userId = ?;`;
-    const selectRatingResult = await executeQuery(selectRatingQuery, [userId]);
+
+    const selectRatingResult = await getUserRatings(userId);
+
     // get number of active ads
     const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
     const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
@@ -440,7 +435,7 @@ async function getAdvertisementDetailsController(req, res) {
     const info = {
       registeredDate: selectRegDateResult[0].registeredDate,
       acitveAds: selectActiveAdsResult[0].countAds,
-      userRate: selectRatingResult[0],
+      userRate: selectRatingResult,
       appSettings: selectSettingResult[0],
       services: serviceNames,
       locations: serviceLocationInfo,

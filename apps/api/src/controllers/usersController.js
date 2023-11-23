@@ -9,6 +9,7 @@ const {
 import { throwError } from 'rxjs';
 import { EnvironmentInfo } from '../../../../libs/common/src/models/common';
 const connectToDatabase = require('../db');
+const { getUserRatings } = require('./common-queries');
 const passport = require('passport');
 const jwtPromisify = require('jsonwebtoken-promisified');
 const jwt = require('jsonwebtoken');
@@ -1354,19 +1355,6 @@ async function getApplicationSettingsController(req, res) {
       errorMessage: 'Failed to retrieve information. Please try again later.',
     });
   }
-}
-
-async function getUserRatings(userId) {
-  const query = `SELECT AVG(overallCustomerSatisfaction) AS average_overall_rating,
-                              AVG(cleanliness) AS average_cleanliness,AVG(flexibility) AS average_flexibility,AVG(qualityOfWork) AS average_qualityOfWork,
-                              AVG(performance) AS average_performance,
-                              AVG(timeliness) AS average_timeliness,AVG(communicationSkills) AS average_communicationSkills,
-                              AVG(costManagement) AS average_costManagement,AVG(professionalism) AS average_professionalism,
-                              AVG(safety) AS average_safety,AVG(materialsAndEquipment) AS average_materialsAndEquipment
-                              FROM userRatings WHERE userId = ?;`;
-
-  const [result] = await executeQuery(query, [userId]);
-  return result;
 }
 
 async function getUserRatingsController(req, res) {
