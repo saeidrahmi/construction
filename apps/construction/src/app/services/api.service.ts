@@ -1508,6 +1508,33 @@ export class ApiService {
         })
       );
   }
+  getAllUserRatingsDetails(userAdvertisementId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/user-ratings-details', {
+        userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Ratings Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
   getAdminAdvertisementDetails(userAdvertisementId: any): Observable<any> {
     this.spinner.show();
     return this.httpClient
@@ -1827,6 +1854,35 @@ export class ApiService {
               progressBar: true,
             }
           );
+          throw error;
+        })
+      );
+  }
+  sendUserFeedback(
+    userId: any,
+    feedbackBy: any,
+    feedback: any
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/post-user-feedback', {
+        feedback: feedback,
+        userId: userId,
+        feedbackBy: feedbackBy,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Posting Feedback Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
           throw error;
         })
       );

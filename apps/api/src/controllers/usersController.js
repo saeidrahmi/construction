@@ -1380,6 +1380,44 @@ async function getUserRatingsController(req, res) {
       .json({ errorMessage: 'Error getting user ratings.' });
   }
 }
+async function getUserRatingsDetailsController(req, res) {
+  try {
+    let userAdvertisementId = req.body.userAdvertisementId;
+    // get userId
+    const selectUserQuery = `select userId from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.userAdvertisementId=?;`;
+    const selectUserResult = await executeQuery(selectUserQuery, [
+      userAdvertisementId,
+    ]);
+    if (selectUserResult?.length === 0)
+      return res
+        .status(500)
+        .json({ errorMessage: 'Error getting user ratings.' });
+
+    const userId = selectUserResult[0]?.userId;
+    const selectRatingResult = await getUserRatings(userId);
+
+    const selectDetailsQuery = `select userRatings.dateCreated, userRatings.performance, userRatings.flexibility,
+    userRatings.cleanliness, userRatings.qualityOfWork, userRatings.timeliness,
+    userRatings.communicationSkills, userRatings.costManagement, userRatings.professionalism, userRatings.safety,
+     userRatings.materialsAndEquipment, userRatings.overallCustomerSatisfaction,
+    userRatings.feedback, users.firstName  from userRatings
+    JOIN users ON userRatings.ratedBy  = users.userId
+    where userRatings.userId=? ORDER BY userRatings.dateCreated DESC;`;
+    const selectDetailsResult = await executeQuery(selectDetailsQuery, [
+      userId,
+    ]);
+
+    let response = {
+      avgRatings: selectRatingResult,
+      details: selectDetailsResult,
+    };
+    return res.status(200).json(response);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user ratings.' });
+  }
+}
 
 async function getPreNewAdInfoController(req, res) {
   try {
@@ -2021,7 +2059,7 @@ async function addUserOverallRatingController(req, res) {
     let ratedBy = decryptItem(req.body.ratedBy, webSecretKey);
     const rate = req.body.rate;
     const rateType = req.body.rateType;
-    const values = [userId, ratedBy, rate];
+    const values = [new Date(), userId, ratedBy, rate];
     if (userId === ratedBy)
       return res.status(500).json({
         errorMessage:
@@ -2069,27 +2107,27 @@ async function addUserOverallRatingController(req, res) {
     } else {
       let insertQuery = '';
       if (rateType === 'average_overall_rating')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,overallCustomerSatisfaction) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated, userId,ratedBy,overallCustomerSatisfaction) VALUES (?,?,?,?)`;
       else if (rateType === 'average_cleanliness')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,cleanliness) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,cleanliness) VALUES (?,?,?,?)`;
       else if (rateType === 'average_flexibility')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,flexibility) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,flexibility) VALUES (?,?,?,?)`;
       else if (rateType === 'average_communicationSkills')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,communicationSkills) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,communicationSkills) VALUES (?,?,?,?)`;
       else if (rateType === 'average_costManagement')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,costManagement) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,costManagement) VALUES (?,?,?,?)`;
       else if (rateType === 'average_materialsAndEquipment')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,materialsAndEquipment) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,materialsAndEquipment) VALUES (?,?,?,?)`;
       else if (rateType === 'average_performance')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,performance) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,performance) VALUES (?,?,?,?)`;
       else if (rateType === 'average_professionalism')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,professionalism) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,professionalism) VALUES (?,?,?,?)`;
       else if (rateType === 'average_qualityOfWork')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,qualityOfWork) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,qualityOfWork) VALUES (?,?,?,?)`;
       else if (rateType === 'average_safety')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,safety) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,safety) VALUES (?,?,?,?)`;
       else if (rateType === 'average_timeliness')
-        insertQuery = `INSERT INTO userRatings (userId,ratedBy,timeliness) VALUES (?,?,?)`;
+        insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,timeliness) VALUES (?,?,?,?)`;
 
       const insertResult = await executeQuery(insertQuery, values);
       if (insertResult.insertId || insertResult.affectedRows > 0) {
@@ -2148,6 +2186,61 @@ async function postAdvertisementMessageController(req, res) {
       res.status(500).json({
         errorMessage: 'Failed to update information. Please try again.',
       });
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  }
+}
+
+async function postUserFeedbackController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    let feedbackBy = decryptItem(req.body.feedbackBy, webSecretKey);
+    const feedback = req.body.feedback;
+
+    if (userId === feedbackBy)
+      res.status(500).json({
+        errorMessage: 'You can not provide feedback to yourself.',
+      });
+
+    const selectQuery =
+      'Select * FROM userRatings WHERE userId = ? and ratedBy = ?;';
+    const selectResult = await executeQuery(selectQuery, [userId, feedbackBy]);
+    if (selectResult?.length > 0) {
+      //update
+
+      const updateQuery = `update userRatings set dateCreated=?, feedback=? WHERE userId = ? and ratedBy = ?; `;
+      const updateResult = await executeQuery(updateQuery, [
+        new Date(),
+        feedback,
+        userId,
+        feedbackBy,
+      ]);
+
+      if (updateResult.affectedRows > 0) {
+        return res.status(200).json();
+      } else
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
+
+      //update
+    } else {
+      const insertQuery = `INSERT INTO userRatings (dateCreated,userId,ratedBy,feedback) VALUES (?,?,?,?)`;
+
+      const insertResult = await executeQuery(insertQuery, [
+        new Date(),
+        userId,
+        feedbackBy,
+        feedback,
+      ]);
+      if (insertResult.affectedRows === 0) {
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
+      } else return res.status(200).json();
+    }
   } catch (error) {
     return res.status(500).json({
       errorMessage: 'Failed to update information. Please try again.',
@@ -2646,4 +2739,6 @@ module.exports = {
   canUserEditAdvertisementController,
   getUserAdvertisementDetailsController,
   getUserRatingsController,
+  getUserRatingsDetailsController,
+  postUserFeedbackController,
 };

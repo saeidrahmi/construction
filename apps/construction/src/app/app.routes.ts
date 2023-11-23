@@ -68,6 +68,13 @@ export const appRoutes: Route[] = [
       ).then((com) => com.UserAdvertisementsListComponent),
   },
   {
+    path: 'user-ratings-details',
+    loadComponent: () =>
+      import('./public/view-reviews/view-reviews.component').then(
+        (com) => com.ViewReviewsComponent
+      ),
+  },
+  {
     path: 'view-advertisement-details',
     loadComponent: () =>
       import(

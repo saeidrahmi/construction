@@ -1,5 +1,5 @@
 import { isUserLoggedIn } from './../../services/user-gaurds';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, Input, inject } from '@angular/core';
 import { AdvertisementInterface } from '../../models/advertisement';
@@ -40,6 +40,7 @@ import { RatingInterface } from '../../models/rating';
     ReactiveFormsModule,
     FormErrorsComponent,
     PhoneNumberPipe,
+    RouterModule,
   ],
 })
 export class AdvertisementDetailsViewComponent {
@@ -104,7 +105,7 @@ export class AdvertisementDetailsViewComponent {
                 }
               });
               this.userInfo = info?.userInfo;
-
+              this.advertisement.userId = this.userInfo?.userId;
               this.registeredDate = new Date(info?.registeredDate);
               this.acitveAds = info.acitveAds;
               this.userRating = info.userRate;
@@ -144,6 +145,14 @@ export class AdvertisementDetailsViewComponent {
     this.messageForm = this.fb.group({
       message: new FormControl('', [Validators.required]),
     });
+  }
+  navigateRatingDetails() {
+    this.storageService.updateAdvertisementState(
+      this.advertisement,
+      this.advertisement.userAdvertisementId,
+      'view'
+    );
+    this.router.navigate(['/user-ratings-details']);
   }
   naviagteUserAds(id: string) {
     this.storageService.updateSelectedAdvertisementId(id);
