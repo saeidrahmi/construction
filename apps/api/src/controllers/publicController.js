@@ -63,7 +63,18 @@ async function listPaidPlansController(req, res) {
 async function listAdvertisementsController(req, res) {
   try {
     const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
-                          (SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = users.userId) as userRating
+                          (SELECT AVG(cleanliness) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
+                          (SELECT AVG(flexibility)  FROM userRatings WHERE userId = users.userId) as average_flexibility,
+                          (SELECT AVG(qualityOfWork)  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
+                          (SELECT AVG(performance) FROM userRatings WHERE userId = users.userId) as average_performance,
+                          (SELECT AVG(communicationSkills) FROM userRatings WHERE userId = users.userId) as average_communicationSkills,
+                          (SELECT AVG(timeliness)   FROM userRatings WHERE userId = users.userId) as average_timeliness,
+                          (SELECT AVG(costManagement)   FROM userRatings WHERE userId = users.userId) as average_costManagement,
+                          (SELECT AVG(professionalism)   FROM userRatings WHERE userId = users.userId) as average_professionalism,
+                          (SELECT AVG(safety)   FROM userRatings WHERE userId = users.userId) as average_safety,
+                          (SELECT AVG(materialsAndEquipment)   FROM userRatings WHERE userId = users.userId) as average_materialsAndEquipment,
+                          (SELECT AVG(overallCustomerSatisfaction) AS average_rating FROM userRatings WHERE userId = users.userId) as average_userOverallRating
+
                           FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           JOIN users ON userPlans.userId = users.userId
@@ -97,7 +108,17 @@ async function listUserActiveAdvertisementsController(req, res) {
       });
 
     const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
-                          (SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = users.userId) as userRating
+                           (SELECT AVG(cleanliness) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
+                          (SELECT AVG(flexibility)  FROM userRatings WHERE userId = users.userId) as average_flexibility,
+                          (SELECT AVG(qualityOfWork)  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
+                          (SELECT AVG(performance) FROM userRatings WHERE userId = users.userId) as average_performance,
+                          (SELECT AVG(communicationSkills) FROM userRatings WHERE userId = users.userId) as average_communicationSkills,
+                          (SELECT AVG(timeliness)   FROM userRatings WHERE userId = users.userId) as average_timeliness,
+                          (SELECT AVG(costManagement)   FROM userRatings WHERE userId = users.userId) as average_costManagement,
+                          (SELECT AVG(professionalism)   FROM userRatings WHERE userId = users.userId) as average_professionalism,
+                          (SELECT AVG(safety)   FROM userRatings WHERE userId = users.userId) as average_safety,
+                          (SELECT AVG(materialsAndEquipment)   FROM userRatings WHERE userId = users.userId) as average_materialsAndEquipment,
+                          (SELECT AVG(overallCustomerSatisfaction) AS average_rating FROM userRatings WHERE userId = users.userId) as average_userOverallRating
                           FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           JOIN users ON userPlans.userId = users.userId

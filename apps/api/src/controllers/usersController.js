@@ -1355,6 +1355,44 @@ async function getApplicationSettingsController(req, res) {
     });
   }
 }
+
+async function getUserRatings(userId) {
+  const query = `SELECT AVG(overallCustomerSatisfaction) AS average_overall_rating,
+                              AVG(cleanliness) AS average_cleanliness,AVG(flexibility) AS average_flexibility,AVG(qualityOfWork) AS average_qualityOfWork,
+                              AVG(performance) AS average_performance,
+                              AVG(timeliness) AS average_timeliness,AVG(communicationSkills) AS average_communicationSkills,
+                              AVG(costManagement) AS average_costManagement,AVG(professionalism) AS average_professionalism,
+                              AVG(safety) AS average_safety,AVG(materialsAndEquipment) AS average_materialsAndEquipment
+                              FROM userRatings WHERE userId = ?;`;
+
+  const [result] = await executeQuery(query, [userId]);
+  return result;
+}
+
+async function getUserRatingsController(req, res) {
+  try {
+    let userAdvertisementId = req.body.userAdvertisementId;
+    // get userId
+    const selectUserQuery = `select userId from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.userAdvertisementId=?;`;
+    const selectUserResult = await executeQuery(selectUserQuery, [
+      userAdvertisementId,
+    ]);
+    if (selectUserResult?.length === 0)
+      return res
+        .status(500)
+        .json({ errorMessage: 'Error getting user ratings.' });
+
+    const userId = selectUserResult[0]?.userId;
+    const selectRatingResult = await getUserRatings(userId);
+    console.log('re', selectRatingResult);
+    return res.status(200).json(selectRatingResult);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user ratings.' });
+  }
+}
+
 async function getPreNewAdInfoController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
@@ -1364,8 +1402,8 @@ async function getPreNewAdInfoController(req, res) {
       userId,
     ]);
     // get user rating
-    const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
-    const selectRatingResult = await executeQuery(selectRatingQuery, [userId]);
+    const selectRatingResult = await getUserRatings(userId);
+
     // get number of active ads
     const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
     const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
@@ -1414,7 +1452,7 @@ async function getPreNewAdInfoController(req, res) {
     const info = {
       registeredDate: selectRegDateResult[0].registeredDate,
       acitveAds: selectActiveAdsResult[0].countAds,
-      userRate: selectRatingResult[0].average_rating,
+      userRate: selectRatingResult,
       appSettings: selectSettingResult[0],
       services: serviceNames,
       locations: serviceLocationInfo,
@@ -1465,8 +1503,9 @@ async function getAdvertisementDetailsController(req, res) {
       userId,
     ]);
     // get user rating
-    const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
-    const selectRatingResult = await executeQuery(selectRatingQuery, [userId]);
+
+    const selectRatingResult = await getUserRatings(userId);
+
     // get number of active ads
     const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where
                                   userAdvertisements.active=1 and userAdvertisements.rejected=0 and  userAdvertisements.deleted=0 and userAdvertisements.approvedByAdmin=1  and userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
@@ -1516,7 +1555,7 @@ async function getAdvertisementDetailsController(req, res) {
     const info = {
       registeredDate: selectRegDateResult[0].registeredDate,
       acitveAds: selectActiveAdsResult[0].countAds,
-      userRate: selectRatingResult[0].average_rating,
+      userRate: selectRatingResult,
       appSettings: selectSettingResult[0],
       services: serviceNames,
       locations: serviceLocationInfo,
@@ -1560,8 +1599,8 @@ async function getUserAdvertisementDetailsController(req, res) {
       userId,
     ]);
     // get user rating
-    const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
-    const selectRatingResult = await executeQuery(selectRatingQuery, [userId]);
+    const selectRatingResult = await getUserRatings(userId);
+
     // get number of active ads
     const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
     const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
@@ -1610,7 +1649,7 @@ async function getUserAdvertisementDetailsController(req, res) {
     const info = {
       registeredDate: selectRegDateResult[0].registeredDate,
       acitveAds: selectActiveAdsResult[0].countAds,
-      userRate: selectRatingResult[0].average_rating,
+      userRate: selectRatingResult,
       appSettings: selectSettingResult[0],
       services: serviceNames,
       locations: serviceLocationInfo,
@@ -1988,22 +2027,92 @@ async function deleteFavoriteAdvertisementsController(req, res) {
     });
   }
 }
-async function addUserRatingController(req, res) {
+async function addUserOverallRatingController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
     let ratedBy = decryptItem(req.body.ratedBy, webSecretKey);
     const rate = req.body.rate;
+    const rateType = req.body.rateType;
     const values = [userId, ratedBy, rate];
-    const insertQuery = `INSERT INTO userRatings (userId,ratedBy,rate) VALUES (?,?,?)`;
-    const insertResult = await executeQuery(insertQuery, values);
-    if (insertResult.insertId || insertResult.affectedRows > 0) {
-      // get user rating
-      const selectRatingQuery = `SELECT AVG(rate) AS average_rating FROM userRatings WHERE userId = ?;`;
-      const selectRatingResult = await executeQuery(selectRatingQuery, [
-        userId,
-      ]);
-      return res.status(200).json(selectRatingResult[0].average_rating);
-    } else return res.status(200).json(rate);
+    if (userId === ratedBy)
+      return res.status(500).json({
+        errorMessage:
+          'Failed to update information. You can not rate yourself.',
+      });
+
+    const selectQuery =
+      'Select * FROM userRatings WHERE userId = ? and ratedBy = ?;';
+    const selectResult = await executeQuery(selectQuery, [userId, ratedBy]);
+    if (selectResult?.length > 0) {
+      const updateValues = [rate, userId, ratedBy];
+      let updateQuery = '';
+      if (rateType === 'average_overall_rating')
+        updateQuery = `update userRatings set overallCustomerSatisfaction=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_cleanliness')
+        updateQuery = `update userRatings set cleanliness=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_flexibility')
+        updateQuery = `update userRatings set flexibility=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_communicationSkills')
+        updateQuery = `update userRatings set communicationSkills=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_costManagement')
+        updateQuery = `update userRatings set costManagement=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_materialsAndEquipment')
+        updateQuery = `update userRatings set materialsAndEquipment=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_performance')
+        updateQuery = `update userRatings set performance=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_professionalism')
+        updateQuery = `update userRatings set professionalism=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_qualityOfWork')
+        updateQuery = `update userRatings set qualityOfWork=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_safety')
+        updateQuery = `update userRatings set safety=? WHERE userId = ? and ratedBy = ?; `;
+      else if (rateType === 'average_timeliness')
+        updateQuery = `update userRatings set timeliness=? WHERE userId = ? and ratedBy = ?; `;
+
+      const updateResult = await executeQuery(updateQuery, updateValues);
+      if (updateResult.affectedRows > 0) {
+        return res.status(200).json(rate);
+      } else
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
+
+      //update
+    } else {
+      let insertQuery = '';
+      if (rateType === 'average_overall_rating')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,overallCustomerSatisfaction) VALUES (?,?,?)`;
+      else if (rateType === 'average_cleanliness')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,cleanliness) VALUES (?,?,?)`;
+      else if (rateType === 'average_flexibility')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,flexibility) VALUES (?,?,?)`;
+      else if (rateType === 'average_communicationSkills')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,communicationSkills) VALUES (?,?,?)`;
+      else if (rateType === 'average_costManagement')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,costManagement) VALUES (?,?,?)`;
+      else if (rateType === 'average_materialsAndEquipment')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,materialsAndEquipment) VALUES (?,?,?)`;
+      else if (rateType === 'average_performance')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,performance) VALUES (?,?,?)`;
+      else if (rateType === 'average_professionalism')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,professionalism) VALUES (?,?,?)`;
+      else if (rateType === 'average_qualityOfWork')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,qualityOfWork) VALUES (?,?,?)`;
+      else if (rateType === 'average_safety')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,safety) VALUES (?,?,?)`;
+      else if (rateType === 'average_timeliness')
+        insertQuery = `INSERT INTO userRatings (userId,ratedBy,timeliness) VALUES (?,?,?)`;
+
+      const insertResult = await executeQuery(insertQuery, values);
+      if (insertResult.insertId || insertResult.affectedRows > 0) {
+        // get user rating
+        const selectRatingQuery = `SELECT AVG(overallCustomerSatisfaction) AS average_rating FROM userRatings WHERE userId = ?;`;
+        const selectRatingResult = await executeQuery(selectRatingQuery, [
+          userId,
+        ]);
+        return res.status(200).json(selectRatingResult[0].average_rating);
+      } else return res.status(200).json(rate);
+    }
   } catch (error) {
     return res.status(500).json({
       errorMessage: 'Failed to update information. Please try again.',
@@ -2544,8 +2653,9 @@ module.exports = {
   getUserAdvertisementsController,
   updateUserAdvertisementActivateStatusController,
   getAdvertisementDetailsController,
-  addUserRatingController,
+  addUserOverallRatingController,
   refreshTokenController,
   canUserEditAdvertisementController,
   getUserAdvertisementDetailsController,
+  getUserRatingsController,
 };

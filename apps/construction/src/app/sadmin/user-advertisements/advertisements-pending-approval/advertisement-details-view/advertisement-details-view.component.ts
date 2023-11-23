@@ -19,6 +19,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormService } from '../../../../services/form.service';
 import { CommonUtilityService } from 'apps/construction/src/app/services/common-utility.service';
+import { RatingInterface } from 'apps/construction/src/app/models/rating';
 
 @Component({
   selector: 'app-admin-advertisement-details-view',
@@ -43,7 +44,7 @@ export class AdminAdvertisementDetailsViewComponent {
   messageForm: FormGroup;
   user = this.storageService.getUser();
   message = '';
-  max = 10;
+  max: number;
   rate: number;
   isReadonly = false;
   heartColor = '';
@@ -58,8 +59,10 @@ export class AdminAdvertisementDetailsViewComponent {
   headerImage: any;
   sliderImages: any[];
   formErrors: string[] = [];
+  userRating: RatingInterface = {};
 
   constructor(private sanitizer: DomSanitizer) {
+    this.max = this.commonUtility.getMaxUserRating();
     const adObject = this.storageService?.getAdvertisement()();
     if (
       adObject?.advertisementIdSelected &&
@@ -90,7 +93,7 @@ export class AdminAdvertisementDetailsViewComponent {
 
               this.registeredDate = new Date(info?.registeredDate);
               this.acitveAds = info.acitveAds;
-              this.rate = info.userRate;
+              this.userRating = info.userRate;
               this.myServices = info?.services;
               this.locationType = info?.locations?.serviceCoverageType;
               if (this.locationType === 'province') {
@@ -128,40 +131,7 @@ export class AdminAdvertisementDetailsViewComponent {
       message: new FormControl('', [Validators.required]),
     });
   }
-  confirmSelection(event: KeyboardEvent) {
-    if (this.isLoggedIn())
-      this.apiService
-        .addUserRating(
-          this.userRate,
-          this.encryptionService.encryptItem(this.userInfo?.userId),
-          this.encryptionService.encryptItem(this.userId())
-        )
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
 
-          tap((info: any) => {
-            this.rate = info;
-            this.toastService.success('User rated successfully', 'Success', {
-              timeOut: 3000,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            });
-          })
-        )
-
-        .subscribe();
-    else
-      this.toastService.error('Please login first', 'Error', {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-        closeButton: true,
-        progressBar: true,
-      });
-  }
-  userRate(userRate: any, arg1: string, arg2: string) {
-    throw new Error('Method not implemented.');
-  }
   goToUrl() {
     // window.open('http://' + this.user().website, '_blank');
     if (

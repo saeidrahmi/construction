@@ -42,7 +42,7 @@ const {
   getAdvertisementDetailsController,
   deleteFavoriteAdvertisementsController,
   addFavoriteAdvertisementsController,
-  addUserRatingController,
+  addUserOverallRatingController,
   isUserFavoriteAdController,
   postAdvertisementMessageController,
   getAdvertisementMessageController,
@@ -55,6 +55,7 @@ const {
   editAdvertisementController,
   repostAdvertisementController,
   deleteUserProfilePhotoController,
+  getUserRatingsController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -71,6 +72,7 @@ router.post('/signup', signupController);
 router.post('/register-free', registerFreeUserController);
 router.post('/register-paid', registerPaidUserController);
 router.post('/reset-password', resetPasswordController);
+router.post('/user-ratings', getUserRatingsController);
 router.post(
   '/edit-user-profile',
   verifyAllToken,
@@ -198,7 +200,11 @@ router.post(
   verifyGeneralToken,
   deleteFavoriteAdvertisementsController
 );
-router.post('/add-user-rating', verifyAllToken, addUserRatingController);
+router.post(
+  '/add-user-overall-rating',
+  verifyAllToken,
+  addUserOverallRatingController
+);
 router.post('/is-user-favorite-ad', verifyAllToken, isUserFavoriteAdController);
 router.post(
   '/post-advertisement-message',

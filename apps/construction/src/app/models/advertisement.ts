@@ -18,7 +18,17 @@ export interface AdvertisementInterface {
   showPicture?: boolean;
   showChat?: boolean;
   numberOfVisits?: number;
-  userRating?: number;
+  average_userOverallRating?: number;
+  average_cleanliness?: number;
+  average_communicationSkills?: number;
+  average_costManagement?: number;
+  average_flexibility?: number;
+  average_materialsAndEquipment?: number;
+  average_performance?: number;
+  average_professionalism?: number;
+  average_qualityOfWork?: number;
+  average_safety?: number;
+  average_timeliness?: number;
   userProfileImage?: any;
   sliderImages?: string[];
   sliderImageFiles?: File[];

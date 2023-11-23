@@ -26,6 +26,7 @@ import { FormService } from '../../services/form.service';
 import { FormErrorsComponent } from '../../public/form-errors.component';
 import { PhoneNumberPipe } from '../../pipes/phone-number.pipe';
 import { CommonUtilityService } from '../../services/common-utility.service';
+import { RatingInterface } from '../../models/rating';
 
 @Component({
   selector: 'app-advertisement-details-view',
@@ -60,8 +61,8 @@ export class AdvertisementDetailsViewComponent {
   messageForm: FormGroup;
   user = this.storageService.getUser();
   message = '';
-  max = 10;
-  rate: number;
+  max: number;
+  userRating: RatingInterface = {};
   isReadonly = false;
   heartColor = '';
   myServices: string[] = [];
@@ -77,6 +78,7 @@ export class AdvertisementDetailsViewComponent {
   formErrors: string[] = [];
 
   constructor(private sanitizer: DomSanitizer) {
+    this.max = this.commonUtility.getMaxUserRating();
     const adObject = this.storageService?.getAdvertisement()();
     if (
       adObject?.advertisementIdSelected &&
@@ -105,7 +107,7 @@ export class AdvertisementDetailsViewComponent {
 
               this.registeredDate = new Date(info?.registeredDate);
               this.acitveAds = info.acitveAds;
-              this.rate = info.userRate;
+              this.userRating = info.userRate;
               this.myServices = info?.services;
               this.locationType = info?.locations?.serviceCoverageType;
               if (this.locationType === 'province') {
@@ -147,19 +149,19 @@ export class AdvertisementDetailsViewComponent {
     this.storageService.updateSelectedAdvertisementId(id);
     this.router.navigate(['/user-advertisements']);
   }
-  confirmSelection(event: KeyboardEvent) {
+
+  updateUserOverallRating(rate: any, rateType: string) {
     if (this.isLoggedIn())
       this.apiService
         .addUserRating(
-          this.userRate,
+          rate,
           this.encryptionService.encryptItem(this.userInfo?.userId),
-          this.encryptionService.encryptItem(this.userId())
+          this.encryptionService.encryptItem(this.userId()),
+          rateType
         )
         .pipe(
           takeUntilDestroyed(this.destroyRef),
-
-          tap((info: any) => {
-            this.rate = info;
+          tap(() => {
             this.toastService.success('success', 'success', {
               timeOut: 3000,
               positionClass: 'toast-top-right',
@@ -170,7 +172,18 @@ export class AdvertisementDetailsViewComponent {
           catchError((err) => {
             this.heartColor = '';
             return of(err);
-          })
+          }),
+          switchMap(() =>
+            this.apiService
+              .getUserRatings(this.advertisement?.userAdvertisementId)
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                tap((ratings: any) => {
+                  console.log(ratings, 'ratings');
+                  this.userRating = { ...ratings };
+                })
+              )
+          )
         )
 
         .subscribe();
@@ -182,9 +195,7 @@ export class AdvertisementDetailsViewComponent {
         progressBar: true,
       });
   }
-  userRate(userRate: any, arg1: string, arg2: string) {
-    throw new Error('Method not implemented.');
-  }
+
   goToUrl() {
     // window.open('http://' + this.user().website, '_blank');
     if (

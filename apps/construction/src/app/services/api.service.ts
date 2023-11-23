@@ -1481,6 +1481,33 @@ export class ApiService {
         })
       );
   }
+  getUserRatings(userAdvertisementId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/user-ratings', {
+        userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Ratings Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
   getAdminAdvertisementDetails(userAdvertisementId: any): Observable<any> {
     this.spinner.show();
     return this.httpClient
@@ -1709,13 +1736,19 @@ export class ApiService {
         })
       );
   }
-  addUserRating(rate: any, userId: any, ratedBy: any): Observable<any> {
+  addUserRating(
+    rate: any,
+    userId: any,
+    ratedBy: any,
+    rateType: string
+  ): Observable<any> {
     this.spinner.show();
     return this.httpClient
-      .post<any>(this.backendApiUrl + '/users/add-user-rating', {
+      .post<any>(this.backendApiUrl + '/users/add-user-overall-rating', {
         rate: rate,
         userId: userId,
         ratedBy: ratedBy,
+        rateType: rateType,
       })
       .pipe(
         take(1),
@@ -1724,16 +1757,12 @@ export class ApiService {
           this.spinner.hide();
         }),
         catchError((error) => {
-          this.toastService.error(
-            error.message,
-            'Updating User Rating Failed',
-            {
-              timeOut: this.toastrTimeoutValue,
-              positionClass: 'toast-top-right',
-              closeButton: true,
-              progressBar: true,
-            }
-          );
+          this.toastService.error(error, 'Updating User Rating Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
           throw error;
         })
       );

@@ -21,6 +21,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { FormService } from '../../../services/form.service';
 import { CommonUtilityService } from '../../../services/common-utility.service';
+import { RatingInterface } from '../../../models/rating';
 
 @Component({
   selector: 'app-user-advertisement-details-view',
@@ -44,7 +45,7 @@ export class UserAdvertisementDetailsViewComponent {
   messageForm: FormGroup;
   user = this.storageService.getUser();
   message = '';
-  max = 10;
+  max: number;
   rate: number;
   isReadonly = false;
   heartColor = '';
@@ -61,7 +62,9 @@ export class UserAdvertisementDetailsViewComponent {
   formErrors: string[] = [];
   selectedImage: any;
   profileImage: string;
+  userRating: RatingInterface = {};
   constructor(private sanitizer: DomSanitizer) {
+    this.max = this.commonUtility.getMaxUserRating();
     const adObject = this.storageService?.getAdvertisement()();
     if (
       adObject?.advertisementIdSelected &&
@@ -93,7 +96,7 @@ export class UserAdvertisementDetailsViewComponent {
               this.userInfo = info?.userInfo;
               this.registeredDate = new Date(info?.registeredDate);
               this.acitveAds = info.acitveAds;
-              this.rate = info.userRate;
+              this.userRating = info.userRate;
               this.myServices = info?.services;
               this.locationType = info?.locations?.serviceCoverageType;
               if (this.locationType === 'province') {
@@ -127,14 +130,6 @@ export class UserAdvertisementDetailsViewComponent {
 
     this.messageForm = this.fb.group({
       message: new FormControl('', [Validators.required]),
-    });
-  }
-  confirmSelection(event: KeyboardEvent) {
-    this.toastService.error('You can not rate yourself', 'Failed', {
-      timeOut: 3000,
-      positionClass: 'toast-top-right',
-      closeButton: true,
-      progressBar: true,
     });
   }
 
