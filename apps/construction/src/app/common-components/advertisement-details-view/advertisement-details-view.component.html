@@ -63,38 +63,43 @@
       ></div>
       <div class="col-10">
         <div class="continer-fluid">
-          <div class="row border border-1 rounded p-2">
-            <div class="col-2">
-              <div *ngIf="headerImage; then imageSection; else noImage"></div>
-              <ng-template #imageSection>
-                <img
-                  class="img-thumbnail rounded"
-                  width="200"
-                  height="200"
-                  [src]="imageService.bufferToSafeUrl(headerImage)"
-              /></ng-template>
-              <ng-template #noImage>
-                <img
-                  class="img-thumbnail rounded"
-                  width="200"
-                  height="200"
-                  src="../../../assets/images/questionmark.png"
-              /></ng-template>
-            </div>
-            <div class="col-8">
-              <h5>{{ advertisement.title }}</h5>
-            </div>
-            <div class="col-1">
-              <i
-                class="bi bi-heart-fill cursor"
-                [ngStyle]="{ 'font-size': '2rem', color: heartColor }"
-                (click)="addFavoriteAd(advertisement?.userAdvertisementId)"
-              ></i>
-            </div>
-          </div>
           <div class="row my-2">
             <div class="col-8">
               <div class="container-fluid">
+                <div class="row border border-1 rounded p-2">
+                  <div class="col-2">
+                    <div
+                      *ngIf="headerImage; then imageSection; else noImage"
+                    ></div>
+                    <ng-template #imageSection>
+                      <img
+                        class="img-thumbnail rounded"
+                        width="200"
+                        height="200"
+                        [src]="imageService.bufferToSafeUrl(headerImage)"
+                    /></ng-template>
+                    <ng-template #noImage>
+                      <img
+                        class="img-thumbnail rounded"
+                        width="200"
+                        height="200"
+                        src="../../../assets/images/questionmark.png"
+                    /></ng-template>
+                  </div>
+                  <div class="col-8">
+                    <h5>{{ advertisement.title }}</h5>
+                  </div>
+                  <div class="col-1">
+                    <i
+                      class="bi bi-heart-fill cursor"
+                      [ngStyle]="{ 'font-size': '2rem', color: heartColor }"
+                      (click)="
+                        addFavoriteAd(advertisement?.userAdvertisementId)
+                      "
+                    ></i>
+                  </div>
+                </div>
+
                 <div class="row" *ngIf="advertisement?.topAdvertisement">
                   <div class="col">
                     <button type="button" class="btn btn-outline-info">
