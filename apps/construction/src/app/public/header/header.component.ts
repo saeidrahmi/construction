@@ -6,7 +6,12 @@ import {
   inject,
 } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  Router,
+  RouterLink,
+  RouterLinkActive,
+  RouterModule,
+} from '@angular/router';
 import { StorageService } from '../../services/storage.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ApiService } from '../../services/api.service';
@@ -24,6 +29,7 @@ import { MatIconModule } from '@angular/material/icon';
     RouterLinkActive,
     CarouselHeaderComponent,
     MatIconModule,
+    RouterModule,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],

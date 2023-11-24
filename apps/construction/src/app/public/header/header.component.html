@@ -91,6 +91,12 @@
         </li>
       </ul>
       <ng-container *ngIf="isLoggedIn()">
+        <span class="mx-2">
+          <a
+            [routerLinkActive]="['active_section']"
+            [routerLink]="['/general/user-favorites']"
+            ><i class="bi bi-heart text-danger"></i> </a
+        ></span>
         <div
           *ngIf="user()?.profileImage; then yesSection; else noSection"
         ></div>
