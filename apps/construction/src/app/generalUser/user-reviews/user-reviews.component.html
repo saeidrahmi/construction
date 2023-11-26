@@ -1,0 +1,176 @@
+<div class="container-fluid my-3">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6">User Average Rating Details </span>
+          </h2>
+          <hr />
+          <div class="container-fluid">
+            <div class="row row-cols-1">
+              <div class="col">
+                <ul class="list-group list-group-horizontal">
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index">
+                      <span class="mx-2">Customer Satisfaction </span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_overall_rating"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Cleanliness</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_cleanliness"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Communication</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_communicationSkills"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                </ul>
+                <ul class="list-group list-group-horizontal">
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Cost management</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_costManagement"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Flexibility</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_flexibility"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Materials & Equipments </span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_materialsAndEquipment"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                </ul>
+                <ul class="list-group list-group-horizontal-sm">
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Performance</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_performance"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Professionalism</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_professionalism"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Quality</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_qualityOfWork"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                </ul>
+                <ul class="list-group list-group-horizontal">
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Safety</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_safety"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                  <li class="list-group-item">
+                    <i class="bi bi-hand-index"
+                      ><span class="mx-2">Timeliness</span></i
+                    >
+                    <rating
+                      [(ngModel)]="userRating.average_timeliness"
+                      [max]="max"
+                      [readonly]="false"
+                    ></rating>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row m-2" *ngIf="ratings?.details.length === 0">
+    <div class="alert alert-info" role="alert">
+      <p class="h4 text-primary">Currently, There are no reviews for you.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6">Feedbacks </span>
+          </h2>
+          <hr />
+          <div class="container-fluid">
+            <div class="row" *ngFor="let item of ratings?.details; index as i">
+              <div class="col">
+                <div
+                  class="alert"
+                  [ngClass]="{
+                    'alert-primary': i % 6 === 0,
+                    'alert-info': i % 6 === 1,
+                    'alert-secondary': i % 6 === 2,
+                    'alert-success': i % 6 === 3,
+                    'alert-light': i % 6 === 4,
+                    'alert-dark': i % 6 === 5
+                  }"
+                  role="alert"
+                >
+                  <p class="h4 text-primary">{{ item?.firstName }}</p>
+                  {{ item?.feedback }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
