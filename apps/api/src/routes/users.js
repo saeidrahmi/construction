@@ -58,6 +58,7 @@ const {
   getUserRatingsController,
   getUserRatingsDetailsController,
   postUserFeedbackController,
+  getAllUserRatingsDetailsBasedOnUserId,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -75,6 +76,11 @@ router.post('/register-free', registerFreeUserController);
 router.post('/register-paid', registerPaidUserController);
 router.post('/reset-password', resetPasswordController);
 router.post('/user-ratings', getUserRatingsController);
+router.post(
+  '/user-ratings-info',
+  verifyGeneralToken,
+  getAllUserRatingsDetailsBasedOnUserId
+);
 router.post('/user-ratings-details', getUserRatingsDetailsController);
 router.post('/post-user-feedback', verifyAllToken, postUserFeedbackController);
 router.post(

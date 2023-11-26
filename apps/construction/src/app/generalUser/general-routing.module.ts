@@ -25,6 +25,7 @@ import { MyBidsComponent } from './my-bids/my-bids.component';
 import { ViewBidComponent } from './my-bids/view-bid/view-bid.component';
 import { MyRFPComponent } from './rfps/my-rfp.component';
 import { NewRFPComponent } from './rfps/new-rfp/new-rfp.component';
+import { UserReviewsComponent } from './user-reviews/user-reviews.component';
 const routes: Routes = [
   {
     path: '',
@@ -121,6 +122,10 @@ const routes: Routes = [
       {
         path: 'advertisement-details',
         component: UserAdvertisementDetailsViewComponent,
+      },
+      {
+        path: 'user-reviews',
+        component: UserReviewsComponent,
       },
       {
         path: 'promote-top-ad',

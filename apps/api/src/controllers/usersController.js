@@ -1418,6 +1418,34 @@ async function getUserRatingsDetailsController(req, res) {
       .json({ errorMessage: 'Error getting user ratings.' });
   }
 }
+async function getAllUserRatingsDetailsBasedOnUserId(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+
+    const selectRatingResult = await getUserRatings(userId);
+
+    const selectDetailsQuery = `select userRatings.dateCreated, userRatings.performance, userRatings.flexibility,
+    userRatings.cleanliness, userRatings.qualityOfWork, userRatings.timeliness,
+    userRatings.communicationSkills, userRatings.costManagement, userRatings.professionalism, userRatings.safety,
+     userRatings.materialsAndEquipment, userRatings.overallCustomerSatisfaction,
+    userRatings.feedback, users.firstName  from userRatings
+    JOIN users ON userRatings.ratedBy  = users.userId
+    where userRatings.userId=? ORDER BY userRatings.dateCreated DESC;`;
+    const selectDetailsResult = await executeQuery(selectDetailsQuery, [
+      userId,
+    ]);
+
+    let response = {
+      avgRatings: selectRatingResult,
+      details: selectDetailsResult,
+    };
+    return res.status(200).json(response);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user ratings.' });
+  }
+}
 
 async function getPreNewAdInfoController(req, res) {
   try {
@@ -2741,4 +2769,5 @@ module.exports = {
   getUserRatingsController,
   getUserRatingsDetailsController,
   postUserFeedbackController,
+  getAllUserRatingsDetailsBasedOnUserId,
 };

@@ -91,11 +91,38 @@
         </li>
       </ul>
       <ng-container *ngIf="isLoggedIn()">
-        <span class="mx-2">
+        <span class="mx-1">
+          <a
+            [routerLinkActive]="['active_section']"
+            [routerLink]="['/general/user-messages']"
+            ><i
+              class="bi bi-envelope-at"
+              matTooltip="Messages"
+              matTooltipPosition="above"
+            ></i> </a
+        ></span>
+        <span class="mx-1">
           <a
             [routerLinkActive]="['active_section']"
             [routerLink]="['/general/user-favorites']"
-            ><i class="bi bi-heart text-danger"></i> </a
+            ><i
+              class="bi bi-heart-fill text-danger"
+              matTooltip="Favorites"
+              matTooltipPosition="above"
+            ></i> </a
+        ></span>
+        <span class="mx-1">
+          <i
+            (click)="changeThemeMode()"
+            class="mx-1 cursor-pointer"
+            matTooltip="Change Theme"
+            matTooltipPosition="above"
+            [ngClass]="
+              theme() === 'dark'
+                ? 'bi bi-brightness-high'
+                : 'bi bi-cloud-sun-fill'
+            "
+          ></i
         ></span>
         <div
           *ngIf="user()?.profileImage; then yesSection; else noSection"
@@ -110,9 +137,9 @@
         <ng-template #noSection> <mat-icon>person</mat-icon></ng-template>
       </ng-container>
 
-      <span class="mx-2">
+      <span class="mx-1">
         <a
-          class="nav-link"
+          class="nav-link text-muted"
           aria-current="page"
           (click)="navigateHomePage()"
           routerLinkActive="active"
@@ -120,16 +147,10 @@
           >{{ userName() | titlecase }}</a
         >
       </span>
-      <button class="btn btn-outline-primary" (click)="changeThemeMode()">
-        <i
-          [ngClass]="
-            theme() === 'dark'
-              ? 'bi bi-brightness-high'
-              : 'bi bi-cloud-sun-fill'
-          "
-        ></i>
-        {{ theme() === 'dark' ? 'Light Theme' : 'Dark Theme' }}
-      </button>
+      <!-- <button class="btn btn-outline-primary" (click)="changeThemeMode()"> -->
+
+      <!-- {{ theme() === 'dark' ? 'Light Theme' : 'Dark Theme' }} -->
+      <!-- </button> -->
       <!-- <form class="d-flex" role="search">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
           <button class="btn btn-outline-success" type="submit">Search</button>

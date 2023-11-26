@@ -19,6 +19,7 @@ import { UserRoutingService } from '../../services/user-routing.service';
 import { CarouselHeaderComponent } from '../carousel-header/carousel-header.component';
 import { ImageService } from '../../services/image-service';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'construction-header',
@@ -30,6 +31,7 @@ import { MatIconModule } from '@angular/material/icon';
     CarouselHeaderComponent,
     MatIconModule,
     RouterModule,
+    MatTooltipModule,
   ],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],

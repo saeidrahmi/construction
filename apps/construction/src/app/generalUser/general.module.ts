@@ -55,6 +55,7 @@ import { ViewBidComponent } from './my-bids/view-bid/view-bid.component';
 import { MyRFPComponent } from './rfps/my-rfp.component';
 import { NewRFPComponent } from './rfps/new-rfp/new-rfp.component';
 import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
+import { UserReviewsComponent } from './user-reviews/user-reviews.component';
 
 @NgModule({
   declarations: [
@@ -83,6 +84,7 @@ import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
     ViewBidComponent,
     MyRFPComponent,
     NewRFPComponent,
+    UserReviewsComponent,
   ],
   imports: [
     CommonModule,
@@ -120,6 +122,7 @@ import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
     RatingModule,
     NgxDropzoneModule,
     PhoneNumberPipe,
+    RatingModule,
   ],
   providers: [],
 })
