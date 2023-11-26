@@ -17,7 +17,7 @@ router.get('/get-top-ad-info', getTopAdInfoController);
 router.get('/list-plans', listPlansController);
 router.get('/list-paid-plans', listPaidPlansController);
 router.get('/get-tax', getTaxController);
-router.get('/list-advertisements', listAdvertisementsController);
+router.post('/list-advertisements', listAdvertisementsController);
 router.post(
   '/list-user-active-advertisements',
   listUserActiveAdvertisementsController

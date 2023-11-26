@@ -15,6 +15,7 @@ export interface AdvertisementInterface {
   approvedByAdmin?: boolean;
   showPhone?: boolean;
   showAddress?: boolean;
+  isFavorite?: number;
   showEmail?: boolean;
   showPicture?: boolean;
   showChat?: boolean;

@@ -29,7 +29,16 @@
                     {{ advertisement.title }}
                   </h5>
                 </div>
-                <!-- <div class="col-1"><i class="bi bi-heart h4"> </i></div> -->
+                <div class="col-1">
+                  <!-- [ngStyle]="{'color': advertisement.isFavorite===1 ? 'green' : 'red'}" -->
+                  <i
+                    class="bi bi-heart-fill cursor h4"
+                    [ngClass]="{
+                      'text-danger': advertisement.isFavorite === 1
+                    }"
+                  >
+                  </i>
+                </div>
               </div>
               <div class="row">
                 <div class="col my-2" *ngIf="advertisement?.topAdvertisement">

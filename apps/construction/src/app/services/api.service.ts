@@ -1649,10 +1649,13 @@ export class ApiService {
       );
   }
 
-  getAllAdvertisements(): Observable<any> {
+  getAllAdvertisements(loggedIn: boolean, userId: string): Observable<any> {
     this.spinner.show();
     return this.httpClient
-      .get<any>(this.backendApiUrl + '/public/list-advertisements')
+      .post<any>(this.backendApiUrl + '/public/list-advertisements', {
+        userId: userId,
+        loggedIn: loggedIn,
+      })
       .pipe(
         take(1),
         timeout(this.apiLongSearchTimeoutValue),

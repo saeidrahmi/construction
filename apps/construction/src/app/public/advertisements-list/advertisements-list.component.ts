@@ -1,3 +1,5 @@
+import { isUserLoggedIn } from './../../services/user-gaurds';
+import { EncryptionService } from './../../services/encryption-service';
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -30,16 +32,22 @@ export class AdvertisementsListComponent {
   imageService = inject(ImageService);
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
+  encryptionService = inject(EncryptionService);
   userService = inject(UserService);
   storageService = inject(StorageService);
   commonUtility = inject(CommonUtilityService);
   destroyRef = inject(DestroyRef);
   allAdvertisements: any[] = [];
   user = this.storageService?.getUser();
+  userId = this.storageService?.getUserId();
+  loggedIn = this.storageService?.isUserLoggedIn();
   currentDate = new Date();
   constructor() {
     this.apiService
-      .getAllAdvertisements()
+      .getAllAdvertisements(
+        this.loggedIn(),
+        this.encryptionService.encryptItem(this.userId())
+      )
       .pipe(
         takeUntilDestroyed(),
 
