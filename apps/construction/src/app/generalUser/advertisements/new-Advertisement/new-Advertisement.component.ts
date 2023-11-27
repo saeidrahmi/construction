@@ -1,7 +1,21 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, catchError, of, switchMap } from 'rxjs';
+import {
+  tap,
+  catchError,
+  of,
+  switchMap,
+  Observable,
+  startWith,
+  map,
+} from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
@@ -20,6 +34,10 @@ import { AdvertisementCommunicationService } from '../../../services/advertiseme
 import { FormService } from '../../../services/form.service';
 import { MatStepper } from '@angular/material/stepper';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { UserService } from '../../../services/user-service';
 
 @Component({
   selector: 'app-new-Advertisement',
@@ -28,13 +46,17 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class NewAdvertisementComponent {
   toastService = inject(ToastrService);
+  @ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
   apiService = inject(ApiService);
   fb = inject(FormBuilder);
   utilityService = inject(CommonUtilityService);
+  filteredTags: Observable<string[]>;
   files: File[] = [];
   form: FormGroup;
   formErrors: string[] = [];
+  myTags: string[] = [];
   encryptionService = inject(EncryptionService);
+  announcer = inject(LiveAnnouncer);
   formService = inject(FormService);
   router = inject(Router);
   storageService = inject(StorageService);
@@ -42,6 +64,7 @@ export class NewAdvertisementComponent {
   commonUtility = inject(CommonUtilityService);
   destroyRef = inject(DestroyRef);
   canAdvertise: boolean;
+  tagCtrl = new FormControl('');
   generalInfo: any;
   tax;
   headerImageFile: any;
@@ -50,6 +73,7 @@ export class NewAdvertisementComponent {
   userAdvertisementDuration: number;
   sliderImages: any[] = [];
   userId = this.storageService?.getUserId();
+  constructionServices = this.userService.getConstructionServices();
   advertisement: AdvertisementInterface;
   getUserAdvertiseInfo$ = this.apiService
     .canUserAdvertise(this.encryptionService.encryptItem(this.userId()))
@@ -68,7 +92,10 @@ export class NewAdvertisementComponent {
   imageWidth: number;
   imageHeight: number;
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private userService: UserService
+  ) {
     this.advertisement = {};
     this.advertisement.dateCreated = new Date();
     this.advertisement.sliderImages = [];
@@ -96,6 +123,9 @@ export class NewAdvertisementComponent {
     this.form = this.fb.group({
       formArray: this.fb.array([
         this.fb.group({
+          tags: new FormControl('', [Validators.required]),
+        }),
+        this.fb.group({
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
           headerImage: new FormControl('', []),
@@ -114,6 +144,19 @@ export class NewAdvertisementComponent {
         // }),
       ]),
     });
+    this.filteredTags = this.tagCtrl?.valueChanges.pipe(
+      startWith(null),
+      map((item: string | null) =>
+        item ? this._filterTags(item) : this.constructionServices.slice()
+      )
+    );
+  }
+  private _filterTags(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.constructionServices.filter((item) =>
+      item.toLowerCase().includes(filterValue)
+    );
   }
   get formArray(): AbstractControl | null {
     return this.form?.get('formArray');
@@ -247,6 +290,7 @@ export class NewAdvertisementComponent {
       } else formData.append('sliderImages', '');
 
       formData.append('title', this.advertisement?.title);
+      formData.append('tags', this.myTags.join(', '));
       formData.append('description', this.advertisement?.description);
 
       formData.append(
@@ -311,6 +355,7 @@ export class NewAdvertisementComponent {
             this.headerImageFile = null;
             //this.sliderImages = [];
             this.form.reset();
+            this.myTags = [];
             stepper.reset();
             this.storageService.clearAdvertisementInfo();
             this.toastService.success('Saved Successfully. ', 'Successful', {
@@ -342,7 +387,6 @@ export class NewAdvertisementComponent {
       // ];
     }
   }
-  submitNewTopAd() {}
 
   onFilesAdded(event: any): void {
     const newFiles: File[] = event.addedFiles;
@@ -480,5 +524,53 @@ export class NewAdvertisementComponent {
         'new'
       );
     }
+  }
+  // new
+  addTag(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value && this.myTags.includes(value)) {
+      this.toastService.error('Tag exists. ', 'Error', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        closeButton: true,
+        progressBar: true,
+      });
+    }
+    // Add service
+    else {
+      this.myTags.push(value);
+    }
+
+    // Clear the input value
+    event.chipInput!.clear();
+
+    this.tagCtrl.setValue(null);
+    //this.formArray?.get([0]).get('tags').setValue(null);
+  }
+
+  removeTag(item: string): void {
+    const index = this.myTags.indexOf(item);
+    if (index >= 0) {
+      this.myTags.splice(index, 1);
+
+      this.announcer.announce(`Removed ${item}`);
+    }
+  }
+
+  selectedTag(event: MatAutocompleteSelectedEvent): void {
+    const value = event.option.viewValue;
+    if (this.myTags.includes(value))
+      this.toastService.error('Tag exist. ', 'Error', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        closeButton: true,
+        progressBar: true,
+      });
+    else {
+      this.myTags.push(value);
+    }
+    this.tagInput.nativeElement.value = '';
+    this.tagCtrl.setValue(null);
+    //this.formArray?.get([0]).get('tags').setValue(null);
   }
 }

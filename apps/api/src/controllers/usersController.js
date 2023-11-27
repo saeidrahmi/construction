@@ -1766,6 +1766,7 @@ async function saveUserRegularAdController(req, res) {
     const dateCreated = new Date();
     const expiryDate = addDays(dateCreated, info.userAdvertisementDuration);
     const canCreate = await canUserCreateAdvertisementController(userId);
+    const tags = info.tags;
 
     if (!canCreate) {
       return res.status(500).json({
@@ -1791,6 +1792,7 @@ async function saveUserRegularAdController(req, res) {
       showPicture: info.showPicture,
       showChat: info.showChat,
       numberOfVisits: info.numberOfVisits,
+      tags: tags,
     });
 
     if (!insertResult) {
@@ -1879,7 +1881,7 @@ async function saveUserRegularAdController(req, res) {
 }
 
 async function insertUserAdvertisement(connection, data) {
-  const selectQuery = `INSERT INTO userAdvertisements (userPlanId, dateCreated, expiryDate, title, description, active,approvedByAdmin, topAdvertisement, showPhone, showAddress, showEmail, showPicture, showChat, numberOfVisits) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+  const selectQuery = `INSERT INTO userAdvertisements (userPlanId, dateCreated, expiryDate, title, description, active,approvedByAdmin, topAdvertisement, showPhone, showAddress, showEmail, showPicture, showChat, numberOfVisits,tags) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
   const values = [
     data.userPlanId,
     data.dateCreated,
@@ -1895,6 +1897,7 @@ async function insertUserAdvertisement(connection, data) {
     data.showPicture,
     data.showChat,
     data.numberOfVisits,
+    data.tags,
   ];
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId
