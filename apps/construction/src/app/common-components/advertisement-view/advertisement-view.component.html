@@ -36,6 +36,7 @@
                     [ngClass]="{
                       'text-danger': advertisement.isFavorite === 1
                     }"
+                    (click)="addFavoriteAd(advertisement?.userAdvertisementId)"
                   >
                   </i>
                 </div>
@@ -71,12 +72,14 @@
 
                 <div class="row">
                   <div class="col">
-                    <span class="lead">
-                      {{ advertisement?.description?.substring(0, 180) }}
-                      {{
-                        advertisement?.description?.length > 180 ? '...' : ''
-                      }}</span
-                    >
+                    <quill-view-html
+                      [content]="
+                        commonUtility.extractDescription(
+                          advertisement?.description
+                        )
+                      "
+                      theme="snow"
+                    ></quill-view-html>
                   </div>
                 </div>
 
@@ -127,8 +130,8 @@
                   </ng-template>
                 </div>
               </div>
-              <div class="row border-top">
-                <div class="border">
+              <div class="row">
+                <div class="">
                   <ul class="list-group list-group-flush">
                     <li class="list-group-item">
                       <rating

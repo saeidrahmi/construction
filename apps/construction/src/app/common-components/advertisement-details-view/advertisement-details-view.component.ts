@@ -27,6 +27,7 @@ import { FormErrorsComponent } from '../../public/form-errors.component';
 import { PhoneNumberPipe } from '../../pipes/phone-number.pipe';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { RatingInterface } from '../../models/rating';
+import { QuillModule } from 'ngx-quill';
 
 @Component({
   selector: 'app-advertisement-details-view',
@@ -41,6 +42,7 @@ import { RatingInterface } from '../../models/rating';
     FormErrorsComponent,
     PhoneNumberPipe,
     RouterModule,
+    QuillModule,
   ],
 })
 export class AdvertisementDetailsViewComponent {

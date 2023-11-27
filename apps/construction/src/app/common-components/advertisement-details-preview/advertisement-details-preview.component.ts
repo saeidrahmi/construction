@@ -14,13 +14,14 @@ import { EncryptionService } from '../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CommonUtilityService } from '../../services/common-utility.service';
+import { QuillModule } from 'ngx-quill';
 
 @Component({
   selector: 'app-advertisement-details-preview',
   templateUrl: './advertisement-details-preview.component.html',
   styleUrls: ['./advertisement-details-preview.component.css'],
   standalone: true,
-  imports: [CommonModule, RatingModule, FormsModule],
+  imports: [CommonModule, RatingModule, FormsModule, QuillModule],
 })
 export class AdvertisementDetailsPreviewComponent {
   env: EnvironmentInfo = new EnvironmentInfo();

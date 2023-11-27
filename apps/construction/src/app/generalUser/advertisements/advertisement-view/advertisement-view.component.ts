@@ -4,6 +4,7 @@ import { Component, Input, inject } from '@angular/core';
 import { AdvertisementInterface } from '../../../models/advertisement';
 import { StorageService } from '../../../services/storage.service';
 import { UserService } from '../../../services/user-service';
+import { CommonUtilityService } from '../../../services/common-utility.service';
 
 @Component({
   selector: 'app-user-advertisement-view',
@@ -14,6 +15,7 @@ export class UserAdvertisementViewComponent {
   @Input('advertisement') advertisement: AdvertisementInterface = {};
   storageService = inject(StorageService);
   userService = inject(UserService);
+  commonUtilityService = inject(CommonUtilityService);
   router = inject(Router);
   user = this.storageService.getUser();
   isUserLoggedIn = this.storageService.isUserLoggedIn();

@@ -41,6 +41,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { UserDashboardDetailsComponent } from './dashboard/user-dashobard-details/user-dashboard-details.component';
 import { SalesDashboardComponent } from './dashboard/sales-dashboard/sales-dashboard.component';
 import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
+import { QuillModule } from 'ngx-quill';
 
 @NgModule({
   declarations: [
@@ -90,6 +91,7 @@ import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
     MatCheckboxModule,
     MyPlansComponent,
     PhoneNumberPipe,
+    QuillModule,
   ],
 })
 export class AdminModule {}

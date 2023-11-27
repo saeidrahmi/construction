@@ -271,23 +271,11 @@
                           <div class="row">
                             <div class="col-md-3 mt-2">Description</div>
                             <div class="col-md-8">
-                              <textarea
-                                class="form-control"
-                                placeholder="Enter description"
-                                formControlName="description"
-                                maxlength="400"
-                                rows="5"
+                              <quill-editor
+                                class="quill-editor"
                                 [(ngModel)]="advertisement.description"
-                              ></textarea>
-                              <span class="text-danger">
-                                {{
-                                  advertisement.description?.length
-                                    ? advertisement.description?.length
-                                    : 0
-                                }}</span
-                              >
-
-                              / 400
+                                formControlName="description"
+                              ></quill-editor>
                             </div>
                           </div>
                         </div>

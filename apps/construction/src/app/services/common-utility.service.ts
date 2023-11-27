@@ -124,4 +124,8 @@ export class CommonUtilityService {
 
     return password;
   }
+  extractDescription(description: string) {
+    if (description?.length < 400) return description;
+    else return description?.substring(0, 200) + '...';
+  }
 }

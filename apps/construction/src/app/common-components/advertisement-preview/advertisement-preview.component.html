@@ -44,12 +44,19 @@
 
           <div class="row">
             <div class="col">
-              <span class="lead">
+              <quill-view-html
+                [content]="
+                  commonUtility.extractDescription(advertisement?.description)
+                "
+                theme="snow"
+              ></quill-view-html>
+
+              <!-- <span class="lead" >
                 {{ advertisement?.description?.substring(0, 180) }}
                 {{
                   advertisement?.description?.length > 180 ? '...' : ''
                 }}</span
-              >
+              > -->
             </div>
           </div>
 

@@ -1,3 +1,4 @@
+import { CommonUtilityService } from './../../../../services/common-utility.service';
 import { Router } from '@angular/router';
 
 import { Component, Input, inject } from '@angular/core';
@@ -13,6 +14,7 @@ export class AdminAdvertisementViewComponent {
   @Input('advertisement') advertisement: AdvertisementInterface = {};
   storageService = inject(StorageService);
   userService = inject(UserService);
+  commonUtilityService = inject(CommonUtilityService);
   router = inject(Router);
   user = this.storageService.getUser();
   isUserLoggedIn = this.storageService.isUserLoggedIn();

@@ -56,6 +56,8 @@ import { MyRFPComponent } from './rfps/my-rfp.component';
 import { NewRFPComponent } from './rfps/new-rfp/new-rfp.component';
 import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
 import { UserReviewsComponent } from './user-reviews/user-reviews.component';
+import { QuillModule } from 'ngx-quill';
+import { QuillConfigModule } from 'ngx-quill/config';
 
 @NgModule({
   declarations: [
@@ -123,6 +125,13 @@ import { UserReviewsComponent } from './user-reviews/user-reviews.component';
     NgxDropzoneModule,
     PhoneNumberPipe,
     RatingModule,
+    QuillModule.forRoot(),
+    QuillConfigModule.forRoot({
+      modules: {
+        syntax: true,
+        toolbar: [],
+      },
+    }),
   ],
   providers: [],
 })
