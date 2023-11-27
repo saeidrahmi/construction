@@ -1905,16 +1905,16 @@ async function insertUserAdvertisement(connection, data) {
     : null;
 }
 async function updateUserAdvertisement(connection, data) {
-  const selectQuery = `update userAdvertisements set  approvedByAdmin=0, title=? , description=? ,  showPhone=? , showAddress=? , showEmail=? , showPicture=? , showChat=? where userAdvertisementId=?   `;
+  const selectQuery = `update userAdvertisements set  approvedByAdmin=0, title=? , description=? ,  showPhone=? , showAddress=? , showEmail=? , showPicture=? , showChat=? , tags=? where userAdvertisementId=?   `;
   const values = [
     data.title,
     data.description,
-
     data.showPhone,
     data.showAddress,
     data.showEmail,
     data.showPicture,
     data.showChat,
+    data.tags,
     data.userAdvertisementId,
   ];
   const [insertResult] = await connection.execute(selectQuery, values);
@@ -2480,6 +2480,7 @@ async function editAdvertisementController(req, res) {
     const userId = decryptItem(info.userId, webSecretKey);
 
     const userAdvertisementId = req.body.userAdvertisementId;
+    const tags = req.body.tags;
 
     const canEdit = await canUserEditAdvertisement(userId, userAdvertisementId);
 
@@ -2501,6 +2502,7 @@ async function editAdvertisementController(req, res) {
       showEmail: info.showEmail,
       showPicture: info.showPicture,
       showChat: info.showChat,
+      tags: tags,
     });
 
     if (!insertResult) {

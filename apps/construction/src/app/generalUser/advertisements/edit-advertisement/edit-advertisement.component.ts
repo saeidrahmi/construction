@@ -1,8 +1,14 @@
 import { ImageService } from './../../../services/image-service';
-import { Component, DestroyRef, inject } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, first, switchMap } from 'rxjs';
+import { tap, first, switchMap, map, startWith, Observable } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
@@ -21,6 +27,11 @@ import { AdvertisementCommunicationService } from '../../../services/advertiseme
 import { FormService } from '../../../services/form.service';
 import { MatStepper } from '@angular/material/stepper';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatChipInputEvent } from '@angular/material/chips';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { UserService } from '../../../services/user-service';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-edit-advertisement',
@@ -34,6 +45,8 @@ export class EditAdvertisementComponent {
   imageService = inject(ImageService);
   fb = inject(FormBuilder);
   form: FormGroup;
+  tagCtrl = new FormControl('');
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   formErrors: string[] = [];
   encryptionService = inject(EncryptionService);
   formService = inject(FormService);
@@ -51,6 +64,12 @@ export class EditAdvertisementComponent {
   userAdvertisementDuration: number;
   sliderImages: any[] = [];
   userId = this.storageService?.getUserId();
+  @ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
+  filteredTags: Observable<string[]>;
+  myTags: string[] = [];
+  announcer = inject(LiveAnnouncer);
+
+  constructionServices = this.userService.getConstructionServices();
   selectedAdvertisementID = this.storageService?.getSelectedAdvertisementId();
   canUserEditAdvertisement$ = this.apiService
     .canUserEditAdvertisement(
@@ -77,6 +96,8 @@ export class EditAdvertisementComponent {
                 this.router.navigate(['/general/user-advertisements']);
               else {
                 this.advertisement = results[0];
+                this.myTags = results[0]?.tags?.split(',');
+                console.log(this.myTags, 'tags');
 
                 const selectAdResult = results;
                 this.sliderImages = [];
@@ -162,7 +183,10 @@ export class EditAdvertisementComponent {
       )
     );
 
-  constructor(private sanitizer: DomSanitizer) {
+  constructor(
+    private sanitizer: DomSanitizer,
+    private userService: UserService
+  ) {
     const adObject = this.storageService?.getAdvertisement()();
     if (
       adObject?.advertisementSelected &&
@@ -188,6 +212,9 @@ export class EditAdvertisementComponent {
     this.form = this.fb.group({
       formArray: this.fb.array([
         this.fb.group({
+          tags: new FormControl('', [Validators.required]),
+        }),
+        this.fb.group({
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
           headerImage: new FormControl('', []),
@@ -205,6 +232,19 @@ export class EditAdvertisementComponent {
         }),
       ]),
     });
+    this.filteredTags = this.tagCtrl?.valueChanges.pipe(
+      startWith(null),
+      map((item: string | null) =>
+        item ? this._filterTags(item) : this.constructionServices.slice()
+      )
+    );
+  }
+  private _filterTags(value: string): string[] {
+    const filterValue = value.toLowerCase();
+
+    return this.constructionServices.filter((item) =>
+      item.toLowerCase().includes(filterValue)
+    );
   }
 
   getObjectURL(file: File): SafeUrl {
@@ -323,6 +363,7 @@ export class EditAdvertisementComponent {
           this.headerImageFile.name
         );
       else formData.append('headerImage', '');
+      formData.append('tags', this.myTags.join(', '));
 
       if (this.advertisement.sliderImageFiles) {
         for (const file of this.advertisement.sliderImageFiles) {
@@ -511,5 +552,52 @@ export class EditAdvertisementComponent {
         'new'
       );
     }
+  }
+  addTag(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+    if (value && this.myTags.includes(value)) {
+      this.toastService.error('Tag exists. ', 'Error', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        closeButton: true,
+        progressBar: true,
+      });
+    }
+    // Add service
+    else {
+      this.myTags.push(value);
+    }
+
+    // Clear the input value
+    event.chipInput!.clear();
+
+    this.tagCtrl.setValue(null);
+    //this.formArray?.get([0]).get('tags').setValue(null);
+  }
+
+  removeTag(item: string): void {
+    const index = this.myTags.indexOf(item);
+    if (index >= 0) {
+      this.myTags.splice(index, 1);
+
+      this.announcer.announce(`Removed ${item}`);
+    }
+  }
+
+  selectedTag(event: MatAutocompleteSelectedEvent): void {
+    const value = event.option.viewValue;
+    if (this.myTags.includes(value))
+      this.toastService.error('Tag exist. ', 'Error', {
+        timeOut: 3000,
+        positionClass: 'toast-top-right',
+        closeButton: true,
+        progressBar: true,
+      });
+    else {
+      this.myTags.push(value);
+    }
+    this.tagInput.nativeElement.value = '';
+    this.tagCtrl.setValue(null);
+    //this.formArray?.get([0]).get('tags').setValue(null);
   }
 }

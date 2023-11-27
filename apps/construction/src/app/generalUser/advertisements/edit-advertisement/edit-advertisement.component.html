@@ -40,6 +40,118 @@
                               ? 'text-light'
                               : ''
                           "
+                          >Advertisement Categories/Tags</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid">
+                        <div class="row">
+                          <div class="col-12">
+                            <!-- Include this message in your advertisement creation form or template -->
+
+                            <div class="alert alert-info">
+                              <p><strong>Attention Advertisers:</strong></p>
+                              <p>
+                                To enhance the visibility and relevance of your
+                                advertisement, please ensure you add all
+                                appropriate categories and tags. This will help
+                                potential customers find your services more
+                                easily. Follow these tips:
+                              </p>
+                              <ul>
+                                <li>
+                                  <strong>Categorize accurately:</strong>
+                                  Choose the most relevant category for your
+                                  services.
+                                </li>
+                                <li>
+                                  <strong>Add specific tags:</strong> Include
+                                  tags that describe key features of your
+                                  product or service.
+                                </li>
+                                <li>
+                                  <strong>Be comprehensive:</strong> Think about
+                                  what terms users might search for when looking
+                                  for your type of offering.
+                                </li>
+                              </ul>
+                              <p>
+                                Thank you for helping us create a more organized
+                                and user-friendly platform!
+                              </p>
+                            </div>
+                          </div>
+                          <div class="col-md-12 border rounded my-3 p-3">
+                            <mat-form-field class="chip-list">
+                              <mat-label>Current Categories/Tags</mat-label>
+                              <mat-chip-grid
+                                #chipGrid
+                                aria-label="Service selection"
+                                formControlName="tags"
+                              >
+                                <mat-chip-row
+                                  *ngFor="let tag of myTags"
+                                  (removed)="removeTag(tag)"
+                                >
+                                  <span class="text-primary">{{ tag }}</span>
+                                  <button
+                                    matChipRemove
+                                    [attr.aria-label]="'remove ' + tag"
+                                  >
+                                    <mat-icon>cancel</mat-icon>
+                                  </button>
+                                </mat-chip-row>
+                              </mat-chip-grid>
+                              <input
+                                placeholder="New Tag..."
+                                #tagInput
+                                [formControl]="tagCtrl"
+                                [matChipInputFor]="chipGrid"
+                                [matAutocomplete]="auto"
+                                [matChipInputSeparatorKeyCodes]="
+                                  separatorKeysCodes
+                                "
+                                (matChipInputTokenEnd)="addTag($event)"
+                              />
+                              <mat-autocomplete
+                                #auto="matAutocomplete"
+                                (optionSelected)="selectedTag($event)"
+                              >
+                                <mat-option
+                                  *ngFor="let tag of filteredTags | async"
+                                  [value]="tag"
+                                >
+                                  <span class="">{{ tag }}</span>
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          id="stepTwoBack"
+                          (click)="goForward(stepper, 0)"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </mat-step>
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="1"
+                      [stepControl]="formArray?.get([1])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
                           >Basic Information</span
                         ></ng-template
                       >
@@ -201,8 +313,8 @@
                     <mat-step
                       linear
                       [optional]="false"
-                      formGroupName="1"
-                      [stepControl]="formArray?.get([1])"
+                      formGroupName="2"
+                      [stepControl]="formArray?.get([2])"
                     >
                       <ng-template matStepLabel
                         ><span
@@ -302,8 +414,8 @@
                     <mat-step
                       linear
                       [optional]="false"
-                      formGroupName="2"
-                      [stepControl]="formArray?.get([2])"
+                      formGroupName="3"
+                      [stepControl]="formArray?.get([3])"
                     >
                       <ng-template matStepLabel
                         ><span

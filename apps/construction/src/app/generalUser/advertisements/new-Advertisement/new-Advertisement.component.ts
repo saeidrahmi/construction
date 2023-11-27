@@ -38,6 +38,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserService } from '../../../services/user-service';
+import { ENTER, COMMA } from '@angular/cdk/keycodes';
 
 @Component({
   selector: 'app-new-Advertisement',
@@ -48,6 +49,7 @@ export class NewAdvertisementComponent {
   toastService = inject(ToastrService);
   @ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
   apiService = inject(ApiService);
+  separatorKeysCodes: number[] = [ENTER, COMMA];
   fb = inject(FormBuilder);
   utilityService = inject(CommonUtilityService);
   filteredTags: Observable<string[]>;
@@ -525,7 +527,7 @@ export class NewAdvertisementComponent {
       );
     }
   }
-  // new
+
   addTag(event: MatChipInputEvent): void {
     const value = (event.value || '').trim();
     if (value && this.myTags.includes(value)) {
