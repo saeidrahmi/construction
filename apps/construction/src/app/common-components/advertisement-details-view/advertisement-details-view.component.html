@@ -4,6 +4,46 @@
     <div
       class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2 gy-3"
     >
+      <div class="col-12">
+        <!-- Include this warning message in your advertisement component or template -->
+
+        <div class="alert alert-warning">
+          <p><strong>Important Notice:</strong></p>
+          <p>
+            This advertisement is for informational purposes only. When seeking
+            professional services or considering construction work, we strongly
+            recommend the following:
+          </p>
+          <ul>
+            <li>
+              Verify the license and credentials of the service provider or
+              contractor.
+            </li>
+            <li>
+              Ensure the professionals you hire are licensed and authorized to
+              perform the specific services.
+            </li>
+            <li>
+              Take necessary precautions for construction works, such as
+              plumbing and electrical installations.
+            </li>
+            <li>
+              When in doubt, consult with qualified professionals for advice and
+              assistance.
+            </li>
+          </ul>
+          <p>
+            Remember that your safety and the quality of work depend on hiring
+            experienced and licensed professionals.
+          </p>
+          <p>
+            <strong>Disclaimer:</strong> [Your Platform/Company Name] takes no
+            responsibility for the services provided by advertisers. Users are
+            encouraged to independently verify credentials and exercise caution
+            when entering into transactions.
+          </p>
+        </div>
+      </div>
       <div class="col-12" *ngIf="sliderImages?.length > 0">
         <div
           style="width: 100%"
@@ -527,7 +567,7 @@
                           (click)="
                             naviagteUserAds(advertisement?.userAdvertisementId)
                           "
-                          >{{ acitveAds }}
+                          >View {{ acitveAds }} listings
                         </span>
                       </li>
 

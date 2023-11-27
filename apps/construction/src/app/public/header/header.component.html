@@ -30,7 +30,8 @@
           <a
             class="nav-link"
             [routerLink]="['/advertisements']"
-            routerLinkActive="router-link-active"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
             >Advertisements</a
           >
         </li>
@@ -38,7 +39,8 @@
           <a
             class="nav-link"
             [routerLink]="['/rfps']"
-            routerLinkActive="router-link-active"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
             >Request for Proposals(RFPs)</a
           >
         </li>
