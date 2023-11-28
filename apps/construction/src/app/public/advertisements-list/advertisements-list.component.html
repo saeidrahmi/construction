@@ -1,19 +1,152 @@
 <div class="container-fluid my-3">
-  <div class="row">
-    <div class="col">
-      <div class="card" aria-hidden="true">
-        <div class="card-body">
-          <h2 class="card-title">
-            <span class="col-6">Advertisements </span>
-          </h2>
-          <hr />
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col">
-                <app-advertisement-view
-                  *ngFor="let advertisement of allAdvertisements"
-                  [advertisement]="advertisement"
-                ></app-advertisement-view>
+  <div class="p-3 m-1 border rounded border-secondary">
+    <div class="row">
+      <div class="col border rounded border-secondary p-3 my-2">
+        <form class="align-items-center" [formGroup]="searchForm">
+          <div class="row">
+            <div class="col-md-4">
+              <input
+                type="text"
+                class="form-control"
+                formControlName="searchText"
+                placeholder="What are you searching for?"
+              />
+              <div
+                class="invalid-feedback"
+                *ngIf="searchForm.get('searchText').hasError('required')"
+              >
+                Please enter a message in the textarea.
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <div class="col-md-8">
+              <mat-form-field class="chip-list">
+                <mat-label>Selected Categories</mat-label>
+                <mat-chip-grid
+                  #chipGrid
+                  aria-label="Service selection"
+                  formControlName="tags"
+                >
+                  <mat-chip-row
+                    *ngFor="let tag of myTags"
+                    (removed)="removeTag(tag)"
+                  >
+                    <span class="text-primary">{{ tag }}</span>
+                    <button matChipRemove [attr.aria-label]="'remove ' + tag">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                </mat-chip-grid>
+                <input
+                  placeholder="Add New Category"
+                  #tagInput
+                  [formControl]="tagCtrl"
+                  [matChipInputFor]="chipGrid"
+                  [matAutocomplete]="auto"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                  (matChipInputTokenEnd)="addTag($event)"
+                />
+                <mat-autocomplete
+                  #auto="matAutocomplete"
+                  (optionSelected)="selectedTag($event)"
+                >
+                  <mat-option
+                    *ngFor="let tag of filteredTags | async"
+                    [value]="tag"
+                  >
+                    <span class="">{{ tag }}</span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row mt-2">
+            <div class="col-md-8">
+              <mat-form-field class="chip-list">
+                <mat-label>Selected Cities</mat-label>
+                <mat-chip-grid
+                  #chipLocationGrid
+                  aria-label="Selected Locations"
+                  formControlName="locations"
+                >
+                  <mat-chip-row
+                    *ngFor="let location of myLocations"
+                    (removed)="removeLocation(location)"
+                  >
+                    <span class="text-primary">{{ location }}</span>
+                    <button
+                      matChipRemove
+                      [attr.aria-label]="'remove ' + location"
+                    >
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip-row>
+                </mat-chip-grid>
+                <input
+                  placeholder="Select location"
+                  #locationInput
+                  [formControl]="locationCtrl"
+                  [matChipInputFor]="chipLocationGrid"
+                  [matAutocomplete]="auto2"
+                  [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                  (matChipInputTokenEnd)="addLocation($event)"
+                />
+                <mat-autocomplete
+                  #auto2="matAutocomplete"
+                  (optionSelected)="selectedLocation($event)"
+                >
+                  <mat-option
+                    *ngFor="let location of filteredLocations | async"
+                    [value]="location"
+                  >
+                    <span class="">{{ location }}</span>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-2">
+              <select formControlName="sortBy" class="form-select">
+                <option selected>Sort by</option>
+                <option>New advertisement first</option>
+                <option>Old advertisement first</option>
+              </select>
+            </div>
+            <div class="col-1">
+              <button
+                type="submit"
+                class="btn btn-primary form-control"
+                (click)="search()"
+              >
+                Search
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2 border rounded p-3">side bar</div>
+      <div class="col-10 border rounded border-secondary p-3">
+        <div class="container-fluid my-3">
+          <div class="row">
+            <div class="col">
+              <div class="card" aria-hidden="true">
+                <div class="card-body">
+                  <div class="container-fluid">
+                    <div class="row">
+                      <div class="col">
+                        <app-advertisement-view
+                          *ngFor="let advertisement of allAdvertisements"
+                          [advertisement]="advertisement"
+                        ></app-advertisement-view>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

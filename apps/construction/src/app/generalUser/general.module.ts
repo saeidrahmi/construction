@@ -102,6 +102,7 @@ import { QuillConfigModule } from 'ngx-quill/config';
     MatFormFieldModule,
     MatChipsModule,
     MatSelectModule,
+    MatInputModule,
     MatButtonModule,
     MatButtonToggleModule,
     MatAutocompleteModule,
@@ -120,7 +121,7 @@ import { QuillConfigModule } from 'ngx-quill/config';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    MatInputModule,
+
     RatingModule,
     NgxDropzoneModule,
     PhoneNumberPipe,
