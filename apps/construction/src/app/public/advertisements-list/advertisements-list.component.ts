@@ -107,8 +107,13 @@ export class AdvertisementsListComponent {
         tap((response) => {
           const data = JSON.parse(JSON.stringify(response));
           const canadaData = data;
-
           this.canadaCites = this.transformData(canadaData);
+          this.filteredLocations = this.locationCtrl?.valueChanges.pipe(
+            startWith(null),
+            map((item: string | null) =>
+              item ? this._filterLocations(item) : this.canadaCites.slice()
+            )
+          );
         })
       )
       .subscribe();
@@ -140,12 +145,6 @@ export class AdvertisementsListComponent {
       startWith(null),
       map((item: string | null) =>
         item ? this._filterTags(item) : this.constructionServices.slice()
-      )
-    );
-    this.filteredLocations = this.locationCtrl?.valueChanges.pipe(
-      startWith(null),
-      map((item: string | null) =>
-        item ? this._filterLocations(item) : this.canadaCites.slice()
       )
     );
   }

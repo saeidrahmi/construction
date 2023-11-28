@@ -83,6 +83,7 @@ export class UserServicesComponent {
           const data = JSON.parse(JSON.stringify(response));
           this.canadaData = data;
           this.canadaProvinces = this.canadaData.map((entry) => entry.province);
+          this.canadaCites = this.getCities(data);
         })
       )
       .subscribe();
@@ -128,13 +129,17 @@ export class UserServicesComponent {
       )
     );
   }
-  selectedProvinceAction() {
-    const provinceData = this.canadaData?.find(
-      (entry) =>
-        entry?.province?.toLocaleLowerCase() ===
-        this.selectedProvince?.toLocaleLowerCase()
-    );
-    this.canadaCites = provinceData ? provinceData.cities : [];
+  getCities(data: any[]): string[] {
+    const citiesList: string[] = [];
+
+    for (const entry of data) {
+      const cities = entry.cities;
+
+      // Add each city to the list
+      citiesList.push(...cities);
+    }
+
+    return citiesList;
   }
 
   addService(event: MatChipInputEvent): void {
