@@ -5,3 +5,6 @@
   background-position: center; /* Center the background image */
   background-repeat: no-repeat; /* Prevent the background image from repeating */
 }
+.cursor-pointer {
+  cursor: pointer;
+}

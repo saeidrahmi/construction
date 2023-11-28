@@ -48,7 +48,14 @@ export class AdvertisementViewComponent {
     );
     this.router.navigate(['/view-advertisement-details']);
   }
-
+  navigateRatingDetails() {
+    this.storageService.updateAdvertisementState(
+      this.advertisement,
+      this.advertisement.userAdvertisementId,
+      'view'
+    );
+    this.router.navigate(['/user-ratings-details']);
+  }
   addFavoriteAd(id: any) {
     if (this.isUserLoggedIn())
       this.apiService

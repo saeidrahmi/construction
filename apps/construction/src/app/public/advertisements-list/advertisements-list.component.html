@@ -5,6 +5,9 @@
         <form class="align-items-center" [formGroup]="searchForm">
           <div class="row">
             <div class="col-md-4">
+              <label for="exampleFormControlInput1" class="form-label fw-bold"
+                >Search Input</label
+              >
               <input
                 type="text"
                 class="form-control"
@@ -22,6 +25,9 @@
 
           <div class="row mt-2">
             <div class="col-md-8">
+              <label for="exampleFormControlInput1" class="form-label fw-bold"
+                >Select Categories/Tags</label
+              >
               <mat-form-field class="chip-list">
                 <mat-label>Selected Categories</mat-label>
                 <mat-chip-grid
@@ -64,6 +70,9 @@
           </div>
           <div class="row mt-2">
             <div class="col-md-8">
+              <label for="exampleFormControlInput1" class="form-label fw-bold"
+                >Select Provinces/Cities</label
+              >
               <mat-form-field class="chip-list">
                 <mat-label>Selected Cities</mat-label>
                 <mat-chip-grid
@@ -108,6 +117,21 @@
             </div>
           </div>
           <div class="row">
+            <div class="col-md-2 mt-1 form-label">
+              <span class="fw-bold">Search Nearby</span>
+              <i class="bi bi-location"></i>
+            </div>
+            <div class="col-md-8">
+              <input
+                type="checkbox"
+                formControlName="currentAddress"
+                name="currentAddress"
+                id=""
+              />
+              {{ address }}
+            </div>
+          </div>
+          <div class="row mt-2">
             <div class="col-md-2">
               <select formControlName="sortBy" class="form-select">
                 <option selected>Sort by</option>
@@ -138,6 +162,20 @@
                 <div class="card-body">
                   <div class="container-fluid">
                     <div class="row">
+                      <div class="col">
+                        <div class="alert alert-info">
+                          Elevate your listing to the forefront where it
+                          belongs.
+                          <a
+                            [routerLink]="['/top-add-info']"
+                            routerLinkActive="router-link-active"
+                          >
+                            Discover more</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mt-1">
                       <div class="col">
                         <app-advertisement-view
                           *ngFor="let advertisement of allAdvertisements"

@@ -75,6 +75,13 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'top-add-info',
+    loadComponent: () =>
+      import('./public/top-ad-info/top-ad-info.component').then(
+        (com) => com.TopAdInfoComponent
+      ),
+  },
+  {
     path: 'view-advertisement-details',
     loadComponent: () =>
       import(

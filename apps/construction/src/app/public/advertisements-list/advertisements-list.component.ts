@@ -16,7 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, map, startWith, take, tap } from 'rxjs';
@@ -53,6 +53,7 @@ import { HttpClient } from '@angular/common/http';
     RatingModule,
     FormsModule,
     AdvertisementViewComponent,
+    RouterModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatChipsModule,
@@ -81,6 +82,8 @@ export class AdvertisementsListComponent {
   userService = inject(UserService);
   storageService = inject(StorageService);
   commonUtility = inject(CommonUtilityService);
+  googleAddresses!: any;
+  addressObject!: any;
   destroyRef = inject(DestroyRef);
   filteredTags: Observable<string[]>;
   filteredLocations: Observable<string[]>;
@@ -93,9 +96,12 @@ export class AdvertisementsListComponent {
   searchForm: FormGroup;
   canadaCites: string[] = [];
   constructor(private fb: FormBuilder, private http: HttpClient) {
+    this.getCurrentLocation();
     this.searchForm = this.fb.group({
       searchText: new FormControl('', [Validators.required]),
       tags: new FormControl('', []),
+      currentAddress: new FormControl('', []),
+
       locations: new FormControl('', []),
       sortBy: new FormControl('Sort by', []),
     });
@@ -147,6 +153,45 @@ export class AdvertisementsListComponent {
         item ? this._filterTags(item) : this.constructionServices.slice()
       )
     );
+  }
+  currentPosition: any;
+  address!: string;
+  getCurrentLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position: any) => {
+          this.currentPosition = position;
+          this.getAddressFromCoordinates();
+        },
+        (error: any) => {
+          //    console.error('Error getting location:', error);
+        }
+      );
+    } else {
+      // console.error('Geolocation is not supported by this browser.');
+    }
+  }
+
+  getAddressFromCoordinates() {
+    const geocoder = new google.maps.Geocoder();
+    const latlng = new google.maps.LatLng(
+      this.currentPosition.coords.latitude,
+      this.currentPosition.coords.longitude
+    );
+
+    geocoder.geocode({ location: latlng }, (results: any, status: any) => {
+      this.googleAddresses = results;
+      if (status === 'OK') {
+        if (results[0]) {
+          this.address = results[0].formatted_address;
+          this.addressObject = results[0];
+        } else {
+          // this.address = 'Address not found';
+        }
+      } else {
+        // console.error('Geocoder failed due to: ' + status);
+      }
+    });
   }
   transformData(data: any[]): string[] {
     const transformedList: string[] = [];
