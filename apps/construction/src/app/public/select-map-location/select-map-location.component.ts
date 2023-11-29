@@ -31,17 +31,22 @@ export class SelectMapLocationComponent {
   @ViewChild('mapContainer', { static: false }) gmap: ElementRef;
   lat: number;
   lng: number;
-  MIN_ZOOM = 14;
-  MAX_ZOOM = 19;
-  RADIUS = 40;
-  mapZoom = 16;
+  MIN_ZOOM = 1;
+  MAX_ZOOM = 100;
+  RADIUS = 1000;
+  mapZoom = 15;
   map!: google.maps.Map;
   EARTH_RADIUS_IN_MILES = 3956.0;
 
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
+  citiesCovered: string[];
+  circleOptions: google.maps.CircleOptions;
 
   constructor() {
-    // Get current location
+    this.getCurrentLocation();
+  }
+
+  getCurrentLocation(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.center = {
@@ -55,8 +60,8 @@ export class SelectMapLocationComponent {
     }
   }
 
-  createMap() {
-    let options: google.maps.MapOptions = {
+  createMap(): void {
+    const options: google.maps.MapOptions = {
       center: { lat: this.lat, lng: this.lng },
       zoom: this.mapZoom,
       minZoom: this.MIN_ZOOM,
@@ -70,40 +75,87 @@ export class SelectMapLocationComponent {
       zoomControl: true,
       tilt: 0,
     };
-    console.log('options', options);
+
     this.map = new google.maps.Map(this.gmap.nativeElement, options);
-    const mapOriginalCenterPoint = this.map.getCenter();
 
     this.addRecenterCustomControl();
     this.addMarker();
     this.addCircle();
   }
-  addMarker() {
+
+  addMarker(): void {
     const marker = new google.maps.Marker({
-      position: {
-        lat: this.lat,
-        lng: this.lng,
-      },
+      position: { lat: this.lat, lng: this.lng },
       map: this.map,
     });
     marker.setMap(this.map);
   }
-  addCircle() {
+
+  addCircle(): void {
     const circleCenter: google.maps.LatLngLiteral = {
       lat: this.lat,
       lng: this.lng,
     };
-    const circleOptions = {
+
+    const circleOptions: google.maps.CircleOptions = {
       strokeColor: 'red',
       strokeOpacity: 0.9,
+      radius: this.RADIUS,
       fillOpacity: 0.1,
-      // circleDraggable:true,
-      // editable: true
+      center: circleCenter, // Use 'center' property instead of 'circleCenter'
+      draggable: true,
+      editable: true,
     };
+
     const circle = new google.maps.Circle(circleOptions);
-    circle.setRadius(this.RADIUS);
-    circle.setCenter(circleCenter);
     circle.setMap(this.map);
+
+    google.maps.event.addListener(
+      circle,
+      'dragend',
+      (event: google.maps.MapMouseEvent) => {
+        const newCenter = circle.getCenter().toJSON();
+
+        this.onCircleDragEnd(event);
+      }
+    );
+
+    google.maps.event.addListener(circle, 'radius_changed', () => {
+      const newCenter = circle.getCenter().toJSON();
+
+      this.onCircleRadiusChanged(circle.getRadius());
+      this.reverseGeocode(newCenter);
+    });
+
+    google.maps.event.addListener(circle, 'center_changed', () => {
+      const newCenter = circle.getCenter().toJSON();
+
+      this.onCircleCenterChanged(newCenter);
+    });
+  }
+
+  reverseGeocode(center: google.maps.LatLngLiteral): void {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: center }, (results, status) => {
+      if (status === google.maps.GeocoderStatus.OK) {
+        this.citiesCovered = results.map((result) => result.formatted_address);
+        console.log(this.citiesCovered, 'cities covered');
+      }
+    });
+  }
+
+  onCircleDragEnd(event: google.maps.MapMouseEvent): void {
+    const newCenter: google.maps.LatLngLiteral = event.latLng.toJSON();
+    this.reverseGeocode(newCenter);
+  }
+
+  onCircleRadiusChanged(radius: number): void {
+    console.log('Circle radius changed to:', radius);
+  }
+
+  onCircleCenterChanged(newCenter: google.maps.LatLngLiteral): void {
+    this.reverseGeocode(newCenter);
+    console.log('Circle center changed to:', newCenter);
   }
 
   addRecenterCustomControl() {
@@ -134,35 +186,35 @@ export class SelectMapLocationComponent {
       this.map.setCenter({ lat: this.lat, lng: this.lng });
       this.map.setZoom(this.mapZoom);
     });
-    const viewButton = document.createElement('div');
-    viewButton.style.marginRight = '10px';
-    viewButton.style.width = '38x';
-    viewButton.title = 'Hybrid View';
-    viewButton.style.height = '38px';
-    viewButton.style.cursor = 'pointer';
-    viewButton.style.borderStyle = 'solid';
-    viewButton.style.borderColor = 'black';
-    viewButton.style.borderWidth = '1px';
-    viewButton.style.borderRadius = '14px';
-    viewButton.style.fontSize = '24px';
-    viewButton.style.background = "url('../../../assets/images/hybrid.png')";
-    viewButton.style.backgroundSize = '38px 38px';
-    controlDiv.appendChild(viewButton);
-    viewButton.addEventListener('click', () => {
-      if (this.map.getMapTypeId() == 'roadmap') {
-        this.map.setMapTypeId('hybrid');
-        viewButton.title = 'Roadmap View';
-        viewButton.style.background =
-          "url('../../../assets/images/roadmap.png')";
-      } else {
-        this.map.setMapTypeId('roadmap');
-        viewButton.title = 'Hybrid View';
-        viewButton.style.background =
-          "url('../../../assets/images/hybrid.png')";
-      }
-      viewButton.style.backgroundSize = '28px 28px';
-    });
 
     this.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
   }
+
+  // reverseGeocode(): void {
+  //   const geocoder = new google.maps.Geocoder();
+
+  //   const numPoints = 360; // Number of points around the circumference of the circle
+  //   const step = 360 / numPoints;
+
+  //   this.citiesCovered = []; // Clear the existing cities
+
+  //   for (let i = 0; i < numPoints; i++) {
+  //     const angle = i * step;
+  //     const point = google.maps.geometry.spherical.computeOffset(
+  //       this.circle.getCenter(),
+  //       this.circle.getRadius(),
+  //       angle
+  //     );
+
+  //     geocoder.geocode({ location: point }, (results, status) => {
+  //       if (status === google.maps.GeocoderStatus.OK) {
+  //         const cityName = results[0]?.formatted_address;
+  //         if (cityName) {
+  //           this.citiesCovered.push(cityName);
+  //         }
+  //       }
+  //     });
+  //   }
+  //   console.log('citeis', this.citiesCovered);
+  // }
 }
