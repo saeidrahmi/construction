@@ -97,71 +97,90 @@
                       </mat-form-field>
                     </div>
                   </div>
-                  <div class="row mt-2">
-                    <div class="col-md-8">
-                      <label
-                        for="exampleFormControlInput1"
-                        class="form-label fw-bold"
-                        >Select Provinces/Cities</label
-                      >
-                      <mat-form-field class="chip-list">
-                        <mat-label>Selected Cities</mat-label>
-                        <mat-chip-grid
-                          #chipLocationGrid
-                          aria-label="Selected Locations"
-                          formControlName="locations"
-                        >
-                          <mat-chip-row
-                            *ngFor="let location of myLocations"
-                            (removed)="removeLocation(location)"
-                          >
-                            <span class="text-primary">{{ location }}</span>
-                            <button
-                              matChipRemove
-                              [attr.aria-label]="'remove ' + location"
-                            >
-                              <mat-icon>cancel</mat-icon>
-                            </button>
-                          </mat-chip-row>
-                        </mat-chip-grid>
+                  <div class="border rounded p-3 my-1">
+                    <div class="row">
+                      <div class="col-md-2 mt-1 form-label">
+                        <i class="bi bi-geo-alt me-1"></i
+                        ><span class="fw-bold">Search Nearby</span>
+                      </div>
+                      <div class="col-md-8">
                         <input
-                          placeholder="Select location"
-                          #locationInput
-                          [formControl]="locationCtrl"
-                          [matChipInputFor]="chipLocationGrid"
-                          [matAutocomplete]="auto2"
-                          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                          (matChipInputTokenEnd)="addLocation($event)"
+                          type="checkbox"
+                          formControlName="currentAddress"
+                          name="currentAddress"
+                          id=""
                         />
-                        <mat-autocomplete
-                          #auto2="matAutocomplete"
-                          (optionSelected)="selectedLocation($event)"
+                        {{ address }}
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-2 mt-1 form-label">
+                        <span class="fw-bold"><b>OR </b>Search by MAP</span>
+                        <i class="bi bi-location"></i>
+                      </div>
+                      <div class="col-md-8">
+                        <a
+                          type="submit"
+                          class="btn btn-primary"
+                          [routerLink]="['/map-location']"
+                          routerLinkActive="router-link-active"
                         >
-                          <mat-option
-                            *ngFor="let location of filteredLocations | async"
-                            [value]="location"
+                          Select location from Map
+                        </a>
+                      </div>
+                    </div>
+                    <div class="row mt-2">
+                      <div class="col-md-8">
+                        <label
+                          for="exampleFormControlInput1"
+                          class="form-label fw-bold"
+                          ><b>OR </b>Select Provinces/Cities</label
+                        >
+                        <mat-form-field class="chip-list">
+                          <mat-label>Selected Cities</mat-label>
+                          <mat-chip-grid
+                            #chipLocationGrid
+                            aria-label="Selected Locations"
+                            formControlName="locations"
                           >
-                            <span class="">{{ location }}</span>
-                          </mat-option>
-                        </mat-autocomplete>
-                      </mat-form-field>
+                            <mat-chip-row
+                              *ngFor="let location of myLocations"
+                              (removed)="removeLocation(location)"
+                            >
+                              <span class="text-primary">{{ location }}</span>
+                              <button
+                                matChipRemove
+                                [attr.aria-label]="'remove ' + location"
+                              >
+                                <mat-icon>cancel</mat-icon>
+                              </button>
+                            </mat-chip-row>
+                          </mat-chip-grid>
+                          <input
+                            placeholder="Select location"
+                            #locationInput
+                            [formControl]="locationCtrl"
+                            [matChipInputFor]="chipLocationGrid"
+                            [matAutocomplete]="auto2"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            (matChipInputTokenEnd)="addLocation($event)"
+                          />
+                          <mat-autocomplete
+                            #auto2="matAutocomplete"
+                            (optionSelected)="selectedLocation($event)"
+                          >
+                            <mat-option
+                              *ngFor="let location of filteredLocations | async"
+                              [value]="location"
+                            >
+                              <span class="">{{ location }}</span>
+                            </mat-option>
+                          </mat-autocomplete>
+                        </mat-form-field>
+                      </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-2 mt-1 form-label">
-                      <span class="fw-bold">Search Nearby</span>
-                      <i class="bi bi-location"></i>
-                    </div>
-                    <div class="col-md-8">
-                      <input
-                        type="checkbox"
-                        formControlName="currentAddress"
-                        name="currentAddress"
-                        id=""
-                      />
-                      {{ address }}
-                    </div>
-                  </div>
+
                   <div class="row mt-2">
                     <div class="col-md-2">
                       <select formControlName="sortBy" class="form-select">

@@ -82,6 +82,13 @@ export const appRoutes: Route[] = [
       ),
   },
   {
+    path: 'map-location',
+    loadComponent: () =>
+      import('./public/select-map-location/select-map-location.component').then(
+        (com) => com.SelectMapLocationComponent
+      ),
+  },
+  {
     path: 'view-advertisement-details',
     loadComponent: () =>
       import(

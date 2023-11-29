@@ -5,6 +5,7 @@ import {
   ViewChild,
   inject,
   DestroyRef,
+  OnInit,
 } from '@angular/core';
 import { HeaderComponent } from './public/header/header.component';
 import { FooterComponent } from './public/footer/footer.component';
@@ -94,6 +95,7 @@ export class AppComponent {
       }
     });
   }
+
   reset() {
     // we'll call this method when we want to start/reset the idle process
     this.idle.watch();
