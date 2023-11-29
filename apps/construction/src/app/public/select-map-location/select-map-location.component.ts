@@ -114,26 +114,28 @@ export class SelectMapLocationComponent {
       this.circle,
       'dragend',
       (event: google.maps.MapMouseEvent) => {
-        const newCenter: google.maps.LatLngLiteral = event.latLng.toJSON();
+        //const newCenter: google.maps.LatLngLiteral = event.latLng.toJSON();
         this.reverseGeocode();
+        console.log('draged');
 
         //this.onCircleDragEnd(event);
       }
     );
 
     google.maps.event.addListener(this.circle, 'radius_changed', () => {
-      const newCenter = this.circle.getCenter().toJSON();
-
+      //const newCenter = this.circle.getCenter().toJSON();
+      console.log('radius changes');
       this.reverseGeocode();
 
       //this.onCircleRadiusChanged(this.circle.getRadius());
     });
 
-    google.maps.event.addListener(this.circle, 'center_changed', () => {
-      const newCenter = this.circle.getCenter().toJSON();
-      this.reverseGeocode();
-      // this.onCircleCenterChanged(newCenter);
-    });
+    // google.maps.event.addListener(this.circle, 'center_changed', () => {
+    //   console.log('center changes');
+    //   const newCenter = this.circle.getCenter().toJSON();
+    //   this.reverseGeocode();
+    //   // this.onCircleCenterChanged(newCenter);
+    // });
   }
 
   // reverseGeocode(center: google.maps.LatLngLiteral): void {
@@ -211,13 +213,14 @@ export class SelectMapLocationComponent {
       geocoder.geocode({ location: point }, (results, status) => {
         if (status === google.maps.GeocoderStatus.OK) {
           const cityName = this.extractMajorCity(results);
+
           if (cityName) {
             this.citiesCovered.push(cityName);
           }
         }
       });
-      console.log('cities', this.citiesCovered);
     }
+    // console.log('cities covered', this.citiesCovered);
   }
 
   private extractMajorCity(
