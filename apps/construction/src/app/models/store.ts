@@ -11,4 +11,5 @@ export interface StoreInterface {
   userIdEdited?: string;
   userSelected?: any;
   userIdSelected?: string;
+  mapSearchSelectedCities?: string[];
 }

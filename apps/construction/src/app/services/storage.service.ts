@@ -173,6 +173,11 @@ export class StorageService {
       return { ...state, userIdEdited: userId };
     });
   }
+  updateMapSearchSelectedCities(cities: string[]) {
+    this.store.update((state) => {
+      return { ...state, mapSearchSelectedCities: [...cities] };
+    });
+  }
   updateUserSelected(user: any) {
     this.store.update((state) => {
       return { ...state, userSelected: user };
@@ -375,6 +380,7 @@ export class StorageService {
       general: { theme: 'light' },
       plan: null,
       advertisement: null,
+      mapSearchSelectedCities: [],
       user: {
         loggedIn: false,
         userId: '',

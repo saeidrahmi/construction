@@ -1,3 +1,4 @@
+import { StorageService } from './../../services/storage.service';
 import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
@@ -5,6 +6,7 @@ import {
   ElementRef,
   OnInit,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink, RouterModule } from '@angular/router';
@@ -38,9 +40,10 @@ export class SelectMapLocationComponent {
   EARTH_RADIUS_IN_MILES = 3956.0;
 
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
-  citiesCovered: string[];
+  citiesCovered: string[] = [];
   circleOptions: google.maps.CircleOptions;
   circle: google.maps.Circle;
+  storageService = inject(StorageService);
 
   constructor() {
     this.getCurrentLocation();
@@ -129,19 +132,13 @@ export class SelectMapLocationComponent {
       (event: google.maps.MapMouseEvent) => {
         //const newCenter: google.maps.LatLngLiteral = event.latLng.toJSON();
         this.reverseGeocode();
-        console.log('draged');
-
-        //this.onCircleDragEnd(event);
       }
     );
 
     google.maps.event.addListener(this.circle, 'radius_changed', () => {
       //const newCenter = this.circle.getCenter().toJSON();
 
-      console.log('Circle radius changed to:', this.circle.getRadius());
       this.reverseGeocode();
-
-      //this.onCircleRadiusChanged(this.circle.getRadius());
     });
 
     // google.maps.event.addListener(this.circle, 'center_changed', () => {
@@ -151,30 +148,6 @@ export class SelectMapLocationComponent {
     //   // this.onCircleCenterChanged(newCenter);
     // });
   }
-
-  // reverseGeocode(center: google.maps.LatLngLiteral): void {
-  //   const geocoder = new google.maps.Geocoder();
-  //   geocoder.geocode({ location: center }, (results, status) => {
-  //     if (status === google.maps.GeocoderStatus.OK) {
-  //       this.citiesCovered = results.map((result) => result.formatted_address);
-  //       console.log(this.citiesCovered, 'cities covered');
-  //     }
-  //   });
-  // }
-
-  // onCircleDragEnd(event: google.maps.MapMouseEvent): void {
-  //   const newCenter: google.maps.LatLngLiteral = event.latLng.toJSON();
-  //   this.reverseGeocode(newCenter);
-  // }
-
-  // onCircleRadiusChanged(radius: number): void {
-  //   console.log('Circle radius changed to:', radius);
-  // }
-
-  // onCircleCenterChanged(newCenter: google.maps.LatLngLiteral): void {
-  //   this.reverseGeocode(newCenter);
-  //   console.log('Circle center changed to:', newCenter);
-  // }
 
   addRecenterCustomControl() {
     const controlDiv = document.createElement('div');
@@ -228,16 +201,19 @@ export class SelectMapLocationComponent {
         if (status === google.maps.GeocoderStatus.OK) {
           const cityName = this.extractMajorCity(results);
 
-          if (cityName) {
+          if (cityName && !this.citiesCovered?.includes(cityName)) {
             this.citiesCovered.push(cityName);
           }
         }
       });
     }
-    // console.log('cities covered', this.citiesCovered);
+    console.log('cities covered', this.citiesCovered);
+    this.storageService.updateMapSearchSelectedCities(
+      this.citiesCovered as string[]
+    );
   }
 
-  private extractMajorCity(
+  private extractFormattedAddress(
     results: google.maps.GeocoderResult[]
   ): string | null {
     for (const result of results) {
@@ -247,6 +223,21 @@ export class SelectMapLocationComponent {
           component.types.includes('administrative_area_level_1')
         ) {
           return result.formatted_address;
+        }
+      }
+    }
+    return null;
+  }
+  private extractMajorCity(
+    results: google.maps.GeocoderResult[]
+  ): string | null {
+    for (const result of results) {
+      for (const component of result.address_components) {
+        if (
+          component.types.includes('locality') ||
+          component.types.includes('administrative_area_level_1')
+        ) {
+          return component.long_name;
         }
       }
     }
