@@ -183,11 +183,11 @@ export class SelectMapLocationComponent {
 
   reverseGeocode(): void {
     const geocoder = new google.maps.Geocoder();
-
-    const numPoints = 360; // Number of points around the circumference of the circle
+    const numPoints = 360;
     const step = 360 / numPoints;
+    const geocodePromises = [];
 
-    this.citiesCovered = []; // Clear the existing cities
+    this.citiesCovered = [];
 
     for (let i = 0; i < numPoints; i++) {
       const angle = i * step;
@@ -197,20 +197,25 @@ export class SelectMapLocationComponent {
         angle
       );
 
-      geocoder.geocode({ location: point }, (results, status) => {
-        if (status === google.maps.GeocoderStatus.OK) {
-          const cityName = this.extractMajorCity(results);
-
-          if (cityName && !this.citiesCovered?.includes(cityName)) {
-            this.citiesCovered.push(cityName);
+      const geocodePromise = new Promise((resolve) => {
+        geocoder.geocode({ location: point }, (results, status) => {
+          if (status === google.maps.GeocoderStatus.OK) {
+            const cityName = this.extractMajorCity(results);
+            if (cityName && !this.citiesCovered?.includes(cityName)) {
+              this.citiesCovered.push(cityName);
+            }
           }
-        }
+          resolve([]); // Resolve the promise regardless of geocoding success or failure
+        });
       });
+
+      geocodePromises.push(geocodePromise);
     }
-    console.log('cities covered', this.citiesCovered);
-    this.storageService.updateMapSearchSelectedCities(
-      this.citiesCovered as string[]
-    );
+
+    // Wait for all geocoding promises to resolve
+    Promise.all(geocodePromises).then(() => {
+      this.storageService.updateMapSearchSelectedCities(this.citiesCovered);
+    });
   }
 
   private extractFormattedAddress(

@@ -92,11 +92,13 @@ export class AdvertisementsListComponent {
   user = this.storageService?.getUser();
   userId = this.storageService?.getUserId();
   loggedIn = this.storageService?.isUserLoggedIn();
+
   currentDate = new Date();
   searchForm: FormGroup;
   canadaCites: string[] = [];
   constructor(private fb: FormBuilder, private http: HttpClient) {
-    this.getCurrentLocation();
+    (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
+      this.getCurrentLocation();
     this.searchForm = this.fb.group({
       searchText: new FormControl('', [Validators.required]),
       tags: new FormControl('', []),

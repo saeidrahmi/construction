@@ -82,6 +82,9 @@ export class StorageService {
   getUserSelected(): Signal<any | undefined> {
     return computed(() => this.store()?.userSelected);
   }
+  getMapSearchSelectedCities(): Signal<string[] | undefined> {
+    return computed(() => this.store()?.mapSearchSelectedCities);
+  }
   getUserIdSelected(): Signal<string | undefined> {
     return computed(() => this.store()?.userIdSelected);
   }
@@ -174,8 +177,9 @@ export class StorageService {
     });
   }
   updateMapSearchSelectedCities(cities: string[]) {
+    console.log('citie', cities);
     this.store.update((state) => {
-      return { ...state, mapSearchSelectedCities: [...cities] };
+      return { ...state, mapSearchSelectedCities: cities };
     });
   }
   updateUserSelected(user: any) {
