@@ -4,3 +4,6 @@
   border: 1px solid rgb(211, 211, 211);
   border-radius: 20px;
 }
+mat-slider {
+  width: 500px;
+}

@@ -10,7 +10,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink, RouterModule } from '@angular/router';
 import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
 import { SpinnerComponent } from '../spinner/spinner.component';
-import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-select-map-location',
@@ -42,10 +41,24 @@ export class SelectMapLocationComponent {
   citiesCovered: string[];
   circleOptions: google.maps.CircleOptions;
   circle: google.maps.Circle;
+
   constructor() {
     this.getCurrentLocation();
   }
+  formatLabel(value: number): string {
+    if (value >= 1000) {
+      return Math.round(value / 1000) + 'k';
+    }
 
+    return `${value}`;
+  }
+  onSliderChange() {
+    this.circle.setRadius(this.RADIUS);
+    const bounds = this.circle.getBounds();
+    if (bounds) {
+      this.map.fitBounds(bounds);
+    }
+  }
   getCurrentLocation(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -124,7 +137,8 @@ export class SelectMapLocationComponent {
 
     google.maps.event.addListener(this.circle, 'radius_changed', () => {
       //const newCenter = this.circle.getCenter().toJSON();
-      console.log('radius changes');
+
+      console.log('Circle radius changed to:', this.circle.getRadius());
       this.reverseGeocode();
 
       //this.onCircleRadiusChanged(this.circle.getRadius());
