@@ -6,14 +6,15 @@
   </div>
   <div class="row border rounded p-4 my-2">
     <div class="d-flex justify-content-center">
-      <a
+      <button
         type="submit"
         class="btn btn-primary align-center"
         [routerLink]="['/advertisements']"
         routerLinkActive="router-link-active"
+        [disabled]="disableSelect"
       >
         Select map locations
-      </a>
+      </button>
     </div>
     <br />
     <div class="col-1 h3">1K</div>

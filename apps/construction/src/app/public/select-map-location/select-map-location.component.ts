@@ -28,7 +28,7 @@ import { SpinnerComponent } from '../spinner/spinner.component';
     SpinnerComponent,
   ],
 })
-export class SelectMapLocationComponent {
+export class SelectMapLocationComponent implements AfterViewInit {
   @ViewChild('mapContainer', { static: false }) gmap: ElementRef;
   lat: number;
   lng: number;
@@ -38,15 +38,26 @@ export class SelectMapLocationComponent {
   mapZoom = 15;
   map!: google.maps.Map;
   EARTH_RADIUS_IN_MILES = 3956.0;
-
+  disableSelect = true;
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   citiesCovered: string[] = [];
+  formattedAddrress: string[] = [];
+
   circleOptions: google.maps.CircleOptions;
   circle: google.maps.Circle;
   storageService = inject(StorageService);
 
   constructor() {
     this.getCurrentLocation();
+  }
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      if (google.maps.geometry && google.maps.geometry.spherical) {
+        // Your component logic here
+        console.log('got called');
+        this.getAllCircleAddresses();
+      }
+    }, 3000);
   }
   formatLabel(value: number): string {
     if (value >= 1000) {
@@ -129,16 +140,16 @@ export class SelectMapLocationComponent {
     google.maps.event.addListener(
       this.circle,
       'dragend',
-      (event: google.maps.MapMouseEvent) => {
+      async (event: google.maps.MapMouseEvent) => {
         //const newCenter: google.maps.LatLngLiteral = event.latLng.toJSON();
-        this.reverseGeocode();
+        this.getAllCircleAddresses();
       }
     );
 
-    google.maps.event.addListener(this.circle, 'radius_changed', () => {
+    google.maps.event.addListener(this.circle, 'radius_changed', async () => {
       //const newCenter = this.circle.getCenter().toJSON();
 
-      this.reverseGeocode();
+      this.getAllCircleAddresses();
     });
 
     // google.maps.event.addListener(this.circle, 'center_changed', () => {
@@ -181,31 +192,107 @@ export class SelectMapLocationComponent {
     this.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
   }
 
-  reverseGeocode(): void {
+  // reverseGeocode(): void {
+  //   const geocoder = new google.maps.Geocoder();
+  //   const numPoints = 360;
+  //   const step = 360 / numPoints;
+  //   const geocodePromises = [];
+
+  //   this.citiesCovered = [];
+
+  //   for (let i = 0; i < numPoints; i++) {
+  //     const angle = i * step;
+  //     const point = google.maps.geometry.spherical.computeOffset(
+  //       this.circle.getCenter(),
+  //       this.circle.getRadius(),
+  //       angle
+  //     );
+
+  //     const geocodePromise = new Promise((resolve) => {
+  //       geocoder.geocode({ location: point }, (results, status) => {
+  //         if (status === google.maps.GeocoderStatus.OK) {
+  //           const cityName = this.extractMajorCity(results);
+  //           if (cityName && !this.citiesCovered?.includes(cityName)) {
+  //             this.citiesCovered.push(cityName);
+  //           }
+  //         }
+  //         resolve([]); // Resolve the promise regardless of geocoding success or failure
+  //       });
+  //     });
+
+  //     geocodePromises.push(geocodePromise);
+  //   }
+
+  //   // Wait for all geocoding promises to resolve
+  //   Promise.all(geocodePromises).then(() => {
+  //     this.storageService.updateMapSearchSelectedCities(this.citiesCovered);
+  //   });
+  // }
+
+  getAllCircleAddresses(): void {
+    this.disableSelect = true;
     const geocoder = new google.maps.Geocoder();
-    const numPoints = 360;
+    const numPoints = 720;
     const step = 360 / numPoints;
     const geocodePromises = [];
 
     this.citiesCovered = [];
+    this.formattedAddrress = [];
+
+    // Include center point
+    const centerGeocodePromise = new Promise((resolve) => {
+      geocoder.geocode(
+        { location: this.circle.getCenter() },
+        (results, status) => {
+          if (status === google.maps.GeocoderStatus.OK) {
+            const cityName = this.extractMajorCity(results);
+            const formattedAddrress = this.extractFormattedAddress(results);
+            if (cityName && !this.citiesCovered?.includes(cityName)) {
+              this.citiesCovered.push(cityName);
+            }
+            if (
+              formattedAddrress &&
+              !this.formattedAddrress?.includes(formattedAddrress)
+            )
+              this.formattedAddrress.push(formattedAddrress);
+          }
+          resolve([]);
+        }
+      );
+    });
+
+    geocodePromises.push(centerGeocodePromise);
 
     for (let i = 0; i < numPoints; i++) {
       const angle = i * step;
-      const point = google.maps.geometry.spherical.computeOffset(
+      const pointOnCircumference = google.maps.geometry.spherical.computeOffset(
         this.circle.getCenter(),
         this.circle.getRadius(),
         angle
       );
 
+      const pointInBetween = google.maps.geometry.spherical.interpolate(
+        this.circle.getCenter(),
+        pointOnCircumference,
+        0.5 // Adjust the interpolation factor as needed
+      );
+
       const geocodePromise = new Promise((resolve) => {
-        geocoder.geocode({ location: point }, (results, status) => {
+        geocoder.geocode({ location: pointInBetween }, (results, status) => {
           if (status === google.maps.GeocoderStatus.OK) {
             const cityName = this.extractMajorCity(results);
+            const formattedAddrress = this.extractFormattedAddress(results);
+
             if (cityName && !this.citiesCovered?.includes(cityName)) {
               this.citiesCovered.push(cityName);
             }
+            if (
+              formattedAddrress &&
+              !this.formattedAddrress?.includes(formattedAddrress)
+            )
+              this.formattedAddrress.push(formattedAddrress);
           }
-          resolve([]); // Resolve the promise regardless of geocoding success or failure
+          resolve([]);
         });
       });
 
@@ -214,6 +301,9 @@ export class SelectMapLocationComponent {
 
     // Wait for all geocoding promises to resolve
     Promise.all(geocodePromises).then(() => {
+      this.disableSelect = false;
+      //console.log('all citeis', this.citiesCovered);
+      //console.log('all formattedAddrress', this.formattedAddrress);
       this.storageService.updateMapSearchSelectedCities(this.citiesCovered);
     });
   }
@@ -225,6 +315,8 @@ export class SelectMapLocationComponent {
       for (const component of result.address_components) {
         if (
           component.types.includes('locality') ||
+          component.types.includes('sublocality') ||
+          component.types.includes('sublocality_level_1') ||
           component.types.includes('administrative_area_level_1')
         ) {
           return result.formatted_address;
@@ -238,8 +330,12 @@ export class SelectMapLocationComponent {
   ): string | null {
     for (const result of results) {
       for (const component of result.address_components) {
+        //if (component.types.includes('administrative_area_level_1'))
+
         if (
           component.types.includes('locality') ||
+          component.types.includes('sublocality') ||
+          component.types.includes('sublocality_level_1') ||
           component.types.includes('administrative_area_level_1')
         ) {
           return component.long_name;

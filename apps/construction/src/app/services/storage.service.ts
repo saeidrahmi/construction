@@ -177,7 +177,6 @@ export class StorageService {
     });
   }
   updateMapSearchSelectedCities(cities: string[]) {
-    console.log('citie', cities);
     this.store.update((state) => {
       return { ...state, mapSearchSelectedCities: cities };
     });

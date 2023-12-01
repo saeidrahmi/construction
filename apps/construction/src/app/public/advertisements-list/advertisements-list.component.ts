@@ -116,6 +116,7 @@ export class AdvertisementsListComponent {
           const data = JSON.parse(JSON.stringify(response));
           const canadaData = data;
           this.canadaCites = this.transformData(canadaData);
+          this.canadaCites.unshift('Canada-wide');
           this.filteredLocations = this.locationCtrl?.valueChanges.pipe(
             startWith(null),
             map((item: string | null) =>
