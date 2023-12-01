@@ -36,6 +36,9 @@ export class SelectMapLocationComponent implements AfterViewInit {
   MAX_ZOOM = 100;
   RADIUS = 1000;
   mapZoom = 15;
+  minRadius = 1000;
+  maxRadius = 100000;
+  stepRadius = 1000;
   map!: google.maps.Map;
   EARTH_RADIUS_IN_MILES = 3956.0;
   disableSelect = true;
@@ -53,8 +56,6 @@ export class SelectMapLocationComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     setTimeout(() => {
       if (google.maps.geometry && google.maps.geometry.spherical) {
-        // Your component logic here
-        console.log('got called');
         this.getAllCircleAddresses();
       }
     }, 3000);
@@ -150,6 +151,12 @@ export class SelectMapLocationComponent implements AfterViewInit {
       //const newCenter = this.circle.getCenter().toJSON();
 
       this.getAllCircleAddresses();
+
+      const bounds = this.circle.getBounds();
+      if (bounds) {
+        this.map.fitBounds(bounds);
+      }
+      this.RADIUS = this.circle.getRadius();
     });
 
     // google.maps.event.addListener(this.circle, 'center_changed', () => {
@@ -192,53 +199,14 @@ export class SelectMapLocationComponent implements AfterViewInit {
     this.map.controls[google.maps.ControlPosition.TOP_RIGHT].push(controlDiv);
   }
 
-  // reverseGeocode(): void {
-  //   const geocoder = new google.maps.Geocoder();
-  //   const numPoints = 360;
-  //   const step = 360 / numPoints;
-  //   const geocodePromises = [];
-
-  //   this.citiesCovered = [];
-
-  //   for (let i = 0; i < numPoints; i++) {
-  //     const angle = i * step;
-  //     const point = google.maps.geometry.spherical.computeOffset(
-  //       this.circle.getCenter(),
-  //       this.circle.getRadius(),
-  //       angle
-  //     );
-
-  //     const geocodePromise = new Promise((resolve) => {
-  //       geocoder.geocode({ location: point }, (results, status) => {
-  //         if (status === google.maps.GeocoderStatus.OK) {
-  //           const cityName = this.extractMajorCity(results);
-  //           if (cityName && !this.citiesCovered?.includes(cityName)) {
-  //             this.citiesCovered.push(cityName);
-  //           }
-  //         }
-  //         resolve([]); // Resolve the promise regardless of geocoding success or failure
-  //       });
-  //     });
-
-  //     geocodePromises.push(geocodePromise);
-  //   }
-
-  //   // Wait for all geocoding promises to resolve
-  //   Promise.all(geocodePromises).then(() => {
-  //     this.storageService.updateMapSearchSelectedCities(this.citiesCovered);
-  //   });
-  // }
-
   getAllCircleAddresses(): void {
     this.disableSelect = true;
     const geocoder = new google.maps.Geocoder();
     const numPoints = 720;
     const step = 360 / numPoints;
     const geocodePromises = [];
-
     this.citiesCovered = [];
     this.formattedAddrress = [];
-
     // Include center point
     const centerGeocodePromise = new Promise((resolve) => {
       geocoder.geocode(
@@ -247,7 +215,6 @@ export class SelectMapLocationComponent implements AfterViewInit {
           if (status === google.maps.GeocoderStatus.OK) {
             const cityName = this.extractMajorCity(results);
             const provinceName = this.extractProvince(results);
-
             const formattedAddrress = this.extractFormattedAddress(results);
             const fullName = provinceName + ', ' + cityName;
             if (fullName && !this.citiesCovered?.includes(fullName)) {
@@ -263,9 +230,7 @@ export class SelectMapLocationComponent implements AfterViewInit {
         }
       );
     });
-
     geocodePromises.push(centerGeocodePromise);
-
     for (let i = 0; i < numPoints; i++) {
       const angle = i * step;
       const pointOnCircumference = google.maps.geometry.spherical.computeOffset(
@@ -299,7 +264,6 @@ export class SelectMapLocationComponent implements AfterViewInit {
           resolve([]);
         });
       });
-
       geocodePromises.push(geocodePromise);
     }
 

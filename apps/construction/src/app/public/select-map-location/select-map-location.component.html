@@ -16,20 +16,22 @@
         Select map locations
       </button>
     </div>
-    <br />
-    <div class="col-1 h3">1K</div>
+    <div class="d-flex justify-content-center h3">
+      {{ formatLabel(RADIUS) }}
+    </div>
+    <div class="col-1 h4">{{ formatLabel(minRadius) }}</div>
     <div class="col-10 mt-2">
       <input
         type="range"
         class="form-range"
-        min="1000"
-        max="100000"
-        step="1000"
+        [min]="minRadius"
+        [max]="maxRadius"
+        [step]="stepRadius"
         id="customRange3"
         [(ngModel)]="RADIUS"
         (change)="onSliderChange()"
       />
     </div>
-    <div class="col-1 h3">{{ formatLabel(RADIUS) }}</div>
+    <div class="col-1 h4">{{ formatLabel(maxRadius) }}</div>
   </div>
 </div>
