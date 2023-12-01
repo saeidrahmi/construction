@@ -246,9 +246,12 @@ export class SelectMapLocationComponent implements AfterViewInit {
         (results, status) => {
           if (status === google.maps.GeocoderStatus.OK) {
             const cityName = this.extractMajorCity(results);
+            const provinceName = this.extractProvince(results);
+
             const formattedAddrress = this.extractFormattedAddress(results);
-            if (cityName && !this.citiesCovered?.includes(cityName)) {
-              this.citiesCovered.push(cityName);
+            const fullName = provinceName + ', ' + cityName;
+            if (fullName && !this.citiesCovered?.includes(fullName)) {
+              this.citiesCovered.push(fullName);
             }
             if (
               formattedAddrress &&
@@ -281,10 +284,11 @@ export class SelectMapLocationComponent implements AfterViewInit {
         geocoder.geocode({ location: pointInBetween }, (results, status) => {
           if (status === google.maps.GeocoderStatus.OK) {
             const cityName = this.extractMajorCity(results);
+            const provinceName = this.extractProvince(results);
             const formattedAddrress = this.extractFormattedAddress(results);
-
-            if (cityName && !this.citiesCovered?.includes(cityName)) {
-              this.citiesCovered.push(cityName);
+            const fullName = provinceName + ', ' + cityName;
+            if (fullName && !this.citiesCovered?.includes(fullName)) {
+              this.citiesCovered.push(fullName);
             }
             if (
               formattedAddrress &&
@@ -329,15 +333,28 @@ export class SelectMapLocationComponent implements AfterViewInit {
     results: google.maps.GeocoderResult[]
   ): string | null {
     for (const result of results) {
+      //console.log(result);
       for (const component of result.address_components) {
-        //if (component.types.includes('administrative_area_level_1'))
-
         if (
           component.types.includes('locality') ||
           component.types.includes('sublocality') ||
           component.types.includes('sublocality_level_1') ||
+          component.types.includes('administrative_area_level_2') ||
           component.types.includes('administrative_area_level_1')
         ) {
+          return component.long_name;
+        }
+      }
+    }
+    return null;
+  }
+  private extractProvince(
+    results: google.maps.GeocoderResult[]
+  ): string | null {
+    for (const result of results) {
+      //console.log(result);
+      for (const component of result.address_components) {
+        if (component.types.includes('administrative_area_level_1')) {
           return component.long_name;
         }
       }
