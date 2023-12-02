@@ -202,7 +202,7 @@ export class SelectMapLocationComponent implements AfterViewInit {
   getAllCircleAddresses(): void {
     this.disableSelect = true;
     const geocoder = new google.maps.Geocoder();
-    const numPoints = 720;
+    const numPoints = 360;
     const step = 360 / numPoints;
     const geocodePromises = [];
     this.citiesCovered = [];
@@ -297,14 +297,14 @@ export class SelectMapLocationComponent implements AfterViewInit {
     results: google.maps.GeocoderResult[]
   ): string | null {
     for (const result of results) {
-      //console.log(result);
+      // console.log(result);
       for (const component of result.address_components) {
         if (
           component.types.includes('locality') ||
           component.types.includes('sublocality') ||
           component.types.includes('sublocality_level_1') ||
           component.types.includes('administrative_area_level_2') ||
-          component.types.includes('administrative_area_level_1')
+          component.types.includes('administrative_area_level_3')
         ) {
           return component.long_name;
         }

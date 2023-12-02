@@ -50,6 +50,7 @@
     "ngx-dropzone": "^3.1.0",
     "ngx-dropzone-wrapper": "^15.0.0",
     "ngx-mask": "^16.3.8",
+    "ngx-pagination": "^6.0.3",
     "ngx-quill": "^22.0.0",
     "ngx-spinner": "^16.0.2",
     "ngx-toastr": "^17.0.2",

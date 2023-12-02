@@ -65,7 +65,7 @@ async function listAdvertisementsController(req, res) {
     const userId = decryptItem(req.body.userId, webSecretKey);
     const loggedIn = req.body.loggedIn;
     if (loggedIn) {
-      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
+      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.province,  users.profileImage as userProfileImage,
                           (SELECT AVG(cleanliness) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
                           (SELECT AVG(flexibility)  FROM userRatings WHERE userId = users.userId) as average_flexibility,
                           (SELECT AVG(qualityOfWork)  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
@@ -89,7 +89,7 @@ async function listAdvertisementsController(req, res) {
 
       return res.status(200).json(selectResult);
     } else {
-      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
+      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.province,  users.profileImage as userProfileImage,
                           (SELECT AVG(cleanliness) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
                           (SELECT AVG(flexibility)  FROM userRatings WHERE userId = users.userId) as average_flexibility,
                           (SELECT AVG(qualityOfWork)  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
@@ -157,7 +157,7 @@ async function searchAdvertisementsController(req, res) {
     const sortBy = searchQuery?.sortBy === 'new' ? 'DESC' : 'ASC';
 
     if (loggedIn) {
-      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
+      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.province, users.profileImage as userProfileImage,
                           (SELECT AVG(cleanliness) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
                           (SELECT AVG(flexibility)  FROM userRatings WHERE userId = users.userId) as average_flexibility,
                           (SELECT AVG(qualityOfWork)  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
@@ -188,7 +188,7 @@ async function searchAdvertisementsController(req, res) {
 
       return res.status(200).json(selectResult);
     } else {
-      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
+      const selectAdQuery = `SELECT userAdvertisements.*, users.city,users.province, users.profileImage as userProfileImage,
                           (SELECT AVG(cleanliness) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
                           (SELECT AVG(flexibility)  FROM userRatings WHERE userId = users.userId) as average_flexibility,
                           (SELECT AVG(qualityOfWork)  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,

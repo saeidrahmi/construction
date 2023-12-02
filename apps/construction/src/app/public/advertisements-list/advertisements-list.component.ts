@@ -44,7 +44,7 @@ import { CanadaInterface } from '../../models/canada';
 import { HttpClient } from '@angular/common/http';
 import { FormErrorsComponent } from '../form-errors.component';
 import { FormService } from '../../services/form.service';
-
+import { NgxPaginationModule } from 'ngx-pagination';
 @Component({
   selector: 'app-advertisements-list',
   templateUrl: './advertisements-list.component.html',
@@ -66,6 +66,7 @@ import { FormService } from '../../services/form.service';
     MatAutocompleteModule,
     MatIconModule,
     FormErrorsComponent,
+    NgxPaginationModule,
   ],
 })
 export class AdvertisementsListComponent {
@@ -73,6 +74,8 @@ export class AdvertisementsListComponent {
   @ViewChild('locationInput') locationInput!: ElementRef<HTMLInputElement>;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   myTags: string[] = [];
+  page = 1;
+  pageSize = 5;
   formErrors: string[] = [];
   myLocations: string[] = [];
   announcer = inject(LiveAnnouncer);
@@ -102,6 +105,7 @@ export class AdvertisementsListComponent {
   currentDate = new Date();
   searchForm: FormGroup;
   canadaCites: string[] = [];
+  citiesByProvince = {};
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -157,6 +161,37 @@ export class AdvertisementsListComponent {
             }
             return obj;
           });
+          this.citiesByProvince = {};
+
+          // Iterate through the data and organize cities by province
+          this.allAdvertisements.forEach((item) => {
+            const province = item.province;
+            const city = item.city;
+
+            // Check if the province already exists
+            if (!this.citiesByProvince[province]) {
+              this.citiesByProvince[province] = {
+                cities: [{ cityName: city, count: 1 }],
+                count: 1,
+              };
+            } else {
+              const existingCity = this.citiesByProvince[province].cities.find(
+                (c) => c.cityName === city
+              );
+
+              if (existingCity) {
+                existingCity.count += 1;
+              } else {
+                this.citiesByProvince[province].cities.push({
+                  cityName: city,
+                  count: 1,
+                });
+              }
+
+              this.citiesByProvince[province].count += 1;
+            }
+          });
+          console.log(this.citiesByProvince, 'by');
         })
       )
       .subscribe();
