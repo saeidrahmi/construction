@@ -23,6 +23,18 @@
             >
               <div class="accordion-body">
                 <form class="align-items-center" [formGroup]="searchForm">
+                  <ng-container *ngIf="formErrors">
+                    <div class="row">
+                      <div class="col-6 m-3 p-3">
+                        <app-form-errors
+                          *ngIf="formErrors"
+                          [formErrors]="formErrors"
+                        ></app-form-errors>
+                        <!-- <api-server-error *ngIf="serverError" [error]="serverError" /> -->
+                      </div>
+                    </div>
+                  </ng-container>
+
                   <div class="row">
                     <div class="col-md-4">
                       <label
@@ -98,7 +110,7 @@
                     </div>
                   </div>
                   <div class="border rounded p-3 my-1">
-                    <div class="row">
+                    <!-- <div class="row">
                       <div class="col-md-2 mt-1 form-label">
                         <i class="bi bi-geo-alt me-1"></i
                         ><span class="fw-bold">Search Nearby</span>
@@ -112,16 +124,16 @@
                         />
                         {{ address }}
                       </div>
-                    </div>
+                    </div> -->
                     <div class="row">
                       <div class="col-md-2 mt-1 form-label">
-                        <span class="fw-bold"><b>OR </b>Search by MAP</span>
+                        <span class="fw-bold"><b> </b>Search by MAP</span>
                         <i class="bi bi-location"></i>
                       </div>
                       <div class="col-md-8">
                         <a
                           type="submit"
-                          class="btn btn-primary"
+                          class="btn btn-success"
                           [routerLink]="['/map-location']"
                           routerLinkActive="router-link-active"
                         >
@@ -178,15 +190,28 @@
                           </mat-autocomplete>
                         </mat-form-field>
                       </div>
+
+                      <div class="col-12">
+                        <button
+                          class="btn btn-success"
+                          (click)="clearAddrress()"
+                        >
+                          Clear Locations
+                        </button>
+                      </div>
                     </div>
                   </div>
 
                   <div class="row mt-2">
                     <div class="col-md-2">
                       <select formControlName="sortBy" class="form-select">
-                        <option selected>Sort by</option>
-                        <option>New advertisement first</option>
-                        <option>Old advertisement first</option>
+                        <option selected value="">Sort by</option>
+                        <option value="new first">
+                          New advertisement first
+                        </option>
+                        <option value="old first">
+                          Old advertisement first
+                        </option>
                       </select>
                     </div>
                     <div class="col-1">

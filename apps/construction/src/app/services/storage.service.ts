@@ -181,6 +181,11 @@ export class StorageService {
       return { ...state, mapSearchSelectedCities: cities };
     });
   }
+  clearMapSearchSelectedCities() {
+    this.store.update((state) => {
+      return { ...state, mapSearchSelectedCities: [] };
+    });
+  }
   updateUserSelected(user: any) {
     this.store.update((state) => {
       return { ...state, userSelected: user };

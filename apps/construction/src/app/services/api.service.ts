@@ -1704,6 +1704,41 @@ export class ApiService {
         })
       );
   }
+
+  searchAdvertisements(
+    loggedIn: boolean,
+    userId: string,
+    data
+  ): Observable<any> {
+    this.spinner.show();
+    console.log(data);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/public/search-advertisements', {
+        userId: userId,
+        loggedIn: loggedIn,
+        data: data,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiLongSearchTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Advertisements Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
   getAllUsersAdvertisementsPendingApproval(): Observable<any> {
     this.spinner.show();
     return this.httpClient

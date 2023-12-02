@@ -42,6 +42,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { CanadaInterface } from '../../models/canada';
 import { HttpClient } from '@angular/common/http';
+import { FormErrorsComponent } from '../form-errors.component';
+import { FormService } from '../../services/form.service';
 
 @Component({
   selector: 'app-advertisements-list',
@@ -63,6 +65,7 @@ import { HttpClient } from '@angular/common/http';
     MatButtonToggleModule,
     MatAutocompleteModule,
     MatIconModule,
+    FormErrorsComponent,
   ],
 })
 export class AdvertisementsListComponent {
@@ -70,6 +73,7 @@ export class AdvertisementsListComponent {
   @ViewChild('locationInput') locationInput!: ElementRef<HTMLInputElement>;
   separatorKeysCodes: number[] = [ENTER, COMMA];
   myTags: string[] = [];
+  formErrors: string[] = [];
   myLocations: string[] = [];
   announcer = inject(LiveAnnouncer);
   tagCtrl = new FormControl('');
@@ -92,17 +96,22 @@ export class AdvertisementsListComponent {
   user = this.storageService?.getUser();
   userId = this.storageService?.getUserId();
   loggedIn = this.storageService?.isUserLoggedIn();
-
+  currentPosition: any;
+  address!: string;
   currentDate = new Date();
   searchForm: FormGroup;
   canadaCites: string[] = [];
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(
+    private fb: FormBuilder,
+    private http: HttpClient,
+    private formService: FormService
+  ) {
     (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
       this.getCurrentLocation();
     this.searchForm = this.fb.group({
       searchText: new FormControl('', [Validators.required]),
       tags: new FormControl('', []),
-      currentAddress: new FormControl('', []),
+      //currentAddress: new FormControl('', []),
 
       locations: new FormControl('', []),
       sortBy: new FormControl('Sort by', []),
@@ -157,8 +166,11 @@ export class AdvertisementsListComponent {
       )
     );
   }
-  currentPosition: any;
-  address!: string;
+  clearAddrress() {
+    this.myLocations = [];
+    this.storageService.clearMapSearchSelectedCities();
+  }
+
   getCurrentLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -228,7 +240,44 @@ export class AdvertisementsListComponent {
     );
   }
   search() {
-    console.log(this.searchForm.value);
+    if (this.searchForm.valid) {
+      const data = {
+        searchText: this.searchForm.get('searchText').value,
+        tags: this.myTags,
+        //currentAddress: new FormControl('', []),
+        locations: this.myLocations,
+        sortBy: this.searchForm.get('sortBy').value,
+      };
+      this.apiService
+        .searchAdvertisements(
+          this.loggedIn(),
+          this.encryptionService.encryptItem(this.userId()),
+          data
+        )
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+
+          tap((list: any) => {
+            this.allAdvertisements = list;
+
+            this.allAdvertisements = this.allAdvertisements.map((obj) => {
+              if (obj?.headerImage) {
+                const blob = new Blob([new Uint8Array(obj.headerImage.data)], {
+                  type: 'image/jpeg',
+                }); // Adjust 'image/jpeg' to the correct image MIME type
+                const imageUrl = URL.createObjectURL(blob);
+                return { ...obj, headerImage: `url(${imageUrl})` };
+              }
+              return obj;
+            });
+          })
+        )
+        .subscribe();
+    } else {
+      this.formErrors = this.formService.getFormValidationErrorMessages(
+        this.searchForm
+      );
+    }
   }
   addTag(event: MatChipInputEvent): void {
     // Clear the input value
