@@ -118,6 +118,90 @@ async function listAdvertisementsController(req, res) {
     });
   }
 }
+async function searchAdvertisementsController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const loggedIn = req.body.loggedIn;
+    const searchQuery = req.body.data;
+    const searchText = searchQuery?.searchText;
+    const tagsArray = searchQuery?.tags;
+    const placeholders = tagsArray
+      .map(
+        (tag) =>
+          // `FIND_IN_SET('${tag.toLowerCase()}',  LOWER(userAdvertisements.tags)) > 0`
+          `LOWER(userAdvertisements.tags) LIKE LOWER('%${tag}%')`
+      )
+      .join(' OR ');
+
+    const locations = searchQuery?.locations;
+    const sortBy = searchQuery?.sortBy === 'new' ? 'DESC' : 'ASC';
+
+    if (loggedIn) {
+      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
+                          (SELECT AVG(cleanliness) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
+                          (SELECT AVG(flexibility)  FROM userRatings WHERE userId = users.userId) as average_flexibility,
+                          (SELECT AVG(qualityOfWork)  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
+                          (SELECT AVG(performance) FROM userRatings WHERE userId = users.userId) as average_performance,
+                          (SELECT AVG(communicationSkills) FROM userRatings WHERE userId = users.userId) as average_communicationSkills,
+                          (SELECT AVG(timeliness)   FROM userRatings WHERE userId = users.userId) as average_timeliness,
+                          (SELECT AVG(costManagement)   FROM userRatings WHERE userId = users.userId) as average_costManagement,
+                          (SELECT AVG(professionalism)   FROM userRatings WHERE userId = users.userId) as average_professionalism,
+                          (SELECT AVG(safety)   FROM userRatings WHERE userId = users.userId) as average_safety,
+                          (SELECT AVG(materialsAndEquipment)   FROM userRatings WHERE userId = users.userId) as average_materialsAndEquipment,
+                          (SELECT AVG(overallCustomerSatisfaction) AS average_rating FROM userRatings WHERE userId = users.userId) as average_userOverallRating,
+                          (SELECT count(*) FROM userFavoriteAdvertisements WHERE userId = ? and userAdvertisementId=userAdvertisements.userAdvertisementId ) as isFavorite
+                          FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          JOIN users ON userPlans.userId = users.userId
+                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1
+                          and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
+                            ${
+                              tagsArray.length > 0
+                                ? `and (${placeholders})`
+                                : ''
+                            }
+                          and (LOWER(userAdvertisements.description) LIKE LOWER('%${searchText}%') or LOWER(userAdvertisements.title) LIKE LOWER('%${searchText}%') )
+                          ORDER BY userAdvertisements.dateCreated ${sortBy} `;
+
+      const selectResult = await executeQuery(selectAdQuery, [userId]);
+
+      return res.status(200).json(selectResult);
+    } else {
+      const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.profileImage as userProfileImage,
+                          (SELECT AVG(cleanliness) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
+                          (SELECT AVG(flexibility)  FROM userRatings WHERE userId = users.userId) as average_flexibility,
+                          (SELECT AVG(qualityOfWork)  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
+                          (SELECT AVG(performance) FROM userRatings WHERE userId = users.userId) as average_performance,
+                          (SELECT AVG(communicationSkills) FROM userRatings WHERE userId = users.userId) as average_communicationSkills,
+                          (SELECT AVG(timeliness)   FROM userRatings WHERE userId = users.userId) as average_timeliness,
+                          (SELECT AVG(costManagement)   FROM userRatings WHERE userId = users.userId) as average_costManagement,
+                          (SELECT AVG(professionalism)   FROM userRatings WHERE userId = users.userId) as average_professionalism,
+                          (SELECT AVG(safety)   FROM userRatings WHERE userId = users.userId) as average_safety,
+                          (SELECT AVG(materialsAndEquipment)   FROM userRatings WHERE userId = users.userId) as average_materialsAndEquipment,
+                          (SELECT AVG(overallCustomerSatisfaction) AS average_rating FROM userRatings WHERE userId = users.userId) as average_userOverallRating
+                           FROM userAdvertisements
+                          JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
+                          JOIN users ON userPlans.userId = users.userId
+                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1
+                           and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
+                              ${
+                                tagsArray.length > 0
+                                  ? `and (${placeholders})`
+                                  : ''
+                              }
+                               and (  LOWER(userAdvertisements.description) LIKE LOWER('%${searchText}%') or LOWER(userAdvertisements.title) LIKE LOWER('%${searchText}%') )
+                           ORDER BY userAdvertisements.dateCreated ${sortBy} `;
+      console.log(selectAdQuery);
+      const selectResult = await executeQuery(selectAdQuery, []);
+
+      return res.status(200).json(selectResult);
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 async function listUserActiveAdvertisementsController(req, res) {
   try {
     // let userId = decryptItem(req.body.userId, webSecretKey);
@@ -173,4 +257,5 @@ module.exports = {
   getTaxController,
   getTopAdInfoController,
   listAdvertisementsController,
+  searchAdvertisementsController,
 };

@@ -80,6 +80,7 @@ export class AdvertisementsListComponent {
   locationCtrl = new FormControl('');
   router = inject(Router);
   imageService = inject(ImageService);
+  sortBy = '';
   toastService = inject(ToastrService);
   apiService = inject(ApiService);
   encryptionService = inject(EncryptionService);
@@ -109,7 +110,7 @@ export class AdvertisementsListComponent {
     (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
       this.getCurrentLocation();
     this.searchForm = this.fb.group({
-      searchText: new FormControl('', [Validators.required]),
+      searchText: new FormControl('', []),
       tags: new FormControl('', []),
       //currentAddress: new FormControl('', []),
 
@@ -246,7 +247,7 @@ export class AdvertisementsListComponent {
         tags: this.myTags,
         //currentAddress: new FormControl('', []),
         locations: this.myLocations,
-        sortBy: this.searchForm.get('sortBy').value,
+        sortBy: this.sortBy,
       };
       this.apiService
         .searchAdvertisements(

@@ -96,8 +96,8 @@ export class EditAdvertisementComponent {
                 this.router.navigate(['/general/user-advertisements']);
               else {
                 this.advertisement = results[0];
-                this.myTags = results[0]?.tags?.split(',');
-                console.log(this.myTags, 'tags');
+                if (results[0]?.tags?.length > 0)
+                  this.myTags = results[0]?.tags?.split(',');
 
                 const selectAdResult = results;
                 this.sliderImages = [];
@@ -586,7 +586,7 @@ export class EditAdvertisementComponent {
 
   selectedTag(event: MatAutocompleteSelectedEvent): void {
     const value = event.option.viewValue;
-    if (this.myTags.includes(value))
+    if (this.myTags?.includes(value))
       this.toastService.error('Tag exist. ', 'Error', {
         timeOut: 3000,
         positionClass: 'toast-top-right',

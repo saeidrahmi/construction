@@ -204,14 +204,14 @@
 
                   <div class="row mt-2">
                     <div class="col-md-2">
-                      <select formControlName="sortBy" class="form-select">
-                        <option selected value="">Sort by</option>
-                        <option value="new first">
-                          New advertisement first
-                        </option>
-                        <option value="old first">
-                          Old advertisement first
-                        </option>
+                      <select
+                        formControlName="sortBy"
+                        class="form-select"
+                        [(ngModel)]="sortBy"
+                      >
+                        <option value="">Sort by</option>
+                        <option value="new">New advertisement first</option>
+                        <option value="old">Old advertisement first</option>
                       </select>
                     </div>
                     <div class="col-1">
@@ -254,6 +254,16 @@
                         </div>
                       </div>
                     </div>
+                    <ng-container *ngIf="allAdvertisements?.length === 0">
+                      <div class="row mt-1 border rounded p-3">
+                        <div class="col alert alert-warning">
+                          No advertisements match the provided search query.
+                          Please consider modifying your search criteria to find
+                          relevant results.
+                        </div>
+                      </div>
+                    </ng-container>
+
                     <div class="row mt-1">
                       <div class="col">
                         <app-advertisement-view

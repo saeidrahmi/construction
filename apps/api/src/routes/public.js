@@ -9,6 +9,7 @@ const {
   getTopAdInfoController,
   listAdvertisementsController,
   listUserActiveAdvertisementsController,
+  searchAdvertisementsController,
 } = require('../controllers/publicController');
 
 //router.post('/delete-plan', deletePlanController);
@@ -18,6 +19,7 @@ router.get('/list-plans', listPlansController);
 router.get('/list-paid-plans', listPaidPlansController);
 router.get('/get-tax', getTaxController);
 router.post('/list-advertisements', listAdvertisementsController);
+router.post('/search-advertisements', searchAdvertisementsController);
 router.post(
   '/list-user-active-advertisements',
   listUserActiveAdvertisementsController
