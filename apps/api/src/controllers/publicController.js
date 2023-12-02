@@ -134,6 +134,26 @@ async function searchAdvertisementsController(req, res) {
       .join(' OR ');
 
     const locations = searchQuery?.locations;
+    let locationsClause = '';
+    if (locations?.includes('Canada-wide') || locations?.length === 0)
+      locationsClause = '';
+    else {
+      const generateConditions = (location) => {
+        const parts = location.split(',').map((part) => part.trim());
+
+        if (parts.length === 1) {
+          // If there is no comma, it is a province
+          return `users.province = '${parts[0]}'`;
+        } else {
+          // If there is a comma, consider the first part as province and the second as city
+          return `users.province = '${parts[0]}' AND users.city = '${parts[1]}'`;
+        }
+      };
+
+      // Generate the WHERE clause for the SQL query
+      locationsClause = locations.map(generateConditions).join(' OR ');
+    }
+
     const sortBy = searchQuery?.sortBy === 'new' ? 'DESC' : 'ASC';
 
     if (loggedIn) {
@@ -161,6 +181,7 @@ async function searchAdvertisementsController(req, res) {
                                 : ''
                             }
                           and (LOWER(userAdvertisements.description) LIKE LOWER('%${searchText}%') or LOWER(userAdvertisements.title) LIKE LOWER('%${searchText}%') )
+                          ${locationsClause ? ` AND ${locationsClause}` : ''}
                           ORDER BY userAdvertisements.dateCreated ${sortBy} `;
 
       const selectResult = await executeQuery(selectAdQuery, [userId]);
@@ -190,8 +211,9 @@ async function searchAdvertisementsController(req, res) {
                                   : ''
                               }
                                and (  LOWER(userAdvertisements.description) LIKE LOWER('%${searchText}%') or LOWER(userAdvertisements.title) LIKE LOWER('%${searchText}%') )
-                           ORDER BY userAdvertisements.dateCreated ${sortBy} `;
-      console.log(selectAdQuery);
+                           ${locationsClause ? ` AND ${locationsClause}` : ''}
+                               ORDER BY userAdvertisements.dateCreated ${sortBy} `;
+
       const selectResult = await executeQuery(selectAdQuery, []);
 
       return res.status(200).json(selectResult);
