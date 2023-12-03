@@ -241,43 +241,81 @@
               >Results Found
             </span>
             <span class="badge bg-primary rounded-pill">{{
-              allAdvertisements?.length
+              filteredAdvertisements?.length
             }}</span>
           </li>
           <li class="list-group-item">
             <span class="text-secondary fw-bold border-bottom h5"
               >Star rating</span
             >
-            <ul class="list-group list-group-flush">
+            <ul
+              class="list-group list-group-flush"
+              *ngFor="let item of this.ratingFilter"
+            >
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === 10"
               >
-                <span>10 stars <i class="bi bi-star"></i></span>
-                <span class="badge bg-primary rounded-pill">14</span>
+                <span class="cursor" (click)="filterRating(10)"
+                  >10 stars <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill"
+                  (click)="filterRating(10)"
+                  >{{ item.count }}</span
+                >
               </li>
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === 9"
               >
-                <span>9+ stars <i class="bi bi-star"></i></span>
-                <span class="badge bg-primary rounded-pill">14</span>
+                <span class="cursor" (click)="filterRating(9)"
+                  >9+ stars <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterRating(9)"
+                  >{{ item.count }}</span
+                >
               </li>
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === 8"
               >
-                <span>8+ stars <i class="bi bi-star"></i></span>
-                <span class="badge bg-primary rounded-pill">14</span>
+                <span class="cursor" (click)="filterRating(8)"
+                  >8+ stars <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterRating(8)"
+                  >{{ item.count }}</span
+                >
               </li>
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === 7"
               >
-                <span>7+ stars <i class="bi bi-star"></i></span>
-                <span class="badge bg-primary rounded-pill">14</span>
+                <span class="cursor" (click)="filterRating(7)"
+                  >7+ stars <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterRating(7)"
+                  >{{ item.count }}</span
+                >
               </li>
               <li
                 class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === -1"
               >
-                <span>All ratings <i class="bi bi-star"></i></span>
-                <span class="badge bg-primary rounded-pill">14</span>
+                <span class="cursor" (click)="filterRating(-1)"
+                  >All ratings <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterRating(-1)"
+                  >{{ item.count }}</span
+                >
               </li>
             </ul>
           </li>
@@ -285,7 +323,9 @@
             class="list-group-item"
             *ngFor="let province of citiesByProvince | keyvalue"
           >
-            <span class="text-secondary fw-bold border-bottom h5"
+            <span
+              class="text-secondary fw-bold border-bottom h5 cursor"
+              (click)="filterProvince(province.key)"
               >{{ province.key }} ({{ province.value.count }})</span
             >
             <ul class="list-group list-group-flush">
@@ -293,10 +333,14 @@
                 class="list-group-item d-flex justify-content-between align-items-center"
                 *ngFor="let city of province.value.cities"
               >
-                <span>{{ city.cityName }} </span>
-                <span class="badge bg-primary rounded-pill">{{
-                  city.count
-                }}</span>
+                <span (click)="filterCity(city.cityName)" class="cursor"
+                  >{{ city.cityName }}
+                </span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterCity(city.cityName)"
+                  >{{ city.count }}</span
+                >
               </li>
             </ul>
           </li>
@@ -320,10 +364,11 @@
                         >
                       </div>
                       <div class="col-2">
-                        {{ allAdvertisements?.length }} advertisements found.
+                        {{ filteredAdvertisements?.length }} advertisements
+                        found.
                       </div>
                     </div>
-                    <ng-container *ngIf="allAdvertisements?.length === 0">
+                    <ng-container *ngIf="filteredAdvertisements?.length === 0">
                       <div class="row mt-1 border rounded p-3">
                         <div class="col alert alert-warning">
                           No advertisements match the provided search query.
@@ -337,7 +382,7 @@
                       <div class="col">
                         <app-advertisement-view
                           *ngFor="
-                            let advertisement of allAdvertisements
+                            let advertisement of filteredAdvertisements
                               | paginate
                                 : { itemsPerPage: pageSize, currentPage: page }
                           "

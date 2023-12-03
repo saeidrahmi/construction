@@ -97,6 +97,7 @@ export class AdvertisementsListComponent {
   filteredLocations: Observable<string[]>;
   constructionServices = this.userService.getConstructionServices();
   allAdvertisements: any[] = [];
+  filteredAdvertisements: any[] = [];
   user = this.storageService?.getUser();
   userId = this.storageService?.getUserId();
   loggedIn = this.storageService?.isUserLoggedIn();
@@ -106,6 +107,7 @@ export class AdvertisementsListComponent {
   searchForm: FormGroup;
   canadaCites: string[] = [];
   citiesByProvince = {};
+  ratingFilter = [];
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -150,48 +152,10 @@ export class AdvertisementsListComponent {
 
         tap((list: any) => {
           this.allAdvertisements = list;
-
-          this.allAdvertisements = this.allAdvertisements.map((obj) => {
-            if (obj?.headerImage) {
-              const blob = new Blob([new Uint8Array(obj.headerImage.data)], {
-                type: 'image/jpeg',
-              }); // Adjust 'image/jpeg' to the correct image MIME type
-              const imageUrl = URL.createObjectURL(blob);
-              return { ...obj, headerImage: `url(${imageUrl})` };
-            }
-            return obj;
-          });
-          this.citiesByProvince = {};
-
-          // Iterate through the data and organize cities by province
-          this.allAdvertisements.forEach((item) => {
-            const province = item.province;
-            const city = item.city;
-
-            // Check if the province already exists
-            if (!this.citiesByProvince[province]) {
-              this.citiesByProvince[province] = {
-                cities: [{ cityName: city, count: 1 }],
-                count: 1,
-              };
-            } else {
-              const existingCity = this.citiesByProvince[province].cities.find(
-                (c) => c.cityName === city
-              );
-
-              if (existingCity) {
-                existingCity.count += 1;
-              } else {
-                this.citiesByProvince[province].cities.push({
-                  cityName: city,
-                  count: 1,
-                });
-              }
-
-              this.citiesByProvince[province].count += 1;
-            }
-          });
-          console.log(this.citiesByProvince, 'by');
+          this.convertImages();
+          this.filteredAdvertisements = this.allAdvertisements;
+          this.categorizeLocations(this.allAdvertisements);
+          this.categorizeRatings(this.allAdvertisements);
         })
       )
       .subscribe();
@@ -202,6 +166,67 @@ export class AdvertisementsListComponent {
       )
     );
   }
+
+  categorizeRatings(advertisements: any[]) {
+    // Iterate through the data and categorize the ratings
+    this.ratingFilter = [
+      { rating: 10, count: 0 },
+      { rating: 9, count: 0 },
+      { rating: 8, count: 0 },
+      { rating: 7, count: 0 },
+      { rating: -1, count: 0 }, // for any rating
+    ];
+
+    advertisements.forEach((item) => {
+      let userRating = parseFloat(item.average_userOverallRating);
+      console.log(userRating, 'rating');
+      if (isNaN(userRating) || userRating === null) {
+        userRating = 1; // Assign it to "any rating" category
+
+        //this.ratingFilter.find((category) => category.rating === -1).count += 1;
+      }
+
+      for (const category of this.ratingFilter) {
+        if (userRating >= category.rating || category.rating === -1) {
+          category.count += 1;
+        }
+      }
+    });
+  }
+
+  categorizeLocations(advertisements: any[]) {
+    this.citiesByProvince = {};
+
+    // Iterate through the data and organize cities by province
+    advertisements.forEach((item) => {
+      const province = item.province;
+      const city = item.city;
+
+      // Check if the province already exists
+      if (!this.citiesByProvince[province]) {
+        this.citiesByProvince[province] = {
+          cities: [{ cityName: city, count: 1 }],
+          count: 1,
+        };
+      } else {
+        const existingCity = this.citiesByProvince[province].cities.find(
+          (c) => c.cityName === city
+        );
+
+        if (existingCity) {
+          existingCity.count += 1;
+        } else {
+          this.citiesByProvince[province].cities.push({
+            cityName: city,
+            count: 1,
+          });
+        }
+
+        this.citiesByProvince[province].count += 1;
+      }
+    });
+  }
+
   clearAddrress() {
     this.myLocations = [];
     this.storageService.clearMapSearchSelectedCities();
@@ -275,6 +300,18 @@ export class AdvertisementsListComponent {
       item.toLowerCase().includes(filterValue)
     );
   }
+  convertImages() {
+    this.allAdvertisements = this.allAdvertisements.map((obj) => {
+      if (obj?.headerImage) {
+        const blob = new Blob([new Uint8Array(obj.headerImage.data)], {
+          type: 'image/jpeg',
+        }); // Adjust 'image/jpeg' to the correct image MIME type
+        const imageUrl = URL.createObjectURL(blob);
+        return { ...obj, headerImage: `url(${imageUrl})` };
+      }
+      return obj;
+    });
+  }
   search() {
     if (this.searchForm.valid) {
       const data = {
@@ -295,17 +332,10 @@ export class AdvertisementsListComponent {
 
           tap((list: any) => {
             this.allAdvertisements = list;
-
-            this.allAdvertisements = this.allAdvertisements.map((obj) => {
-              if (obj?.headerImage) {
-                const blob = new Blob([new Uint8Array(obj.headerImage.data)], {
-                  type: 'image/jpeg',
-                }); // Adjust 'image/jpeg' to the correct image MIME type
-                const imageUrl = URL.createObjectURL(blob);
-                return { ...obj, headerImage: `url(${imageUrl})` };
-              }
-              return obj;
-            });
+            this.convertImages();
+            this.filteredAdvertisements = this.allAdvertisements;
+            this.categorizeLocations(this.allAdvertisements);
+            this.categorizeRatings(this.allAdvertisements);
           })
         )
         .subscribe();
@@ -375,5 +405,22 @@ export class AdvertisementsListComponent {
     }
     this.locationInput.nativeElement.value = '';
     this.locationCtrl.setValue(null);
+  }
+  filterCity(city: string) {
+    this.filteredAdvertisements = this.allAdvertisements.filter(
+      (item) => item.city === city
+    );
+  }
+  filterProvince(province: string) {
+    this.filteredAdvertisements = this.allAdvertisements.filter(
+      (item) => item.province === province
+    );
+  }
+  filterRating(rate: number) {
+    if (rate === -1) this.filteredAdvertisements = this.allAdvertisements;
+    else
+      this.filteredAdvertisements = this.allAdvertisements.filter(
+        (item) => rate <= parseFloat(item.average_userOverallRating)
+      );
   }
 }
