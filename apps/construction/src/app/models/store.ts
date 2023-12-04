@@ -1,5 +1,6 @@
 import { AdvertisementStateInterface } from './advertisement-state';
 import { GeneralInfoInterface } from './general';
+import { AdvertisementSearchFilterInterface } from './advertisementSearchFilterInterface';
 import { UserInterface } from './user';
 
 export interface StoreInterface {
@@ -12,4 +13,5 @@ export interface StoreInterface {
   userSelected?: any;
   userIdSelected?: string;
   mapSearchSelectedCities?: string[];
+  advertisementSearchFilters?: AdvertisementSearchFilterInterface;
 }

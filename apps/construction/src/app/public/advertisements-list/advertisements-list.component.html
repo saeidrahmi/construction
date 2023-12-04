@@ -244,6 +244,16 @@
               filteredAdvertisements?.length
             }}</span>
           </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <span
+              class="text-secondary fw-bold border-bottom text-danger cursor"
+              (click)="clearAllFilters()"
+            >
+              <i class="bi bi-trash"></i> Clear all filters
+            </span>
+          </li>
           <li class="list-group-item">
             <span class="text-secondary fw-bold border-bottom h5"
               >Star rating</span
@@ -308,12 +318,12 @@
                 class="list-group-item d-flex justify-content-between align-items-center"
                 *ngIf="item.rating === -1"
               >
-                <span class="cursor" (click)="filterRating(-1)"
+                <span class="cursor" (click)="filterRating(0)"
                   >All ratings <i class="bi bi-star"></i
                 ></span>
                 <span
                   class="badge bg-primary rounded-pill cursor"
-                  (click)="filterRating(-1)"
+                  (click)="filterRating(0)"
                   >{{ item.count }}</span
                 >
               </li>
@@ -333,12 +343,14 @@
                 class="list-group-item d-flex justify-content-between align-items-center"
                 *ngFor="let city of province.value.cities"
               >
-                <span (click)="filterCity(city.cityName)" class="cursor"
+                <span
+                  (click)="filterCity(city.cityName, province.key)"
+                  class="cursor"
                   >{{ city.cityName }}
                 </span>
                 <span
                   class="badge bg-primary rounded-pill cursor"
-                  (click)="filterCity(city.cityName)"
+                  (click)="filterCity(city.cityName, province.key)"
                   >{{ city.count }}</span
                 >
               </li>
@@ -368,6 +380,29 @@
                         found.
                       </div>
                     </div>
+                    <ng-container
+                      *ngIf="
+                        this.storageService.getAdvertisementSearchFilters()()
+                      "
+                    >
+                      <div class="row mt-1 border rounded p-3">
+                        <div class="col alert alert-warning">
+                          <mat-label>Filters</mat-label>
+                          <mat-chip-listbox aria-label="Dog selection">
+                            <mat-chip *ngFor="let filter of filters">
+                              {{ filter }}
+                              <button
+                                (click)="remove(filter)"
+                                matChipRemove
+                                [attr.aria-label]="'remove ' + filter"
+                              >
+                                <mat-icon>cancel</mat-icon>
+                              </button>
+                            </mat-chip>
+                          </mat-chip-listbox>
+                        </div>
+                      </div>
+                    </ng-container>
                     <ng-container *ngIf="filteredAdvertisements?.length === 0">
                       <div class="row mt-1 border rounded p-3">
                         <div class="col alert alert-warning">

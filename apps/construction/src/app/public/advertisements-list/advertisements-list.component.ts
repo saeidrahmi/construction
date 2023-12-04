@@ -1,5 +1,5 @@
 import { EncryptionService } from './../../services/encryption-service';
-import { CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule } from '@angular/common';
 import {
   Component,
   DestroyRef,
@@ -19,7 +19,7 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, map, startWith, take, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map, startWith, take, tap } from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { ImageService } from '../../services/image-service';
@@ -45,6 +45,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormErrorsComponent } from '../form-errors.component';
 import { FormService } from '../../services/form.service';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { AdvertisementSearchFilterInterface } from '../../models/advertisementSearchFilterInterface';
 @Component({
   selector: 'app-advertisements-list',
   templateUrl: './advertisements-list.component.html',
@@ -67,12 +68,14 @@ import { NgxPaginationModule } from 'ngx-pagination';
     MatIconModule,
     FormErrorsComponent,
     NgxPaginationModule,
+    AsyncPipe,
   ],
 })
 export class AdvertisementsListComponent {
   @ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
   @ViewChild('locationInput') locationInput!: ElementRef<HTMLInputElement>;
   separatorKeysCodes: number[] = [ENTER, COMMA];
+  filters: string[] = [];
   myTags: string[] = [];
   page = 1;
   pageSize = 5;
@@ -108,11 +111,19 @@ export class AdvertisementsListComponent {
   canadaCites: string[] = [];
   citiesByProvince = {};
   ratingFilter = [];
+  filterAd$ = new BehaviorSubject(null);
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private formService: FormService
   ) {
+    this.filterAd$.subscribe(() => {
+      console.log(
+        'filters',
+        this.storageService.getAdvertisementSearchFilters()()
+      );
+    });
+
     (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
       this.getCurrentLocation();
     this.searchForm = this.fb.group({
@@ -166,6 +177,13 @@ export class AdvertisementsListComponent {
       )
     );
   }
+  remove(fruit: string): void {
+    const index = this.filters.indexOf(fruit);
+    if (index >= 0) {
+      this.filters.splice(index, 1);
+      this.announcer.announce(`Removed ${fruit}`);
+    }
+  }
 
   categorizeRatings(advertisements: any[]) {
     // Iterate through the data and categorize the ratings
@@ -179,7 +197,7 @@ export class AdvertisementsListComponent {
 
     advertisements.forEach((item) => {
       let userRating = parseFloat(item.average_userOverallRating);
-      console.log(userRating, 'rating');
+
       if (isNaN(userRating) || userRating === null) {
         userRating = 1; // Assign it to "any rating" category
 
@@ -406,21 +424,72 @@ export class AdvertisementsListComponent {
     this.locationInput.nativeElement.value = '';
     this.locationCtrl.setValue(null);
   }
-  filterCity(city: string) {
+  filterCity(city: string, province: string) {
+    this.filters = this.filters.filter(
+      (item) => item != 'Location (' + province + ', ' + city + ')'
+    );
+    this.filters.push('Location (' + province + ', ' + city + ')');
+
+    const filter: AdvertisementSearchFilterInterface = {
+      type: 'city',
+      rating: 0,
+      province: province,
+      city: city,
+    };
+    this.storageService.updateAdvertisementSearchFilters(filter);
+    this.filterAd$.next(null);
+
     this.filteredAdvertisements = this.allAdvertisements.filter(
       (item) => item.city === city
     );
   }
+  clearAllFilters() {
+    this.filteredAdvertisements = this.allAdvertisements;
+    this.storageService.clearAdvertisementSearchFilters();
+    this.filters = [];
+  }
   filterProvince(province: string) {
+    this.filters = this.filters.filter(
+      (item) => item != 'Province (' + province + ')'
+    );
+    this.filters.push('Province (' + province + ')');
+    const filter: AdvertisementSearchFilterInterface = {
+      type: 'province',
+      rating: 0,
+      province: province,
+      city: '',
+    };
+    this.storageService.updateAdvertisementSearchFilters(filter);
+    this.filterAd$.next(null);
+
     this.filteredAdvertisements = this.allAdvertisements.filter(
       (item) => item.province === province
     );
   }
   filterRating(rate: number) {
-    if (rate === -1) this.filteredAdvertisements = this.allAdvertisements;
-    else
-      this.filteredAdvertisements = this.allAdvertisements.filter(
-        (item) => rate <= parseFloat(item.average_userOverallRating)
-      );
+    this.filters = this.filters.filter((item) => !item.includes('Rating'));
+    const rating = rate === 0 ? 'All ratings' : rate;
+
+    this.filters.push('Rating (' + rating + ')');
+
+    const filter: AdvertisementSearchFilterInterface = {
+      type: 'rating',
+      rating: rate,
+      province: '',
+      city: '',
+    };
+    this.storageService.updateAdvertisementSearchFilters(filter);
+    this.filterAd$.next(null);
+
+    this.filteredAdvertisements = this.allAdvertisements.filter((item) => {
+      let userRating = parseFloat(item.average_userOverallRating);
+      // Check for null, empty, or non-numeric values
+      if (isNaN(userRating) || userRating === null) {
+        // Handle the case when average_userOverallRating is null or NaN
+        userRating = 0;
+      }
+      // Your original condition
+      return rate <= userRating;
+    });
   }
 }

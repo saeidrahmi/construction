@@ -4,6 +4,7 @@ import { StoreInterface } from '../models/store';
 import { UserApiResponseInterface } from '../../../../../libs/common/src/models/user-response';
 import { AdvertisementInterface } from '../models/advertisement';
 import { UserPermissionsInterface } from '../models/user-permissions';
+import { AdvertisementSearchFilterInterface } from '../models/advertisementSearchFilterInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -64,6 +65,7 @@ export class StorageService {
       () => this.store()?.user?.firstName + ' ' + this.store()?.user?.lastName
     );
   }
+
   getUserfirstName(): Signal<string | undefined> {
     return computed(() => this.store()?.user?.firstName);
   }
@@ -78,6 +80,11 @@ export class StorageService {
   }
   getUserIdEdited(): Signal<string | undefined> {
     return computed(() => this.store()?.userIdEdited);
+  }
+  getAdvertisementSearchFilters(): Signal<
+    AdvertisementSearchFilterInterface | undefined
+  > {
+    return computed(() => this.store()?.advertisementSearchFilters);
   }
   getUserSelected(): Signal<any | undefined> {
     return computed(() => this.store()?.userSelected);
@@ -112,6 +119,53 @@ export class StorageService {
       };
     });
   }
+  clearAdvertisementSearchFilters() {
+    this.store.update((state) => {
+      return {
+        ...state,
+        advertisementSearchFilters: null,
+      };
+    });
+  }
+  updateAdvertisementSearchFilters(data: AdvertisementSearchFilterInterface) {
+    if (data?.type === 'rating') {
+      this.store.update((state) => {
+        return {
+          ...state,
+          advertisementSearchFilters: {
+            ...state.advertisementSearchFilters,
+            type: data?.type,
+            rating: data?.rating,
+          },
+        };
+      });
+    } else if (data?.type === 'province') {
+      this.store.update((state) => {
+        return {
+          ...state,
+          advertisementSearchFilters: {
+            ...state.advertisementSearchFilters,
+            type: data?.type,
+            province: data?.province,
+            city: '',
+          },
+        };
+      });
+    } else if (data?.type === 'city') {
+      this.store.update((state) => {
+        return {
+          ...state,
+          advertisementSearchFilters: {
+            ...state.advertisementSearchFilters,
+            type: data?.type,
+            province: data?.province,
+            city: data?.city,
+          },
+        };
+      });
+    }
+  }
+
   clearAdvertisementInfo() {
     this.store.update((state) => {
       return {
@@ -389,6 +443,7 @@ export class StorageService {
       plan: null,
       advertisement: null,
       mapSearchSelectedCities: [],
+      advertisementSearchFilters: null,
       user: {
         loggedIn: false,
         userId: '',
