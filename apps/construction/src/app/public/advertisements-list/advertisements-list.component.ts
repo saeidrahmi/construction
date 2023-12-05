@@ -111,60 +111,12 @@ export class AdvertisementsListComponent {
   canadaCites: string[] = [];
   citiesByProvince = {};
   ratingFilter = [];
-  filterAd$ = new BehaviorSubject(null);
+
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
     private formService: FormService
   ) {
-    this.filterAd$.subscribe(() => {
-      const filters = this.storageService.getAdvertisementSearchFilters()();
-      const ratingFilter = filters.find((filter) => filter.includes('Rating'));
-      const provinceFilters = filters.filter((filter) =>
-        filter.includes('Province')
-      );
-      const locationFilters = filters.filter((filter) =>
-        filter.includes('Location')
-      );
-
-      // Extract values from filters
-      const rate = ratingFilter
-        ? parseFloat(ratingFilter.match(/\(([^)]+)\)/)[1])
-        : null;
-      // Additional checks for the existence of filters
-      const hasRatingFilter = ratingFilter?.length > 0;
-      const hasProvinceFilter = provinceFilters?.length > 0;
-      const hasLocationFilter = locationFilters?.length > 0;
-      // Apply the filters
-      this.filteredAdvertisements = this.allAdvertisements.filter((item) => {
-        const isRatingMatch = !rate || this.rateFilter(item, rate);
-        const isProvinceMatch =
-          !hasProvinceFilter ||
-          provinceFilters.some(
-            (provinceFilter) =>
-              !provinceFilter ||
-              this.provinceFilter(item, provinceFilter.match(/\(([^)]+)\)/)[1])
-          );
-
-        const isLocationMatch =
-          !hasLocationFilter ||
-          locationFilters.some((locationFilter) =>
-            this.locationFilter(
-              item,
-              ...(locationFilter.match(/\(([^,]+),\s*([^)]+)\)/).slice(1) as [
-                string,
-                string
-              ])
-            )
-          );
-
-        return isRatingMatch && isProvinceMatch && isLocationMatch;
-      });
-
-      this.categorizeLocations(this.filteredAdvertisements);
-      this.categorizeRatings(this.filteredAdvertisements);
-    });
-
     (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
       this.getCurrentLocation();
     this.searchForm = this.fb.group({
@@ -201,13 +153,14 @@ export class AdvertisementsListComponent {
       )
       .pipe(
         takeUntilDestroyed(),
-
         tap((list: any) => {
           this.allAdvertisements = list;
           this.convertImages();
           this.filteredAdvertisements = this.allAdvertisements;
           this.categorizeLocations(this.allAdvertisements);
           this.categorizeRatings(this.allAdvertisements);
+          if (this.storageService.getAdvertisementSearchFilters()()?.length > 0)
+            this.filterResults();
         })
       )
       .subscribe();
@@ -255,6 +208,7 @@ export class AdvertisementsListComponent {
       // this.filters.splice(index, 1);
       this.announcer.announce(`Removed ${filter}`);
       this.storageService.removeAdvertisementSearchFilters(filter);
+      this.filterResults();
     }
   }
 
@@ -405,6 +359,7 @@ export class AdvertisementsListComponent {
   }
   search() {
     if (this.searchForm.valid) {
+      this.storageService.clearAdvertisementSearchFilters();
       const data = {
         searchText: this.searchForm.get('searchText').value,
         tags: this.myTags,
@@ -499,10 +454,8 @@ export class AdvertisementsListComponent {
   }
   filterCity(city: string, province: string) {
     const cityStr = 'Location (' + province + ', ' + city + ')';
-    //  this.filters = this.filters.filter((item) => item != cityStr);
-    // this.filters.push(cityStr);
+
     this.storageService.updateAdvertisementSearchFilters(cityStr, province);
-    this.filterAd$.next(null);
   }
   clearAllFilters() {
     this.filteredAdvertisements = this.allAdvertisements;
@@ -512,11 +465,7 @@ export class AdvertisementsListComponent {
   }
   filterProvince(province: string) {
     const provinceStr = 'Province (' + province + ')';
-    // this.filters = this.filters.filter((item) => item != provinceStr);
-    // this.filters.push(provinceStr);
-
     this.storageService.updateAdvertisementSearchFilters(provinceStr, province);
-    this.filterAd$.next(null);
   }
   filterRating(rate: number) {
     //this.filters = this.filters.filter((item) => !item.includes('Rating'));
@@ -526,7 +475,52 @@ export class AdvertisementsListComponent {
       'Rating (' + rating + ')',
       null
     );
-    this.filterAd$.next(null);
   }
-  filterResults() {}
+  filterResults() {
+    const filters = this.storageService.getAdvertisementSearchFilters()();
+    const ratingFilter = filters.find((filter) => filter.includes('Rating'));
+    const provinceFilters = filters.filter((filter) =>
+      filter.includes('Province')
+    );
+    const locationFilters = filters.filter((filter) =>
+      filter.includes('Location')
+    );
+
+    // Extract values from filters
+    const rate = ratingFilter
+      ? parseFloat(ratingFilter.match(/\(([^)]+)\)/)[1])
+      : null;
+    // Additional checks for the existence of filters
+    const hasRatingFilter = ratingFilter?.length > 0;
+    const hasProvinceFilter = provinceFilters?.length > 0;
+    const hasLocationFilter = locationFilters?.length > 0;
+    // Apply the filters
+    this.filteredAdvertisements = this.allAdvertisements.filter((item) => {
+      const isRatingMatch = !rate || this.rateFilter(item, rate);
+      const isProvinceMatch =
+        !hasProvinceFilter ||
+        provinceFilters.some(
+          (provinceFilter) =>
+            !provinceFilter ||
+            this.provinceFilter(item, provinceFilter.match(/\(([^)]+)\)/)[1])
+        );
+
+      const isLocationMatch =
+        !hasLocationFilter ||
+        locationFilters.some((locationFilter) =>
+          this.locationFilter(
+            item,
+            ...(locationFilter.match(/\(([^,]+),\s*([^)]+)\)/).slice(1) as [
+              string,
+              string
+            ])
+          )
+        );
+
+      return isRatingMatch && isProvinceMatch && isLocationMatch;
+    });
+
+    // this.categorizeLocations(this.filteredAdvertisements);
+    // this.categorizeRatings(this.filteredAdvertisements);
+  }
 }
