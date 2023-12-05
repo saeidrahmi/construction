@@ -4,7 +4,6 @@ import { StoreInterface } from '../models/store';
 import { UserApiResponseInterface } from '../../../../../libs/common/src/models/user-response';
 import { AdvertisementInterface } from '../models/advertisement';
 import { UserPermissionsInterface } from '../models/user-permissions';
-import { AdvertisementSearchFilterInterface } from '../models/advertisementSearchFilterInterface';
 
 @Injectable({
   providedIn: 'root',
@@ -81,9 +80,7 @@ export class StorageService {
   getUserIdEdited(): Signal<string | undefined> {
     return computed(() => this.store()?.userIdEdited);
   }
-  getAdvertisementSearchFilters(): Signal<
-    AdvertisementSearchFilterInterface | undefined
-  > {
+  getAdvertisementSearchFilters(): Signal<string[] | undefined> {
     return computed(() => this.store()?.advertisementSearchFilters);
   }
   getUserSelected(): Signal<any | undefined> {
@@ -123,47 +120,60 @@ export class StorageService {
     this.store.update((state) => {
       return {
         ...state,
-        advertisementSearchFilters: null,
+        advertisementSearchFilters: [],
       };
     });
   }
-  updateAdvertisementSearchFilters(data: AdvertisementSearchFilterInterface) {
-    if (data?.type === 'rating') {
-      this.store.update((state) => {
-        return {
-          ...state,
-          advertisementSearchFilters: {
-            ...state.advertisementSearchFilters,
-            type: data?.type,
-            rating: data?.rating,
-          },
-        };
-      });
-    } else if (data?.type === 'province') {
-      this.store.update((state) => {
-        return {
-          ...state,
-          advertisementSearchFilters: {
-            ...state.advertisementSearchFilters,
-            type: data?.type,
-            province: data?.province,
-            city: '',
-          },
-        };
-      });
-    } else if (data?.type === 'city') {
-      this.store.update((state) => {
-        return {
-          ...state,
-          advertisementSearchFilters: {
-            ...state.advertisementSearchFilters,
-            type: data?.type,
-            province: data?.province,
-            city: data?.city,
-          },
-        };
-      });
-    }
+  updateAdvertisementSearchFilters(filterStr: string, province: string) {
+    this.store.update((state) => {
+      // Ensure that state.advertisementSearchFilters is an array or initialize it as an empty array
+      const existingFilters = Array.isArray(state.advertisementSearchFilters)
+        ? state.advertisementSearchFilters
+        : [];
+      let updatedFilters = [];
+      if (filterStr?.toLowerCase()?.includes('rating'))
+        updatedFilters = existingFilters.filter(
+          (filter) => !filter?.toLowerCase()?.includes('rating')
+        );
+      else if (filterStr?.toLowerCase()?.includes('province'))
+        updatedFilters = existingFilters.filter(
+          (filter) =>
+            !filter
+              ?.toLowerCase()
+              ?.includes('location (' + province?.toLowerCase())
+        );
+      else if (filterStr?.toLowerCase()?.includes('location'))
+        updatedFilters = existingFilters.filter(
+          (filter) =>
+            !filter
+              ?.toLowerCase()
+              ?.includes('province (' + province?.toLowerCase()) &&
+            filter !== filterStr
+        );
+
+      return {
+        ...state,
+        advertisementSearchFilters: [...updatedFilters, filterStr],
+      };
+    });
+  }
+  removeAdvertisementSearchFilters(filterToRemove: string) {
+    this.store.update((state) => {
+      // Ensure that state.advertisementSearchFilters is an array or initialize it as an empty array
+      const existingFilters = Array.isArray(state.advertisementSearchFilters)
+        ? state.advertisementSearchFilters
+        : [];
+
+      // Create a new array without the filter to remove
+      const updatedFilters = existingFilters.filter(
+        (filter) => filter !== filterToRemove
+      );
+
+      return {
+        ...state,
+        advertisementSearchFilters: updatedFilters,
+      };
+    });
   }
 
   clearAdvertisementInfo() {
@@ -443,7 +453,7 @@ export class StorageService {
       plan: null,
       advertisement: null,
       mapSearchSelectedCities: [],
-      advertisementSearchFilters: null,
+      advertisementSearchFilters: [],
       user: {
         loggedIn: false,
         userId: '',

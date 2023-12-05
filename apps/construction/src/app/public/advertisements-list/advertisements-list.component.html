@@ -356,6 +356,17 @@
               </li>
             </ul>
           </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <span
+              class="text-secondary fw-bold border-bottom text-danger cursor"
+            >
+              <button class="btn btn-success" (click)="filterResults()">
+                Filter results
+              </button>
+            </span>
+          </li>
         </ul>
       </div>
       <div class="col-10 border rounded border-secondary p-3">
@@ -383,13 +394,18 @@
                     <ng-container
                       *ngIf="
                         this.storageService.getAdvertisementSearchFilters()()
+                          ?.length > 0
                       "
                     >
                       <div class="row mt-1 border rounded p-3">
                         <div class="col alert alert-warning">
                           <mat-label>Filters</mat-label>
                           <mat-chip-listbox aria-label="Dog selection">
-                            <mat-chip *ngFor="let filter of filters">
+                            <mat-chip
+                              *ngFor="
+                                let filter of this.storageService.getAdvertisementSearchFilters()()
+                              "
+                            >
                               {{ filter }}
                               <button
                                 (click)="remove(filter)"

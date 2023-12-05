@@ -45,7 +45,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormErrorsComponent } from '../form-errors.component';
 import { FormService } from '../../services/form.service';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { AdvertisementSearchFilterInterface } from '../../models/advertisementSearchFilterInterface';
+
 @Component({
   selector: 'app-advertisements-list',
   templateUrl: './advertisements-list.component.html',
@@ -118,10 +118,51 @@ export class AdvertisementsListComponent {
     private formService: FormService
   ) {
     this.filterAd$.subscribe(() => {
-      console.log(
-        'filters',
-        this.storageService.getAdvertisementSearchFilters()()
+      const filters = this.storageService.getAdvertisementSearchFilters()();
+      const ratingFilter = filters.find((filter) => filter.includes('Rating'));
+      const provinceFilters = filters.filter((filter) =>
+        filter.includes('Province')
       );
+      const locationFilters = filters.filter((filter) =>
+        filter.includes('Location')
+      );
+
+      // Extract values from filters
+      const rate = ratingFilter
+        ? parseFloat(ratingFilter.match(/\(([^)]+)\)/)[1])
+        : null;
+      // Additional checks for the existence of filters
+      const hasRatingFilter = ratingFilter?.length > 0;
+      const hasProvinceFilter = provinceFilters?.length > 0;
+      const hasLocationFilter = locationFilters?.length > 0;
+      // Apply the filters
+      this.filteredAdvertisements = this.allAdvertisements.filter((item) => {
+        const isRatingMatch = !rate || this.rateFilter(item, rate);
+        const isProvinceMatch =
+          !hasProvinceFilter ||
+          provinceFilters.some(
+            (provinceFilter) =>
+              !provinceFilter ||
+              this.provinceFilter(item, provinceFilter.match(/\(([^)]+)\)/)[1])
+          );
+
+        const isLocationMatch =
+          !hasLocationFilter ||
+          locationFilters.some((locationFilter) =>
+            this.locationFilter(
+              item,
+              ...(locationFilter.match(/\(([^,]+),\s*([^)]+)\)/).slice(1) as [
+                string,
+                string
+              ])
+            )
+          );
+
+        return isRatingMatch && isProvinceMatch && isLocationMatch;
+      });
+
+      this.categorizeLocations(this.filteredAdvertisements);
+      this.categorizeRatings(this.filteredAdvertisements);
     });
 
     (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
@@ -177,11 +218,43 @@ export class AdvertisementsListComponent {
       )
     );
   }
-  remove(fruit: string): void {
-    const index = this.filters.indexOf(fruit);
+  rateFilter = (item, rate) => {
+    let userRating = parseFloat(item.average_userOverallRating);
+    // Check for null, empty, or non-numeric values
+    if (isNaN(userRating) || userRating === null) {
+      // Handle the case when average_userOverallRating is null or NaN
+      userRating = 0;
+    }
+    // Your original condition
+    return rate <= userRating;
+  };
+
+  provinceFilter = (item, province) => {
+    return item.province === province;
+  };
+
+  locationFilter(
+    item: {
+      province: string;
+      city: string;
+      // ... other properties of your item
+    },
+    province: string,
+    city: string
+  ): boolean {
+    // Your existing logic for location filtering
+    console.log(item.province, province, item.city, city);
+    return item.province === province && item.city === city;
+  }
+
+  remove(filter: string): void {
+    const index = this.storageService
+      .getAdvertisementSearchFilters()()
+      .indexOf(filter);
     if (index >= 0) {
-      this.filters.splice(index, 1);
-      this.announcer.announce(`Removed ${fruit}`);
+      // this.filters.splice(index, 1);
+      this.announcer.announce(`Removed ${filter}`);
+      this.storageService.removeAdvertisementSearchFilters(filter);
     }
   }
 
@@ -425,71 +498,35 @@ export class AdvertisementsListComponent {
     this.locationCtrl.setValue(null);
   }
   filterCity(city: string, province: string) {
-    this.filters = this.filters.filter(
-      (item) => item != 'Location (' + province + ', ' + city + ')'
-    );
-    this.filters.push('Location (' + province + ', ' + city + ')');
-
-    const filter: AdvertisementSearchFilterInterface = {
-      type: 'city',
-      rating: 0,
-      province: province,
-      city: city,
-    };
-    this.storageService.updateAdvertisementSearchFilters(filter);
+    const cityStr = 'Location (' + province + ', ' + city + ')';
+    //  this.filters = this.filters.filter((item) => item != cityStr);
+    // this.filters.push(cityStr);
+    this.storageService.updateAdvertisementSearchFilters(cityStr, province);
     this.filterAd$.next(null);
-
-    this.filteredAdvertisements = this.allAdvertisements.filter(
-      (item) => item.city === city
-    );
   }
   clearAllFilters() {
     this.filteredAdvertisements = this.allAdvertisements;
     this.storageService.clearAdvertisementSearchFilters();
-    this.filters = [];
+    this.categorizeLocations(this.filteredAdvertisements);
+    this.categorizeRatings(this.filteredAdvertisements);
   }
   filterProvince(province: string) {
-    this.filters = this.filters.filter(
-      (item) => item != 'Province (' + province + ')'
-    );
-    this.filters.push('Province (' + province + ')');
-    const filter: AdvertisementSearchFilterInterface = {
-      type: 'province',
-      rating: 0,
-      province: province,
-      city: '',
-    };
-    this.storageService.updateAdvertisementSearchFilters(filter);
-    this.filterAd$.next(null);
+    const provinceStr = 'Province (' + province + ')';
+    // this.filters = this.filters.filter((item) => item != provinceStr);
+    // this.filters.push(provinceStr);
 
-    this.filteredAdvertisements = this.allAdvertisements.filter(
-      (item) => item.province === province
-    );
+    this.storageService.updateAdvertisementSearchFilters(provinceStr, province);
+    this.filterAd$.next(null);
   }
   filterRating(rate: number) {
-    this.filters = this.filters.filter((item) => !item.includes('Rating'));
+    //this.filters = this.filters.filter((item) => !item.includes('Rating'));
     const rating = rate === 0 ? 'All ratings' : rate;
-
-    this.filters.push('Rating (' + rating + ')');
-
-    const filter: AdvertisementSearchFilterInterface = {
-      type: 'rating',
-      rating: rate,
-      province: '',
-      city: '',
-    };
-    this.storageService.updateAdvertisementSearchFilters(filter);
+    // this.filters.push('Rating (' + rating + ')');
+    this.storageService.updateAdvertisementSearchFilters(
+      'Rating (' + rating + ')',
+      null
+    );
     this.filterAd$.next(null);
-
-    this.filteredAdvertisements = this.allAdvertisements.filter((item) => {
-      let userRating = parseFloat(item.average_userOverallRating);
-      // Check for null, empty, or non-numeric values
-      if (isNaN(userRating) || userRating === null) {
-        // Handle the case when average_userOverallRating is null or NaN
-        userRating = 0;
-      }
-      // Your original condition
-      return rate <= userRating;
-    });
   }
+  filterResults() {}
 }
