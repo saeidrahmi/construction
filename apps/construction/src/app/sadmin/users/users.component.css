@@ -1,0 +1,33 @@
+table {
+  width: 100%;
+  overflow: auto;
+  width: 100%;
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+td,
+th {
+  width: 25%;
+  text-align: center;
+}
+
+td img {
+  display: block; /* Ensures margin: 0 auto; works */
+  margin: 0 auto; /* Center horizontally */
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.bg-deleted {
+  background-color: rgb(177, 106, 106);
+}
+
+.bg-inactive {
+  background-color: rgb(213, 159, 88);
+}/*# sourceMappingURL=users.component.css.map */

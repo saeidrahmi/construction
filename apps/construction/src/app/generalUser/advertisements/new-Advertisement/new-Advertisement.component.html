@@ -56,18 +56,34 @@
             *ngIf="canAdvertise; then canAdvertiseSection; else noAdvertise"
           ></div>
           <ng-template #noAdvertise>
-            <h5>
-              You are currently unable to create advertisements. Please recharge
-              your account by purchasing a new plan.
-            </h5>
+            <div class="alert alert-warning my-2">
+              <h4 class="alert-heading">
+                <i class="bi bi-exclamation-circle me-1"></i>Insufficient
+                credits!
+              </h4>
+              <hr />
+              <p>
+                To continue enjoying our advertising services, we kindly ask you
+                to recharge your account by
+                <a
+                  [routerLink]="'/general/purchase-plan'"
+                  routerLinkActive="active"
+                  [routerLinkActiveOptions]="{ exact: true }"
+                  >Purchase a new Plan</a
+                >. This will ensure uninterrupted access to our advertising
+                features, allowing you to promote your business effectively. You
+                are currently unable to create advertisements. Please recharge
+                your account by purchasing a new plan.
+              </p>
 
-            <a
-              class="nav-link text-success"
-              [routerLink]="'/general/purchase-plan'"
-              routerLinkActive="active"
-              [routerLinkActiveOptions]="{ exact: true }"
-              >Purchase a new Plan</a
-            >
+              <a
+                class="btn btn-primary text-center"
+                [routerLink]="'/general/purchase-plan'"
+                routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                >Purchase a new Plan</a
+              >
+            </div>
           </ng-template>
           <ng-template #canAdvertiseSection>
             <div class="container-fluid my-3 border border-1 p-2">
@@ -76,32 +92,204 @@
                   <app-form-errors [formErrors]="formErrors"></app-form-errors>
                 </div>
               </div>
-              <div class="row">
-                <div class="col">
-                  <div class="alert alert-warning" role="alert">
-                    Please make sure that you have updated your
-                    <span>
-                      <a
-                        class="text-primary"
-                        [routerLink]="'/general/user-services'"
-                        routerLinkActive="active"
-                        [routerLinkActiveOptions]="{ exact: true }"
-                      >
-                        services and the service location coverages</a
-                      ></span
+
+              <div class="accordion" id="previousPlan">
+                <div class="accordion-item">
+                  <h2 class="accordion-header">
+                    <button
+                      class="accordion-button"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target="#collapseOne"
+                      aria-expanded="true"
+                      aria-controls="collapseOne"
                     >
-                    and also your
-                    <span>
-                      <a
-                        class="text-primary"
-                        [routerLink]="'/general/user-profile'"
-                        routerLinkActive="active"
-                        [routerLinkActiveOptions]="{ exact: true }"
-                      >
-                        profile</a
-                      ></span
-                    >
-                    is up to date initially.
+                      Guidelines for a Successful Campaign
+                    </button>
+                  </h2>
+                  <div
+                    id="collapseOne"
+                    class="accordion-collapse show"
+                    data-bs-parent="#previousPlan"
+                  >
+                    <div class="accordion-body">
+                      <div class="row">
+                        <div class="col">
+                          <div class="alert alert-warning" role="alert">
+                            <h4 class="alert-heading">
+                              <i class="bi bi-info-circle me-1"></i>Create a
+                              Stellar Advertisement: Guidelines for a Successful
+                              Campaign
+                            </h4>
+                            <hr />
+                            <p>
+                              Exciting times! You're about to embark on creating
+                              a compelling advertisement to showcase your
+                              offerings. Before you get started, please take a
+                              moment to read through our guidelines to ensure
+                              your ad meets our platform's standards.
+                            </p>
+
+                            <p class="fw-bold">
+                              Guidelines for Creating a Successful Ad:
+                            </p>
+                            <ul>
+                              <li>
+                                Accurate Information: Provide precise and
+                                accurate details for all required fields. This
+                                ensures potential customers have a clear
+                                understanding of your offering.
+                              </li>
+                              <li>
+                                Please make sure that you have updated your
+                                <span>
+                                  <a
+                                    class="text-primary"
+                                    [routerLink]="'/general/user-services'"
+                                    routerLinkActive="active"
+                                    [routerLinkActiveOptions]="{ exact: true }"
+                                  >
+                                    services and the service location
+                                    coverages</a
+                                  ></span
+                                >
+                                and also your
+                                <span>
+                                  <a
+                                    class="text-primary"
+                                    [routerLink]="'/general/user-profile'"
+                                    routerLinkActive="active"
+                                    [routerLinkActiveOptions]="{ exact: true }"
+                                  >
+                                    profile</a
+                                  ></span
+                                >
+                                is up to date initially.
+                              </li>
+                              <li>
+                                Promote Your Ad to Top: This
+                                <span>
+                                  <a
+                                    class="text-primary"
+                                    [routerLink]="'/top-add-info'"
+                                    routerLinkActive="active"
+                                    [routerLinkActiveOptions]="{ exact: true }"
+                                  >
+                                    feature</a
+                                  ></span
+                                >
+                                highlights a maximum of five Top Ads at any
+                                given time within the dedicated Top Ad section,
+                                positioned prominently at the top of search
+                                results. This ensures optimal visibility for
+                                your listings, increasing their exposure and
+                                potential for engagement.
+                              </li>
+                              <li>
+                                Images: Use high-quality images that adhere to
+                                our specifications. This enhances the visual
+                                appeal of your ad and attracts more attention.
+                                Refer to our image guidelines for optimal
+                                results.
+                              </li>
+                              <li>
+                                Avoid Fraudulent Activities: Engage in fair and
+                                transparent practices. Any form of fraudulent
+                                activity is strictly prohibited and will result
+                                in immediate action.
+                              </li>
+                              <li>
+                                No Inappropriate Materials or Images: Refrain
+                                from posting content that is offensive,
+                                explicit, or inappropriate. This includes
+                                images, text, or any other materials that
+                                violate community standards.
+                              </li>
+                            </ul>
+                            <p class="fw-bold">Review Process:</p>
+                            <ul>
+                              <li>
+                                All ads will be reviewed by our admin team
+                                before being posted to the platform.
+                              </li>
+                              <li>
+                                We reserve the right to reject ads that do not
+                                adhere to our guidelines.
+                              </li>
+                            </ul>
+                            <p class="fw-bold">Rules for a Great Ad:</p>
+                            <ul>
+                              <li>
+                                Clarity: Ensure your ad clearly communicates
+                                your product or service.
+                              </li>
+                              <li>
+                                Relevance: Craft ads that are relevant to your
+                                target audience.
+                              </li>
+                              <li>
+                                Professionalism: Maintain a professional tone
+                                and presentation in your ad.
+                              </li>
+                              <li>
+                                Honesty: Be truthful and transparent about your
+                                offerings.
+                              </li>
+                            </ul>
+                            <h4>
+                              Create Stunning Ads with Real-Time Preview and
+                              Enhanced Security Features
+                            </h4>
+                            <p>
+                              We're thrilled that you're considering creating a
+                              new advertisement on our platform! We want to
+                              ensure you have the best experience possible, so
+                              here are some key features to keep in mind:
+                            </p>
+                            <ul>
+                              <li>
+                                Real-Time Preview: While creating your ad, you
+                                can enjoy a real-time preview. This means you
+                                can see exactly how your ad will appear in both
+                                the general search results and the detailed view
+                                when users click for more information. Make sure
+                                to tailor your content for maximum impact!
+                              </li>
+                              <li>
+                                Enhanced Security Features: To prioritize your
+                                security and privacy, our system allows you to
+                                apply permissions to various types of
+                                information associated with your ad. You have
+                                control over what information is displayed,
+                                providing you with added flexibility and peace
+                                of mind.
+                                <p
+                                  class="fw-bold"
+                                  style="margin-bottom: 3px; margin-top: 3px"
+                                >
+                                  Permission Options:
+                                </p>
+                                <p style="margin-bottom: 3px; margin-top: 3px">
+                                  Use the checkboxes to specify whether you want
+                                  to display or not display each type of
+                                  information. This level of customization
+                                  ensures that your ad suits your preferences
+                                  while providing the information you want to
+                                  share.
+                                </p>
+                                <ul>
+                                  <li>Contact Address: [Show/Hide]</li>
+                                  <li>phone Number: [Show/Hide]</li>
+                                  <li>Email Address: [Show/Hide]</li>
+                                  <li>Profile Picture: [Show/Hide]</li>
+                                  <li>Chat Messaging: [Show/Hide]</li>
+                                </ul>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
