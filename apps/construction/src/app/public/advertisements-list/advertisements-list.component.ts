@@ -118,15 +118,15 @@ export class AdvertisementsListComponent {
     private formService: FormService
   ) {
     (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
-      this.getCurrentLocation();
-    this.searchForm = this.fb.group({
-      searchText: new FormControl('', []),
-      tags: new FormControl('', []),
-      //currentAddress: new FormControl('', []),
+      // this.getCurrentLocation();
+      (this.searchForm = this.fb.group({
+        searchText: new FormControl('', []),
+        tags: new FormControl('', []),
+        //currentAddress: new FormControl('', []),
 
-      locations: new FormControl('', []),
-      sortBy: new FormControl('Sort by', []),
-    });
+        locations: new FormControl('', []),
+        sortBy: new FormControl('Sort by', []),
+      }));
     this.http
       .get<CanadaInterface[]>('../../assets/canadian-cities.json')
       .pipe(
@@ -171,7 +171,7 @@ export class AdvertisementsListComponent {
       )
     );
   }
-  rateFilter = (item, rate) => {
+  rateFilter(item, rate) {
     let userRating = parseFloat(item.average_userOverallRating);
     // Check for null, empty, or non-numeric values
     if (isNaN(userRating) || userRating === null) {
@@ -180,11 +180,11 @@ export class AdvertisementsListComponent {
     }
     // Your original condition
     return rate <= userRating;
-  };
+  }
 
-  provinceFilter = (item, province) => {
+  provinceFilter(item, province) {
     return item.province === province;
-  };
+  }
 
   locationFilter(
     item: {
@@ -196,7 +196,7 @@ export class AdvertisementsListComponent {
     city: string
   ): boolean {
     // Your existing logic for location filtering
-    console.log(item.province, province, item.city, city);
+
     return item.province === province && item.city === city;
   }
 
@@ -277,43 +277,43 @@ export class AdvertisementsListComponent {
     this.storageService.clearMapSearchSelectedCities();
   }
 
-  getCurrentLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position: any) => {
-          this.currentPosition = position;
-          this.getAddressFromCoordinates();
-        },
-        (error: any) => {
-          //    console.error('Error getting location:', error);
-        }
-      );
-    } else {
-      // console.error('Geolocation is not supported by this browser.');
-    }
-  }
+  // getCurrentLocation() {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position: any) => {
+  //         this.currentPosition = position;
+  //         this.getAddressFromCoordinates();
+  //       },
+  //       (error: any) => {
+  //         //    console.error('Error getting location:', error);
+  //       }
+  //     );
+  //   } else {
+  //     // console.error('Geolocation is not supported by this browser.');
+  //   }
+  // }
 
-  getAddressFromCoordinates() {
-    const geocoder = new google.maps.Geocoder();
-    const latlng = new google.maps.LatLng(
-      this.currentPosition.coords.latitude,
-      this.currentPosition.coords.longitude
-    );
+  // getAddressFromCoordinates() {
+  //   const geocoder = new google.maps.Geocoder();
+  //   const latlng = new google.maps.LatLng(
+  //     this.currentPosition.coords.latitude,
+  //     this.currentPosition.coords.longitude
+  //   );
 
-    geocoder.geocode({ location: latlng }, (results: any, status: any) => {
-      this.googleAddresses = results;
-      if (status === 'OK') {
-        if (results[0]) {
-          this.address = results[0].formatted_address;
-          this.addressObject = results[0];
-        } else {
-          // this.address = 'Address not found';
-        }
-      } else {
-        // console.error('Geocoder failed due to: ' + status);
-      }
-    });
-  }
+  //   geocoder.geocode({ location: latlng }, (results: any, status: any) => {
+  //     this.googleAddresses = results;
+  //     if (status === 'OK') {
+  //       if (results[0]) {
+  //         this.address = results[0].formatted_address;
+  //         this.addressObject = results[0];
+  //       } else {
+  //         // this.address = 'Address not found';
+  //       }
+  //     } else {
+  //       // console.error('Geocoder failed due to: ' + status);
+  //     }
+  //   });
+  // }
   transformData(data: any[]): string[] {
     const transformedList: string[] = [];
 
@@ -478,47 +478,49 @@ export class AdvertisementsListComponent {
   }
   filterResults() {
     const filters = this.storageService.getAdvertisementSearchFilters()();
-    const ratingFilter = filters.find((filter) => filter.includes('Rating'));
-    const provinceFilters = filters.filter((filter) =>
-      filter.includes('Province')
-    );
-    const locationFilters = filters.filter((filter) =>
-      filter.includes('Location')
-    );
+    if (filters?.length > 0) {
+      const ratingFilter = filters.find((filter) => filter.includes('Rating'));
+      const provinceFilters = filters.filter((filter) =>
+        filter.includes('Province')
+      );
+      const locationFilters = filters.filter((filter) =>
+        filter.includes('Location')
+      );
 
-    // Extract values from filters
-    const rate = ratingFilter
-      ? parseFloat(ratingFilter.match(/\(([^)]+)\)/)[1])
-      : null;
-    // Additional checks for the existence of filters
-    const hasRatingFilter = ratingFilter?.length > 0;
-    const hasProvinceFilter = provinceFilters?.length > 0;
-    const hasLocationFilter = locationFilters?.length > 0;
-    // Apply the filters
-    this.filteredAdvertisements = this.allAdvertisements.filter((item) => {
-      const isRatingMatch = !rate || this.rateFilter(item, rate);
-      const isProvinceMatch =
-        !hasProvinceFilter ||
-        provinceFilters.some(
-          (provinceFilter) =>
-            !provinceFilter ||
-            this.provinceFilter(item, provinceFilter.match(/\(([^)]+)\)/)[1])
-        );
+      // Extract values from filters
+      const rate = ratingFilter
+        ? parseFloat(ratingFilter.match(/\(([^)]+)\)/)[1])
+        : null;
+      // Additional checks for the existence of filters
+      const hasRatingFilter = ratingFilter?.length > 0;
+      const hasProvinceFilter = provinceFilters?.length > 0;
+      const hasLocationFilter = locationFilters?.length > 0;
+      // Apply the filters
+      this.filteredAdvertisements = this.allAdvertisements.filter((item) => {
+        const isRatingMatch = rate && this.rateFilter(item, rate);
+        const isProvinceMatch =
+          hasProvinceFilter &&
+          provinceFilters.some(
+            (provinceFilter) =>
+              !provinceFilter ||
+              this.provinceFilter(item, provinceFilter.match(/\(([^)]+)\)/)[1])
+          );
 
-      const isLocationMatch =
-        !hasLocationFilter ||
-        locationFilters.some((locationFilter) =>
-          this.locationFilter(
-            item,
-            ...(locationFilter.match(/\(([^,]+),\s*([^)]+)\)/).slice(1) as [
-              string,
-              string
-            ])
-          )
-        );
+        const isLocationMatch =
+          hasLocationFilter &&
+          locationFilters.some((locationFilter) =>
+            this.locationFilter(
+              item,
+              ...(locationFilter.match(/\(([^,]+),\s*([^)]+)\)/).slice(1) as [
+                string,
+                string
+              ])
+            )
+          );
 
-      return isRatingMatch && isProvinceMatch && isLocationMatch;
-    });
+        return isRatingMatch || isProvinceMatch || isLocationMatch;
+      });
+    } else this.clearAllFilters();
 
     // this.categorizeLocations(this.filteredAdvertisements);
     // this.categorizeRatings(this.filteredAdvertisements);
