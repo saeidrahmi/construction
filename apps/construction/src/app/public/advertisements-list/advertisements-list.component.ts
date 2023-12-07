@@ -480,6 +480,10 @@ export class AdvertisementsListComponent {
 
     this.storageService.updateAdvertisementSearchFilters(cityStr, province);
   }
+  filterCategory(tag: string) {
+    const tagStr = 'Category (' + tag + ')';
+    this.storageService.updateAdvertisementSearchFilters(tagStr, null);
+  }
   clearAllFilters() {
     this.filteredAdvertisements = this.allAdvertisements;
     this.storageService.clearAdvertisementSearchFilters();

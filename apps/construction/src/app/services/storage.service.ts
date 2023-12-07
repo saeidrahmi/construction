@@ -142,6 +142,10 @@ export class StorageService {
               ?.toLowerCase()
               ?.includes('location (' + province?.toLowerCase())
         );
+      else if (filterStr?.toLowerCase()?.includes('category'))
+        updatedFilters = existingFilters.filter(
+          (filter) => filter !== filterStr
+        );
       else if (filterStr?.toLowerCase()?.includes('location'))
         updatedFilters = existingFilters.filter(
           (filter) =>
