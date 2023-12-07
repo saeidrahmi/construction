@@ -480,6 +480,7 @@ export class AdvertisementsListComponent {
     const filters = this.storageService.getAdvertisementSearchFilters()();
     if (filters?.length > 0) {
       const ratingFilter = filters.find((filter) => filter.includes('Rating'));
+
       const provinceFilters = filters.filter((filter) =>
         filter.includes('Province')
       );
@@ -488,9 +489,12 @@ export class AdvertisementsListComponent {
       );
 
       // Extract values from filters
-      const rate = ratingFilter
-        ? parseFloat(ratingFilter.match(/\(([^)]+)\)/)[1])
-        : null;
+      let rate = 0;
+      if (ratingFilter === 'Rating (All ratings)') rate = -1;
+      else
+        rate = ratingFilter
+          ? parseFloat(ratingFilter.match(/\(([^)]+)\)/)[1])
+          : null;
       // Additional checks for the existence of filters
       const hasRatingFilter = ratingFilter?.length > 0;
       const hasProvinceFilter = provinceFilters?.length > 0;
@@ -517,8 +521,9 @@ export class AdvertisementsListComponent {
               ])
             )
           );
-
-        return isRatingMatch || isProvinceMatch || isLocationMatch;
+        if (hasRatingFilter && (hasProvinceFilter || hasLocationFilter))
+          return isRatingMatch && (isProvinceMatch || isLocationMatch);
+        else return isRatingMatch || isProvinceMatch || isLocationMatch;
       });
     } else this.clearAllFilters();
 
