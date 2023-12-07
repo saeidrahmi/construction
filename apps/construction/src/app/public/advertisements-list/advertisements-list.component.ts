@@ -187,6 +187,9 @@ export class AdvertisementsListComponent {
   provinceFilter(item, province) {
     return item.province === province;
   }
+  tagFilter(item, tag) {
+    return item?.tags?.toLowerCase()?.includes(tag?.toLowerCase());
+  }
 
   locationFilter(
     item: {
@@ -515,6 +518,9 @@ export class AdvertisementsListComponent {
         filter.includes('Location')
       );
 
+      const tagsFilters = filters.filter((filter) =>
+        filter.includes('Category')
+      );
       // Extract values from filters
       let rate = 0;
       if (ratingFilter === 'Rating (All ratings)') rate = -1;
@@ -526,9 +532,17 @@ export class AdvertisementsListComponent {
       const hasRatingFilter = ratingFilter?.length > 0;
       const hasProvinceFilter = provinceFilters?.length > 0;
       const hasLocationFilter = locationFilters?.length > 0;
+      const hasTagsFilter = tagsFilters?.length > 0;
       // Apply the filters
       this.filteredAdvertisements = this.allAdvertisements.filter((item) => {
         const isRatingMatch = rate && this.rateFilter(item, rate);
+        const isTagMatch =
+          hasTagsFilter &&
+          tagsFilters.some(
+            (tagFilter) =>
+              !tagFilter ||
+              this.tagFilter(item, tagFilter.match(/\(([^)]+)\)/)[1])
+          );
         const isProvinceMatch =
           hasProvinceFilter &&
           provinceFilters.some(
@@ -548,9 +562,47 @@ export class AdvertisementsListComponent {
               ])
             )
           );
-        if (hasRatingFilter && (hasProvinceFilter || hasLocationFilter))
+        if (
+          hasRatingFilter &&
+          (hasProvinceFilter || hasLocationFilter) &&
+          hasTagsFilter
+        ) {
+          console.log('1');
+          return (
+            isRatingMatch && (isProvinceMatch || isLocationMatch) && isTagMatch
+          );
+        } else if (
+          hasRatingFilter &&
+          (hasProvinceFilter || hasLocationFilter) &&
+          !hasTagsFilter
+        ) {
+          console.log('2');
           return isRatingMatch && (isProvinceMatch || isLocationMatch);
-        else return isRatingMatch || isProvinceMatch || isLocationMatch;
+        } else if (
+          hasRatingFilter &&
+          (!hasProvinceFilter || !hasLocationFilter) &&
+          hasTagsFilter
+        ) {
+          console.log('3');
+          return isRatingMatch && isTagMatch;
+        } else if (
+          !hasRatingFilter &&
+          !(hasProvinceFilter || hasLocationFilter) &&
+          hasTagsFilter
+        ) {
+          console.log('4');
+          return isTagMatch;
+        } else if (
+          !hasRatingFilter &&
+          (hasProvinceFilter || hasLocationFilter) &&
+          hasTagsFilter
+        ) {
+          console.log('5');
+          return isTagMatch && (isProvinceMatch || isLocationMatch);
+        } else
+          return (
+            isRatingMatch || isProvinceMatch || isLocationMatch || isTagMatch
+          );
       });
     } else this.clearAllFilters();
 
