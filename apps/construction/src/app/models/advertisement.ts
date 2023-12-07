@@ -4,6 +4,7 @@ export interface AdvertisementInterface {
   userId?: any;
   title?: string;
   city?: string;
+  tags?: string;
   headerImage?: string;
   headerImageUrl?: string;
   active?: boolean;

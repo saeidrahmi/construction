@@ -111,6 +111,7 @@ export class AdvertisementsListComponent {
   canadaCites: string[] = [];
   citiesByProvince = {};
   ratingFilter = [];
+  tagsCategorized: { tag: string; count: number }[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -159,6 +160,7 @@ export class AdvertisementsListComponent {
           this.filteredAdvertisements = this.allAdvertisements;
           this.categorizeLocations(this.allAdvertisements);
           this.categorizeRatings(this.allAdvertisements);
+          this.categorizeTags(this.allAdvertisements);
           if (this.storageService.getAdvertisementSearchFilters()()?.length > 0)
             this.filterResults();
         })
@@ -237,6 +239,26 @@ export class AdvertisementsListComponent {
         }
       }
     });
+  }
+  categorizeTags(advertisements: any[]) {
+    this.tagsCategorized = [];
+
+    // Iterate through the data and organize cities by province
+
+    advertisements.forEach((item) => {
+      const tags = item.tags?.split(', ');
+      tags?.forEach((tag) => {
+        const existingTag = this.tagsCategorized.find(
+          (entry) => entry.tag === tag
+        );
+        if (existingTag) {
+          existingTag.count++;
+        } else {
+          this.tagsCategorized.push({ tag: tag, count: 1 });
+        }
+      });
+    });
+    console.log(this.tagsCategorized);
   }
 
   categorizeLocations(advertisements: any[]) {
@@ -382,6 +404,7 @@ export class AdvertisementsListComponent {
             this.filteredAdvertisements = this.allAdvertisements;
             this.categorizeLocations(this.allAdvertisements);
             this.categorizeRatings(this.allAdvertisements);
+            this.categorizeTags(this.allAdvertisements);
           })
         )
         .subscribe();
