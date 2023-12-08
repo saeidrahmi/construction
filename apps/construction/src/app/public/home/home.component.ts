@@ -51,4 +51,9 @@ export class HomeComponent {
         }
       });
   }
+  navigateAd(tag: string) {
+    const tagStr = 'Category (' + tag + ')';
+    this.storageService.updateAdvertisementSearchFilters(tagStr, null);
+    this.router.navigate(['/advertisements']);
+  }
 }
