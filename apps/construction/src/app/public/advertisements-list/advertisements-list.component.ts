@@ -45,7 +45,7 @@ import { HttpClient } from '@angular/common/http';
 import { FormErrorsComponent } from '../form-errors.component';
 import { FormService } from '../../services/form.service';
 import { NgxPaginationModule } from 'ngx-pagination';
-
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 @Component({
   selector: 'app-advertisements-list',
   templateUrl: './advertisements-list.component.html',
@@ -69,7 +69,9 @@ import { NgxPaginationModule } from 'ngx-pagination';
     FormErrorsComponent,
     NgxPaginationModule,
     AsyncPipe,
+    PaginationModule,
   ],
+  providers: [],
 })
 export class AdvertisementsListComponent {
   @ViewChild('tagInput') tagInput!: ElementRef<HTMLInputElement>;
@@ -77,7 +79,8 @@ export class AdvertisementsListComponent {
   separatorKeysCodes: number[] = [ENTER, COMMA];
   filters: string[] = [];
   myTags: string[] = [];
-  page = 1;
+  pageFilter = 1;
+  pageTop = 1;
   pageSize = 5;
   formErrors: string[] = [];
   myLocations: string[] = [];
@@ -101,6 +104,7 @@ export class AdvertisementsListComponent {
   constructionServices = this.userService.getConstructionServices();
   allAdvertisements: any[] = [];
   filteredAdvertisements: any[] = [];
+  filteredTopAdvertisements: any[] = [];
   user = this.storageService?.getUser();
   userId = this.storageService?.getUserId();
   loggedIn = this.storageService?.isUserLoggedIn();
@@ -112,7 +116,16 @@ export class AdvertisementsListComponent {
   citiesByProvince = {};
   ratingFilter = [];
   tagsCategorized: { tag: string; count: number }[] = [];
+  itemsPerPage = 5;
 
+  configFilter: any = {
+    itemsPerPage: 10,
+    currentPage: 1,
+    totalItems: this.filteredAdvertisements?.length,
+  };
+  pageChangedTop(event: any, target: string): void {
+    this[target] = event.page;
+  }
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
@@ -157,7 +170,13 @@ export class AdvertisementsListComponent {
         tap((list: any) => {
           this.allAdvertisements = list;
           this.convertImages();
-          this.filteredAdvertisements = this.allAdvertisements;
+          this.filteredAdvertisements = this.allAdvertisements.filter(
+            (item) => item.topAdvertisement === 0
+          );
+          this.filteredTopAdvertisements = this.allAdvertisements.filter(
+            (item) => item.topAdvertisement === 1
+          );
+
           this.categorizeLocations(this.allAdvertisements);
           this.categorizeRatings(this.allAdvertisements);
           this.categorizeTags(this.allAdvertisements);
@@ -172,6 +191,9 @@ export class AdvertisementsListComponent {
         item ? this._filterTags(item) : this.constructionServices.slice()
       )
     );
+  }
+  pageChangedFilter(event: number, config: any): void {
+    config.currentPage = event;
   }
   rateFilter(item, rate) {
     let userRating = parseFloat(item.average_userOverallRating);
@@ -261,7 +283,6 @@ export class AdvertisementsListComponent {
         }
       });
     });
-    console.log(this.tagsCategorized);
   }
 
   categorizeLocations(advertisements: any[]) {
@@ -404,7 +425,13 @@ export class AdvertisementsListComponent {
           tap((list: any) => {
             this.allAdvertisements = list;
             this.convertImages();
-            this.filteredAdvertisements = this.allAdvertisements;
+
+            this.filteredAdvertisements = this.allAdvertisements.filter(
+              (item) => item.topAdvertisement === 0
+            );
+            this.filteredTopAdvertisements = this.allAdvertisements.filter(
+              (item) => item.topAdvertisement === 1
+            );
             this.categorizeLocations(this.allAdvertisements);
             this.categorizeRatings(this.allAdvertisements);
             this.categorizeTags(this.allAdvertisements);
@@ -488,7 +515,12 @@ export class AdvertisementsListComponent {
     this.storageService.updateAdvertisementSearchFilters(tagStr, null);
   }
   clearAllFilters() {
-    this.filteredAdvertisements = this.allAdvertisements;
+    this.filteredAdvertisements = this.allAdvertisements.filter(
+      (item) => item.topAdvertisement === 0
+    );
+    this.filteredTopAdvertisements = this.allAdvertisements.filter(
+      (item) => item.topAdvertisement === 1
+    );
     this.storageService.clearAdvertisementSearchFilters();
     this.categorizeLocations(this.filteredAdvertisements);
     this.categorizeRatings(this.filteredAdvertisements);
@@ -567,7 +599,6 @@ export class AdvertisementsListComponent {
           (hasProvinceFilter || hasLocationFilter) &&
           hasTagsFilter
         ) {
-          console.log('1');
           return (
             isRatingMatch && (isProvinceMatch || isLocationMatch) && isTagMatch
           );
@@ -576,34 +607,36 @@ export class AdvertisementsListComponent {
           (hasProvinceFilter || hasLocationFilter) &&
           !hasTagsFilter
         ) {
-          console.log('2');
           return isRatingMatch && (isProvinceMatch || isLocationMatch);
         } else if (
           hasRatingFilter &&
           (!hasProvinceFilter || !hasLocationFilter) &&
           hasTagsFilter
         ) {
-          console.log('3');
           return isRatingMatch && isTagMatch;
         } else if (
           !hasRatingFilter &&
           !(hasProvinceFilter || hasLocationFilter) &&
           hasTagsFilter
         ) {
-          console.log('4');
           return isTagMatch;
         } else if (
           !hasRatingFilter &&
           (hasProvinceFilter || hasLocationFilter) &&
           hasTagsFilter
         ) {
-          console.log('5');
           return isTagMatch && (isProvinceMatch || isLocationMatch);
         } else
           return (
             isRatingMatch || isProvinceMatch || isLocationMatch || isTagMatch
           );
       });
+      this.filteredTopAdvertisements = this.filteredAdvertisements.filter(
+        (item) => item.topAdvertisement === 1
+      );
+      this.filteredAdvertisements = this.filteredAdvertisements.filter(
+        (item) => item.topAdvertisement === 0
+      );
     } else this.clearAllFilters();
 
     // this.categorizeLocations(this.filteredAdvertisements);

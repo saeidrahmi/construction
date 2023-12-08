@@ -455,7 +455,12 @@
                         </div>
                       </div>
                     </ng-container>
-                    <ng-container *ngIf="filteredAdvertisements?.length === 0">
+                    <ng-container
+                      *ngIf="
+                        filteredAdvertisements?.length === 0 &&
+                        filteredTopAdvertisements?.length === 0
+                      "
+                    >
                       <div class="row mt-1 border rounded p-3">
                         <div class="col alert alert-warning">
                           No advertisements match the provided search query.
@@ -464,21 +469,51 @@
                         </div>
                       </div>
                     </ng-container>
+                    <div
+                      class="row mt-1"
+                      *ngIf="filteredTopAdvertisements?.length > 0"
+                    >
+                      <div class="col">
+                        <app-advertisement-view
+                          *ngFor="
+                            let advertisement of filteredTopAdvertisements
+                              | slice
+                                : (pageTop - 1) * itemsPerPage
+                                : pageTop * itemsPerPage
+                          "
+                          [advertisement]="advertisement"
+                        >
+                        </app-advertisement-view>
+                        <div class="d-flex justify-content-center">
+                          <pagination
+                            [(ngModel)]="pageTop"
+                            [totalItems]="filteredTopAdvertisements.length"
+                            [itemsPerPage]="itemsPerPage"
+                            (pageChanged)="pageChangedTop($event, 'pageTop')"
+                          ></pagination>
+                        </div>
+                      </div>
+                    </div>
 
-                    <div class="row mt-1">
+                    <hr />
+                    <div
+                      class="row mt-1"
+                      *ngIf="filteredAdvertisements?.length > 0"
+                    >
                       <div class="col">
                         <app-advertisement-view
                           *ngFor="
                             let advertisement of filteredAdvertisements
-                              | paginate
-                                : { itemsPerPage: pageSize, currentPage: page }
+                              | paginate : configFilter
                           "
                           [advertisement]="advertisement"
                         >
                         </app-advertisement-view>
                         <div class="d-flex justify-content-center">
                           <pagination-controls
-                            (pageChange)="page = $event"
+                            (pageChange)="
+                              pageChangedFilter($event, configFilter)
+                            "
                           ></pagination-controls>
                         </div>
                       </div>
