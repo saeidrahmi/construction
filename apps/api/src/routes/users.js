@@ -131,7 +131,7 @@ router.post(
 );
 router.post(
   '/delete-support-request-messages',
-  verifyGeneralToken,
+  verifyAllToken,
   deleteRequestSupportMessagesController
 );
 

@@ -42,6 +42,7 @@ import { UserDashboardDetailsComponent } from './dashboard/user-dashobard-detail
 import { SalesDashboardComponent } from './dashboard/sales-dashboard/sales-dashboard.component';
 import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
 import { QuillModule } from 'ngx-quill';
+import { SupportComponent } from './support/support.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { QuillModule } from 'ngx-quill';
     ViewUserComponent,
     UserDashboardDetailsComponent,
     SalesDashboardComponent,
+    SupportComponent,
   ],
   imports: [
     NgChartsModule,

@@ -237,6 +237,8 @@ async function loginController(req, res) {
                 selectResult[0]?.allowPlanActions === 1 ? true : false,
               allowUserActions:
                 selectResult[0]?.allowUserActions === 1 ? true : false,
+              viewSupportRequests:
+                selectResult[0]?.viewSupportRequests === 1 ? true : false,
             };
           }
 

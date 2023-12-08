@@ -23,6 +23,7 @@ const {
   UsersListController,
   UsersTotalCountBasedOnPlansController,
   getUsersCountBasedOnPlanTypesDashboard,
+  listUserRequestSupportMessagesController,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -109,5 +110,9 @@ router.get(
   verifyAdminAndSAdminToken,
   getUsersCountBasedOnPlanTypesDashboard
 );
-
+router.get(
+  '/get-support-request-messages',
+  verifyAdminAndSAdminToken,
+  listUserRequestSupportMessagesController
+);
 module.exports = router;

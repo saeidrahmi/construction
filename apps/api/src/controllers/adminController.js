@@ -569,13 +569,14 @@ async function updateUserPermissionController(req, res) {
       userPermissions.allowUserActions,
       userPermissions.viewRfps,
       userPermissions.approvedRfps,
+      userPermissions.viewSupportRequests,
       userId,
     ];
     if (selectResult.length > 0) {
       const updateQuery = `UPDATE userPermissions SET  viewDashboard=?,updateAdminSettings=?,
                             createUser=?,viewUsers=?,createPlan=?,listPlans=?,
                             viewPendingAdvertisements=?,approveAdvertisement=?,allowPlanActions=?,
-                            allowUserActions=? , viewRfps=?, approvedRfps=? WHERE userId =?`;
+                            allowUserActions=? , viewRfps=?, approvedRfps=?, viewSupportRequests=? WHERE userId =?`;
       const updateResult = await executeQuery(updateQuery, values);
       if (updateResult.affectedRows < 1) {
         return res.status(500).json({
@@ -586,8 +587,8 @@ async function updateUserPermissionController(req, res) {
       return res.status(200).json(userPermissions);
     } else {
       const insertQuery = `INSERT INTO userPermissions(viewDashboard, updateAdminSettings, createUser, viewUsers, createPlan,
-        listPlans, viewPendingAdvertisements, approveAdvertisement,allowUserActions,allowPlanActions,viewRfps,approvedRfps, userId)
-                   values(?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+        listPlans, viewPendingAdvertisements, approveAdvertisement,allowUserActions,allowPlanActions,viewRfps,approvedRfps, viewSupportRequests,userId)
+                   values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
 
       const insertResult = await executeQuery(insertQuery, values);
       console.log(insertResult);
@@ -836,6 +837,17 @@ async function UsersTotalCountBasedOnPlansController(req, res) {
     });
   }
 }
+async function listUserRequestSupportMessagesController(req, res) {
+  try {
+    const selectQuery = `select * from userSupportRequests where  respondedByAdmin=0 ORDER BY dateCreated DESC; `;
+    const selectResult = await executeQuery(selectQuery, []);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to insert information. Please try again later.',
+    });
+  }
+}
 module.exports = {
   UsersTotalCountBasedOnPlansController,
   getUsersCountBasedOnPlanTypesDashboard,
@@ -858,4 +870,5 @@ module.exports = {
   updatePlanController,
   getAllUsersAdvertisementsPendingApproval,
   createNewUserController,
+  listUserRequestSupportMessagesController,
 };

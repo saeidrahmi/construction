@@ -2,7 +2,12 @@ import { Component, DestroyRef, inject } from '@angular/core';
 import { StorageService } from '../../../services/storage.service';
 import { Router } from '@angular/router';
 import { ApiService } from '../../../services/api.service';
-import { FormGroup, FormBuilder, FormControl } from '@angular/forms';
+import {
+  FormGroup,
+  FormBuilder,
+  FormControl,
+  Validators,
+} from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap } from 'rxjs';
 import { EncryptionService } from '../../../services/encryption-service';
@@ -27,16 +32,16 @@ export class NewSupportComponent {
   plan = this.storageService.getPlan();
   contactForm: FormGroup;
   formErrors: string[] = [];
-  requestType: string = 'type';
+  requestType: string = '';
   description: string = '';
   subject: string = '';
   constructor(private fb: FormBuilder) {
     if (this.plan()?.onlineSupportIncluded != 1)
       this.router.navigate(['/general/dashboard']);
     this.contactForm = this.fb.group({
-      description: new FormControl(),
-      requestType: new FormControl(),
-      subject: new FormControl(),
+      description: new FormControl('', [Validators.required]),
+      requestType: new FormControl('', [Validators.required]),
+      subject: new FormControl('', [Validators.required]),
     });
   }
   submit() {

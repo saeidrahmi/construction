@@ -11,4 +11,5 @@ export interface UserPermissionsInterface {
   allowPlanActions?: boolean;
   viewRfps?: boolean;
   approvedRfps?: boolean;
+  viewSupportRequests?: boolean;
 }

@@ -58,6 +58,7 @@ export class CreateUserComponent {
       allowPlanActions: new FormControl('', []),
       viewRfps: new FormControl('', []),
       approvedRfps: new FormControl('', []),
+      viewSupportRequests: new FormControl('', []),
     });
   }
   submit() {
@@ -94,6 +95,10 @@ export class CreateUserComponent {
             allowPlanActions: this.userPermissions.allowPlanActions ? 1 : 0,
             viewRfps: this.userPermissions.viewRfps ? 1 : 0,
             approvedRfps: this.userPermissions.approvedRfps ? 1 : 0,
+            viewSupportRequests: this.userPermissions.viewSupportRequests
+              ? 1
+              : 0,
+
             approveAdvertisement: this.userPermissions.approveAdvertisement
               ? 1
               : 0,

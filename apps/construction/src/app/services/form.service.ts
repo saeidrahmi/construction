@@ -109,15 +109,23 @@ export class FormService {
     },
     {
       filedName: 'description',
-      filedValue: 'Description ',
+      filedValue: 'Description',
     },
     {
       filedName: 'passwordResetDurationGeneralUsers',
-      filedValue: 'Password duration for general users ',
+      filedValue: 'Password duration for general users',
     },
     {
       filedName: 'passwordResetDurationAdminUsers',
       filedValue: 'Password duration for admins ',
+    },
+    {
+      filedName: 'subject',
+      filedValue: 'Subject',
+    },
+    {
+      filedName: 'requestType',
+      filedValue: 'Request Type ',
     },
   ];
 

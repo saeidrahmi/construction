@@ -61,6 +61,7 @@ export class ChangeUserPermissionComponent {
             allowUserActions: false,
             viewRfps: false,
             approvedRfps: false,
+            viewSupportRequests: false,
           };
       });
     this.form = this.fb.group({
@@ -91,6 +92,10 @@ export class ChangeUserPermissionComponent {
       ),
       viewRfps: new FormControl(this.userPermissions?.viewRfps, []),
       approvedRfps: new FormControl(this.userPermissions?.approvedRfps, []),
+      viewSupportRequests: new FormControl(
+        this.userPermissions?.viewSupportRequests,
+        []
+      ),
     });
   }
   submit() {
@@ -107,6 +112,7 @@ export class ChangeUserPermissionComponent {
         allowPlanActions: this.userPermissions.allowPlanActions ? 1 : 0,
         viewRfps: this.userPermissions.viewRfps ? 1 : 0,
         approvedRfps: this.userPermissions.approvedRfps ? 1 : 0,
+        viewSupportRequests: this.userPermissions.viewSupportRequests ? 1 : 0,
         approveAdvertisement: this.userPermissions.approveAdvertisement ? 1 : 0,
         viewPendingAdvertisements: this.userPermissions
           .viewPendingAdvertisements

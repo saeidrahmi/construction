@@ -6,6 +6,13 @@
           <h2 class="card-title">
             <span class="col-12">New Support Request</span>
           </h2>
+          <hr />
+          <a
+            [routerLink]="'/general/request-support'"
+            class="btn btn-outline-primary"
+            >View My Requests</a
+          >
+          <hr />
           <div class="container">
             <div class="row">
               <div class="col-12">
@@ -60,10 +67,9 @@
                         aria-label="Default select type"
                         [(ngModel)]="requestType"
                       >
-                        <option value="type" selected>Select Type</option>
-                        <option value="technical">
-                          Help with technical issue
-                        </option>
+                        <option value="" selected>Select Type</option>
+                        <option value="general">General enquiry</option>
+                        <option value="technical">Technical issue</option>
                       </select>
                     </div>
                   </div>

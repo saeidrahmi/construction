@@ -16,6 +16,7 @@ import { ChangeUserPermissionComponent } from './users/change-user-permissions/c
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
 import { ViewUserComponent } from './users/view-user/view-user.component';
+import { SupportComponent } from './support/support.component';
 
 const routes: Routes = [
   {
@@ -61,6 +62,10 @@ const routes: Routes = [
       {
         path: 'create-user',
         component: CreateUserComponent,
+      },
+      {
+        path: 'user-request-supports',
+        component: SupportComponent,
       },
       {
         path: 'user-profile',

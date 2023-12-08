@@ -107,6 +107,21 @@
         >
       </a>
     </li>
+    <li
+      class="list-group-item"
+      *ngIf="
+        userRole() === 'SAdmin' || this.userPermissions()?.viewSupportRequests
+      "
+    >
+      <a
+        [routerLinkActive]="['active_section']"
+        [routerLink]="['/admin/user-request-supports']"
+      >
+        <i class="bi bi-question-diamond"
+          ><span class="mx-2">Users Support Requests</span></i
+        >
+      </a>
+    </li>
     <li class="list-group-item">
       <a
         [routerLinkActive]="['active_section']"
