@@ -180,7 +180,16 @@
                   <i class="bi bi-eye"></i> 0 Visits
                 </div>
               </div>
-
+              <hr />
+              <div class="row mt-4" *ngIf="advertisement.tags">
+                <div class="col">
+                  <hr />
+                  <i>
+                    Categories:
+                    {{ advertisement.tags }}
+                  </i>
+                </div>
+              </div>
               <hr />
               <div class="row m-2">
                 <div class="col">

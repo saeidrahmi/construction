@@ -59,6 +59,9 @@ const {
   getUserRatingsDetailsController,
   postUserFeedbackController,
   getAllUserRatingsDetailsBasedOnUserId,
+  submitNewSupportRequestController,
+  listUserRequestSupportMessagesController,
+  deleteRequestSupportMessagesController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -120,6 +123,16 @@ router.post(
   '/remove-user-services',
   verifyGeneralToken,
   removeUserServicesController
+);
+router.post(
+  '/get-support-request-messages',
+  verifyGeneralToken,
+  listUserRequestSupportMessagesController
+);
+router.post(
+  '/delete-support-request-messages',
+  verifyGeneralToken,
+  deleteRequestSupportMessagesController
 );
 
 router.post('/delete-user', verifyAdminAndSAdminToken, DeleteUserController);
@@ -285,6 +298,11 @@ router.post(
   '/advertisement-general-edit-info',
   verifyGeneralToken,
   getAdvertisementEditInfoController
+);
+router.post(
+  '/new-support-request',
+  verifyGeneralToken,
+  submitNewSupportRequestController
 );
 router.post(
   '/advertisement-repost',

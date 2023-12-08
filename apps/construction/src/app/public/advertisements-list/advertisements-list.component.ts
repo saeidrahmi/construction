@@ -19,7 +19,15 @@ import {
 import { Router, RouterModule } from '@angular/router';
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, map, startWith, take, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  Observable,
+  interval,
+  map,
+  startWith,
+  take,
+  tap,
+} from 'rxjs';
 import { ApiService } from '../../services/api.service';
 import { CommonUtilityService } from '../../services/common-utility.service';
 import { ImageService } from '../../services/image-service';
@@ -185,12 +193,23 @@ export class AdvertisementsListComponent {
         })
       )
       .subscribe();
+    interval(10000) // 10 seconds interval
+      .pipe(takeUntilDestroyed()) // execute only once for demonstration purposes
+      .subscribe(() => {
+        this.moveLastToBeginning();
+      });
     this.filteredTags = this.tagCtrl?.valueChanges.pipe(
       startWith(null),
       map((item: string | null) =>
         item ? this._filterTags(item) : this.constructionServices.slice()
       )
     );
+  }
+  moveLastToBeginning() {
+    if (this.filteredTopAdvertisements.length > 2) {
+      const lastItem = this.filteredTopAdvertisements.pop(); // Remove the last item
+      this.filteredTopAdvertisements.unshift(lastItem); // Add it to the beginning
+    }
   }
   pageChangedFilter(event: number, config: any): void {
     config.currentPage = event;

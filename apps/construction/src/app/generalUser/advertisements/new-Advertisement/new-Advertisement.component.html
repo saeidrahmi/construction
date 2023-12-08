@@ -368,6 +368,7 @@
                                   #chipGrid
                                   aria-label="Service selection"
                                   formControlName="tags"
+                                  [(ngModel)]="advertisement.tags"
                                 >
                                   <mat-chip-row
                                     *ngFor="let tag of myTags"

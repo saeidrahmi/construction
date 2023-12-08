@@ -19,4 +19,59 @@
       </div>
     </div>
   </div>
+  <div class="row" *ngIf="messageList?.length > 0">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-6">Message List</span>
+          </h2>
+
+          <hr />
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col">
+                <div
+                  class="alert alert-info"
+                  role="alert"
+                  *ngFor="let item of messageList"
+                >
+                  <h4 class="alert-heading">
+                    {{ item.dateCreated | date : 'medium' }}
+                  </h4>
+                  <button
+                    class="btn btn-danger"
+                    (click)="delete(item.messageId)"
+                  >
+                    Delete Message
+                  </button>
+                  <hr />
+                  <p class="mb-0">
+                    <span class="fw-bold">Subject : </span> {{ item.subject }}
+                  </p>
+                  <hr />
+                  <p class="mb-0">
+                    <span class="fw-bold">Request Type: </span> {{ item.type }}
+                  </p>
+                  <hr />
+
+                  <p class="fw-bold">Message Description:</p>
+                  {{ item.description }}
+                  <ng-container
+                    *ngIf="item.adminResponse && item.respondedByAdmin"
+                  >
+                    <br />
+                    <hr />
+
+                    <p class="fw-bold">Admin Response:</p>
+                    <span class="text-primary">{{ item.adminResponse }}</span>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

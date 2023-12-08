@@ -2472,4 +2472,92 @@ export class ApiService {
         })
       );
   }
+  submitUserRequest(data: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/new-support-request', {
+        data: data,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Error while submitting request',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
+  getUserSupportRequestMessages(userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-support-request-messages', {
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Error while retrieving information',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
+  deleteRequestSupportMessagesController(
+    userId: any,
+    messageId: any
+  ): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(
+        this.backendApiUrl + '/users/delete-support-request-messages',
+        {
+          userId: userId,
+          messageId: messageId,
+        }
+      )
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Error while deleting information',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
 }

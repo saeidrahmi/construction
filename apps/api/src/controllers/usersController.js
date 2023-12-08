@@ -2459,6 +2459,7 @@ async function getUserNumberOfNewMessagesController(req, res) {
     await connection.end();
   }
 }
+
 async function canUserEditAdvertisementController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
@@ -2718,8 +2719,61 @@ async function promoteTopAdvertisementController(req, res) {
     }
   }
 }
+async function submitNewSupportRequestController(req, res) {
+  try {
+    const userId = decryptItem(req.body.data.userId, webSecretKey);
+    const subject = req.body.data.subject;
+    const description = req.body.data.description;
+    const requestType = req.body.data.requestType;
+    const insertQuery = `INSERT INTO userSupportRequests ( userId, subject, type, description) values(?,?,?,?)`;
 
+    const insertResult = await executeQuery(insertQuery, [
+      userId,
+      subject,
+      requestType,
+      description,
+    ]);
+
+    if (insertResult.affectedRows === 0) {
+      return res.status(500).json({
+        errorMessage: 'Failed to insert information. Please try again.',
+      });
+    }
+    return res.status(200).json();
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to insert information. Please try again later.',
+    });
+  }
+}
+async function listUserRequestSupportMessagesController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const selectQuery = `select * from userSupportRequests where  userId=? ORDER BY dateCreated DESC; `;
+    const selectResult = await executeQuery(selectQuery, [userId]);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to insert information. Please try again later.',
+    });
+  }
+}
+async function deleteRequestSupportMessagesController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const messageId = req.body.messageId;
+    const selectQuery = `delete from userSupportRequests where  userId=? and messageId =? `;
+
+    const selectResult = await executeQuery(selectQuery, [userId, messageId]);
+    return res.status(200).json();
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to insert information. Please try again later.',
+    });
+  }
+}
 module.exports = {
+  deleteRequestSupportMessagesController,
   deleteUserProfilePhotoController,
   promoteTopAdvertisementController,
   repostAdvertisementController,
@@ -2775,4 +2829,6 @@ module.exports = {
   getUserRatingsDetailsController,
   postUserFeedbackController,
   getAllUserRatingsDetailsBasedOnUserId,
+  submitNewSupportRequestController,
+  listUserRequestSupportMessagesController,
 };

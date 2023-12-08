@@ -4,8 +4,96 @@
       <div class="card" aria-hidden="true">
         <div class="card-body">
           <h2 class="card-title">
-            <span class="col-12">New Support</span>
+            <span class="col-12">New Support Request</span>
           </h2>
+          <div class="container">
+            <div class="row">
+              <div class="col-12">
+                <div class="alert alert-warning my-2">
+                  <h4 class="alert-heading">
+                    <i class="bi bi-info-circle me-1"></i>Contact Us - Submit a
+                    Request
+                  </h4>
+                  <hr />
+                  <p>
+                    We value your inquiries and feedback! Please use the form
+                    below to submit your request, and we'll get back to you as
+                    soon as possible. Provide any relevant information that will
+                    help us assist you more effectively.
+                  </p>
+
+                  <p class="fw-bold">Our Commitment:</p>
+
+                  <p>
+                    We understand the importance of timely responses. Rest
+                    assured, our team is dedicated to providing you with the
+                    assistance you need promptly.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <app-form-errors [formErrors]="formErrors"></app-form-errors>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <form [formGroup]="contactForm">
+                  <div class="row">
+                    <div class="col-md-2 mt-2">Subject</div>
+                    <div class="col-md-8">
+                      <input
+                        class="form-control"
+                        placeholder="Enter Subject"
+                        formControlName="subject"
+                        [(ngModel)]="subject"
+                      />
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2 mt-1 form-label">Request Type</div>
+                    <div class="col-md-8">
+                      <select
+                        formControlName="requestType"
+                        class="form-select"
+                        aria-label="Default select type"
+                        [(ngModel)]="requestType"
+                      >
+                        <option value="type" selected>Select Type</option>
+                        <option value="technical">
+                          Help with technical issue
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2 mt-2">Profile Description</div>
+                    <div class="col-md-8">
+                      <textarea
+                        class="form-control"
+                        placeholder="Enter description"
+                        formControlName="description"
+                        maxlength="1000"
+                        rows="10"
+                        [(ngModel)]="description"
+                      ></textarea>
+                      <span class="text-danger"> {{ description?.length }}</span
+                      >/ 1000
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-2 mt-2"></div>
+                    <div class="col-md-8">
+                      <button class="btn btn-primary" (click)="submit()">
+                        Submit
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -67,6 +67,16 @@
               </button>
             </div>
           </div>
+          <hr />
+          <div class="row mt-4" *ngIf="advertisement.tags">
+            <div class="col">
+              <hr />
+              <i>
+                Categories:
+                {{ advertisement.tags }}
+              </i>
+            </div>
+          </div>
         </div>
       </div>
     </div>
