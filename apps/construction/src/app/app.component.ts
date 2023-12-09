@@ -20,6 +20,7 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { ApiService } from './services/api.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { ScrollTopComponent } from './common-components/scroll-top/scroll-top.component';
 @Component({
   standalone: true,
   imports: [
@@ -29,6 +30,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     RouterOutlet,
     SpinnerComponent,
     NgxSpinnerModule,
+    ScrollTopComponent,
   ],
   selector: 'construction-root',
   templateUrl: './app.component.html',
