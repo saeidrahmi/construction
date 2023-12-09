@@ -2751,8 +2751,9 @@ async function submitNewSupportRequestController(req, res) {
 async function listUserRequestSupportMessagesController(req, res) {
   try {
     const userId = decryptItem(req.body.userId, webSecretKey);
-    const selectQuery = `select * from userSupportRequests where  userId=? ORDER BY dateCreated DESC; `;
+    const selectQuery = `select messageId, dateCreated, userId, subject, type, description, adminResponse, respondedByAdmin, viewedByUser from userSupportRequests where  userId=? ORDER BY dateCreated DESC; `;
     const selectResult = await executeQuery(selectQuery, [userId]);
+
     return res.status(200).json(selectResult);
   } catch (error) {
     return res.status(500).json({

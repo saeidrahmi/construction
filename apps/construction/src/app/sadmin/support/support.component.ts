@@ -6,6 +6,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { switchMap, tap } from 'rxjs';
 import { EncryptionService } from '../../services/encryption-service';
+import {
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  Validators,
+} from '@angular/forms';
+import { FormService } from '../../services/form.service';
 
 @Component({
   selector: 'app-support',
@@ -21,6 +28,13 @@ export class SupportComponent {
   encryptionService = inject(EncryptionService);
   toastService = inject(ToastrService);
   messageList: any[] = [];
+  formService = inject(FormService);
+  fb = inject(FormBuilder);
+  feedbackForm: FormGroup;
+  formErrors: { messageId: any; errors: string[] } = {
+    messageId: null,
+    errors: [],
+  };
   userPermissions = this.storageService.getUserPermissions();
   userRole = this.storageService.getUserRole();
   getList$ = this.apiService.getAdminSupportRequestMessages().pipe(
@@ -29,7 +43,11 @@ export class SupportComponent {
       this.messageList = list;
     })
   );
+
   constructor() {
+    this.feedbackForm = this.fb.group({
+      feedback: new FormControl('', [Validators.required]),
+    });
     if (
       this.userRole() != 'SAdmin' &&
       !this.userPermissions().viewSupportRequests
@@ -57,5 +75,40 @@ export class SupportComponent {
         switchMap(() => this.getList$)
       )
       .subscribe();
+  }
+  sendResponse(messageId, userId, feedback) {
+    this.formErrors = {
+      messageId: null,
+      errors: [],
+    };
+    if (this.feedbackForm.valid) {
+      console.log(messageId, userId);
+      const adminUserId = this.storageService?.getUserId();
+      this.apiService
+        .sendUserSupportRequestAdminResponse(
+          this.encryptionService.encryptItem(adminUserId()),
+          this.encryptionService.encryptItem(userId),
+          feedback,
+          messageId
+        )
+        .pipe(
+          takeUntilDestroyed(this.destroyRef),
+
+          tap((info: any) => {
+            this.toastService.success('success', 'success', {
+              timeOut: 3000,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            });
+          }),
+          switchMap(() => this.getList$)
+        )
+
+        .subscribe();
+    } else this.formErrors.messageId = messageId;
+    this.formErrors.errors = this.formService.getFormValidationErrorMessages(
+      this.feedbackForm
+    );
   }
 }

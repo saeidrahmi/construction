@@ -848,6 +848,33 @@ async function listUserRequestSupportMessagesController(req, res) {
     });
   }
 }
+
+async function sendUserSupportRequestAdminResponse(req, res) {
+  try {
+    const adminUserId = decryptItem(req.body.adminUserId, webSecretKey);
+    const userUserId = decryptItem(req.body.userUserId, webSecretKey);
+    const messageId = req.body.messageId;
+    const feedback = req.body.feedback;
+
+    const updateQuery = `update userSupportRequests set adminResponse=? , adminUserId=?, respondedByAdmin=1  where  messageId =?  and userId=?`;
+    const updateResult = await executeQuery(updateQuery, [
+      feedback,
+      adminUserId,
+      messageId,
+      userUserId,
+    ]);
+    if (updateResult.affectedRows === 0)
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again later.',
+      });
+    return res.status(200).json();
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again later.',
+    });
+  }
+}
+
 module.exports = {
   UsersTotalCountBasedOnPlansController,
   getUsersCountBasedOnPlanTypesDashboard,
@@ -871,4 +898,5 @@ module.exports = {
   getAllUsersAdvertisementsPendingApproval,
   createNewUserController,
   listUserRequestSupportMessagesController,
+  sendUserSupportRequestAdminResponse,
 };

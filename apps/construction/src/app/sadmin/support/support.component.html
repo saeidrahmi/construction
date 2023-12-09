@@ -62,6 +62,43 @@
                     <p class="fw-bold">Admin Response:</p>
                     <span class="text-primary">{{ item.adminResponse }}</span>
                   </ng-container>
+                  <br />
+
+                  <form [formGroup]="feedbackForm">
+                    <div class="col">
+                      <h5 class=" ">Provide Your Response</h5>
+
+                      <app-form-errors
+                        [formErrors]="formErrors.errors"
+                        *ngIf="formErrors?.messageId === item?.messageId"
+                      ></app-form-errors>
+                      <textarea
+                        class="form-control"
+                        placeholder="Enter Response"
+                        formControlName="feedback"
+                        rows="5"
+                        minlength="5"
+                        maxlength="1000"
+                      ></textarea>
+                      {{
+                        this.feedbackForm?.get('feedback')?.value?.length
+                      }}/1000
+                      <br />
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary my-1 text-center"
+                        (click)="
+                          sendResponse(
+                            item?.messageId,
+                            item?.userId,
+                            this.feedbackForm?.get('feedback')?.value
+                          )
+                        "
+                      >
+                        Submit Response
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
