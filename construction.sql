@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Nov 14, 2023 at 09:02 PM
+-- Generation Time: Dec 09, 2023 at 08:35 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `construction`
 --
+CREATE DATABASE IF NOT EXISTS `construction` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `construction`;
 
 -- --------------------------------------------------------
 
@@ -93,7 +95,8 @@ CREATE TABLE `userAdvertisements` (
   `userAdvertisementId` bigint UNSIGNED NOT NULL,
   `userPlanId` bigint UNSIGNED NOT NULL,
   `title` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `description` varchar(400) NOT NULL,
+  `tags` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `description` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `active` tinyint(1) DEFAULT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   `approvedByAdmin` tinyint(1) DEFAULT '0',
@@ -172,7 +175,10 @@ CREATE TABLE `userPermissions` (
   `viewPendingAdvertisements` tinyint(1) NOT NULL DEFAULT '0',
   `approveAdvertisement` tinyint(1) NOT NULL DEFAULT '0',
   `allowPlanActions` tinyint(1) NOT NULL DEFAULT '0',
-  `allowUserActions` tinyint(1) NOT NULL DEFAULT '0'
+  `allowUserActions` tinyint(1) NOT NULL DEFAULT '0',
+  `viewRfps` tinyint(1) DEFAULT '0',
+  `approvedRfps` tinyint(1) DEFAULT '0',
+  `viewSupportRequests` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -209,9 +215,21 @@ CREATE TABLE `userProvinces` (
 --
 
 CREATE TABLE `userRatings` (
+  `dateCreated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `userId` varchar(80) NOT NULL,
   `ratedBy` varchar(80) NOT NULL,
-  `rate` int NOT NULL
+  `performance` int NOT NULL DEFAULT '0',
+  `flexibility` int NOT NULL DEFAULT '0',
+  `cleanliness` int NOT NULL DEFAULT '0',
+  `qualityOfWork` int NOT NULL DEFAULT '0',
+  `timeliness` int NOT NULL DEFAULT '0',
+  `communicationSkills` int NOT NULL DEFAULT '0',
+  `costManagement` int NOT NULL DEFAULT '0',
+  `professionalism` int NOT NULL DEFAULT '0',
+  `safety` int NOT NULL DEFAULT '0',
+  `materialsAndEquipment` int NOT NULL DEFAULT '0',
+  `overallCustomerSatisfaction` int NOT NULL DEFAULT '0',
+  `feedback` varchar(1000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -224,32 +242,33 @@ CREATE TABLE `users` (
   `id` bigint UNSIGNED NOT NULL,
   `userId` varchar(80) NOT NULL,
   `role` varchar(20) NOT NULL,
-  `firstName` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `firstName` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT '',
   `lastName` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `registeredDate` timestamp NOT NULL,
   `loggedIn` tinyint(1) DEFAULT NULL,
   `active` tinyint(1) DEFAULT NULL,
   `registered` tinyint(1) DEFAULT NULL,
   `lastLoginDate` timestamp NULL DEFAULT NULL,
-  `phone` varchar(20) DEFAULT NULL,
-  `fax` varchar(20) DEFAULT NULL,
-  `address` varchar(80) DEFAULT NULL,
-  `city` varchar(20) DEFAULT NULL,
-  `province` varchar(20) DEFAULT NULL,
-  `postalCode` varchar(7) DEFAULT NULL,
-  `website` varchar(80) DEFAULT NULL,
-  `middleName` varchar(80) DEFAULT NULL,
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `fax` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `address` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `city` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `province` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `postalCode` varchar(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `website` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `middleName` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `profileImage` longblob,
   `logoImage` longblob,
   `jwtToken` varchar(500) DEFAULT NULL,
   `loginCount` int DEFAULT '0',
-  `password` varchar(200) DEFAULT NULL,
+  `password` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `company` varchar(80) DEFAULT NULL,
   `jobProfileDescription` varchar(400) DEFAULT NULL,
   `deleted` tinyint(1) DEFAULT '0',
   `serviceCoverageType` varchar(10) DEFAULT NULL,
   `passwordResetRequired` tinyint(1) DEFAULT '0',
-  `lastPasswordResetDate` timestamp NULL DEFAULT NULL
+  `lastPasswordResetDate` timestamp NULL DEFAULT NULL,
+  `previousPassword` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -273,6 +292,25 @@ CREATE TABLE `userServiceCities` (
 CREATE TABLE `userServices` (
   `userId` varchar(80) NOT NULL,
   `service` varchar(80) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userSupportRequests`
+--
+
+CREATE TABLE `userSupportRequests` (
+  `messageId` bigint UNSIGNED NOT NULL,
+  `dateCreated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `userId` varchar(80) NOT NULL,
+  `subject` varchar(80) NOT NULL,
+  `type` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `description` varchar(1000) NOT NULL,
+  `adminResponse` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `respondedByAdmin` tinyint(1) NOT NULL DEFAULT '0',
+  `viewedByUser` tinyint(1) NOT NULL DEFAULT '0',
+  `adminUserId` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -385,6 +423,14 @@ ALTER TABLE `userServices`
   ADD UNIQUE KEY `userId` (`userId`,`service`);
 
 --
+-- Indexes for table `userSupportRequests`
+--
+ALTER TABLE `userSupportRequests`
+  ADD PRIMARY KEY (`messageId`),
+  ADD UNIQUE KEY `messageId` (`messageId`),
+  ADD KEY `userid_request` (`userId`);
+
+--
 -- Indexes for table `userTopAdvertisementPayments`
 --
 ALTER TABLE `userTopAdvertisementPayments`
@@ -436,6 +482,12 @@ ALTER TABLE `userPlans`
 --
 ALTER TABLE `users`
   MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `userSupportRequests`
+--
+ALTER TABLE `userSupportRequests`
+  MODIFY `messageId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `userTopAdvertisementPayments`
@@ -502,6 +554,12 @@ ALTER TABLE `userServiceCities`
 --
 ALTER TABLE `userServices`
   ADD CONSTRAINT `userId` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userSupportRequests`
+--
+ALTER TABLE `userSupportRequests`
+  ADD CONSTRAINT `userid_request` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Constraints for table `userTopAdvertisementPayments`
