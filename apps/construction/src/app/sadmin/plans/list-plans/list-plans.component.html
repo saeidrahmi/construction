@@ -283,43 +283,6 @@
                 </td>
               </ng-container>
 
-              <ng-container matColumnDef="createRfpIncluded">
-                <th
-                  mat-header-cell
-                  [class]="
-                    this.storageService.getTheme()() === 'dark'
-                      ? 'bg-dark text-light'
-                      : 'bg-light'
-                  "
-                  *matHeaderCellDef
-                  mat-sort-header
-                >
-                  Create Request for Proposal (RFP)
-                </th>
-                <td
-                  mat-cell
-                  [class]="
-                    this.storageService.getTheme()() === 'dark'
-                      ? 'bg-dark text-light'
-                      : 'bg-light'
-                  "
-                  *matCellDef="let row"
-                >
-                  <div
-                    *ngIf="
-                      row.createRfpIncluded === 1;
-                      then yesSection;
-                      else noSection
-                    "
-                  ></div>
-                  <ng-template #yesSection>
-                    <mat-icon>check_box</mat-icon></ng-template
-                  >
-                  <ng-template #noSection>
-                    <mat-icon>close</mat-icon></ng-template
-                  >
-                </td>
-              </ng-container>
               <ng-container matColumnDef="createBidsIncluded">
                 <th
                   mat-header-cell

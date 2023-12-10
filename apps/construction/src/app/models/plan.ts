@@ -6,8 +6,7 @@ export interface PlanInterface {
   deleted?: boolean;
   planDescription?: string;
   numberOfAdvertisements?: number;
-  // createRfpIncluded?: boolean;
-  createRfpIncluded?: boolean;
+
   createBidsIncluded?: boolean;
   onlineSupportIncluded?: boolean;
   originalPrice?: number;

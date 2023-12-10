@@ -14,8 +14,5 @@ export class NewRFPComponent {
   router = inject(Router);
   destroyRef = inject(DestroyRef);
   plan = this.storageService.getPlan();
-  constructor() {
-    if (this.plan()?.createRfpIncluded != 1)
-      this.router.navigate(['/general/dashboard']);
-  }
+  constructor() {}
 }

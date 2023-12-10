@@ -110,7 +110,7 @@ async function updateAdminSettingsController(req, res) {
 async function createNewPlanController(req, res) {
   try {
     const createBidsIncluded = req.body.plan.createBidsIncluded ? 1 : 0;
-    const createRfpIncluded = req.body.plan.createRfpIncluded ? 1 : 0;
+
     const onlineSupportIncluded = req.body.plan.onlineSupportIncluded ? 1 : 0;
     const customProfileIncluded = req.body.plan.customProfileIncluded ? 1 : 0;
     const planActive = req.body.plan.active ? 1 : 0;
@@ -127,14 +127,14 @@ async function createNewPlanController(req, res) {
       req.body.plan.planDescription,
       new Date(req.body.plan.dateCreated),
       req.body.plan.duration,
-      createRfpIncluded,
+
       planActive,
       createBidsIncluded,
       onlineSupportIncluded,
     ];
 
     // No results
-    const query = `INSERT INTO plans ( planName,planType,originalPrice,discountPercentage,priceAfterDiscount,startDate,expiryDate,numberOfAdvertisements,customProfileIncluded,planDescription,dateCreated,duration,createRfpIncluded,active,createBidsIncluded,onlineSupportIncluded) VALUES (?, ?,?,?,?, ?, ?,?,?, ?, ?,?, ?, ?,?,?)`;
+    const query = `INSERT INTO plans ( planName,planType,originalPrice,discountPercentage,priceAfterDiscount,startDate,expiryDate,numberOfAdvertisements,customProfileIncluded,planDescription,dateCreated,duration,active,createBidsIncluded,onlineSupportIncluded) VALUES (?, ?,?,?, ?, ?,?,?, ?, ?,?, ?, ?,?,?)`;
 
     const result = await executeQuery(query, values);
     if (result.affectedRows > 0 || result.insertId) {
@@ -151,7 +151,7 @@ async function createNewPlanController(req, res) {
         planDescription: req.body.plan.planDescription,
         dateCreated: req.body.plan.dateCreated,
         duration: req.body.plan.duration,
-        createRfpIncluded: req.body.plan.createRfpIncluded,
+
         active: req.body.plan.active,
         createBidsIncluded: req.body.plan.createBidsIncluded,
         onlineSupportIncluded: req.body.plan.onlineSupportIncluded,
@@ -254,7 +254,7 @@ async function getPlanInfoController(req, res) {
 async function updatePlanController(req, res) {
   try {
     const createBidsIncluded = req.body.plan.createBidsIncluded ? 1 : 0;
-    const createRfpIncluded = req.body.plan.createRfpIncluded ? 1 : 0;
+
     const onlineSupportIncluded = req.body.plan.onlineSupportIncluded ? 1 : 0;
     const customProfileIncluded = req.body.plan.customProfileIncluded ? 1 : 0;
     const values = [
@@ -264,14 +264,14 @@ async function updatePlanController(req, res) {
       req.body.plan.numberOfAdvertisements,
       customProfileIncluded,
       req.body.plan.planDescription,
-      createRfpIncluded,
+
       createBidsIncluded,
       onlineSupportIncluded,
       req.body.planId,
     ];
 
     // No results
-    const query = `update plans set planName=?,startDate=?,expiryDate=?,numberOfAdvertisements=?,customProfileIncluded=?,planDescription=?,createRfpIncluded=?,createBidsIncluded=?,onlineSupportIncluded=? where planId = ? `;
+    const query = `update plans set planName=?,startDate=?,expiryDate=?,numberOfAdvertisements=?,customProfileIncluded=?,planDescription=?,createBidsIncluded=?,onlineSupportIncluded=? where planId = ? `;
 
     const result = await executeQuery(query, values);
     if (result.affectedRows > 0 || result.insertId) {
@@ -288,7 +288,7 @@ async function updatePlanController(req, res) {
         planDescription: req.body.plan.planDescription,
         dateCreated: req.body.plan.dateCreated,
         duration: req.body.plan.duration,
-        createRfpIncluded: req.body.plan.createRfpIncluded,
+
         active: req.body.plan.active,
         createBidsIncluded: req.body.plan.createBidsIncluded,
         onlineSupportIncluded: req.body.plan.onlineSupportIncluded,

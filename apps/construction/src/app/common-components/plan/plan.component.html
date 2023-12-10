@@ -34,22 +34,6 @@
       <li
         class="list-group-item d-flex justify-content-between align-items-center"
       >
-        Create Request for Proposal (RFP)
-
-        <div
-          *ngIf="this.plan.createRfpIncluded; then yesSection; else noSection"
-        ></div>
-        <ng-template #yesSection>
-          <span class="badge bg-primary rounded-pill"> Yes</span></ng-template
-        >
-
-        <ng-template #noSection>
-          <span class="badge bg-primary rounded-pill"> No</span></ng-template
-        >
-      </li>
-      <li
-        class="list-group-item d-flex justify-content-between align-items-center"
-      >
         Submit Proposals for Construction Projects
 
         <div

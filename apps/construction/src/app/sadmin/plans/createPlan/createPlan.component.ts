@@ -54,7 +54,7 @@ export class CreatePlanComponent {
       startDate: new FormControl('', [Validators.required]),
       endDate: new FormControl('', [Validators.required]),
       customProfileIncluded: new FormControl('', []),
-      createRfpIncluded: new FormControl('', []),
+
       createBidsIncluded: new FormControl('', []),
       onlineSupportIncluded: new FormControl('', []),
 
@@ -133,9 +133,6 @@ export class CreatePlanComponent {
       this.plan.dateCreated = new Date();
       if (!this.form?.get('customProfileIncluded')?.value)
         this.plan.customProfileIncluded = false;
-
-      if (!this.form?.get('createRfpIncluded')?.value)
-        this.plan.createRfpIncluded = false;
 
       this.apiService
         .createNewPlan(this.plan)
