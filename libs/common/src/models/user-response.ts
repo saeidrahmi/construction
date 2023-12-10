@@ -21,6 +21,7 @@ export interface UserApiResponseInterface {
     registeredDate?: Date | null | undefined;
     active?: boolean;
     deleted?: boolean;
+    locked?: boolean;
     loggedIn?: boolean;
     registered?: boolean;
     passwordResetRequired?: boolean;

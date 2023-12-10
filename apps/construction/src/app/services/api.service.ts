@@ -76,7 +76,7 @@ export class ApiService {
           } else this.userRouting.navigateToUserMainPage();
         }),
         catchError((error) => {
-          this.toastService.error(error.message, 'Login Failed', {
+          this.toastService.error(error, 'Login Failed', {
             timeOut: this.toastrTimeoutValue,
             positionClass: 'toast-top-right',
             closeButton: true,

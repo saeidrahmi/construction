@@ -37,7 +37,7 @@ export class AppHttpInterceptor implements HttpInterceptor {
         if (error instanceof HttpErrorResponse && error.status === 401) {
           return this.handle401Error(req, next);
         } else {
-          let errorMessage = this.getErrorMessage(error);
+          const errorMessage = this.getErrorMessage(error);
           return throwError(errorMessage);
         }
       })
@@ -64,7 +64,7 @@ export class AppHttpInterceptor implements HttpInterceptor {
       catchError((error: any) => {
         // Handle refresh token error or logout user
         this.apiService.logout().subscribe();
-        return throwError('Unauthorized Access');
+        return throwError(error);
       })
     );
   }
@@ -81,10 +81,10 @@ export class AppHttpInterceptor implements HttpInterceptor {
         return 'Unauthorized access. ' + error.error.errorMessage;
       }
       case 402: {
-        return 'Request Failed: The parameters were valid but the request failed. ';
+        return 'Request Failed. ' + error.error.errorMessage;
       }
       case 403: {
-        return 'Forbidden access to resource: the API key does not have permissions to perform the request. ';
+        return 'Forbidden access to resource: ' + error.error.errorMessage;
       }
       case 404: {
         return 'Resource not found.';

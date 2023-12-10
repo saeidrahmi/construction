@@ -17,6 +17,7 @@ export interface UserInterface {
   lastName?: string;
   registeredDate?: Date | null | undefined;
   active?: boolean;
+  locked?: boolean;
   registered?: boolean;
   lastLoginDate?: Date | null | undefined;
   address?: string;

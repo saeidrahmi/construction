@@ -93,41 +93,72 @@ async function loginController(req, res) {
     if (rows.length === 0) {
       await connection.rollback();
       // User not found or incorrect credentials
-      return res.status(401).json({
-        errorMessage:
-          'The provided user ID or password is incorrect. Please double-check your credentials and try again.',
-      });
-    } else if (password != decryptItem(rows[0].password, dbSecretKey)) {
-      await connection.rollback();
-      return res.status(401).json({
+      return res.status(402).json({
         errorMessage:
           'The provided user ID or password is incorrect. Please double-check your credentials and try again.',
       });
     } else if (env.multiLoginAllowed() == false && rows[0].loggedIn) {
       await connection.rollback();
-      return res.status(401).json({
+      return res.status(402).json({
         errorMessage:
           'User is already logged in. Please log out from other sessions or contact support for assistance.',
       });
     } else if (!rows[0].registered) {
       await connection.rollback();
-      return res.status(401).json({
+      return res.status(402).json({
         errorMessage:
           'User is not registered. Please sign up to create an account.',
       });
     } else if (!rows[0].active) {
       await connection.rollback();
-      return res.status(401).json({
+      return res.status(402).json({
         errorMessage:
           'User account is currently inactive. Please contact support to activate your account.',
       });
+    } else if (rows[0].locked) {
+      await connection.rollback();
+      return res.status(402).json({
+        errorMessage:
+          'User account is currently locked. Please contact support team or reset your password.',
+      });
     } else if (rows[0].deleted) {
       await connection.rollback();
-      return res.status(401).json({
+      return res.status(402).json({
         errorMessage:
           'User account is currently closed. Please contact support to activate your account.',
       });
+    } else if (password != decryptItem(rows[0].password, dbSecretKey)) {
+      //update password retry failure
+      await executeQuery(
+        'UPDATE users SET  passFailCount = passFailCount+1 WHERE userId = ?',
+        [userId]
+      );
+
+      const lockQueryResult = await executeQuery(
+        'select  passFailCount from users  WHERE userId = ?',
+        [userId]
+      );
+
+      if (lockQueryResult[0]?.passFailCount >= 3)
+        await executeQuery('UPDATE users SET  locked = 1 WHERE userId = ?', [
+          userId,
+        ]);
+      await connection.rollback();
+      return res.status(402).json({
+        errorMessage:
+          'The provided user ID or password is incorrect. Please double-check your credentials and try again.',
+      });
     } else {
+      await connection.execute(
+        'UPDATE users SET  passFailCount = 0 WHERE userId = ?',
+        [userId]
+      );
+
+      await connection.execute(
+        'UPDATE users SET  locked = 0 WHERE userId = ?',
+        [userId]
+      );
+
       const user = {
         userId: rows[0].userId,
         role: rows[0].role,
@@ -141,6 +172,7 @@ async function loginController(req, res) {
         registeredDate: rows[0].registeredDate,
         loggedIn: rows[0].loggedIn,
         active: rows[0].active,
+        locked: rows[0].locked,
         registered: rows[0].registered,
         lastLoginDate: new Date(),
         phone: rows[0].phone,
@@ -178,7 +210,7 @@ async function loginController(req, res) {
       if (updateResult.affectedRows === 0) {
         await connection.rollback();
         // User not found or update operation failed
-        return res.status(401).json({
+        return res.status(500).json({
           errorMessage: 'Failed to login. Please try again.',
         });
       } else {
@@ -480,6 +512,7 @@ async function registerFreeUserController(req, res) {
                 lastLoginDate: userObj.lastLoginDate,
                 active: true,
                 deleted: false,
+                locked: false,
                 loggedIn: true,
                 registered: true,
                 passwordResetRequired: false,
@@ -656,6 +689,7 @@ async function registerPaidUserController(req, res) {
                   lastLoginDate: userObj.lastLoginDate,
                   active: true,
                   deleted: false,
+                  locked: false,
                   loggedIn: true,
                   registered: true,
                   passwordResetRequired: false,
