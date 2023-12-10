@@ -1,0 +1,9 @@
+a {
+  text-decoration: none;
+}
+.quill-editor {
+  height: 400px; /* Set a fixed height */
+}
+.chip-list {
+  width: 100%;
+}

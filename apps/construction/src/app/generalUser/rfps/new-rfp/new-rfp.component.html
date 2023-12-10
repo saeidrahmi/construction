@@ -6,15 +6,908 @@
           <h2 class="card-title">
             <span class="col-12">New Request for Proposal (RFP)</span>
           </h2>
-          <h6>
-            You would detail the scope of the project, any specific requirements
-            you have, the deadline for project completion, and any other
-            pertinent information in the RFP. Contractors would then submit
-            proposals detailing how they would meet your requirements and what
-            their cost for the project would be. You can then choose the
-            contractor you feel offers the best mix of reliability, quality, and
-            cost.
-          </h6>
+
+          <div class="container-fluid my-3 border border-1 p-2">
+            <div class="row">
+              <div class="col">
+                <app-form-errors [formErrors]="formErrors"></app-form-errors>
+              </div>
+            </div>
+
+            <div class="accordion" id="previousPlan">
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button
+                    class="accordion-button"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#collapseOne"
+                    aria-expanded="true"
+                    aria-controls="collapseOne"
+                  >
+                    Guidelines for a Successful Campaign
+                  </button>
+                </h2>
+                <div
+                  id="collapseOne"
+                  class="accordion-collapse show"
+                  data-bs-parent="#previousPlan"
+                >
+                  <div class="accordion-body">
+                    <div class="row">
+                      <div class="col">
+                        <div class="alert alert-warning" role="alert">
+                          <h4 class="alert-heading">
+                            <i class="bi bi-info-circle me-1"></i>Create a
+                            Stellar Advertisement: Guidelines for a Successful
+                            Campaign
+                          </h4>
+                          <hr />
+                          <p>
+                            Exciting times! You're about to embark on creating a
+                            compelling advertisement to showcase your offerings.
+                            Before you get started, please take a moment to read
+                            through our guidelines to ensure your ad meets our
+                            platform's standards.
+                          </p>
+
+                          <p class="fw-bold">
+                            Guidelines for Creating a Successful Ad:
+                          </p>
+                          <ul>
+                            <li>
+                              Accurate Information: Provide precise and accurate
+                              details for all required fields. This ensures
+                              potential customers have a clear understanding of
+                              your offering.
+                            </li>
+                            <li>
+                              Please make sure that you have updated your
+                              <span>
+                                <a
+                                  class="text-primary"
+                                  [routerLink]="'/general/user-services'"
+                                  routerLinkActive="active"
+                                  [routerLinkActiveOptions]="{ exact: true }"
+                                >
+                                  services and the service location coverages</a
+                                ></span
+                              >
+                              and also your
+                              <span>
+                                <a
+                                  class="text-primary"
+                                  [routerLink]="'/general/user-profile'"
+                                  routerLinkActive="active"
+                                  [routerLinkActiveOptions]="{ exact: true }"
+                                >
+                                  profile</a
+                                ></span
+                              >
+                              is up to date initially.
+                            </li>
+                            <li>
+                              Promote Your Ad to Top: This
+                              <span>
+                                <a
+                                  class="text-primary"
+                                  [routerLink]="'/top-add-info'"
+                                  routerLinkActive="active"
+                                  [routerLinkActiveOptions]="{ exact: true }"
+                                >
+                                  feature</a
+                                ></span
+                              >
+                              highlights a maximum of five Top Ads at any given
+                              time within the dedicated Top Ad section,
+                              positioned prominently at the top of search
+                              results. This ensures optimal visibility for your
+                              listings, increasing their exposure and potential
+                              for engagement.
+                            </li>
+                            <li>
+                              Images: Use high-quality images that adhere to our
+                              specifications. This enhances the visual appeal of
+                              your ad and attracts more attention. Refer to our
+                              image guidelines for optimal results.
+                            </li>
+                            <li>
+                              Avoid Fraudulent Activities: Engage in fair and
+                              transparent practices. Any form of fraudulent
+                              activity is strictly prohibited and will result in
+                              immediate action.
+                            </li>
+                            <li>
+                              No Inappropriate Materials or Images: Refrain from
+                              posting content that is offensive, explicit, or
+                              inappropriate. This includes images, text, or any
+                              other materials that violate community standards.
+                            </li>
+                          </ul>
+                          <p class="fw-bold">Review Process:</p>
+                          <ul>
+                            <li>
+                              All ads will be reviewed by our admin team before
+                              being posted to the platform.
+                            </li>
+                            <li>
+                              We reserve the right to reject ads that do not
+                              adhere to our guidelines.
+                            </li>
+                          </ul>
+                          <p class="fw-bold">Rules for a Great Ad:</p>
+                          <ul>
+                            <li>
+                              Clarity: Ensure your ad clearly communicates your
+                              product or service.
+                            </li>
+                            <li>
+                              Relevance: Craft ads that are relevant to your
+                              target audience.
+                            </li>
+                            <li>
+                              Professionalism: Maintain a professional tone and
+                              presentation in your ad.
+                            </li>
+                            <li>
+                              Honesty: Be truthful and transparent about your
+                              offerings.
+                            </li>
+                          </ul>
+                          <h4>
+                            Create Stunning Ads with Real-Time Preview and
+                            Enhanced Security Features
+                          </h4>
+                          <p>
+                            We're thrilled that you're considering creating a
+                            new advertisement on our platform! We want to ensure
+                            you have the best experience possible, so here are
+                            some key features to keep in mind:
+                          </p>
+                          <ul>
+                            <li>
+                              Real-Time Preview: While creating your ad, you can
+                              enjoy a real-time preview. This means you can see
+                              exactly how your ad will appear in both the
+                              general search results and the detailed view when
+                              users click for more information. Make sure to
+                              tailor your content for maximum impact!
+                            </li>
+                            <li>
+                              Enhanced Security Features: To prioritize your
+                              security and privacy, our system allows you to
+                              apply permissions to various types of information
+                              associated with your ad. You have control over
+                              what information is displayed, providing you with
+                              added flexibility and peace of mind.
+                              <p
+                                class="fw-bold"
+                                style="margin-bottom: 3px; margin-top: 3px"
+                              >
+                                Permission Options:
+                              </p>
+                              <p style="margin-bottom: 3px; margin-top: 3px">
+                                Use the checkboxes to specify whether you want
+                                to display or not display each type of
+                                information. This level of customization ensures
+                                that your ad suits your preferences while
+                                providing the information you want to share.
+                              </p>
+                              <ul>
+                                <li>Contact Address: [Show/Hide]</li>
+                                <li>phone Number: [Show/Hide]</li>
+                                <li>Email Address: [Show/Hide]</li>
+                                <li>Profile Picture: [Show/Hide]</li>
+                                <li>Chat Messaging: [Show/Hide]</li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row p-2">
+              <div class="col">
+                <form [formGroup]="form">
+                  <mat-horizontal-stepper
+                    formArrayName="formArray"
+                    linear
+                    #stepper
+                    animationDuration="500"
+                    [class]="
+                      this.storageService.getTheme()() === 'dark'
+                        ? 'bg-dark'
+                        : 'bg-light'
+                    "
+                  >
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="0"
+                      [stepControl]="formArray?.get([0])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >Advertisement Categories/Tags</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid">
+                        <div class="row">
+                          <div class="col-12">
+                            <!-- Include this message in your advertisement creation form or template -->
+
+                            <div class="alert alert-info">
+                              <p><strong>Attention Advertisers:</strong></p>
+                              <p>
+                                To enhance the visibility and relevance of your
+                                advertisement, please ensure you add all
+                                appropriate categories and tags. This will help
+                                potential customers find your services more
+                                easily. Follow these tips:
+                              </p>
+                              <ul>
+                                <li>
+                                  <strong>Categorize accurately:</strong>
+                                  Choose the most relevant category for your
+                                  services.
+                                </li>
+                                <li>
+                                  <strong>Add specific tags:</strong> Include
+                                  tags that describe key features of your
+                                  product or service.
+                                </li>
+                                <li>
+                                  <strong>Be comprehensive:</strong> Think about
+                                  what terms users might search for when looking
+                                  for your type of offering.
+                                </li>
+                              </ul>
+                              <p>
+                                Thank you for helping us create a more organized
+                                and user-friendly platform!
+                              </p>
+                            </div>
+                          </div>
+                          <div class="col-md-12 border rounded my-3 p-3">
+                            <mat-form-field class="chip-list">
+                              <mat-label>Current Categories/Tags</mat-label>
+                              <mat-chip-grid
+                                #chipGrid
+                                aria-label="Service selection"
+                                formControlName="tags"
+                                [(ngModel)]="advertisement.tags"
+                              >
+                                <mat-chip-row
+                                  *ngFor="let tag of myTags"
+                                  (removed)="removeTag(tag)"
+                                >
+                                  <span class="text-primary">{{ tag }}</span>
+                                  <button
+                                    matChipRemove
+                                    [attr.aria-label]="'remove ' + tag"
+                                  >
+                                    <mat-icon>cancel</mat-icon>
+                                  </button>
+                                </mat-chip-row>
+                              </mat-chip-grid>
+                              <input
+                                placeholder="New Tag..."
+                                #tagInput
+                                [formControl]="tagCtrl"
+                                [matChipInputFor]="chipGrid"
+                                [matAutocomplete]="auto"
+                                [matChipInputSeparatorKeyCodes]="
+                                  separatorKeysCodes
+                                "
+                                (matChipInputTokenEnd)="addTag($event)"
+                              />
+                              <mat-autocomplete
+                                #auto="matAutocomplete"
+                                (optionSelected)="selectedTag($event)"
+                              >
+                                <mat-option
+                                  *ngFor="let tag of filteredTags | async"
+                                  [value]="tag"
+                                >
+                                  <span class="">{{ tag }}</span>
+                                </mat-option>
+                              </mat-autocomplete>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          id="stepTwoBack"
+                          (click)="goForward(stepper, 0)"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </mat-step>
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="1"
+                      [stepControl]="formArray?.get([1])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >Basic Information</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid my-3 border rounded p-3">
+                        <div class="row">
+                          <div
+                            class="col-md-3 mt-1 form-labe form-label"
+                            for="formFile"
+                          >
+                            Header image
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-control"
+                              type="file"
+                              formControlName="headerImage"
+                              accept="image/*"
+                              aria-describedby="fileHelpBlock"
+                              (change)="headerImageHandler($event)"
+                            />
+                            <div id="fileHelpBlock" class="form-text">
+                              <span class="small-text mx-2">
+                                Acceptable image file ({{
+                                  this.commonUtility._imageMimeTypes
+                                }}). <br
+                              /></span>
+                              <span class="small-text mx-2">
+                                Header image width should be between
+                                {{
+                                  this.commonUtility
+                                    ._advertisementHeaderMinMaxWidthHeightPixel[0][0]
+                                }}
+                                -
+                                {{
+                                  this.commonUtility
+                                    ._advertisementHeaderMinMaxWidthHeightPixel[0][1]
+                                }}
+                                pixels. Header image height should be between
+                                {{
+                                  this.commonUtility
+                                    ._advertisementHeaderMinMaxWidthHeightPixel[1][0]
+                                }}
+                                -
+                                {{
+                                  this.commonUtility
+                                    ._advertisementHeaderMinMaxWidthHeightPixel[1][1]
+                                }}
+                                pixels. <br />
+                              </span>
+                              <span class="small-text mx-2">
+                                Maximum file size of
+                                {{
+                                  utilityService.convertBytesToKbOrMb(
+                                    this.commonUtility
+                                      ._advertisementHeaderMaxSize
+                                  )
+                                }}
+                                .</span
+                              >
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row" *ngIf="this.headerImageFile">
+                          <div class="col-md-3"></div>
+                          <div class="col-md-8">
+                            <div class="file-item my-2">
+                              <table
+                                class="table table-bordered table-responsive align-middle"
+                              >
+                                <thead>
+                                  <tr>
+                                    <th>File name</th>
+                                    <th>File type</th>
+                                    <th>File size</th>
+                                    <th>Dimensions</th>
+                                    <th>Action</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td>{{ headerImageFile?.name }}</td>
+                                    <td>{{ headerImageFile?.type }}</td>
+                                    <td>
+                                      {{
+                                        utilityService.convertBytesToKbOrMb(
+                                          headerImageFile?.size
+                                        )
+                                      }}
+                                    </td>
+                                    <td>
+                                      {{ imageWidth + ' X ' + imageHeight }}
+                                    </td>
+
+                                    <td>
+                                      <button
+                                        class="btn btn-danger"
+                                        (click)="deleteHeaderImage()"
+                                      >
+                                        Delete
+                                      </button>
+                                    </td>
+                                  </tr>
+                                  <tr>
+                                    <td colspan="5" style="text-align: center">
+                                      <img
+                                        [src]="this.advertisement?.headerImage"
+                                        style="
+                                          max-width: 800px;
+                                          max-height: 400px;
+                                        "
+                                      />
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">Title</div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-control"
+                              placeholder="Enter title..."
+                              formControlName="title"
+                              [(ngModel)]="advertisement.title"
+                            />
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-3 mt-2">Description</div>
+                          <div class="col-md-8">
+                            <quill-editor
+                              class="quill-editor"
+                              [(ngModel)]="advertisement.description"
+                              formControlName="description"
+                            ></quill-editor>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          id="stepTwoBack"
+                          (click)="goForward(stepper, 0)"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </mat-step>
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="2"
+                      [stepControl]="formArray?.get([2])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >Display Sections</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid border border-black p-4">
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">
+                            Top Advertisement
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="topAdvertisement"
+                              [(ngModel)]="advertisement.topAdvertisement"
+                            />
+                            &nbsp; Extra {{ topAdPrice | currency }} for top
+                            Advertisement is requierd.
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">
+                            Show Picture
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showPicture"
+                              [(ngModel)]="advertisement.showPicture"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">
+                            Show My Phone
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showPhone"
+                              [(ngModel)]="advertisement.showPhone"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">
+                            Show Address
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showAddress"
+                              [(ngModel)]="advertisement.showAddress"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">Show Chat</div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showChat"
+                              [(ngModel)]="advertisement.showChat"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">Show Email</div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="showEmail"
+                              [(ngModel)]="advertisement.showEmail"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          matStepperPrevious
+                          id="stepTwoBack"
+                        >
+                          Back
+                        </button>
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          matStepperNext
+                          id="stepTwoNext"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </mat-step>
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="3"
+                      [stepControl]="formArray?.get([3])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >Slider Images</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid border border-black p-4">
+                        <div class="row my-2 border border-1 rounded my-2 p-2">
+                          <div class="container-fluid">
+                            <div class="row">
+                              <div class="col">
+                                <h5>Slider Images</h5>
+                                <h6>
+                                  You can upload up to
+                                  {{ maxAdvertisementSliderImage }} images
+                                </h6>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <ngx-dropzone
+                                  [multiple]="true"
+                                  (change)="onFilesAdded($event)"
+                                  accept="image/*"
+                                >
+                                  <p>Drag and drop files here</p>
+                                </ngx-dropzone>
+                                <div id="fileHelpBlock" class="form-text">
+                                  <span class="small-text mx-2">
+                                    Acceptable image file ({{
+                                      this.commonUtility._imageMimeTypes
+                                    }}). <br
+                                  /></span>
+                                  <span class="small-text mx-2">
+                                    Slider image width should be between
+                                    {{
+                                      this.commonUtility
+                                        ._sliderPhotoMinMaxWidthHeightPixel[0][0]
+                                    }}
+                                    -
+                                    {{
+                                      this.commonUtility
+                                        ._sliderPhotoMinMaxWidthHeightPixel[0][1]
+                                    }}
+
+                                    Height should be between
+                                    {{
+                                      this.commonUtility
+                                        ._sliderPhotoMinMaxWidthHeightPixel[1][0]
+                                    }}
+                                    -
+                                    {{
+                                      this.commonUtility
+                                        ._sliderPhotoMinMaxWidthHeightPixel[1][1]
+                                    }}. <br />
+                                  </span>
+                                  <span class="small-text mx-2">
+                                    Maximum file size of
+                                    {{
+                                      utilityService.convertBytesToKbOrMb(
+                                        this.commonUtility._sliderPhotoMaxSize
+                                      )
+                                    }}
+                                    .</span
+                                  >
+                                </div>
+                                <div class="file-item my-2">
+                                  <table
+                                    class="table table-bordered table-responsive align-middle"
+                                  >
+                                    <thead>
+                                      <tr>
+                                        <th>File name</th>
+                                        <th>File type</th>
+                                        <th>File size</th>
+                                        <th>Dimensions</th>
+                                        <th>Action</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody
+                                      *ngFor="
+                                        let file of this.advertisement
+                                          ?.sliderImageFiles;
+                                        let i = index
+                                      "
+                                    >
+                                      <tr>
+                                        <td>{{ file.name }}</td>
+                                        <td>{{ file.type }}</td>
+                                        <td>
+                                          {{
+                                            utilityService.convertBytesToKbOrMb(
+                                              file.size
+                                            )
+                                          }}
+                                        </td>
+
+                                        <td>
+                                          {{ file.width + ' X ' + file.height }}
+                                        </td>
+
+                                        <td>
+                                          <button
+                                            class="btn btn-danger"
+                                            (click)="onFileDeleted(i)"
+                                          >
+                                            Delete
+                                          </button>
+                                        </td>
+                                      </tr>
+                                      <tr>
+                                        <td
+                                          colspan="5"
+                                          style="text-align: center"
+                                        >
+                                          <img
+                                            [src]="getObjectURL(file)"
+                                            style="
+                                              max-width: 800px;
+                                              max-height: 400px;
+                                            "
+                                          />
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                            <!--
+                              <div formArrayName="sliderImages">
+                                <div
+                                  *ngFor="
+                                    let group of getClienttFormArrayControls();
+                                    let i = index
+                                  "
+                                  [formGroupName]="i"
+                                  class="border border-1 p-2 my-2"
+                                >
+
+                                  <div class="row">
+                                    <div class="col-md-3 mt-1 form-labe">
+                                      Image
+                                    </div>
+                                    <div class="col-md-8">
+                                      <input
+                                        type="file"
+                                        class="form-control"
+                                        placeholder="Enter description.."
+                                        formControlName="sliderImage"
+                                        accept="image/*"
+                                        aria-describedby="fileHelpBlock"
+                                        (change)="sliderImageHandler($event, i)"
+                                      />
+                                    </div>
+                                  </div>
+
+                                  <div class="row">
+                                    <div class="col">
+                                      <button
+                                        type="button"
+                                        class="btn btn-secondary my-2"
+                                        (click)="removeClientFormGroup(i)"
+                                      >
+                                        Remove Slider Image
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col">
+                                    <button
+                                      type="button"
+                                      class="btn btn-primary my-2"
+                                      (click)="addClientFormControl()"
+                                      [disabled]="
+                                        getClienttFormArrayControls().length >=
+                                        maxAdvertisementSliderImage
+                                      "
+                                    >
+                                      Add Slider Image
+                                    </button>
+                                  </div>
+                                </div>
+                              </div> -->
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          matStepperPrevious
+                          id="stepTwoBack"
+                        >
+                          Back
+                        </button>
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-4"
+                          (click)="submitNewAd(stepper)"
+                          *ngIf="!advertisement?.topAdvertisement"
+                        >
+                          Submit
+                        </button>
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          matStepperNext
+                          id="stepThreeNext"
+                          *ngIf="advertisement?.topAdvertisement"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </mat-step>
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      *ngIf="advertisement?.topAdvertisement"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >Process Payment</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid border border-black p-4">
+                        <div class="row row-cols-1">
+                          <div class="col-8 font-weight-bold border-bottom">
+                            payment.
+                          </div>
+                        </div>
+                        <div class="row row-cols-4">
+                          <div class="col">{{ advertisement | json }}</div>
+                        </div>
+                      </div>
+
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          matStepperPrevious
+                          id="stepTwoBack"
+                        >
+                          Back
+                        </button>
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-4"
+                          (click)="submitNewAd(stepper)"
+                        >
+                          Submit
+                        </button>
+                      </div>
+                    </mat-step>
+                  </mat-horizontal-stepper>
+                </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col border-border-1 my-2">
+                <h4>Preview</h4>
+                <app-preview-advertisement
+                  [advertisement]="advertisement"
+                ></app-preview-advertisement>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
