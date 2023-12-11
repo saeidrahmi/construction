@@ -58,6 +58,9 @@ import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
 import { UserReviewsComponent } from './user-reviews/user-reviews.component';
 import { QuillModule } from 'ngx-quill';
 import { QuillConfigModule } from 'ngx-quill/config';
+import { RfpGuidelineComponent } from './rfps/rfp-guidline/rfp-guidline.component';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @NgModule({
   declarations: [
@@ -87,8 +90,11 @@ import { QuillConfigModule } from 'ngx-quill/config';
     MyRFPComponent,
     NewRFPComponent,
     UserReviewsComponent,
+    RfpGuidelineComponent,
   ],
   imports: [
+    MatDatepickerModule,
+    MatNativeDateModule,
     CommonModule,
     GeneralRoutingModule,
     ReactiveFormsModule,

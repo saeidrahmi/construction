@@ -8,12 +8,6 @@
           </h2>
 
           <div class="container-fluid my-3 border border-1 p-2">
-            <div class="row">
-              <div class="col">
-                <app-form-errors [formErrors]="formErrors"></app-form-errors>
-              </div>
-            </div>
-
             <div class="accordion" id="previousPlan">
               <div class="accordion-item">
                 <h2 class="accordion-header">
@@ -38,73 +32,29 @@
                       <div class="col">
                         <div class="alert alert-warning" role="alert">
                           <h4 class="alert-heading">
-                            <i class="bi bi-info-circle me-1"></i>Create a
-                            Stellar Advertisement: Guidelines for a Successful
-                            Campaign
+                            <i class="bi bi-info-circle me-1"></i>Creating a
+                            successful Request for Proposal (RFP) for
+                            construction
                           </h4>
                           <hr />
                           <p>
-                            Exciting times! You're about to embark on creating a
-                            compelling advertisement to showcase your offerings.
-                            Before you get started, please take a moment to read
-                            through our guidelines to ensure your ad meets our
-                            platform's standards.
+                            Creating a successful Request for Proposal (RFP) for
+                            construction projects involves providing clear and
+                            comprehensive information to attract qualified
+                            contractors and ensure accurate and competitive
+                            bids. Here are guidelines to help you draft a
+                            successful construction RFP for posting online:
                           </p>
 
-                          <p class="fw-bold">
-                            Guidelines for Creating a Successful Ad:
-                          </p>
+                          <p class="fw-bold">General Guidelines</p>
                           <ul>
                             <li>
                               Accurate Information: Provide precise and accurate
                               details for all required fields. This ensures
                               potential customers have a clear understanding of
-                              your offering.
+                              your project requirements.
                             </li>
-                            <li>
-                              Please make sure that you have updated your
-                              <span>
-                                <a
-                                  class="text-primary"
-                                  [routerLink]="'/general/user-services'"
-                                  routerLinkActive="active"
-                                  [routerLinkActiveOptions]="{ exact: true }"
-                                >
-                                  services and the service location coverages</a
-                                ></span
-                              >
-                              and also your
-                              <span>
-                                <a
-                                  class="text-primary"
-                                  [routerLink]="'/general/user-profile'"
-                                  routerLinkActive="active"
-                                  [routerLinkActiveOptions]="{ exact: true }"
-                                >
-                                  profile</a
-                                ></span
-                              >
-                              is up to date initially.
-                            </li>
-                            <li>
-                              Promote Your Ad to Top: This
-                              <span>
-                                <a
-                                  class="text-primary"
-                                  [routerLink]="'/top-add-info'"
-                                  routerLinkActive="active"
-                                  [routerLinkActiveOptions]="{ exact: true }"
-                                >
-                                  feature</a
-                                ></span
-                              >
-                              highlights a maximum of five Top Ads at any given
-                              time within the dedicated Top Ad section,
-                              positioned prominently at the top of search
-                              results. This ensures optimal visibility for your
-                              listings, increasing their exposure and potential
-                              for engagement.
-                            </li>
+
                             <li>
                               Images: Use high-quality images that adhere to our
                               specifications. This enhances the visual appeal of
@@ -124,7 +74,7 @@
                               other materials that violate community standards.
                             </li>
                           </ul>
-                          <p class="fw-bold">Review Process:</p>
+                          <p class="fw-bold">System Review Process:</p>
                           <ul>
                             <li>
                               All ads will be reviewed by our admin team before
@@ -135,73 +85,8 @@
                               adhere to our guidelines.
                             </li>
                           </ul>
-                          <p class="fw-bold">Rules for a Great Ad:</p>
-                          <ul>
-                            <li>
-                              Clarity: Ensure your ad clearly communicates your
-                              product or service.
-                            </li>
-                            <li>
-                              Relevance: Craft ads that are relevant to your
-                              target audience.
-                            </li>
-                            <li>
-                              Professionalism: Maintain a professional tone and
-                              presentation in your ad.
-                            </li>
-                            <li>
-                              Honesty: Be truthful and transparent about your
-                              offerings.
-                            </li>
-                          </ul>
-                          <h4>
-                            Create Stunning Ads with Real-Time Preview and
-                            Enhanced Security Features
-                          </h4>
-                          <p>
-                            We're thrilled that you're considering creating a
-                            new advertisement on our platform! We want to ensure
-                            you have the best experience possible, so here are
-                            some key features to keep in mind:
-                          </p>
-                          <ul>
-                            <li>
-                              Real-Time Preview: While creating your ad, you can
-                              enjoy a real-time preview. This means you can see
-                              exactly how your ad will appear in both the
-                              general search results and the detailed view when
-                              users click for more information. Make sure to
-                              tailor your content for maximum impact!
-                            </li>
-                            <li>
-                              Enhanced Security Features: To prioritize your
-                              security and privacy, our system allows you to
-                              apply permissions to various types of information
-                              associated with your ad. You have control over
-                              what information is displayed, providing you with
-                              added flexibility and peace of mind.
-                              <p
-                                class="fw-bold"
-                                style="margin-bottom: 3px; margin-top: 3px"
-                              >
-                                Permission Options:
-                              </p>
-                              <p style="margin-bottom: 3px; margin-top: 3px">
-                                Use the checkboxes to specify whether you want
-                                to display or not display each type of
-                                information. This level of customization ensures
-                                that your ad suits your preferences while
-                                providing the information you want to share.
-                              </p>
-                              <ul>
-                                <li>Contact Address: [Show/Hide]</li>
-                                <li>phone Number: [Show/Hide]</li>
-                                <li>Email Address: [Show/Hide]</li>
-                                <li>Profile Picture: [Show/Hide]</li>
-                                <li>Chat Messaging: [Show/Hide]</li>
-                              </ul>
-                            </li>
-                          </ul>
+
+                          <app-rfp-guidline></app-rfp-guidline>
                         </div>
                       </div>
                     </div>
@@ -209,7 +94,11 @@
                 </div>
               </div>
             </div>
-
+            <div class="row">
+              <div class="col">
+                <app-form-errors [formErrors]="formErrors"></app-form-errors>
+              </div>
+            </div>
             <div class="row p-2">
               <div class="col">
                 <form [formGroup]="form">
@@ -342,6 +231,98 @@
                       [optional]="false"
                       formGroupName="1"
                       [stepControl]="formArray?.get([1])"
+                    >
+                      <ng-template matStepLabel
+                        ><span
+                          [class]="
+                            this.storageService.getTheme()() === 'dark'
+                              ? 'text-light'
+                              : ''
+                          "
+                          >RFP Date Setting</span
+                        ></ng-template
+                      >
+                      <div class="container-fluid my-3 border rounded p-3">
+                        <div class="row my-2">
+                          <div class="col-md-3 mt-1 form-labe">
+                            RFP Effective Dates
+                          </div>
+                          <div class="col-md-8">
+                            <mat-form-field
+                              appearance="outline"
+                              [ngStyle]="
+                                this.storageService.getTheme()() === 'dark'
+                                  ? { 'background-color': 'dark' }
+                                  : { 'background-color': 'light' }
+                              "
+                            >
+                              <mat-label
+                                [class]="
+                                  this.storageService.getTheme()() === 'dark'
+                                    ? 'text-white'
+                                    : ''
+                                "
+                                >Effective Dates</mat-label
+                              >
+                              <mat-date-range-input
+                                [formGroup]="this.formArray?.get([1])"
+                                [rangePicker]="campaignOnePicker"
+                                [comparisonStart]="advertisement.startDate"
+                                [comparisonEnd]="advertisement.endDate"
+                              >
+                                <input
+                                  matStartDate
+                                  placeholder="Start date"
+                                  formControlName="startDate"
+                                  [(ngModel)]="advertisement.startDate"
+                                  [class]="
+                                    this.storageService.getTheme()() === 'dark'
+                                      ? 'text-white'
+                                      : ''
+                                  "
+                                />
+                                <input
+                                  matEndDate
+                                  placeholder="End date"
+                                  formControlName="endDate"
+                                  [(ngModel)]="advertisement.endDate"
+                                  [class]="
+                                    this.storageService.getTheme()() === 'dark'
+                                      ? 'text-white'
+                                      : ''
+                                  "
+                                />
+                              </mat-date-range-input>
+                              <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                              <mat-datepicker-toggle
+                                matIconSuffix
+                                [for]="campaignOnePicker"
+                              ></mat-datepicker-toggle>
+                              <mat-date-range-picker
+                                #campaignOnePicker
+                              ></mat-date-range-picker>
+                            </mat-form-field>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mt-5">
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          id="stepTwoBack"
+                          (click)="goForward(stepper, 1)"
+                        >
+                          Next
+                        </button>
+                      </div>
+                    </mat-step>
+
+                    <mat-step
+                      linear
+                      [optional]="false"
+                      formGroupName="2"
+                      [stepControl]="formArray?.get([2])"
                     >
                       <ng-template matStepLabel
                         ><span
@@ -497,7 +478,7 @@
                           color="primary"
                           class="mx-1"
                           id="stepTwoBack"
-                          (click)="goForward(stepper, 0)"
+                          (click)="goForward(stepper, 2)"
                         >
                           Next
                         </button>
@@ -506,8 +487,8 @@
                     <mat-step
                       linear
                       [optional]="false"
-                      formGroupName="2"
-                      [stepControl]="formArray?.get([2])"
+                      formGroupName="3"
+                      [stepControl]="formArray?.get([3])"
                     >
                       <ng-template matStepLabel
                         ><span
@@ -522,21 +503,6 @@
                       <div class="container-fluid border border-black p-4">
                         <div class="row">
                           <div class="col-md-3 mt-1 form-labe">
-                            Top Advertisement
-                          </div>
-                          <div class="col-md-8">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              formControlName="topAdvertisement"
-                              [(ngModel)]="advertisement.topAdvertisement"
-                            />
-                            &nbsp; Extra {{ topAdPrice | currency }} for top
-                            Advertisement is requierd.
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-3 mt-1 form-labe">
                             Show Picture
                           </div>
                           <div class="col-md-8">
@@ -545,54 +511,6 @@
                               type="checkbox"
                               formControlName="showPicture"
                               [(ngModel)]="advertisement.showPicture"
-                            />
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-3 mt-1 form-labe">
-                            Show My Phone
-                          </div>
-                          <div class="col-md-8">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              formControlName="showPhone"
-                              [(ngModel)]="advertisement.showPhone"
-                            />
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-3 mt-1 form-labe">
-                            Show Address
-                          </div>
-                          <div class="col-md-8">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              formControlName="showAddress"
-                              [(ngModel)]="advertisement.showAddress"
-                            />
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-3 mt-1 form-labe">Show Chat</div>
-                          <div class="col-md-8">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              formControlName="showChat"
-                              [(ngModel)]="advertisement.showChat"
-                            />
-                          </div>
-                        </div>
-                        <div class="row">
-                          <div class="col-md-3 mt-1 form-labe">Show Email</div>
-                          <div class="col-md-8">
-                            <input
-                              class="form-check-input"
-                              type="checkbox"
-                              formControlName="showEmail"
-                              [(ngModel)]="advertisement.showEmail"
                             />
                           </div>
                         </div>
@@ -622,8 +540,8 @@
                     <mat-step
                       linear
                       [optional]="false"
-                      formGroupName="3"
-                      [stepControl]="formArray?.get([3])"
+                      formGroupName="4"
+                      [stepControl]="formArray?.get([4])"
                     >
                       <ng-template matStepLabel
                         ><span
@@ -643,7 +561,7 @@
                                 <h5>Slider Images</h5>
                                 <h6>
                                   You can upload up to
-                                  {{ maxAdvertisementSliderImage }} images
+                                  {{ maxRFPSliderImage }} images
                                 </h6>
                               </div>
                             </div>
@@ -758,62 +676,6 @@
                                 </div>
                               </div>
                             </div>
-                            <!--
-                              <div formArrayName="sliderImages">
-                                <div
-                                  *ngFor="
-                                    let group of getClienttFormArrayControls();
-                                    let i = index
-                                  "
-                                  [formGroupName]="i"
-                                  class="border border-1 p-2 my-2"
-                                >
-
-                                  <div class="row">
-                                    <div class="col-md-3 mt-1 form-labe">
-                                      Image
-                                    </div>
-                                    <div class="col-md-8">
-                                      <input
-                                        type="file"
-                                        class="form-control"
-                                        placeholder="Enter description.."
-                                        formControlName="sliderImage"
-                                        accept="image/*"
-                                        aria-describedby="fileHelpBlock"
-                                        (change)="sliderImageHandler($event, i)"
-                                      />
-                                    </div>
-                                  </div>
-
-                                  <div class="row">
-                                    <div class="col">
-                                      <button
-                                        type="button"
-                                        class="btn btn-secondary my-2"
-                                        (click)="removeClientFormGroup(i)"
-                                      >
-                                        Remove Slider Image
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="row">
-                                  <div class="col">
-                                    <button
-                                      type="button"
-                                      class="btn btn-primary my-2"
-                                      (click)="addClientFormControl()"
-                                      [disabled]="
-                                        getClienttFormArrayControls().length >=
-                                        maxAdvertisementSliderImage
-                                      "
-                                    >
-                                      Add Slider Image
-                                    </button>
-                                  </div>
-                                </div>
-                              </div> -->
                           </div>
                         </div>
                       </div>
@@ -828,32 +690,19 @@
                         >
                           Back
                         </button>
-                        <button
-                          mat-stroked-button
-                          color="primary"
-                          class="mx-4"
-                          (click)="submitNewAd(stepper)"
-                          *ngIf="!advertisement?.topAdvertisement"
-                        >
-                          Submit
-                        </button>
+
                         <button
                           mat-stroked-button
                           color="primary"
                           class="mx-1"
                           matStepperNext
                           id="stepThreeNext"
-                          *ngIf="advertisement?.topAdvertisement"
                         >
                           Next
                         </button>
                       </div>
                     </mat-step>
-                    <mat-step
-                      linear
-                      [optional]="false"
-                      *ngIf="advertisement?.topAdvertisement"
-                    >
+                    <mat-step linear [optional]="false">
                       <ng-template matStepLabel
                         ><span
                           [class]="
@@ -889,7 +738,7 @@
                           mat-stroked-button
                           color="primary"
                           class="mx-4"
-                          (click)="submitNewAd(stepper)"
+                          (click)="submitNewRfp(stepper)"
                         >
                           Submit
                         </button>

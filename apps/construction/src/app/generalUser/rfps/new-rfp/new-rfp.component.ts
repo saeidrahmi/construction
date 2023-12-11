@@ -30,7 +30,7 @@ import {
 import { AdvertisementInterface } from '../../../models/advertisement';
 import { CommonUtilityService } from '../../../services/common-utility.service';
 import { Router } from '@angular/router';
-import { AdvertisementCommunicationService } from '../../../services/advertisementServcie';
+
 import { FormService } from '../../../services/form.service';
 import { MatStepper } from '@angular/material/stepper';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
@@ -39,6 +39,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserService } from '../../../services/user-service';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { RFPInterface } from '../../../models/rfp';
 
 @Component({
   selector: 'app-new-rfp',
@@ -62,24 +63,25 @@ export class NewRFPComponent {
   formService = inject(FormService);
   router = inject(Router);
   storageService = inject(StorageService);
-  advertisementCommunicationService = inject(AdvertisementCommunicationService);
+
   commonUtility = inject(CommonUtilityService);
   destroyRef = inject(DestroyRef);
-  canAdvertise: boolean;
+
   tagCtrl = new FormControl('');
   generalInfo: any;
   tax;
   headerImageFile: any;
-  topAdPrice: any;
-  maxAdvertisementSliderImage: number;
-  userAdvertisementDuration: number;
+  rfpPrice: any;
+  maxRFPSliderImage: number;
+  userRFPDuration: number;
   sliderImages: any[] = [];
   userId = this.storageService?.getUserId();
   constructionServices = this.userService.getConstructionServices();
-  advertisement: AdvertisementInterface;
+  advertisement: RFPInterface;
 
   imageWidth: number;
   imageHeight: number;
+  rfpDiscount: any;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -94,10 +96,11 @@ export class NewRFPComponent {
       .pipe(
         takeUntilDestroyed(),
         tap((info: any) => {
-          this.topAdPrice = info.topAdvertisementPrice;
+          this.rfpPrice = info.rfpPrice;
+          this.rfpDiscount = info.rfpDiscount;
           this.tax = info.tax;
-          this.maxAdvertisementSliderImage = info.maxAdvertisementSliderImage;
-          this.userAdvertisementDuration = info.userAdvertisementDuration;
+          this.maxRFPSliderImage = info.maxRFPSliderImage;
+          this.userRFPDuration = info.userRFPDuration;
         })
       )
       .subscribe();
@@ -113,22 +116,20 @@ export class NewRFPComponent {
           tags: new FormControl('', [Validators.required]),
         }),
         this.fb.group({
+          startDate: new FormControl('', [Validators.required]),
+          endDate: new FormControl('', [Validators.required]),
+        }),
+        this.fb.group({
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
           headerImage: new FormControl('', []),
         }),
         this.fb.group({
-          topAdvertisement: new FormControl('', []),
-          showPhone: new FormControl('', []),
-          showAddress: new FormControl('', []),
-          showEmail: new FormControl('', []),
           showPicture: new FormControl('', []),
-          showChat: new FormControl('', []),
+        }),
+        this.fb.group({
           sliderImages: new FormArray([]),
         }),
-        // this.fb.group({
-        //   sliderImages: new FormArray([]),
-        // }),
       ]),
     });
     this.filteredTags = this.tagCtrl?.valueChanges.pipe(
@@ -157,24 +158,7 @@ export class NewRFPComponent {
     );
     stepper.next();
   }
-  // removeClientFormGroup(index: number) {
-  //   (this.formArray?.get([2]).get('sliderImages') as FormArray).removeAt(index);
-  //   this.advertisement.sliderImages?.splice(index, 1);
-  //   this.sliderImages?.splice(index, 1);
-  // }
-  // addClientFormControl() {
-  //   (this.formArray?.get([2]).get('sliderImages') as FormArray).push(
-  //     new FormGroup({
-  //       sliderImage: new FormControl('', [Validators.required]),
-  //       // sliderTitle: new FormControl('', [Validators.required]),
-  //       // sliderDescription: new FormControl('', [Validators.required]),
-  //     })
-  //   );
-  // }
-  // preview() {
-  //   this.advertisementCommunicationService.sendMessage(this.advertisement);
-  //   this.router.navigate(['/general/preview-advertisement']);
-  // }
+
   getObjectURL(file: File): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
   }
@@ -257,7 +241,7 @@ export class NewRFPComponent {
     this.headerImageFile = null;
   }
 
-  submitNewAd(stepper: MatStepper) {
+  submitNewRfp(stepper: MatStepper) {
     if (this.form.valid) {
       const userId = this.storageService?.getUserId();
       const formData = new FormData();
@@ -279,59 +263,32 @@ export class NewRFPComponent {
       formData.append('title', this.advertisement?.title);
       formData.append('tags', this.myTags.join(', '));
       formData.append('description', this.advertisement?.description);
-
       formData.append(
-        'topAdvertisement',
-        `${this.advertisement?.topAdvertisement ? '1' : '0'}`
+        'startDate',
+        this.advertisement?.startDate?.toDateString()
       );
-      if (this.advertisement?.topAdvertisement) {
-        const amount = this.topAdPrice;
+      formData.append('endDate', this.advertisement?.endDate?.toDateString());
 
-        const tax = (amount * this.tax) / 100;
+      const amount = this.rfpPrice;
+      const tax = (amount * this.tax) / 100;
+      const totalAmount =
+        parseFloat(amount.toString()) + parseFloat(tax.toString());
 
-        const totalAmount =
-          parseFloat(amount.toString()) + parseFloat(tax.toString());
+      formData.append('paymentConfirmation', `PAL-235894-CONFIRM`);
+      formData.append('paymentAmount', `${amount}`);
+      formData.append('tax', `${tax}`);
+      formData.append('totalPayment', `${totalAmount}`);
 
-        formData.append('paymentConfirmation', `PAL-235894-CONFIRM`);
-        formData.append('paymentAmount', `${amount}`);
-        formData.append('tax', `${tax}`);
-        formData.append('totalPayment', `${totalAmount}`);
-      }
-      formData.append(
-        'showPhone',
-        `${this.advertisement?.showPhone ? '1' : '0'}`
-      );
-      formData.append(
-        'showAddress',
-        `${this.advertisement?.showAddress ? '1' : '0'}`
-      );
-      formData.append(
-        'showEmail',
-        `${this.advertisement?.showEmail ? '1' : '0'}`
-      );
       formData.append(
         'showPicture',
         `${this.advertisement?.showPicture ? '1' : '0'}`
       );
-      formData.append(
-        'showChat',
-        `${this.advertisement?.showChat ? '1' : '0'}`
-      );
+
       formData.append('active', `1`);
       formData.append('numberOfVisits', `0`);
       formData.append('approvedByAdmin', `0`);
-      //const dateCreated = new Date();
-      // const expiryDate = new Date(
-      //   dateCreated.getTime() -
-      //     this.userAdvertisementDuration * 24 * 60 * 60 * 1000
-      // );
-      const userPlanId = this.storageService.getPlan()()?.userPlanId;
 
-      formData.append('userPlanId', `${userPlanId}`);
-      formData.append(
-        'userAdvertisementDuration',
-        `${this.userAdvertisementDuration}`
-      );
+      formData.append('userRFPDuration', `${this.userRFPDuration}`);
       // formData.append('expiryDate', `${expiryDate}`);
       // formData.append('dateCreated', `${dateCreated}`);
       this.apiService
@@ -358,18 +315,6 @@ export class NewRFPComponent {
       this.formErrors = this.formService.getFormValidationErrorMessages(
         this.formArray?.get([0]) as FormGroup
       );
-      // this.formErrors = [
-      //   ...this.formErrors,
-      //   ...this.formService.getFormValidationErrorMessages(
-      //     this.formArray?.get([1]) as FormGroup
-      //   ),
-      // ];
-      // this.formErrors = [
-      //   ...this.formErrors,
-      //   ...this.formService.getFormValidationErrorMessages(
-      //     this.formArray?.get([2]) as FormGroup
-      //   ),
-      // ];
     }
   }
 
@@ -377,11 +322,11 @@ export class NewRFPComponent {
     const newFiles: File[] = event.addedFiles;
 
     // Calculate how many files can be added to reach the maximum limit
-    const remainingSlots = this.maxAdvertisementSliderImage - this.files.length;
+    const remainingSlots = this.maxRFPSliderImage - this.files.length;
 
     if (remainingSlots <= 0) {
       this.toastService.error(
-        `You can upload only ${this.maxAdvertisementSliderImage} images`,
+        `You can upload only ${this.maxRFPSliderImage} images`,
         'Error',
         {
           timeOut: 3000,

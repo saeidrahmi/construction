@@ -31,166 +31,249 @@
                       />
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Max Advertisement Slider Images
+                  <div class="border rounded p-2">
+                    <div class="row">
+                      <div class="col">
+                        <h2>Advertisement (Services, Sales) Settings</h2>
+                      </div>
                     </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter.."
-                        formControlName="maxAdvertisementSliderImage"
-                        type="number"
-                        [(ngModel)]="setting.maxAdvertisementSliderImage"
-                      />
+
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Max Advertisement Slider Images
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter.."
+                          formControlName="maxAdvertisementSliderImage"
+                          type="number"
+                          [(ngModel)]="setting.maxAdvertisementSliderImage"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      User Advertisement Duration
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        User Advertisement Duration
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter.."
+                          formControlName="userAdvertisementDuration"
+                          type="number"
+                          [(ngModel)]="setting.userAdvertisementDuration"
+                        />
+                      </div>
                     </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter.."
-                        formControlName="userAdvertisementDuration"
-                        type="number"
-                        [(ngModel)]="setting.userAdvertisementDuration"
-                      />
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Top Advertisement Price
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter.."
+                          formControlName="topAdvertisementPrice"
+                          type="number"
+                          [(ngModel)]="setting.topAdvertisementPrice"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Top Advertisement Price
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Free Trial Period Duration
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter.."
+                          formControlName="freeTiralPeriod"
+                          type="number"
+                          [(ngModel)]="setting.freeTiralPeriod"
+                        />
+                      </div>
                     </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter.."
-                        formControlName="topAdvertisementPrice"
-                        type="number"
-                        [(ngModel)]="setting.topAdvertisementPrice"
-                      />
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">Monthly Price</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="monthlyPrice"
+                          type="number"
+                          max="1000"
+                          min="0"
+                          [(ngModel)]="setting.monthlyPrice"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Free Trial Period Duration
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Monthly discount %
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="monthlyDiscount"
+                          type="number"
+                          max="100"
+                          min="0"
+                          [(ngModel)]="setting.monthlyDiscount"
+                        />
+                      </div>
                     </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter.."
-                        formControlName="freeTiralPeriod"
-                        type="number"
-                        [(ngModel)]="setting.freeTiralPeriod"
-                      />
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Quarterly discount %
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="quarterlyDiscount"
+                          type="number"
+                          max="100"
+                          min="0"
+                          [(ngModel)]="setting.quarterlyDiscount"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">Monthly Price</div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter ..."
-                        formControlName="monthlyPrice"
-                        type="number"
-                        max="1000"
-                        min="0"
-                        [(ngModel)]="setting.monthlyPrice"
-                      />
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Semi-Annual discount %
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="semiAnualDiscount"
+                          type="number"
+                          max="100"
+                          min="0"
+                          [(ngModel)]="setting.semiAnualDiscount"
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Monthly discount %
-                    </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter ..."
-                        formControlName="monthlyDiscount"
-                        type="number"
-                        max="100"
-                        min="0"
-                        [(ngModel)]="setting.monthlyDiscount"
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Quarterly discount %
-                    </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter ..."
-                        formControlName="quarterlyDiscount"
-                        type="number"
-                        max="100"
-                        min="0"
-                        [(ngModel)]="setting.quarterlyDiscount"
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Semi-Annual discount %
-                    </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter ..."
-                        formControlName="semiAnualDiscount"
-                        type="number"
-                        max="100"
-                        min="0"
-                        [(ngModel)]="setting.semiAnualDiscount"
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">Yearly discount %</div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter ..."
-                        formControlName="yearlyDiscount"
-                        type="number"
-                        [(ngModel)]="setting.yearlyDiscount"
-                      />
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Password Reset Duration (General Users)
-                    </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter ..."
-                        formControlName="passwordResetDurationGeneralUsers"
-                        type="number"
-                        min="14"
-                        max="365"
-                        [(ngModel)]="setting.passwordResetDurationGeneralUsers"
-                      />
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Yearly discount %
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="yearlyDiscount"
+                          type="number"
+                          [(ngModel)]="setting.yearlyDiscount"
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div class="row">
-                    <div class="col-md-3 mt-1 form-labe">
-                      Password Reset Duration (Admin Users)
+                  <div class="border rounded p-2">
+                    <div class="row">
+                      <div class="col">
+                        <h2>RFP Settings</h2>
+                      </div>
                     </div>
-                    <div class="col-md-8">
-                      <input
-                        class="form-control"
-                        placeholder="Enter ..."
-                        formControlName="passwordResetDurationAdminUsers"
-                        type="number"
-                        min="14"
-                        max="365"
-                        [(ngModel)]="setting.passwordResetDurationAdminUsers"
-                      />
+
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Max RFP Slider Images
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter.."
+                          formControlName="maxRFPSliderImage"
+                          type="number"
+                          [(ngModel)]="setting.maxRFPSliderImage"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">RFP Duration</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter.."
+                          formControlName="userRFPDuration"
+                          type="number"
+                          [(ngModel)]="setting.userRFPDuration"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">RFP Price</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="rfpPrice"
+                          type="number"
+                          max="1000"
+                          min="0"
+                          [(ngModel)]="setting.rfpPrice"
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">RFP discount %</div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="rfpDiscount"
+                          type="number"
+                          max="100"
+                          min="0"
+                          [(ngModel)]="setting.rfpDiscount"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="border rounded p-2">
+                    <div class="row">
+                      <div class="col">
+                        <h2>GeneralSettings</h2>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Password Reset Duration (General Users)
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="passwordResetDurationGeneralUsers"
+                          type="number"
+                          min="14"
+                          max="365"
+                          [(ngModel)]="
+                            setting.passwordResetDurationGeneralUsers
+                          "
+                        />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-3 mt-1 form-labe">
+                        Password Reset Duration (Admin Users)
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          class="form-control"
+                          placeholder="Enter ..."
+                          formControlName="passwordResetDurationAdminUsers"
+                          type="number"
+                          min="14"
+                          max="365"
+                          [(ngModel)]="setting.passwordResetDurationAdminUsers"
+                        />
+                      </div>
                     </div>
                   </div>
                 </form>

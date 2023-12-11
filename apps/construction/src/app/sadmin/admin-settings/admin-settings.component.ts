@@ -50,6 +50,10 @@ export class AdminSettingsComponent {
       topAdvertisementPrice: new FormControl('', [Validators.required]),
       maxAdvertisementSliderImage: new FormControl('', [Validators.required]),
       userAdvertisementDuration: new FormControl('', [Validators.required]),
+      maxRFPSliderImage: new FormControl('', [Validators.required]),
+      userRFPDuration: new FormControl('', [Validators.required]),
+      rfpPrice: new FormControl('', [Validators.required]),
+      rfpDiscount: new FormControl('', [Validators.required]),
       passwordResetDurationGeneralUsers: new FormControl('', [
         Validators.required,
       ]),

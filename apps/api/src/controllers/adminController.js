@@ -24,6 +24,10 @@ async function listAdminSettingsController(req, res) {
       monthlyPrice: selectResult[0].monthlyPrice,
       monthlyDiscount: selectResult[0].monthlyDiscount,
       quarterlyDiscount: selectResult[0].quarterlyDiscount,
+      maxRFPSliderImage: selectResult[0].maxRFPSliderImage,
+      userRFPDuration: selectResult[0].userRFPDuration,
+      rfpPrice: selectResult[0].rfpPrice,
+      rfpDiscount: selectResult[0].rfpDiscount,
       semiAnualDiscount: selectResult[0].semiAnualDiscount,
       yearlyDiscount: selectResult[0].yearlyDiscount,
       topAdvertisementPrice: selectResult[0].topAdvertisementPrice,
@@ -58,6 +62,10 @@ async function updateAdminSettingsController(req, res) {
       userAdvertisementDuration: info.userAdvertisementDuration,
       passwordResetDurationGeneralUsers: info.passwordResetDurationGeneralUsers,
       passwordResetDurationAdminUsers: info.passwordResetDurationAdminUsers,
+      maxRFPSliderImage: info.maxRFPSliderImage,
+      userRFPDuration: info.userRFPDuration,
+      rfpPrice: info.rfpPrice,
+      rfpDiscount: info.rfpDiscount,
     };
     const values = [
       setting.tax,
@@ -72,6 +80,10 @@ async function updateAdminSettingsController(req, res) {
       setting.userAdvertisementDuration,
       setting.passwordResetDurationGeneralUsers,
       setting.passwordResetDurationAdminUsers,
+      setting.maxRFPSliderImage,
+      setting.userRFPDuration,
+      setting.rfpPrice,
+      setting.rfpDiscount,
     ];
     const selectQuery = `SELECT * FROM settings`;
     const selectResult = await executeQuery(selectQuery, []);
@@ -79,7 +91,9 @@ async function updateAdminSettingsController(req, res) {
     if (selectResult.length > 0) {
       // There are results
       const query = `UPDATE settings SET tax =? , freeTiralPeriod = ?, monthlyPrice = ?,monthlyDiscount = ?, quarterlyDiscount = ?,semiAnualDiscount=?, yearlyDiscount=?, topAdvertisementPrice=?,
-       maxAdvertisementSliderImage=?, userAdvertisementDuration=?,passwordResetDurationGeneralUsers=?, passwordResetDurationAdminUsers=?`;
+       maxAdvertisementSliderImage=?, userAdvertisementDuration=?,passwordResetDurationGeneralUsers=?, passwordResetDurationAdminUsers=?,
+       maxRFPSliderImage=?, userRFPDuration=?,rfpPrice=?, rfpDiscount=?
+       `;
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(setting);
@@ -90,7 +104,7 @@ async function updateAdminSettingsController(req, res) {
       }
     } else {
       // No results
-      const query = `INSERT INTO settings (freeTiralPeriod, monthlyPrice,quarterlyDiscount, semiAnualDiscount=?,yearlyDiscount,topAdvertisementPrice,maxAdvertisementSliderImage,userAdvertisementDuration,passwordResetDurationGeneralUsers, passwordResetDurationAdminUsers) VALUES ( ?,?,?,?,?, ?, ?,?,?)`;
+      const query = `INSERT INTO settings (freeTiralPeriod, monthlyPrice,quarterlyDiscount, semiAnualDiscount=?,yearlyDiscount,topAdvertisementPrice,maxAdvertisementSliderImage,userAdvertisementDuration,passwordResetDurationGeneralUsers, passwordResetDurationAdminUsers,maxRFPSliderImage, userRFPDuration,rfpPrice, rfpDiscount) VALUES ( ?,?,?,?,?, ?, ?,?,?, ?, ?,?,?)`;
       const result = await executeQuery(query, values);
       if (result.affectedRows > 0 || result.insertId) {
         return res.status(200).json(setting);

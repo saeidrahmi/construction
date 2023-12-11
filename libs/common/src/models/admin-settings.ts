@@ -11,4 +11,8 @@ export interface AdminSettingsInterface {
   userAdvertisementDuration?: number;
   passwordResetDurationGeneralUsers?: number;
   passwordResetDurationAdminUsers?: number;
+  maxRFPSliderImage?: number;
+  userRFPDuration?: number;
+  rfpPrice?: number;
+  rfpDiscount?: number;
 }
