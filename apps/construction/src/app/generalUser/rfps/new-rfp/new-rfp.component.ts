@@ -277,7 +277,11 @@ export class NewRFPComponent {
       );
       formData.append(
         'budgetInformation',
-        this.advertisement?.budgetInformation
+        `${
+          this.advertisement?.budgetInformation
+            ? this.advertisement?.budgetInformation
+            : ''
+        }`
       );
       formData.append(
         'contractorQualifications',
