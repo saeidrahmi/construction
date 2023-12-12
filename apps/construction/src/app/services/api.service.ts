@@ -1267,6 +1267,27 @@ export class ApiService {
         })
       );
   }
+  saveUserRFP(data: FormData): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/save-user-rfp', data)
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Saving User RFP Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          throw error;
+        })
+      );
+  }
   editAdvertisement(data: FormData): Observable<any> {
     this.spinner.show();
     return this.httpClient

@@ -2809,6 +2809,195 @@ async function deleteRequestSupportMessagesController(req, res) {
     });
   }
 }
+async function insertUserRFP(connection, data) {
+  const selectQuery = `INSERT INTO userRFPs( userId, title, description, tags,
+                        startDate, endDate, projectStartDate, expiryDate,  showPicture,  isTurnkey,contractorQualifications,
+                        insuranceRequirements, milestones, budgetInformation, approvedByAdmin,active, deleted)
+                       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,? ,?,?)`;
+  const values = [
+    data.userId,
+    data.title,
+    data.description,
+    data.tags,
+    new Date(data.startDate),
+    new Date(data.endDate),
+    data.projectStartDate ? new Date(data.projectStartDate) : null,
+    data.expiryDate,
+    data.showPicture,
+    data.isTurnkey,
+    data.contractorQualifications,
+
+    data.insuranceRequirements,
+    data.milestones,
+    data.budgetInformation,
+    0,
+    1,
+    0,
+  ];
+
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
+async function insertUserRFPSliderImages(connection, data) {
+  const selectQuery = `INSERT INTO userRFPImages (rfpId , userRFPImage) VALUES (?,?)`;
+  const values = [data.rfpId, data.userRFPImage];
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
+async function insertUserRFPPayment(connection, data) {
+  const selectQuery = `INSERT INTO userRFPPayment (rfpId , paymentConfirmation,paymentAmount,tax,totalPayment,discountPercentage,discount,amountAfterDiscount)
+  VALUES (?,?,?,?,?,?,?,?)`;
+
+  const values = [
+    data.rfpId,
+    data.paymentConfirmation,
+    data.paymentAmount,
+    data.tax,
+    data.totalPayment,
+    data.discountPercentage,
+    data.discount,
+    data.amountAfterDiscount,
+  ];
+
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
+async function insertRFPHeaderImage(connection, buffer, insertId) {
+  const insertImageQuery = 'update userRFPs set headerImage=? where rfpId =?';
+  console.log(insertImageQuery, insertId);
+  const [insertImageResult] = await connection.execute(insertImageQuery, [
+    buffer,
+    insertId,
+  ]);
+
+  return insertImageResult.affectedRows > 0 || insertImageResult.insertId
+    ? insertImageResult
+    : null;
+}
+
+async function saveUserRFPController(req, res) {
+  let connection;
+  try {
+    const info = req.body;
+    const userId = decryptItem(info.userId, webSecretKey);
+    const dateCreated = new Date();
+    const expiryDate = addDays(dateCreated, info.userRFPDuration);
+
+    const tags = info.tags;
+
+    connection = await connectToDatabase();
+    await connection.beginTransaction();
+
+    const insertResult = await insertUserRFP(connection, {
+      userId: userId,
+      title: info.title,
+      description: info.description,
+      tags: tags,
+      startDate: info.startDate,
+      endDate: info.endDate,
+      projectStartDate: info.projectStartDate,
+      expiryDate: expiryDate,
+      showPicture: info.showPicture,
+      isTurnkey: info.isTurnkey,
+      contractorQualifications: info.contractorQualifications,
+
+      insuranceRequirements: info.insuranceRequirements,
+      milestones: info.milestones,
+      budgetInformation: info.budgetInformation,
+    });
+
+    if (!insertResult) {
+      await connection.rollback();
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
+    }
+
+    if (req.files['headerImage']) {
+      console.log('heder image');
+      const image = req.files['headerImage'][0];
+      const { buffer } = image;
+      const insertImageResult = await insertRFPHeaderImage(
+        connection,
+        buffer,
+        insertResult.insertId
+      );
+
+      if (!insertImageResult) {
+        await connection.rollback();
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
+      }
+    }
+    if (req.files['sliderImages']) {
+      for (const file of req.files['sliderImages']) {
+        const { buffer } = file;
+        const insertSliderImageResult = await insertUserRFPSliderImages(
+          connection,
+          {
+            rfpId: insertResult.insertId,
+            userRFPImage: buffer,
+          }
+        );
+
+        if (!insertSliderImageResult) {
+          await connection.rollback();
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
+        }
+      }
+    }
+
+    const insertPaymentResult = await insertUserRFPPayment(connection, {
+      rfpId: insertResult.insertId,
+      paymentConfirmation: info.paymentConfirmation,
+      paymentAmount: info.paymentAmount,
+      discountPercentage: info.discountPercentage,
+      discount: info.discount,
+      amountAfterDiscount: info.amountAfterDiscount,
+      tax: info.tax,
+      totalPayment: info.totalPayment,
+    });
+
+    if (!insertPaymentResult) {
+      await connection.rollback();
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
+    }
+
+    await connection.commit();
+    return res.status(200).json(true);
+  } catch (error) {
+    if (connection) {
+      try {
+        await connection.rollback();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  } finally {
+    if (connection) {
+      try {
+        await connection.end();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
+  }
+}
+
 module.exports = {
   deleteRequestSupportMessagesController,
   deleteUserProfilePhotoController,
@@ -2868,4 +3057,5 @@ module.exports = {
   getAllUserRatingsDetailsBasedOnUserId,
   submitNewSupportRequestController,
   listUserRequestSupportMessagesController,
+  saveUserRFPController,
 };

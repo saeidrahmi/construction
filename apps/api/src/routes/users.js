@@ -36,6 +36,7 @@ const {
   getApplicationSettingsController,
   getPreNewAdInfoController,
   saveUserRegularAdController,
+  saveUserRFPController,
   updateUserAdvertisementActivateStatusController,
   getUserAdvertisementsController,
   updateUserAdvertisementDeleteStatusController,
@@ -186,6 +187,15 @@ router.post(
     { name: 'sliderImages', maxCount: 30 }, // You can adjust the number of allowed files
   ]),
   saveUserRegularAdController
+);
+router.post(
+  '/save-user-rfp',
+  verifyGeneralToken,
+  upload.fields([
+    { name: 'headerImage', maxCount: 1 },
+    { name: 'sliderImages', maxCount: 30 }, // You can adjust the number of allowed files
+  ]),
+  saveUserRFPController
 );
 
 router.post(

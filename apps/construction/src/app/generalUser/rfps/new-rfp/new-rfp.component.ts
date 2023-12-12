@@ -118,14 +118,21 @@ export class NewRFPComponent {
         this.fb.group({
           startDate: new FormControl('', [Validators.required]),
           endDate: new FormControl('', [Validators.required]),
+          projectStartDate: new FormControl('', []),
         }),
         this.fb.group({
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
           headerImage: new FormControl('', []),
+          contractorQualifications: new FormControl('', []),
+
+          milestones: new FormControl('', []),
+          insuranceRequirements: new FormControl('', []),
+          budgetInformation: new FormControl('', []),
         }),
         this.fb.group({
           showPicture: new FormControl('', []),
+          isTurnkey: new FormControl('', []),
         }),
         this.fb.group({
           sliderImages: new FormArray([]),
@@ -261,38 +268,76 @@ export class NewRFPComponent {
       } else formData.append('sliderImages', '');
 
       formData.append('title', this.advertisement?.title);
+
+      formData.append(
+        'milestones',
+        `${
+          this.advertisement?.milestones ? this.advertisement?.milestones : ''
+        }`
+      );
+      formData.append(
+        'budgetInformation',
+        this.advertisement?.budgetInformation
+      );
+      formData.append(
+        'contractorQualifications',
+        `${
+          this.advertisement?.contractorQualifications
+            ? this.advertisement?.contractorQualifications
+            : ''
+        }`
+      );
       formData.append('tags', this.myTags.join(', '));
       formData.append('description', this.advertisement?.description);
       formData.append(
-        'startDate',
-        this.advertisement?.startDate?.toDateString()
+        'insuranceRequirements',
+        `${
+          this.advertisement?.insuranceRequirements
+            ? this.advertisement?.insuranceRequirements
+            : ''
+        }`
       );
-      formData.append('endDate', this.advertisement?.endDate?.toDateString());
 
+      formData.append('startDate', `${this.advertisement?.startDate}`);
+      formData.append(
+        'projectStartDate',
+        `${
+          this.advertisement?.projectStartDate
+            ? this.advertisement?.projectStartDate
+            : ''
+        }`
+      );
+      formData.append('endDate', `${this.advertisement?.endDate}`);
       const amount = this.rfpPrice;
-      const tax = (amount * this.tax) / 100;
+      const discount = (amount * this.rfpDiscount) / 100;
+      const amountAfterDiscount = amount - discount;
+      const tax = (amountAfterDiscount * this.tax) / 100;
       const totalAmount =
-        parseFloat(amount.toString()) + parseFloat(tax.toString());
+        parseFloat(amountAfterDiscount.toString()) + parseFloat(tax.toString());
 
       formData.append('paymentConfirmation', `PAL-235894-CONFIRM`);
       formData.append('paymentAmount', `${amount}`);
+      formData.append('amountAfterDiscount', `${amountAfterDiscount}`);
+      formData.append('discountPercentage', `${this.rfpDiscount}`);
+      formData.append('discount', `${discount}`);
       formData.append('tax', `${tax}`);
       formData.append('totalPayment', `${totalAmount}`);
 
+      formData.append(
+        'isTurnkey',
+        `${this.advertisement?.isTurnkey ? '1' : '0'}`
+      );
       formData.append(
         'showPicture',
         `${this.advertisement?.showPicture ? '1' : '0'}`
       );
 
-      formData.append('active', `1`);
-      formData.append('numberOfVisits', `0`);
-      formData.append('approvedByAdmin', `0`);
-
       formData.append('userRFPDuration', `${this.userRFPDuration}`);
       // formData.append('expiryDate', `${expiryDate}`);
       // formData.append('dateCreated', `${dateCreated}`);
+
       this.apiService
-        .saveUserRegularAd(formData)
+        .saveUserRFP(formData)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
