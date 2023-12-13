@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Dec 09, 2023 at 08:35 PM
+-- Generation Time: Dec 13, 2023 at 10:19 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -33,7 +33,6 @@ CREATE TABLE `plans` (
   `planId` bigint UNSIGNED NOT NULL,
   `planName` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `planType` varchar(20) NOT NULL,
-  `createRfpIncluded` tinyint(1) NOT NULL,
   `createBidsIncluded` tinyint(1) DEFAULT NULL,
   `customProfileIncluded` tinyint(1) NOT NULL,
   `onlineSupportIncluded` tinyint(1) DEFAULT NULL,
@@ -68,7 +67,11 @@ CREATE TABLE `settings` (
   `maxAdvertisementSliderImage` int DEFAULT NULL,
   `userAdvertisementDuration` int NOT NULL,
   `passwordResetDurationAdminUsers` int DEFAULT NULL,
-  `passwordResetDurationGeneralUsers` int DEFAULT NULL
+  `passwordResetDurationGeneralUsers` int DEFAULT NULL,
+  `rfpPrice` decimal(10,0) NOT NULL,
+  `maxRFPSliderImage` int NOT NULL,
+  `userRFPDuration` int NOT NULL,
+  `rfpDiscount` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -235,6 +238,67 @@ CREATE TABLE `userRatings` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `userRFPImages`
+--
+
+CREATE TABLE `userRFPImages` (
+  `userRFPImageId` bigint UNSIGNED NOT NULL,
+  `rfpId` bigint UNSIGNED NOT NULL,
+  `userRFPImage` longblob NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userRFPPayment`
+--
+
+CREATE TABLE `userRFPPayment` (
+  `paymentId` bigint UNSIGNED NOT NULL,
+  `paymentConfirmation` varchar(80) NOT NULL,
+  `paymentAmount` decimal(10,2) NOT NULL,
+  `tax` decimal(10,2) NOT NULL,
+  `totalPayment` decimal(10,2) NOT NULL,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `rfpId` bigint UNSIGNED NOT NULL,
+  `discountPercentage` int NOT NULL,
+  `discount` decimal(10,2) NOT NULL,
+  `amountAfterDiscount` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userRFPs`
+--
+
+CREATE TABLE `userRFPs` (
+  `rfpId` bigint UNSIGNED NOT NULL,
+  `userId` varchar(80) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `description` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `tags` varchar(200) NOT NULL,
+  `headerImage` longblob,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
+  `dateCreated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `startDate` timestamp NOT NULL,
+  `endDate` timestamp NOT NULL,
+  `approvedByAdmin` tinyint(1) NOT NULL DEFAULT '0',
+  `numberOfVisits` int NOT NULL DEFAULT '0',
+  `showPicture` tinyint(1) NOT NULL DEFAULT '0',
+  `contractorQualifications` text,
+  `isTurnkey` tinyint(1) NOT NULL DEFAULT '0',
+  `projectStartDate` timestamp NULL DEFAULT NULL,
+  `insuranceRequirements` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `milestones` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `budgetInformation` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `expiryDate` timestamp NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -268,7 +332,9 @@ CREATE TABLE `users` (
   `serviceCoverageType` varchar(10) DEFAULT NULL,
   `passwordResetRequired` tinyint(1) DEFAULT '0',
   `lastPasswordResetDate` timestamp NULL DEFAULT NULL,
-  `previousPassword` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL
+  `previousPassword` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `passFailCount` int NOT NULL DEFAULT '0',
+  `locked` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -404,6 +470,30 @@ ALTER TABLE `userRatings`
   ADD PRIMARY KEY (`userId`,`ratedBy`);
 
 --
+-- Indexes for table `userRFPImages`
+--
+ALTER TABLE `userRFPImages`
+  ADD PRIMARY KEY (`userRFPImageId`),
+  ADD UNIQUE KEY `userRFPImageId` (`userRFPImageId`),
+  ADD KEY `rfp_imageId` (`rfpId`);
+
+--
+-- Indexes for table `userRFPPayment`
+--
+ALTER TABLE `userRFPPayment`
+  ADD PRIMARY KEY (`paymentId`),
+  ADD UNIQUE KEY `paymentId` (`paymentId`),
+  ADD KEY `rfp_id` (`rfpId`);
+
+--
+-- Indexes for table `userRFPs`
+--
+ALTER TABLE `userRFPs`
+  ADD PRIMARY KEY (`rfpId`),
+  ADD UNIQUE KEY `rfpId` (`rfpId`),
+  ADD KEY `rfp_userId` (`userId`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -478,6 +568,24 @@ ALTER TABLE `userPlans`
   MODIFY `userPlanId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `userRFPImages`
+--
+ALTER TABLE `userRFPImages`
+  MODIFY `userRFPImageId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `userRFPPayment`
+--
+ALTER TABLE `userRFPPayment`
+  MODIFY `paymentId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `userRFPs`
+--
+ALTER TABLE `userRFPs`
+  MODIFY `rfpId` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
@@ -542,6 +650,24 @@ ALTER TABLE `userPlans`
 --
 ALTER TABLE `userProvinces`
   ADD CONSTRAINT `userId_province` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userRFPImages`
+--
+ALTER TABLE `userRFPImages`
+  ADD CONSTRAINT `rfp_imageId` FOREIGN KEY (`rfpId`) REFERENCES `userRFPs` (`rfpId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userRFPPayment`
+--
+ALTER TABLE `userRFPPayment`
+  ADD CONSTRAINT `rfp_id` FOREIGN KEY (`rfpId`) REFERENCES `userRFPs` (`rfpId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userRFPs`
+--
+ALTER TABLE `userRFPs`
+  ADD CONSTRAINT `rfp_userId` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `userServiceCities`

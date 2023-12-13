@@ -1341,7 +1341,7 @@ async function listUserServiceLocationController(req, res) {
 async function canUserAdvertiseController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
-    const selectQuery1 = `SELECT userPlans.userPlanId ,plans.numberOfAdvertisements FROM userPlans JOIN plans ON userPlans.planId  = plans.planId  WHERE  userPlans.userId = ? and userPlans.userPlanActive=1  `;
+    const selectQuery1 = `SELECT userPlans.userPlanId ,plans.numberOfAdvertisements, userPlans.userPlanExpiryDate FROM userPlans JOIN plans ON userPlans.planId  = plans.planId  WHERE  userPlans.userId = ? and userPlans.userPlanActive=1  `;
     const selectResult1 = await executeQuery(selectQuery1, [userId]);
 
     if (selectResult1?.length > 0) {
@@ -1353,6 +1353,7 @@ async function canUserAdvertiseController(req, res) {
       if (selectResult[0]?.count >= selectResult1[0]?.numberOfAdvertisements)
         return res.status(200).json({
           activePlanId: selectResult1[0].userPlanId,
+          userPlanExpiryDate: selectResult1[0].userPlanExpiryDate,
           result: false,
           usedAdvertisements: selectResult[0]?.count,
           allowedOriginalAdvertisements:
@@ -1363,6 +1364,7 @@ async function canUserAdvertiseController(req, res) {
       else
         return res.status(200).json({
           activePlanId: selectResult1[0].userPlanId,
+          userPlanExpiryDate: selectResult1[0].userPlanExpiryDate,
           result: true,
           usedAdvertisements: selectResult[0]?.count,
           allowedOriginalAdvertisements:

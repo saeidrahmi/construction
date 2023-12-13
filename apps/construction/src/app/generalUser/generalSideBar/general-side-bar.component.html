@@ -81,7 +81,9 @@
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/new-rfp']"
       >
-        <i class="bi bi-card-list"><span class="mx-2">Create RFP</span></i>
+        <i class="bi bi-plus-square-fill"
+          ><span class="mx-2">Create RFP</span></i
+        >
       </a>
     </li>
     <li class="list-group-item" *ngIf="plan()?.createBidsIncluded === 1">
@@ -89,7 +91,7 @@
         [routerLinkActive]="['active_section']"
         [routerLink]="['/general/my-bids']"
       >
-        <i class="bi bi-card-list"><span class="mx-2">My Bids/Offers</span></i>
+        <i class="bi bi-list-check"><span class="mx-2">My Bids/Offers</span></i>
       </a>
     </li>
     <li class="list-group-item" *ngIf="plan()?.onlineSupportIncluded === 1">
