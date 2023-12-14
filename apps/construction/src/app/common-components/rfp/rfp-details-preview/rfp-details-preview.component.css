@@ -1,0 +1,15 @@
+.background-container {
+  min-width: 100px;
+  min-height: 220px; /* Set the height of the container to cover the viewport */
+  background-size: cover; /* Make the background image cover the entire container */
+  background-position: center; /* Center the background image */
+  background-repeat: no-repeat; /* Prevent the background image from repeating */
+}
+a {
+  text-decoration: none;
+}
+.font-sm {
+  font-size: 10px;
+}
+.font-md {
+}

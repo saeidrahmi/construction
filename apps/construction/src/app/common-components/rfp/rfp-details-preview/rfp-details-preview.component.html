@@ -1,0 +1,341 @@
+<div class="container-fluid">
+  <div class="row"></div>
+  <div
+    class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2 gy-3"
+  >
+    <div class="col-12" *ngIf="advertisement?.sliderImages?.length > 0">
+      <div
+        style="width: 100%"
+        id="carouselAdSliderIndicatorsPrv"
+        class="carousel carousel-dark slide"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-indicators">
+          <button
+            *ngFor="let imageUrl of advertisement.sliderImages; let i = index"
+            type="button"
+            [attr.data-bs-target]="'#carouselAdSliderIndicatorsPrv'"
+            [attr.data-bs-slide-to]="i"
+            [class.active]="i === 0"
+            [attr.aria-current]="i === 0 ? 'true' : null"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          ></button>
+        </div>
+        <div class="carousel-inner">
+          <div
+            *ngFor="let imageUrl of advertisement.sliderImages; let i = index"
+            class="carousel-item"
+            [class.active]="i === 0"
+            [attr.data-bs-interval]="8000"
+          >
+            <img
+              [src]="sanitizer.bypassSecurityTrustUrl(imageUrl)"
+              style="height: 350px"
+              class="d-block w-100 rounded"
+              alt="..."
+            />
+            <!-- Your content goes here for each slide -->
+          </div>
+        </div>
+        <button
+          class="carousel-control-prev"
+          type="button"
+          [attr.data-bs-target]="'#carouselAdSliderIndicatorsPrv'"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          [attr.data-bs-target]="'#carouselAdSliderIndicatorsPrv'"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+    <div
+      class="col-2 align-middle background-container rounded-1 border border-1"
+    ></div>
+    <div class="col-10">
+      <div class="continer-fluid">
+        <div class="row border border-1 rounded p-2">
+          <div class="col-2">
+            <div
+              *ngIf="
+                advertisement.headerImageUrl;
+                then imageSection;
+                else noImage
+              "
+            ></div>
+            <ng-template #imageSection>
+              <img
+                class="img-thumbnail rounded"
+                width="200"
+                height="200"
+                [src]="advertisement.headerImage"
+            /></ng-template>
+            <ng-template #noImage>
+              <img
+                class="img-thumbnail rounded"
+                width="200"
+                height="200"
+                src="../../../assets/images/questionmark.png"
+            /></ng-template>
+          </div>
+          <div class="col-8">
+            <h5>{{ advertisement.title }}</h5>
+          </div>
+          <div class="col-1">
+            <i class="bi bi-heart"></i>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-11">
+            <h5>{{ advertisement.title }}</h5>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-8">
+            <div class="container-fluid">
+              <div class="row" *ngIf="advertisement?.topAdvertisement">
+                <div class="col">
+                  <button type="button" class="btn btn-outline-info">
+                    TOP AD
+                  </button>
+                </div>
+              </div>
+
+              <div class="row my-1">
+                <div class="col">
+                  {{ user().city }} |
+                  {{
+                    userService.formatTimeDifference(advertisement?.dateCreated)
+                  }}
+                </div>
+              </div>
+              <hr />
+
+              <div class="row">
+                <div class="col">
+                  <h5>Description</h5>
+                  <quill-view-html
+                    [content]="advertisement?.description"
+                    theme="snow"
+                  ></quill-view-html>
+                </div>
+              </div>
+              <hr />
+              <div class="row border rounded p-2">
+                <div class="col">
+                  <h5 class="border-bottom">My Services</h5>
+                  <h6>The following services are made available:</h6>
+
+                  <ul class="list-group list-group-flush">
+                    <li
+                      class="list-group-item"
+                      *ngFor="let service of myServices"
+                    >
+                      {{ service }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <hr />
+              <div class="row border rounded p-2">
+                <div class="col">
+                  <h5 class="border-bottom">Covered locations</h5>
+                  <h6>My services are available in following locations:</h6>
+                  <ul class="list-group list-group-flush">
+                    <li
+                      class="list-group-item"
+                      *ngFor="let location of myLocations"
+                    >
+                      {{ location }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="row m-2" *ngIf="advertisement?.showAddress">
+                <div class="col border border-1 p-2">
+                  {{
+                    user().address +
+                      ', ' +
+                      user().city +
+                      ', ' +
+                      user().province +
+                      ', ' +
+                      user().postalCode
+                  }}&nbsp;
+                  <a href="" target="_blank">(View Map)</a>
+                </div>
+              </div>
+
+              <hr />
+              <div class="row m-2">
+                <div class="col border border-1 p-2">
+                  <i class="bi bi-eye"></i> 0 Visits
+                </div>
+              </div>
+              <hr />
+              <div class="row mt-4" *ngIf="advertisement.tags">
+                <div class="col">
+                  <hr />
+                  <i>
+                    Categories:
+                    {{ advertisement.tags }}
+                  </i>
+                </div>
+              </div>
+              <hr />
+              <div class="row m-2">
+                <div class="col">
+                  <i class="bi bi-heart"></i><i class="bi bi-flag mx-3"></i
+                  ><i class="bi bi-facebook mx-3"></i>
+                  <i class="bi bi-twitter mx-3"></i>
+                  <i class="bi bi-pinterest mx-3"></i
+                  ><i class="bi bi-envelope mx-3"></i
+                  ><i class="bi bi-printer mx-3"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4 border rounded p-2">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col">
+                  <div
+                    *ngIf="
+                      advertisement?.showPicture && advertisement?.showPicture;
+                      then showPic;
+                      else noShow
+                    "
+                  ></div>
+                  <ng-template #showPic>
+                    <img
+                      class="img-thumbnail rounded"
+                      width="1000"
+                      height="1000"
+                      [src]="
+                        imageService.bufferToSafeUrl(user()?.profileImage)
+                      "
+                  /></ng-template>
+                  <ng-template #noShow>
+                    <i
+                      class="bi bi-person"
+                      style="font-size: 4rem; color: cornflowerblue"
+                    ></i>
+                  </ng-template>
+                </div>
+              </div>
+
+              <div class="row border-top">
+                <div class="border">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                      <rating
+                        [(ngModel)]="rate"
+                        [max]="commonUtility.getMaxUserRating()"
+                        [readonly]="isReadonly"
+                      ></rating>
+                    </li>
+                    <li class="list-group-item">
+                      <i class="bi bi-person-add"
+                        ><span class="mx-2">{{ user().firstName }}</span></i
+                      >
+                    </li>
+                    <li
+                      class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      <i class="bi bi-chat-heart"
+                        ><span class="mx-2"
+                          >on {{ env.getSystemName() }}</span
+                        ></i
+                      >
+                      <span class="badge bg-primary rounded-pill">{{
+                        userService.formatTimeDifference(registeredDate)
+                      }}</span>
+                    </li>
+                    <li
+                      class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      <i class="bi bi-chat-heart"
+                        ><span class="mx-2">Listing</span></i
+                      >
+                      <span class="badge bg-primary rounded-pill"
+                        >{{ acitveAds }}
+                      </span>
+                    </li>
+
+                    <li
+                      *ngIf="advertisement?.showPhone"
+                      class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      <i class="bi bi-chat-heart"
+                        ><span class="mx-2">Phone</span></i
+                      >
+                      <span class="badge bg-primary rounded-pill"
+                        >{{ user().phone }}
+                      </span>
+                    </li>
+                    <li
+                      class="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      <span class="mx-2">
+                        <a
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          [href]="user().website"
+                          target="_blank"
+                        >
+                          Visit website
+                        </a></span
+                      >
+                      <span class="mx-2" *ngIf="advertisement?.showEmail">
+                        <a
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          href="mailto:{{ user().userId }}"
+                        >
+                          Email
+                        </a></span
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div
+                class="row border rounded p-2"
+                *ngIf="advertisement.showChat"
+              >
+                <div class="col">
+                  <h5 class=" ">Contact me</h5>
+                  <p class="font-sm">
+                    To deter and identify potential fraud, spam or suspicious
+                    behavior, we anonymize your email address (as applicable)
+                    and reserve the right to monitor conversations. By sending
+                    the message you agree to our Terms of Use and Privacy
+                    Policy.
+                  </p>
+                  <textarea
+                    class="form-control"
+                    placeholder="Enter message"
+                    [(ngModel)]="message"
+                    maxlength="400"
+                    rows="5"
+                  ></textarea>
+                  <button type="button" class="btn btn-outline-secondary my-1">
+                    Submit
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

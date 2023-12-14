@@ -61,6 +61,10 @@ import { QuillConfigModule } from 'ngx-quill/config';
 import { RfpGuidelineComponent } from './rfps/rfp-guidline/rfp-guidline.component';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { RFPPreviewComponent } from '../common-components/rfp/rfp-preview/rfp-preview.component';
+import { RFPViewComponent } from '../common-components/rfp/rfp-view/rfp-view.component';
+import { RFPDetailsPreviewComponent } from '../common-components/rfp/rfp-details-preview/rfp-details-preview.component';
+import { RFPDetailsViewComponent } from '../common-components/rfp/rfp-details-view/rfp-details-view.component';
 
 @NgModule({
   declarations: [
@@ -127,7 +131,10 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-
+    RFPPreviewComponent,
+    RFPViewComponent,
+    RFPDetailsPreviewComponent,
+    RFPDetailsViewComponent,
     RatingModule,
     NgxDropzoneModule,
     PhoneNumberPipe,
