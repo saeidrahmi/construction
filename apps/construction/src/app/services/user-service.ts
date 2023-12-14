@@ -346,4 +346,12 @@ export class UserService {
       return daysRemaining;
     } else return null;
   }
+  differenceInDays(date1: Date, date2: Date): number {
+    if (date1 && date2) {
+      const millisecondsPerDay = 24 * 60 * 60 * 1000; // Number of milliseconds in a day
+      const diffInMilliseconds = Math.abs(date1.getTime() - date2.getTime());
+      const diffInDays = Math.floor(diffInMilliseconds / millisecondsPerDay);
+      return diffInDays;
+    } else return null;
+  }
 }

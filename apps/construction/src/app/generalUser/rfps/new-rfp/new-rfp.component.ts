@@ -25,6 +25,8 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { AdvertisementInterface } from '../../../models/advertisement';
@@ -85,7 +87,7 @@ export class NewRFPComponent {
 
   constructor(
     private sanitizer: DomSanitizer,
-    private userService: UserService
+    public userService: UserService
   ) {
     this.advertisement = {};
     this.advertisement.dateCreated = new Date();
@@ -115,11 +117,16 @@ export class NewRFPComponent {
         this.fb.group({
           tags: new FormControl('', [Validators.required]),
         }),
-        this.fb.group({
-          startDate: new FormControl('', [Validators.required]),
-          endDate: new FormControl('', [Validators.required]),
-          projectStartDate: new FormControl('', []),
-        }),
+        this.fb.group(
+          {
+            startDate: new FormControl('', [Validators.required]),
+            endDate: new FormControl('', [Validators.required]),
+            projectStartDate: new FormControl('', []),
+          },
+          {
+            validator: this.validateRfpDuration.bind(this), // Add your custom validator function here
+          }
+        ),
         this.fb.group({
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
@@ -139,6 +146,7 @@ export class NewRFPComponent {
         }),
       ]),
     });
+    //  this.formArray?.get([1]).setValidators(this.validateRfpDuration);
     this.filteredTags = this.tagCtrl?.valueChanges.pipe(
       startWith(null),
       map((item: string | null) =>
@@ -146,6 +154,31 @@ export class NewRFPComponent {
       )
     );
   }
+
+  // validateRfpDuration(): ValidatorFn {
+  //   return (control: AbstractControl): ValidationErrors | null => {
+  //     const start = control.get('startDate').value;
+  //     const end = control.get('endDate').value;
+  //     const duration = this.userService.differenceInDays(start, end);
+  //     console.log(duration, this.userRFPDuration, 'valid');
+  //     if (duration > this.userRFPDuration) return { durationInvalid: true };
+  //     else return null;
+  //   };
+  // }
+  validateRfpDuration: ValidatorFn = (
+    control: AbstractControl
+  ): ValidationErrors | null => {
+    const start = control.get('startDate').value;
+    const end = control.get('endDate').value;
+    const duration = this.userService.differenceInDays(start, end);
+
+    if (duration > this.userRFPDuration) {
+      return { rfpDurationInvalid: true };
+    } else {
+      return null;
+    }
+  };
+
   private _filterTags(value: string): string[] {
     const filterValue = value.toLowerCase();
 

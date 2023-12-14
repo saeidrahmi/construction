@@ -193,6 +193,9 @@ export class FormService {
         return `${controlLabel} must be less than or equal to ${errorValue.max}.`;
       case 'matchError':
         return `Passwords do not match.`;
+      case 'rfpDurationInvalid':
+        return `RFP Duration is invalid.`;
+
       default:
         return `${controlLabel} has an invalid value: ${errorValue}.`;
     }

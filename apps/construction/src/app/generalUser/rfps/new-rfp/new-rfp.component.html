@@ -86,7 +86,12 @@
                             </li>
                           </ul>
 
-                          <app-rfp-guidline></app-rfp-guidline>
+                          <p>
+                            To learn more on creating an effective RFP,
+                            <a [routerLink]="'/general/rfp-guide'"
+                              >click here
+                            </a>
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -245,7 +250,8 @@
                       <div class="container-fluid my-3 border rounded p-3">
                         <div class="row my-2">
                           <div class="col-md-3 mt-1 form-labe">
-                            RFP Effective Dates
+                            RFP Effective Dates <br />(Maximum duration
+                            {{ userRFPDuration }} days)
                           </div>
                           <div class="col-md-8">
                             <mat-form-field
@@ -302,6 +308,15 @@
                                 #campaignOnePicker
                               ></mat-date-range-picker>
                             </mat-form-field>
+                            <span class="text-primary">
+                              {{
+                                userService.differenceInDays(
+                                  advertisement?.endDate,
+                                  advertisement?.startDate
+                                )
+                              }}
+                              days</span
+                            >
                           </div>
                         </div>
                         <div class="row my-2">
