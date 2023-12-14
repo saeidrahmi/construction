@@ -50,7 +50,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row my-2">
             <div class="col">
               <button type="button" class="btn btn-outline-secondary">
                 View more info
@@ -58,6 +58,18 @@
             </div>
           </div>
           <hr />
+          <div class="row">
+            <div class="col-4">
+              Bidding Start Date: {{ advertisement.startDate | date }}
+            </div>
+            <div class="col-4">
+              Bidding End Date: {{ advertisement.endDate | date }}
+            </div>
+            <div class="col-4">
+              Project Start Date: {{ advertisement.projectStartDate | date }}
+            </div>
+          </div>
+
           <div class="row mt-4" *ngIf="advertisement.tags">
             <div class="col">
               <hr />

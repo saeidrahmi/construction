@@ -1,0 +1,96 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <div class="card" aria-hidden="true">
+        <div class="card-body">
+          <h2 class="card-title">
+            <span class="col-12">Preview RFP</span>
+          </h2>
+
+          <div class="accordion" id="preview">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseSummary"
+                  aria-expanded="true"
+                  aria-controls="collapseSummary"
+                >
+                  Summary View
+                </button>
+              </h2>
+              <div
+                id="collapseSummary"
+                class="accordion-collapse show"
+                data-bs-parent="#preview"
+              >
+                <div class="accordion-body">
+                  <div class="row gy-3">
+                    <div class="col">
+                      <app-rfp-preview
+                        [advertisement]="advertisement"
+                      ></app-rfp-preview>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div
+                id="collapseSummary"
+                class="accordion-collapse collapse"
+                data-bs-parent="#preview"
+              >
+                <div class="accordion-body">
+                  <div class="row gy-3">
+                    <div class="col"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button
+                  class="accordion-button"
+                  type="button"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#collapseDetails"
+                  aria-expanded="true"
+                  aria-controls="collapseDetails"
+                >
+                  Details View
+                </button>
+              </h2>
+              <div
+                id="collapseDetails"
+                class="accordion-collapse collapse"
+                data-bs-parent="#preview"
+              >
+                <div class="accordion-body">
+                  <div class="row gy-3">
+                    <div class="col"></div>
+                  </div>
+                </div>
+              </div>
+              <div
+                id="collapseDetails"
+                class="accordion-collapse collapse"
+                data-bs-parent="#preview"
+              >
+                <div class="accordion-body">
+                  <div class="row gy-3">
+                    <div class="col">
+                      <app-rfp-details-preview
+                        [advertisement]="advertisement"
+                      ></app-rfp-details-preview>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

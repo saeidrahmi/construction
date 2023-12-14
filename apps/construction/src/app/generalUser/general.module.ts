@@ -65,6 +65,7 @@ import { RFPPreviewComponent } from '../common-components/rfp/rfp-preview/rfp-pr
 import { RFPViewComponent } from '../common-components/rfp/rfp-view/rfp-view.component';
 import { RFPDetailsPreviewComponent } from '../common-components/rfp/rfp-details-preview/rfp-details-preview.component';
 import { RFPDetailsViewComponent } from '../common-components/rfp/rfp-details-view/rfp-details-view.component';
+import { PreviewRFPComponent } from './rfps/rfp-advertisement/preview-rfp.component';
 
 @NgModule({
   declarations: [
@@ -95,6 +96,7 @@ import { RFPDetailsViewComponent } from '../common-components/rfp/rfp-details-vi
     NewRFPComponent,
     UserReviewsComponent,
     RfpGuidelineComponent,
+    PreviewRFPComponent,
   ],
   imports: [
     MatDatepickerModule,
