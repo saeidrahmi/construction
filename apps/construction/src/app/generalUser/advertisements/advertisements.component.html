@@ -257,14 +257,15 @@
               <app-user-advertisement-view
                 [advertisement]="advertisement"
               ></app-user-advertisement-view>
-              <div class="d-flex justify-content-center">
-                <pagination
-                  [(ngModel)]="page"
-                  [totalItems]="uniqueAdvertisements?.length"
-                  [itemsPerPage]="pageSize"
-                  (pageChanged)="pageChangedTop($event, 'page')"
-                ></pagination></div
-            ></ng-container>
+            </ng-container>
+            <div class="d-flex justify-content-center">
+              <pagination
+                [(ngModel)]="page"
+                [totalItems]="uniqueAdvertisements?.length"
+                [itemsPerPage]="pageSize"
+                (pageChanged)="pageChangedTop($event, 'page')"
+              ></pagination>
+            </div>
           </div>
         </div>
       </div>

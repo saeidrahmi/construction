@@ -192,4 +192,7 @@ export class AdvertisementsComponent {
 
     this.router.navigate(['/general/promote-top-ad']);
   }
+  pageChangedTop(event: any, target: string): void {
+    this[target] = event.page;
+  }
 }

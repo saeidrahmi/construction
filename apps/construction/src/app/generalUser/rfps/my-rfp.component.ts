@@ -89,6 +89,9 @@ export class MyRFPComponent {
   constructor() {
     this.getAds$.subscribe();
   }
+  pageChangedTop(event: any, target: string): void {
+    this[target] = event.page;
+  }
   activateAd(flag: boolean, adId: any) {
     this.apiService
       .updateUserAdvertisementActiveStatus(

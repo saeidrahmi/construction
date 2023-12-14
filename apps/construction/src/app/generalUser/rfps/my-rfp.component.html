@@ -234,15 +234,15 @@
               <app-user-rfp-view
                 [advertisement]="advertisement"
               ></app-user-rfp-view>
-              <div class="d-flex justify-content-center">
-                <pagination
-                  [(ngModel)]="page"
-                  [totalItems]="uniqueAdvertisements?.length"
-                  [itemsPerPage]="pageSize"
-                  (pageChanged)="pageChangedTop($event, 'page')"
-                ></pagination>
-              </div>
             </ng-container>
+            <div class="d-flex justify-content-center">
+              <pagination
+                [(ngModel)]="page"
+                [totalItems]="uniqueAdvertisements?.length"
+                [itemsPerPage]="pageSize"
+                (pageChanged)="pageChangedTop($event, 'page')"
+              ></pagination>
+            </div>
           </div>
         </div>
       </div>
