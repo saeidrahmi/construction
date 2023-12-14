@@ -30,4 +30,10 @@ export class RFPPreviewComponent {
     if (description?.length < 400) return description;
     else return description?.substring(0, 200) + '...';
   }
+  getDaysLeft() {
+    return this.userService.differenceInDays(
+      this.advertisement?.endDate,
+      new Date()
+    );
+  }
 }

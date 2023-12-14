@@ -139,6 +139,9 @@ export class NewRFPComponent {
         }),
         this.fb.group({
           showPicture: new FormControl('', []),
+          showPhone: new FormControl('', []),
+          showEmail: new FormControl('', []),
+          showAddress: new FormControl('', []),
           isTurnkey: new FormControl('', []),
         }),
         this.fb.group({
@@ -367,6 +370,18 @@ export class NewRFPComponent {
       formData.append(
         'showPicture',
         `${this.advertisement?.showPicture ? '1' : '0'}`
+      );
+      formData.append(
+        'showPhone',
+        `${this.advertisement?.showPhone ? '1' : '0'}`
+      );
+      formData.append(
+        'showEmail',
+        `${this.advertisement?.showEmail ? '1' : '0'}`
+      );
+      formData.append(
+        'showAddress',
+        `${this.advertisement?.showAddress ? '1' : '0'}`
       );
 
       formData.append('userRFPDuration', `${this.userRFPDuration}`);

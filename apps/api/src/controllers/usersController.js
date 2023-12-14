@@ -2813,9 +2813,9 @@ async function deleteRequestSupportMessagesController(req, res) {
 }
 async function insertUserRFP(connection, data) {
   const selectQuery = `INSERT INTO userRFPs( userId, title, description, tags,
-                        startDate, endDate, projectStartDate, expiryDate,  showPicture,  isTurnkey,contractorQualifications,
+                        startDate, endDate, projectStartDate, expiryDate,  showPicture,  isTurnkey,showPhone,showEmail,showAddress,contractorQualifications,
                         insuranceRequirements, milestones, budgetInformation, approvedByAdmin,active, deleted)
-                       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,? ,?,?)`;
+                       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,? ,?,?,? ,?,?)`;
   const values = [
     data.userId,
     data.title,
@@ -2827,8 +2827,10 @@ async function insertUserRFP(connection, data) {
     data.expiryDate,
     data.showPicture,
     data.isTurnkey,
+    data.showPhone,
+    data.showEmail,
+    data.showAddress,
     data.contractorQualifications,
-
     data.insuranceRequirements,
     data.milestones,
     data.budgetInformation,
@@ -2907,6 +2909,9 @@ async function saveUserRFPController(req, res) {
       expiryDate: expiryDate,
       showPicture: info.showPicture,
       isTurnkey: info.isTurnkey,
+      showPhone: info.showPhone,
+      showEmail: info.showEmail,
+      showAddress: info.showAddress,
       contractorQualifications: info.contractorQualifications,
 
       insuranceRequirements: info.insuranceRequirements,

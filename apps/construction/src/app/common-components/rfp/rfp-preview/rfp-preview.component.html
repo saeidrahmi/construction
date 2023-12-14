@@ -25,6 +25,11 @@
           <div class="col-1"><i class="bi bi-heart"></i></div>
         </div>
         <div class="row">
+          <div class="col" *ngIf="advertisement?.isTurnkey">
+            <button type="button" class="btn btn-outline-info">
+              Turnkey Project
+            </button>
+          </div>
           <div class="row">
             <div class="col">
               {{ user().city }} |
@@ -60,13 +65,19 @@
           <hr />
           <div class="row">
             <div class="col-4">
-              Bidding Start Date: {{ advertisement.startDate | date }}
+              <span class="fw-bold">Bidding Start Date: </span
+              >{{ advertisement.startDate | date }}
             </div>
             <div class="col-4">
-              Bidding End Date: {{ advertisement.endDate | date }}
+              <span class="fw-bold">Bidding End Date:</span>
+              {{ advertisement.endDate | date }}
             </div>
             <div class="col-4">
-              Project Start Date: {{ advertisement.projectStartDate | date }}
+              <span class="fw-bold">Project Start Date:</span>
+              {{ advertisement.projectStartDate | date }}
+            </div>
+            <div class="col-4">
+              <span class="fw-bold">Days Left:</span> {{ getDaysLeft() }} days.
             </div>
           </div>
 

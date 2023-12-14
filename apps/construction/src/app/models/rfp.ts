@@ -10,9 +10,11 @@ export interface RFPInterface {
   isTurnkey?: boolean;
   deleted?: boolean;
   description?: string;
-
   budgetInformation?: string;
   showPicture?: boolean;
+  showPhone?: boolean;
+  showEmail?: boolean;
+  showAddress?: boolean;
   dateCreated?: Date;
   startDate?: Date;
   projectStartDate?: Date;

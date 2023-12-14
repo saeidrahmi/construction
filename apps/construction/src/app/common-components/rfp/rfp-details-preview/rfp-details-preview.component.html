@@ -99,16 +99,26 @@
           </div>
         </div>
         <div class="row">
+          <div class="col-4">
+            <span class="fw-bold">Bidding Start Date: </span
+            >{{ advertisement.startDate | date }}
+          </div>
+          <div class="col-4">
+            <span class="fw-bold">Bidding End Date:</span>
+            {{ advertisement.endDate | date }}
+          </div>
+          <div class="col-4">
+            <span class="fw-bold">Project Start Date:</span>
+            {{ advertisement.projectStartDate | date }}
+          </div>
+          <div class="col-4">
+            <span class="fw-bold">Days Left:</span> {{ getDaysLeft() }} days.
+          </div>
+        </div>
+
+        <div class="row">
           <div class="col-8">
             <div class="container-fluid">
-              <div class="row" *ngIf="advertisement?.topAdvertisement">
-                <div class="col">
-                  <button type="button" class="btn btn-outline-info">
-                    TOP AD
-                  </button>
-                </div>
-              </div>
-
               <div class="row my-1">
                 <div class="col">
                   {{ user().city }} |
@@ -121,7 +131,7 @@
 
               <div class="row">
                 <div class="col">
-                  <h5>Description</h5>
+                  <h5>Project Scope</h5>
                   <quill-view-html
                     [content]="advertisement?.description"
                     theme="snow"
@@ -131,46 +141,70 @@
               <hr />
               <div class="row border rounded p-2">
                 <div class="col">
-                  <h5 class="border-bottom">My Services</h5>
-                  <h6>The following services are made available:</h6>
+                  <h5 class="border-bottom">Qualification Requirements</h5>
 
-                  <ul class="list-group list-group-flush">
-                    <li
-                      class="list-group-item"
-                      *ngFor="let service of myServices"
-                    >
-                      {{ service }}
-                    </li>
-                  </ul>
+                  <quill-view-html
+                    [content]="advertisement?.contractorQualifications"
+                    theme="snow"
+                  ></quill-view-html>
                 </div>
               </div>
               <hr />
               <div class="row border rounded p-2">
                 <div class="col">
-                  <h5 class="border-bottom">Covered locations</h5>
-                  <h6>My services are available in following locations:</h6>
-                  <ul class="list-group list-group-flush">
-                    <li
-                      class="list-group-item"
-                      *ngFor="let location of myLocations"
-                    >
-                      {{ location }}
-                    </li>
-                  </ul>
+                  <h5 class="border-bottom">Budget Information</h5>
+
+                  <quill-view-html
+                    [content]="advertisement?.budgetInformation"
+                    theme="snow"
+                  ></quill-view-html>
                 </div>
               </div>
-              <div class="row m-2" *ngIf="advertisement?.showAddress">
+              <hr />
+              <div class="row border rounded p-2">
+                <div class="col">
+                  <h5 class="border-bottom">Insurance and Liability</h5>
+
+                  <quill-view-html
+                    [content]="advertisement?.insuranceRequirements"
+                    theme="snow"
+                  ></quill-view-html>
+                </div>
+              </div>
+              <hr />
+              <div class="row border rounded p-2">
+                <div class="col">
+                  <h5 class="border-bottom">Timeline and Milestones</h5>
+
+                  <quill-view-html
+                    [content]="advertisement?.milestones"
+                    theme="snow"
+                  ></quill-view-html>
+                </div>
+              </div>
+              <hr />
+
+              <div class="row m-2">
                 <div class="col border border-1 p-2">
-                  {{
-                    user().address +
-                      ', ' +
-                      user().city +
-                      ', ' +
-                      user().province +
-                      ', ' +
-                      user().postalCode
-                  }}&nbsp;
-                  <a href="" target="_blank">(View Map)</a>
+                  <div
+                    *ngIf="advertisement.showAddress; then showAd; else noAd"
+                  ></div>
+                  <ng-template #showAd>
+                    {{
+                      user().address +
+                        ', ' +
+                        user().city +
+                        ', ' +
+                        user().province +
+                        ', ' +
+                        user().postalCode
+                    }}&nbsp;
+                  </ng-template>
+                  <ng-template #noAd>
+                    {{
+                      user().city + ', ' + user().province
+                    }}&nbsp;</ng-template
+                  >
                 </div>
               </div>
 
@@ -305,31 +339,6 @@
                       >
                     </li>
                   </ul>
-                </div>
-              </div>
-              <div
-                class="row border rounded p-2"
-                *ngIf="advertisement.showChat"
-              >
-                <div class="col">
-                  <h5 class=" ">Contact me</h5>
-                  <p class="font-sm">
-                    To deter and identify potential fraud, spam or suspicious
-                    behavior, we anonymize your email address (as applicable)
-                    and reserve the right to monitor conversations. By sending
-                    the message you agree to our Terms of Use and Privacy
-                    Policy.
-                  </p>
-                  <textarea
-                    class="form-control"
-                    placeholder="Enter message"
-                    [(ngModel)]="message"
-                    maxlength="400"
-                    rows="5"
-                  ></textarea>
-                  <button type="button" class="btn btn-outline-secondary my-1">
-                    Submit
-                  </button>
                 </div>
               </div>
             </div>

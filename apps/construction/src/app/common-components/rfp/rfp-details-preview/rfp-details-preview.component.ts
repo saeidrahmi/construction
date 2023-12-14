@@ -15,6 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CommonUtilityService } from '../../../services/common-utility.service';
 import { QuillModule } from 'ngx-quill';
+import { RFPInterface } from '../../../models/rfp';
 
 @Component({
   selector: 'app-rfp-details-preview',
@@ -35,7 +36,7 @@ export class RFPDetailsPreviewComponent {
   encryptionService = inject(EncryptionService);
   user = this.storageService.getUser();
 
-  @Input() advertisement: AdvertisementInterface = {};
+  @Input() advertisement: RFPInterface = {};
   message = '';
   max = 10;
   rate: number;
@@ -55,18 +56,15 @@ export class RFPDetailsPreviewComponent {
           this.registeredDate = new Date(info?.registeredDate);
           this.acitveAds = info.acitveAds;
           this.rate = info.userRate;
-          this.myServices = info?.services;
-          this.locationType = info?.locations?.serviceCoverageType;
-          if (this.locationType === 'province') {
-            this.myLocations = info?.locations?.provinces;
-          } else if (this.locationType === 'city') {
-            this.myLocations = info?.locations?.cities;
-          } else if (this.locationType === 'country') {
-            this.myLocations.push('All over Canada');
-          }
         })
       )
       .subscribe();
+  }
+  getDaysLeft() {
+    return this.userService.differenceInDays(
+      this.advertisement?.endDate,
+      new Date()
+    );
   }
   goToUrl() {
     // window.open('http://' + this.user().website, '_blank');
