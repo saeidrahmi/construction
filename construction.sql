@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Dec 13, 2023 at 10:19 PM
+-- Generation Time: Dec 14, 2023 at 06:46 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -293,7 +293,10 @@ CREATE TABLE `userRFPs` (
   `insuranceRequirements` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `milestones` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
   `budgetInformation` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
-  `expiryDate` timestamp NOT NULL
+  `expiryDate` timestamp NOT NULL,
+  `showPhone` tinyint(1) NOT NULL DEFAULT '0',
+  `showEmail` tinyint(1) NOT NULL DEFAULT '0',
+  `showAddress` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
