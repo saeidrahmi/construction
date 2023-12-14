@@ -63,6 +63,7 @@ const {
   submitNewSupportRequestController,
   listUserRequestSupportMessagesController,
   deleteRequestSupportMessagesController,
+  getUserRFPsController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -203,6 +204,7 @@ router.post(
   verifyGeneralToken,
   getUserAdvertisementsController
 );
+router.post('/get-user-rfps', verifyGeneralToken, getUserRFPsController);
 router.post(
   '/updateAd-active-status',
   verifyGeneralToken,

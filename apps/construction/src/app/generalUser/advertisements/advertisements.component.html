@@ -73,7 +73,12 @@
             </a>
           </div>
           <div class="border border-1 pt-3rounded my-2">
-            <ng-container *ngFor="let advertisement of uniqueAdvertisements">
+            <ng-container
+              *ngFor="
+                let advertisement of uniqueAdvertisements
+                  | slice : (page - 1) * pageSize : page * pageSize
+              "
+            >
               <div class="container">
                 <div class="row">
                   <div class="col-3 border border-1 pt-3">
@@ -251,7 +256,14 @@
 
               <app-user-advertisement-view
                 [advertisement]="advertisement"
-              ></app-user-advertisement-view
+              ></app-user-advertisement-view>
+              <div class="d-flex justify-content-center">
+                <pagination
+                  [(ngModel)]="page"
+                  [totalItems]="uniqueAdvertisements?.length"
+                  [itemsPerPage]="pageSize"
+                  (pageChanged)="pageChangedTop($event, 'page')"
+                ></pagination></div
             ></ng-container>
           </div>
         </div>

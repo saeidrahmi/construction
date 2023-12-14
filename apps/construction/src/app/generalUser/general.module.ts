@@ -66,6 +66,8 @@ import { RFPViewComponent } from '../common-components/rfp/rfp-view/rfp-view.com
 import { RFPDetailsPreviewComponent } from '../common-components/rfp/rfp-details-preview/rfp-details-preview.component';
 import { RFPDetailsViewComponent } from '../common-components/rfp/rfp-details-view/rfp-details-view.component';
 import { PreviewRFPComponent } from './rfps/rfp-advertisement/preview-rfp.component';
+import { UserRFPViewComponent } from './rfps/rfp-view/rfp-view.component';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
 
 @NgModule({
   declarations: [
@@ -97,6 +99,7 @@ import { PreviewRFPComponent } from './rfps/rfp-advertisement/preview-rfp.compon
     UserReviewsComponent,
     RfpGuidelineComponent,
     PreviewRFPComponent,
+    UserRFPViewComponent,
   ],
   imports: [
     MatDatepickerModule,
@@ -140,6 +143,8 @@ import { PreviewRFPComponent } from './rfps/rfp-advertisement/preview-rfp.compon
     RatingModule,
     NgxDropzoneModule,
     PhoneNumberPipe,
+
+    PaginationModule,
     RatingModule,
     QuillModule.forRoot(),
     QuillConfigModule.forRoot({

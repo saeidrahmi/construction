@@ -25,6 +25,8 @@ export class AdvertisementsComponent {
   imageService = inject(ImageService);
   utilityService = inject(CommonUtilityService);
   toastService = inject(ToastrService);
+  page = 1;
+  pageSize = 5;
   apiService = inject(ApiService);
   userService = inject(UserService);
   storageService = inject(StorageService);

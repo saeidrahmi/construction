@@ -2030,6 +2030,23 @@ WHERE userPlans.userId= ? and   userAdvertisements.deleted = 0 ORDER BY userAdve
     });
   }
 }
+async function getUserRFPsController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const selectQuery = `SELECT userRFPs.*, userRFPImages.userRFPImage
+                        FROM userRFPs
+                        JOIN users ON users.userId = userRFPs.userId
+                        LEFT JOIN userRFPImages ON userRFPs.rfpId  = userRFPImages.rfpId
+                        WHERE userRFPs.userId= ? and   userRFPs.deleted = 0 ORDER BY userRFPs.dateCreated DESC`;
+    const selectResult = await executeQuery(selectQuery, [userId]);
+
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 
 async function updateUserAdvertisementActivateStatusController(req, res) {
   try {
@@ -3065,4 +3082,5 @@ module.exports = {
   submitNewSupportRequestController,
   listUserRequestSupportMessagesController,
   saveUserRFPController,
+  getUserRFPsController,
 };
