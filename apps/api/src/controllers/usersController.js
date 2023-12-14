@@ -2074,6 +2074,28 @@ async function updateUserAdvertisementActivateStatusController(req, res) {
     });
   }
 }
+async function updateUserRFPActivateStatusController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const rfpId = req.body.rfpId;
+    const active = req.body.active ? '1' : '0';
+    const updateQuery = `UPDATE  userRFPs  SET active = ?  WHERE  userId= ? and rfpId = ?`;
+
+    const result = await executeQuery(updateQuery, [active, userId, rfpId]);
+
+    if (result.affectedRows > 0 || result.insertId) {
+      return res.status(200).json();
+    } else {
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  }
+}
 async function updateUserAdvertisementDeleteStatusController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
@@ -2086,6 +2108,27 @@ async function updateUserAdvertisementDeleteStatusController(req, res) {
       userId,
       userAdvertisementId,
     ]);
+
+    if (result.affectedRows > 0 || result.insertId) {
+      return res.status(200).json();
+    } else {
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  }
+}
+async function updateUserRFPDeleteStatusController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const rfpId = req.body.rfpId;
+    const deleted = req.body.deleted ? '1' : '0';
+    const updateQuery = `UPDATE  userRFPs  SET deleted = ?  WHERE  userId= ? and rfpId = ?`;
+    const result = await executeQuery(updateQuery, [deleted, userId, rfpId]);
 
     if (result.affectedRows > 0 || result.insertId) {
       return res.status(200).json();
@@ -3083,4 +3126,6 @@ module.exports = {
   listUserRequestSupportMessagesController,
   saveUserRFPController,
   getUserRFPsController,
+  updateUserRFPActivateStatusController,
+  updateUserRFPDeleteStatusController,
 };

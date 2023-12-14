@@ -35,11 +35,12 @@
           </li>
 
           <li>
-            Edit Ad: Make updates to keep your content relevant and engaging.
+            Edit RFP: Make updates to keep your content relevant and engaging.
           </li>
-          <li>Delete Ad: Remove advertisements that are no longer needed.</li>
+          <li>Delete RFP: Remove RFPs that are no longer needed.</li>
           <li>
-            Pause Ad: Temporarily halt your campaign without losing any details.
+            Pause RFP: Temporarily halt your campaign without losing any
+            details.
           </li>
         </ul>
         <p>
@@ -159,9 +160,7 @@
                       mat-stroked-button
                       color="primary"
                       class="mx-1"
-                      (click)="
-                        activateAd(true, advertisement?.userAdvertisementId)
-                      "
+                      (click)="activateAd(true, advertisement?.rfpId)"
                       *ngIf="
                         userService.getDaysRemaining(
                           currentDate,
@@ -175,9 +174,7 @@
                       mat-stroked-button
                       color="primary"
                       class="mx-1"
-                      (click)="
-                        activateAd(false, advertisement?.userAdvertisementId)
-                      "
+                      (click)="activateAd(false, advertisement?.rfpId)"
                       *ngIf="
                         userService.getDaysRemaining(
                           currentDate,
@@ -191,7 +188,7 @@
                       mat-stroked-button
                       color="primary"
                       class="mx-1"
-                      (click)="deleteAd(advertisement?.userAdvertisementId)"
+                      (click)="deleteAd(advertisement?.rfpId)"
                     >
                       Delete
                     </button>

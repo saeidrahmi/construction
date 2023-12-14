@@ -1397,6 +1397,40 @@ export class ApiService {
         })
       );
   }
+  updateUserRFPActiveStatus(
+    userId: string,
+    active: boolean,
+    rfpId: any
+  ): Observable<any> {
+    this.spinner.show();
+
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/updateRfp-active-status', {
+        userId: userId,
+        active: active,
+        rfpId: rfpId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User RFP Active Status Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
   updateUserAdvertisementDeleteStatus(
     userId: string,
 
@@ -1408,6 +1442,35 @@ export class ApiService {
         userId: userId,
         deleted: true,
         userAdvertisementId: userAdvertisementId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating User Ads Delete Status Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
+  updateUserRFPDeleteStatus(userId: string, rfpId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/updateRfp-delete-status', {
+        userId: userId,
+        deleted: true,
+        rfpId: rfpId,
       })
       .pipe(
         take(1),

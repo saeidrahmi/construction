@@ -94,7 +94,7 @@ export class MyRFPComponent {
   }
   activateAd(flag: boolean, adId: any) {
     this.apiService
-      .updateUserAdvertisementActiveStatus(
+      .updateUserRFPActiveStatus(
         this.encryptionService.encryptItem(this.userId()),
         flag,
         adId
@@ -118,7 +118,7 @@ export class MyRFPComponent {
   }
   deleteAd(adId: any) {
     this.apiService
-      .updateUserAdvertisementDeleteStatus(
+      .updateUserRFPDeleteStatus(
         this.encryptionService.encryptItem(this.userId()),
         adId
       )

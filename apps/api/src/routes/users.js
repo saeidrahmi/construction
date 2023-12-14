@@ -63,7 +63,9 @@ const {
   submitNewSupportRequestController,
   listUserRequestSupportMessagesController,
   deleteRequestSupportMessagesController,
+  updateUserRFPActivateStatusController,
   getUserRFPsController,
+  updateUserRFPDeleteStatusController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -211,9 +213,19 @@ router.post(
   updateUserAdvertisementActivateStatusController
 );
 router.post(
+  '/updateRfp-active-status',
+  verifyGeneralToken,
+  updateUserRFPActivateStatusController
+);
+router.post(
   '/updateAd-delete-status',
   verifyGeneralToken,
   updateUserAdvertisementDeleteStatusController
+);
+router.post(
+  '/updateRfp-delete-status',
+  verifyGeneralToken,
+  updateUserRFPDeleteStatusController
 );
 router.post(
   '/get-advertisement-details',
