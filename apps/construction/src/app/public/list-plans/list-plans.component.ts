@@ -4,7 +4,7 @@ import { ApiService } from '../../services/api.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
 import { tap } from 'rxjs';
-import { PlanComponent } from '../../common-components/plan/plan.component';
+import { PlanComponent } from '../../common-components/plans/plan/plan.component';
 import { RouterModule } from '@angular/router';
 
 @Component({

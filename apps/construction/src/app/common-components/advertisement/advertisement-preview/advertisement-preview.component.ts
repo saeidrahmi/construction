@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, inject } from '@angular/core';
-import { AdvertisementInterface } from '../../models/advertisement';
-import { StorageService } from '../../services/storage.service';
-import { UserService } from '../../services/user-service';
+import { AdvertisementInterface } from '../../../models/advertisement';
+import { StorageService } from '../../../services/storage.service';
+import { UserService } from '../../../services/user-service';
 import { RatingModule } from 'ngx-bootstrap/rating';
 import { FormsModule } from '@angular/forms';
 import { QuillModule } from 'ngx-quill';
-import { CommonUtilityService } from '../../services/common-utility.service';
+import { CommonUtilityService } from '../../../services/common-utility.service';
 
 @Component({
   selector: 'app-advertisement-preview',

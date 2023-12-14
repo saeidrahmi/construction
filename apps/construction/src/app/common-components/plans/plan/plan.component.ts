@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { PlanInterface } from '../../models/plan';
+import { PlanInterface } from '../../../models/plan';
 
 @Component({
   selector: 'app-plan',

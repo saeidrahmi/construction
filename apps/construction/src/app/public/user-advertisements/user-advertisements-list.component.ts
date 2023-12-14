@@ -11,7 +11,7 @@ import { CommonUtilityService } from '../../services/common-utility.service';
 import { ImageService } from '../../services/image-service';
 import { StorageService } from '../../services/storage.service';
 import { UserService } from '../../services/user-service';
-import { AdvertisementViewComponent } from '../../common-components/advertisement-view/advertisement-view.component';
+import { AdvertisementViewComponent } from '../../common-components/advertisement/advertisement-view/advertisement-view.component';
 import { EncryptionService } from '../../services/encryption-service';
 
 @Component({

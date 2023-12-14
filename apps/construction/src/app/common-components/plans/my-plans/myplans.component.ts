@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, inject } from '@angular/core';
-import { PlanInterface } from '../../models/plan';
-import { UserService } from '../../services/user-service';
+import { PlanInterface } from '../../../models/plan';
+import { UserService } from '../../../services/user-service';
 
 @Component({
   selector: 'app-myplans',

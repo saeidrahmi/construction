@@ -92,7 +92,7 @@ export const appRoutes: Route[] = [
     path: 'view-advertisement-details',
     loadComponent: () =>
       import(
-        './common-components/advertisement-details-view/advertisement-details-view.component'
+        './common-components/advertisement/advertisement-details-view/advertisement-details-view.component'
       ).then((com) => com.AdvertisementDetailsViewComponent),
   },
 

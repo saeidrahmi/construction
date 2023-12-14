@@ -1,10 +1,10 @@
-import { isUserLoggedIn } from './../../services/user-gaurds';
+import { isUserLoggedIn } from '../../../services/user-gaurds';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, Input, inject } from '@angular/core';
-import { AdvertisementInterface } from '../../models/advertisement';
-import { StorageService } from '../../services/storage.service';
-import { UserService } from '../../services/user-service';
+import { AdvertisementInterface } from '../../../models/advertisement';
+import { StorageService } from '../../../services/storage.service';
+import { UserService } from '../../../services/user-service';
 import { RatingModule } from 'ngx-bootstrap/rating';
 import {
   FormBuilder,
@@ -15,18 +15,18 @@ import {
   Validators,
 } from '@angular/forms';
 import { EnvironmentInfo } from 'libs/common/src/models/common';
-import { ImageService } from '../../services/image-service';
-import { ApiService } from '../../services/api.service';
+import { ImageService } from '../../../services/image-service';
+import { ApiService } from '../../../services/api.service';
 import { catchError, first, map, of, take, tap, switchMap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import { EncryptionService } from '../../services/encryption-service';
+import { EncryptionService } from '../../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DomSanitizer } from '@angular/platform-browser';
-import { FormService } from '../../services/form.service';
-import { FormErrorsComponent } from '../../public/form-errors.component';
-import { PhoneNumberPipe } from '../../pipes/phone-number.pipe';
-import { CommonUtilityService } from '../../services/common-utility.service';
-import { RatingInterface } from '../../models/rating';
+import { FormService } from '../../../services/form.service';
+import { FormErrorsComponent } from '../../../public/form-errors.component';
+import { PhoneNumberPipe } from '../../../pipes/phone-number.pipe';
+import { CommonUtilityService } from '../../../services/common-utility.service';
+import { RatingInterface } from '../../../models/rating';
 import { QuillModule } from 'ngx-quill';
 
 @Component({

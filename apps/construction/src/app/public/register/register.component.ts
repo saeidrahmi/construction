@@ -33,7 +33,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ToastrService } from 'ngx-toastr';
 import { PlanInterface } from '../../models/plan';
-import { PlanComponent } from '../../common-components/plan/plan.component';
+import { PlanComponent } from '../../common-components/plans/plan/plan.component';
 
 @Component({
   selector: 'construction-register',
