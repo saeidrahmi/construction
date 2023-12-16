@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Dec 14, 2023 at 06:46 PM
+-- Generation Time: Dec 16, 2023 at 06:32 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -144,6 +144,18 @@ CREATE TABLE `userFavoriteAdvertisements` (
   `dateCreated` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `userId` varchar(80) NOT NULL,
   `userAdvertisementId` bigint UNSIGNED NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userFavoriteRfps`
+--
+
+CREATE TABLE `userFavoriteRfps` (
+  `userId` varchar(80) NOT NULL,
+  `rfpId` bigint UNSIGNED NOT NULL,
+  `dateCreated` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -296,7 +308,9 @@ CREATE TABLE `userRFPs` (
   `expiryDate` timestamp NOT NULL,
   `showPhone` tinyint(1) NOT NULL DEFAULT '0',
   `showEmail` tinyint(1) NOT NULL DEFAULT '0',
-  `showAddress` tinyint(1) NOT NULL DEFAULT '0'
+  `showAddress` tinyint(1) NOT NULL DEFAULT '0',
+  `rejected` tinyint(1) NOT NULL DEFAULT '0',
+  `rejectedReason` varchar(400) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -437,6 +451,13 @@ ALTER TABLE `userAdvertisementsMessages`
 ALTER TABLE `userFavoriteAdvertisements`
   ADD PRIMARY KEY (`userId`,`userAdvertisementId`),
   ADD KEY `fav_adId` (`userAdvertisementId`);
+
+--
+-- Indexes for table `userFavoriteRfps`
+--
+ALTER TABLE `userFavoriteRfps`
+  ADD UNIQUE KEY `userId` (`userId`,`rfpId`),
+  ADD KEY `rfp_id_Fav` (`rfpId`);
 
 --
 -- Indexes for table `userPayments`
@@ -628,6 +649,13 @@ ALTER TABLE `userAdvertisements`
 ALTER TABLE `userFavoriteAdvertisements`
   ADD CONSTRAINT `fav_adId` FOREIGN KEY (`userAdvertisementId`) REFERENCES `userAdvertisements` (`userAdvertisementId`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `userId_fav` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userFavoriteRfps`
+--
+ALTER TABLE `userFavoriteRfps`
+  ADD CONSTRAINT `rfp_id_Fav` FOREIGN KEY (`rfpId`) REFERENCES `userRFPs` (`rfpId`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  ADD CONSTRAINT `userId_fav_rfp` FOREIGN KEY (`userId`) REFERENCES `users` (`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `userPayments`

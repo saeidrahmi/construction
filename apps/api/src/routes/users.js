@@ -66,6 +66,7 @@ const {
   updateUserRFPActivateStatusController,
   getUserRFPsController,
   updateUserRFPDeleteStatusController,
+  getUserRfpDetailsController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -236,6 +237,11 @@ router.post(
   '/get-user-advertisement-details',
   verifyGeneralToken,
   getUserAdvertisementDetailsController
+);
+router.post(
+  '/get-user-rfp-details',
+  verifyGeneralToken,
+  getUserRfpDetailsController
 );
 router.post(
   '/add-favorite-advertisement',

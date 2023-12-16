@@ -25,12 +25,12 @@ export class UserRFPViewComponent {
     this.currentDate = new Date();
   }
   navigateDetails(advertisement, userAdvertisementId) {
-    this.storageService.updateAdvertisementState(
+    this.storageService.updateRfpState(
       advertisement,
       userAdvertisementId,
       'view'
     );
-    this.router.navigate(['/general/advertisement-details']);
+    this.router.navigate(['/general/rfp-details']);
   }
   getDaysLeft() {
     return this.userService.differenceInDays(

@@ -46,7 +46,7 @@ export class MyRFPComponent {
 
       tap((list: any) => {
         this.allAdvertisements = list;
-        console.log(this.allAdvertisements);
+
         const uniqueIds = new Set();
         this.uniqueAdvertisements = this.allAdvertisements.filter((obj) => {
           if (uniqueIds.has(obj.rfpId)) {
@@ -56,7 +56,6 @@ export class MyRFPComponent {
             return true;
           }
         });
-        console.log(this.uniqueAdvertisements);
 
         this.uniqueAdvertisements = this.uniqueAdvertisements.map((obj) => {
           if (
@@ -138,8 +137,8 @@ export class MyRFPComponent {
       )
       .subscribe();
   }
-  editAdvertisement(userAdvertisementId: string) {
-    this.storageService.updateSelectedAdvertisementId(userAdvertisementId);
-    this.router.navigate(['/general/edit-advertisement']);
+  editAdvertisement(rfpId: string) {
+    this.storageService.updateSelectedRfpId(rfpId);
+    this.router.navigate(['/general/edit-rfp']);
   }
 }

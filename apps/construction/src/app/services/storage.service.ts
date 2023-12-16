@@ -59,6 +59,9 @@ export class StorageService {
   getAdvertisement(): Signal<any | undefined> {
     return computed(() => this.store()?.advertisement);
   }
+  getRfp(): Signal<any | undefined> {
+    return computed(() => this.store()?.rfp);
+  }
   getUserName(): Signal<string | undefined> {
     return computed(
       () => this.store()?.user?.firstName + ' ' + this.store()?.user?.lastName
@@ -113,6 +116,14 @@ export class StorageService {
       return {
         ...state,
         advertisement: { ...state.advertisement, advertisementIdSelected: id },
+      };
+    });
+  }
+  updateSelectedRfpId(id: string) {
+    this.store.update((state) => {
+      return {
+        ...state,
+        rfp: { ...state.rfp, rfpIdSelected: id },
       };
     });
   }
@@ -197,6 +208,19 @@ export class StorageService {
           advertisementIdSelected: id,
           advertisementSelected: advertisement,
           advertisementAction: action,
+        },
+      };
+    });
+  }
+  updateRfpState(advertisement: any, id: string, action: any) {
+    this.store.update((state) => {
+      return {
+        ...state,
+        rfp: {
+          ...state.rfp,
+          rfpIdSelected: id,
+          rfpSelected: advertisement,
+          rfpAction: action,
         },
       };
     });
@@ -333,6 +357,7 @@ export class StorageService {
         ...state,
         user: user,
         advertisement: null,
+        rfp: null,
         userIdSelected: null,
         plan: null,
         general: {
@@ -459,6 +484,7 @@ export class StorageService {
       general: { theme: 'light' },
       plan: null,
       advertisement: null,
+      rfp: null,
       mapSearchSelectedCities: [],
       advertisementSearchFilters: [],
       user: {

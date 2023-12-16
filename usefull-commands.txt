@@ -15,27 +15,6 @@ github token
 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
 
 
-Here is a list of categories to rate a construction service:
+docker-compose build
+docker-compose up
 
-1. Quality of Work: Assess the overall workmanship and adherence to building codes and standards.
-
-2. Timeliness: Evaluate if the project was completed within the agreed-upon timeline.
-
-3. Communication skills: Rate the effectiveness of the construction company's communication throughout the project, including responding to inquiries and providing regular updates.
-
-4. Cost Management: Review how well the service managed the project's budget and if it met the financial expectations.
-
-5. Professionalism: Consider the overall professionalism of the construction service, such as their conduct on-site, attire, and communication with clients and stakeholders.
-
-6. Safety: Measure the construction service's compliance with safety regulations and prevention of accidents on-site.
-
-7. Materials and Equipment: Assess the service's use of high-quality materials and equipment for the project.
-
-8. Flexibility: Evaluate the construction service's ability to adapt to changes in project requirements or handle unexpected issues.
-
-9. Cleanliness: Rate the service on keeping the worksite clean and organized throughout the project.
-
-10. Customer Satisfaction: Analyze the overall satisfaction of the end-users or clients with the completed project's results.
-11. Performance
-
-By rating a construction service on these categories, you can effectively assess their performance and ensure they meet or exceed expectations.

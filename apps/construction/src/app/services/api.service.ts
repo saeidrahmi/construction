@@ -1786,6 +1786,34 @@ export class ApiService {
         })
       );
   }
+  getUserRfpDetails(rfpId: any, userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-user-rfp-details', {
+        rfpId: rfpId,
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User RFP Details Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
 
   getAllAdvertisements(loggedIn: boolean, userId: string): Observable<any> {
     this.spinner.show();

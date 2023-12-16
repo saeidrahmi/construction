@@ -6,7 +6,7 @@
     "web-app": "nx run construction:serve:development",
     "api": "nx run api:serve:development",
     "start": "nx serve",
-    "build": "nx build",
+    "build": "nx run construction:serve:production",
     "test": "nx test"
   },
   "private": true,

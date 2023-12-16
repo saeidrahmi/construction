@@ -1,0 +1,11 @@
+# Use the official MySQL image as the base image
+FROM mysql:latest
+
+# Set environment variables
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=construction
+ENV MYSQL_USER=construction_user
+ENV MYSQL_PASSWORD=saeid
+
+# Copy the SQL initialization script
+COPY construction.sql /docker-entrypoint-initdb.d/

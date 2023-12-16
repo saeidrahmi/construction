@@ -30,7 +30,7 @@ export class EnvironmentInfo {
   refreshSecretKey() {
     return this._jwtRefreshSecretKey;
   }
-  userSessionRefreshTokenExpiry() {
+  userSessionRefreshTokenExpiry() { 
     return this._jwtRefreshTokenExpiration;
   }
   getPasswordResetExpiry() {

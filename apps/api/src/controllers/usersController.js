@@ -1755,6 +1755,62 @@ async function getUserAdvertisementDetailsController(req, res) {
     });
   }
 }
+async function getUserRfpDetailsController(req, res) {
+  try {
+    let rfpId = req.body.rfpId;
+    let userId = decryptItem(req.body.userId, webSecretKey);
+
+    // get user general info
+    const selectUserInfoQuery = `select userId,firstName,lastName,registeredDate,phone,fax,address, city, province, postalCode, website,  profileImage from  users where userId=?`;
+
+    const selectUserInfoResult = await executeQuery(selectUserInfoQuery, [
+      userId,
+    ]);
+
+    // get Ad details
+
+    const selectQuery = `SELECT userRFPs.*, userRFPImages.userRFPImage
+                        FROM userRFPs
+                        JOIN users ON users.userId = userRFPs.userId
+                        LEFT JOIN userRFPImages ON userRFPs.rfpId  = userRFPImages.rfpId
+                        WHERE userRFPs.rfpId= ? and userRFPs.userId= ? and   userRFPs.deleted = 0 ORDER BY userRFPs.dateCreated DESC`;
+
+    const selectAdResult = await executeQuery(selectQuery, [rfpId, userId]);
+
+    // get user registered date
+    const selectRegDateQuery = `SELECT registeredDate FROM users where userId=?`;
+    const selectRegDateResult = await executeQuery(selectRegDateQuery, [
+      userId,
+    ]);
+    // get user rating
+    const selectRatingResult = await getUserRatings(userId);
+
+    // get number of active ads
+    const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
+    const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
+      userId,
+    ]);
+    // get settings
+    const selectSettingQuery = `SELECT * FROM settings`;
+    const selectSettingResult = await executeQuery(selectSettingQuery, []);
+    // get services
+
+    // info
+    const info = {
+      registeredDate: selectRegDateResult[0].registeredDate,
+      acitveAds: selectActiveAdsResult[0].countAds,
+      userRate: selectRatingResult,
+      appSettings: selectSettingResult[0],
+      selectAdResult: selectAdResult,
+      userInfo: selectUserInfoResult[0],
+    };
+    return res.status(200).json(info);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 
 function canUserCreateAdvertisementController(userId) {
   return new Promise(async (resolve, reject) => {
@@ -3128,4 +3184,5 @@ module.exports = {
   getUserRFPsController,
   updateUserRFPActivateStatusController,
   updateUserRFPDeleteStatusController,
+  getUserRfpDetailsController,
 };

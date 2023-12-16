@@ -29,4 +29,6 @@ export interface RFPInterface {
   contractorQualifications?: string;
   insuranceRequirements?: string;
   milestones?: string;
+  rejectedReason?: string;
+  rejected?: boolean;
 }
