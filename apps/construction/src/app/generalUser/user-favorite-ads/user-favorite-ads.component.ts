@@ -8,6 +8,7 @@ import { StorageService } from '../../services/storage.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { tap, switchMap } from 'rxjs';
 import { AdvertisementInterface } from '../../models/advertisement';
+import { RFPInterface } from '../../models/rfp';
 @Component({
   selector: 'app-user-favorite-ads-messages',
   templateUrl: './user-favorite-ads.component.html',
@@ -26,16 +27,19 @@ export class UserFavoriteAdvertisementsComponent {
   user = this.storageService.getUser();
   userId = this.storageService?.getUserId();
   advertisements: AdvertisementInterface[] = [];
+  rfps: RFPInterface[] = [];
   getFavoriteAdvertisements$ = this.apiService
     .getFavoriteAdvertisements(
       this.encryptionService.encryptItem(this.userId())
     )
     .pipe(
       takeUntilDestroyed(this.destroyRef),
-      tap((list: AdvertisementInterface[]) => {
-        this.advertisements = list;
+      tap((list: any) => {
+        this.advertisements = list?.advertisements;
+        this.rfps = list?.rfps;
       })
     );
+
   constructor() {
     this.getFavoriteAdvertisements$.subscribe();
   }

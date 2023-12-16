@@ -1,33 +1,125 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col">
-      <div class="card" aria-hidden="true">
-        <div class="card-body">
-          <h2 class="card-title">
-            <span class="col-12">My Favorite Advertisements</span>
-          </h2>
+    <div class="accordion" id="previousPlan">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button
+            class="accordion-button"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseOne"
+            aria-expanded="true"
+            aria-controls="collapseOne"
+          >
+            My Favorite Advertisements
+          </button>
+        </h2>
+        <div
+          id="collapseOne"
+          class="accordion-collapse show"
+          data-bs-parent="#previousPlan"
+        >
+          <div class="accordion-body">
+            <div class="row">
+              <div class="col">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body">
+                    <h2 class="card-title">
+                      <span class="col-12">My Favorite Advertisements</span>
+                    </h2>
 
-          <div class="border border-1 p-2 rounded my-2">
-            <ng-container *ngFor="let advertisement of advertisements">
-              <div class="container">
-                <div class="row">
-                  <div class="col-6 border border-1 p-2">
-                    <button
-                      mat-stroked-button
-                      color="primary"
-                      class="mx-1"
-                      (click)="deleteAd(advertisement?.userAdvertisementId)"
-                    >
-                      Delete
-                    </button>
+                    <div class="border border-1 p-2 rounded my-2">
+                      <ng-container
+                        *ngFor="let advertisement of advertisements"
+                      >
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-6 border border-1 p-2">
+                              <button
+                                mat-stroked-button
+                                color="primary"
+                                class="mx-1"
+                                (click)="
+                                  deleteAd(advertisement?.userAdvertisementId)
+                                "
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <app-advertisement-view
+                          [advertisement]="advertisement"
+                        ></app-advertisement-view
+                      ></ng-container>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="accordion" id="rfps">
+      <div class="accordion-item">
+        <h2 class="accordion-header">
+          <button
+            class="accordion-button"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseTwo"
+            aria-expanded="true"
+            aria-controls="collapseTwo"
+          >
+            My Favorite RFPs
+          </button>
+        </h2>
+        <div
+          id="collapseTwo"
+          class="accordion-collapse show"
+          data-bs-parent="#rfps"
+        >
+          <div class="accordion-body">
+            <div class="row">
+              <div class="col">
+                <div class="card" aria-hidden="true">
+                  <div class="card-body">
+                    <h2 class="card-title">
+                      <span class="col-12">My Favorite RFPs</span>
+                    </h2>
 
-              <app-advertisement-view
-                [advertisement]="advertisement"
-              ></app-advertisement-view
-            ></ng-container>
+                    <div class="border border-1 p-2 rounded my-2">
+                      <ng-container *ngFor="let rfp of rfps">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-6 border border-1 p-2">
+                              <button
+                                mat-stroked-button
+                                color="primary"
+                                class="mx-1"
+                                (click)="
+                                  deleteAd(advertisement?.userAdvertisementId)
+                                "
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <app-user-rfp-view
+                          [advertisement]="rfp"
+                        ></app-user-rfp-view
+                      ></ng-container>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

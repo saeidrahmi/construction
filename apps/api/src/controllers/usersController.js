@@ -2519,8 +2519,17 @@ async function getFavoriteAdvertisementsController(req, res) {
                           JOIN userFavoriteAdvertisements ON userAdvertisements.userAdvertisementId  = userFavoriteAdvertisements.userAdvertisementId
                           WHERE  userFavoriteAdvertisements.userId=? ORDER BY userFavoriteAdvertisements.dateCreated DESC;`;
     const selectResult = await executeQuery(selectQuery, values);
+    // saeid
+    const selectRfpQuery = `SELECT userRFPs.*
+                        FROM userRFPs
+                        JOIN users ON users.userId = userRFPs.userId
+                        JOIN userFavoriteRfps ON userFavoriteRfps.rfpId  = userRFPs.rfpId
+                        WHERE userRFPs.userId= ? and   userRFPs.deleted = 0 ORDER BY userRFPs.dateCreated DESC`;
+    const selectRfpResult = await executeQuery(selectRfpQuery, [userId]);
 
-    return res.status(200).json(selectResult);
+    return res
+      .status(200)
+      .json({ advertisements: selectResult, rfps: selectRfpResult });
   } catch (error) {
     return res.status(500).json({
       errorMessage:
