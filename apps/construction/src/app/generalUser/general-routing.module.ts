@@ -28,6 +28,7 @@ import { NewRFPComponent } from './rfps/new-rfp/new-rfp.component';
 import { UserReviewsComponent } from './user-reviews/user-reviews.component';
 import { RfpGuidelineComponent } from './rfps/rfp-guidline/rfp-guidline.component';
 import { UserRfpDetailsViewComponent } from './rfps/rfp-details-view/rfp-details-view.component';
+import { EditRfpComponent } from './rfps/edit-rfp/edit-rfp.component';
 const routes: Routes = [
   {
     path: '',
@@ -128,6 +129,10 @@ const routes: Routes = [
       {
         path: 'rfp-details',
         component: UserRfpDetailsViewComponent,
+      },
+      {
+        path: 'edit-rfp',
+        component: EditRfpComponent,
       },
       {
         path: 'user-reviews',

@@ -69,6 +69,7 @@ const {
   getUserRfpDetailsController,
   isRfpUserFavoriteAdController,
   addFavoriteRfpController,
+  getRfpEditInfoController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -336,6 +337,11 @@ router.post(
   '/advertisement-general-edit-info',
   verifyGeneralToken,
   getAdvertisementEditInfoController
+);
+router.post(
+  '/rfp-general-edit-info',
+  verifyGeneralToken,
+  getRfpEditInfoController
 );
 router.post(
   '/new-support-request',

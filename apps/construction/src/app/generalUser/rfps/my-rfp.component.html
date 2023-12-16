@@ -235,9 +235,7 @@
                           advertisement?.expiryDate
                         ) >= 1 && advertisement?.active === 1
                       "
-                      (click)="
-                        editAdvertisement(advertisement?.userAdvertisementId)
-                      "
+                      (click)="editAdvertisement(advertisement?.rfpId)"
                     >
                       Edit
                     </button>

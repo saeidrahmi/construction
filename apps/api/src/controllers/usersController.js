@@ -2806,6 +2806,25 @@ async function getAdvertisementEditInfoController(req, res) {
     });
   }
 }
+async function getRfpEditInfoController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const rfpId = req.body.rfpId;
+
+    const selectAdQuery = `SELECT userRFPs.*, userRFPImages.userRFPImage
+                          FROM userRFPs
+                          LEFT JOIN userRFPImages ON userRFPImages.rfpId  = userRFPs.rfpId
+                          WHERE userRFPs.rfpId=?  and userRFPs.userId = ?   `;
+
+    const selectResult = await executeQuery(selectAdQuery, [rfpId, userId]);
+
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  }
+}
 async function repostAdvertisementController(req, res) {
   let connection;
   try {
@@ -3236,4 +3255,5 @@ module.exports = {
   getUserRfpDetailsController,
   isRfpUserFavoriteAdController,
   addFavoriteRfpController,
+  getRfpEditInfoController,
 };

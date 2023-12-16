@@ -69,6 +69,7 @@ import { PreviewRFPComponent } from './rfps/rfp-advertisement/preview-rfp.compon
 import { UserRFPViewComponent } from './rfps/rfp-view/rfp-view.component';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { UserRfpDetailsViewComponent } from './rfps/rfp-details-view/rfp-details-view.component';
+import { EditRfpComponent } from './rfps/edit-rfp/edit-rfp.component';
 
 @NgModule({
   declarations: [
@@ -102,6 +103,7 @@ import { UserRfpDetailsViewComponent } from './rfps/rfp-details-view/rfp-details
     PreviewRFPComponent,
     UserRFPViewComponent,
     UserRfpDetailsViewComponent,
+    EditRfpComponent,
   ],
   imports: [
     MatDatepickerModule,
