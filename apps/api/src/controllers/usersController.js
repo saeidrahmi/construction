@@ -2225,6 +2225,32 @@ async function addFavoriteAdvertisementsController(req, res) {
     });
   }
 }
+async function addFavoriteRfpController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+
+    const values = [userId, req.body.rfpId];
+    const selectQuery = `select * from userFavoriteRfps  where userId=? and rfpId=?`;
+    const selectResult = await executeQuery(selectQuery, values);
+
+    let result = '';
+    if (selectResult?.length === 0) {
+      const insertQuery = `INSERT INTO userFavoriteRfps (userId,rfpId) VALUES (?,?)`;
+      const insertResult = await executeQuery(insertQuery, values);
+      result = 'inserted';
+    } else {
+      const deleteQuery = `delete from userFavoriteRfps where userId=? and rfpId=? `;
+      const deleteResult = await executeQuery(deleteQuery, values);
+      result = 'deleted';
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  }
+}
 async function deleteFavoriteAdvertisementsController(req, res) {
   try {
     let userId = decryptItem(req.body.userId, webSecretKey);
@@ -2335,6 +2361,20 @@ async function isUserFavoriteAdController(req, res) {
     let userId = decryptItem(req.body.userId, webSecretKey);
     const values = [userId, req.body.userAdvertisementId];
     const selectQuery = `select * from userFavoriteAdvertisements where userId=? and userAdvertisementId=? `;
+    const selectResult = await executeQuery(selectQuery, values);
+    const result = selectResult?.length > 0 ? true : false;
+    return res.status(200).json(result);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
+async function isRfpUserFavoriteAdController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    const values = [userId, req.body.rfpId];
+    const selectQuery = `select * from userFavoriteRfps where userId=? and rfpId=? `;
     const selectResult = await executeQuery(selectQuery, values);
     const result = selectResult?.length > 0 ? true : false;
     return res.status(200).json(result);
@@ -3185,4 +3225,6 @@ module.exports = {
   updateUserRFPActivateStatusController,
   updateUserRFPDeleteStatusController,
   getUserRfpDetailsController,
+  isRfpUserFavoriteAdController,
+  addFavoriteRfpController,
 };

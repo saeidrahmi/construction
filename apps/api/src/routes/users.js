@@ -67,6 +67,8 @@ const {
   getUserRFPsController,
   updateUserRFPDeleteStatusController,
   getUserRfpDetailsController,
+  isRfpUserFavoriteAdController,
+  addFavoriteRfpController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -248,6 +250,7 @@ router.post(
   verifyGeneralToken,
   addFavoriteAdvertisementsController
 );
+router.post('/add-favorite-rfp', verifyGeneralToken, addFavoriteRfpController);
 router.post(
   '/delete-favorite-advertisement',
   verifyGeneralToken,
@@ -259,6 +262,11 @@ router.post(
   addUserOverallRatingController
 );
 router.post('/is-user-favorite-ad', verifyAllToken, isUserFavoriteAdController);
+router.post(
+  '/is-rfp-user-favorite',
+  verifyAllToken,
+  isRfpUserFavoriteAdController
+);
 router.post(
   '/post-advertisement-message',
   verifyAllToken,

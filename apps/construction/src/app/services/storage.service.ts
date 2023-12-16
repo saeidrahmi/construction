@@ -53,6 +53,9 @@ export class StorageService {
   getSelectedAdvertisementId(): Signal<string | undefined> {
     return computed(() => this.store()?.advertisement?.advertisementIdSelected);
   }
+  getSelectedRfpId(): Signal<string | undefined> {
+    return computed(() => this.store()?.rfp?.rfpIdSelected);
+  }
   getSelectedAdvertisement(): Signal<AdvertisementInterface | undefined> {
     return computed(() => this.store()?.advertisement?.advertisementSelected);
   }

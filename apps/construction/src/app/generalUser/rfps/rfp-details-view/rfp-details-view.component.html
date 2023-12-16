@@ -38,7 +38,7 @@
             >
               <img
                 [src]="imageService.bufferToSafeUrl(imageUrl)"
-                style="height: 400px"
+                style="height: 500px"
                 class="d-block w-100 rounded opacity-100"
                 alt="..."
                 data-bs-toggle="modal"
@@ -98,7 +98,7 @@
               <i
                 class="bi bi-heart-fill cursor"
                 [ngStyle]="{ 'font-size': '2rem', color: heartColor }"
-                (click)="addFavoriteAd(advertisement?.userAdvertisementId)"
+                (click)="addFavoriteAd(advertisement?.rfpId)"
               ></i>
             </div>
           </div>

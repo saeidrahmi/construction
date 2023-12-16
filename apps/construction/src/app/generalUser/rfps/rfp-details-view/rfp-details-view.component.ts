@@ -100,12 +100,12 @@ export class UserRfpDetailsViewComponent {
 
           switchMap(() => {
             return this.apiService
-              .isUserFavoriteAd(
-                this.storageService?.getSelectedAdvertisementId()(),
+              .isRfpUserFavoriteAd(
+                this.storageService?.getSelectedRfpId()(),
                 this.encryptionService.encryptItem(this.userId())
               )
               .pipe(
-                takeUntilDestroyed(),
+                takeUntilDestroyed(this.destroyRef),
                 tap((isFavorite) => {
                   if (isFavorite) this.heartColor = 'red';
                   else this.heartColor = '';
@@ -140,10 +140,7 @@ export class UserRfpDetailsViewComponent {
 
   addFavoriteAd(id: any) {
     this.apiService
-      .addFavoriteAdvertisement(
-        id,
-        this.encryptionService.encryptItem(this.userId())
-      )
+      .addFavoriteRfp(id, this.encryptionService.encryptItem(this.userId()))
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap((info: any) => {

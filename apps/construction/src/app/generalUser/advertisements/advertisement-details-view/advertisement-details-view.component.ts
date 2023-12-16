@@ -116,7 +116,7 @@ export class UserAdvertisementDetailsViewComponent {
                 this.encryptionService.encryptItem(this.userId())
               )
               .pipe(
-                takeUntilDestroyed(),
+                takeUntilDestroyed(this.destroyRef),
                 tap((isFavorite) => {
                   if (isFavorite) this.heartColor = 'red';
                   else this.heartColor = '';

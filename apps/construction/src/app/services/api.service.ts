@@ -1924,7 +1924,35 @@ export class ApiService {
         catchError((error) => {
           this.toastService.error(
             error.message,
-            'Retrieving Favorite Advertisement Failed',
+            'Updating Favorite Advertisement Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
+  addFavoriteRfp(rfpId: any, userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/add-favorite-rfp', {
+        rfpId: rfpId,
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Updating Favorite Rfp Failed',
             {
               timeOut: this.toastrTimeoutValue,
               positionClass: 'toast-top-right',
@@ -2023,6 +2051,30 @@ export class ApiService {
               progressBar: true,
             }
           );
+          throw error;
+        })
+      );
+  }
+  isRfpUserFavoriteAd(rfpId: any, userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/is-rfp-user-favorite', {
+        rfpId: rfpId,
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'User Favorite Rfp Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
           throw error;
         })
       );
