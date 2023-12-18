@@ -67,11 +67,12 @@ export class AdminRfpDetailsViewComponent {
   constructor(private sanitizer: DomSanitizer) {
     this.max = this.commonUtility.getMaxUserRating();
     const adObject = this.storageService?.getRfp()();
+
     if (adObject?.rfpIdSelected && adObject?.rfpAction === 'view') {
       this.apiService
         .getUserRfpDetails(
           adObject?.rfpIdSelected,
-          this.encryptionService.encryptItem(this.userId())
+          this.encryptionService.encryptItem(adObject.rfpSelected?.userId)
         )
         .pipe(
           takeUntilDestroyed(),

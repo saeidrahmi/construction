@@ -190,7 +190,6 @@ export class AdvertisementDetailsViewComponent {
               .pipe(
                 takeUntilDestroyed(this.destroyRef),
                 tap((ratings: any) => {
-                  console.log(ratings, 'ratings');
                   this.userRating = { ...ratings };
                 })
               )

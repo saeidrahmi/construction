@@ -87,15 +87,15 @@ export class RfpPendingApprovalComponent {
       this.router.navigate(['/admin/user-profile']);
     this.getAds$.subscribe();
   }
-  approveAd(userAdvertisementId: any) {
+  approveAd(rfpId: any) {
     this.apiService
-      .approveAdvertisement(userAdvertisementId)
+      .approveRfp(rfpId)
 
       .pipe(
         takeUntilDestroyed(this.destroyRef),
 
         tap((list: any) => {
-          this.toastService.success('Ad. approved successfully. ', 'Success', {
+          this.toastService.success('RFP approved successfully. ', 'Success', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,
@@ -107,15 +107,15 @@ export class RfpPendingApprovalComponent {
       )
       .subscribe();
   }
-  rejectAd(userAdvertisementId: any) {
+  rejectAd(rfpId: any) {
     this.apiService
-      .rejectAdvertisement(userAdvertisementId, this.reason?.join(', '))
+      .rejectRfp(rfpId, this.reason?.join(', '))
 
       .pipe(
         takeUntilDestroyed(this.destroyRef),
 
         tap(() => {
-          this.toastService.success('Ad. rejected successfully. ', 'Success', {
+          this.toastService.success('RFP rejected successfully. ', 'Success', {
             timeOut: 3000,
             positionClass: 'toast-top-right',
             closeButton: true,

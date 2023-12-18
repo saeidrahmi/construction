@@ -355,6 +355,19 @@ async function approveAdvertisement(req, res) {
     });
   }
 }
+async function approveRfp(req, res) {
+  try {
+    const rfpId = req.body.rfpId;
+
+    const selectQuery = `UPDATE userRFPs set   approvedByAdmin = 1,  rejected=0 , rejectedReason='' where rfpId =?`;
+    const selectResult = await executeQuery(selectQuery, [rfpId]);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 async function rejectAdvertisement(req, res) {
   try {
     const userAdvertisementId = req.body.userAdvertisementId;
@@ -365,6 +378,20 @@ async function rejectAdvertisement(req, res) {
       reason,
       userAdvertisementId,
     ]);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
+async function rejectRfp(req, res) {
+  try {
+    const rfpId = req.body.rfpId;
+    const reason = req.body.rejectReason;
+
+    const selectQuery = `UPDATE userRFPs set   approvedByAdmin = 0,  rejected=1 , rejectedReason=? where rfpId =?`;
+    const selectResult = await executeQuery(selectQuery, [reason, rfpId]);
     return res.status(200).json(selectResult);
   } catch (error) {
     return res.status(500).json({
@@ -616,7 +643,7 @@ async function updateUserPermissionController(req, res) {
                    values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
 
       const insertResult = await executeQuery(insertQuery, values);
-      console.log(insertResult);
+
       if (insertResult.affectedRows === 0) {
         return res
           .status(500)
@@ -925,4 +952,6 @@ module.exports = {
   listUserRequestSupportMessagesController,
   sendUserSupportRequestAdminResponse,
   getAllUsersRfpsPendingApproval,
+  approveRfp,
+  rejectRfp,
 };

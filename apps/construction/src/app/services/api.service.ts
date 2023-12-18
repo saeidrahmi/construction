@@ -1776,6 +1776,29 @@ export class ApiService {
         })
       );
   }
+  approveRfp(rfpId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/approve-rfp', {
+        rfpId: rfpId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Approving RFP Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          throw error;
+        })
+      );
+  }
   rejectAdvertisement(userAdvertisementId: any, reason: any): Observable<any> {
     this.spinner.show();
     return this.httpClient
@@ -1800,6 +1823,30 @@ export class ApiService {
               progressBar: true,
             }
           );
+          throw error;
+        })
+      );
+  }
+  rejectRfp(rfpId: any, reason: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/admin/reject-rfp', {
+        rfpId: rfpId,
+        rejectReason: reason,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Rejecting RFP Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
           throw error;
         })
       );

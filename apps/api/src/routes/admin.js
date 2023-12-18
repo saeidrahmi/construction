@@ -26,6 +26,8 @@ const {
   listUserRequestSupportMessagesController,
   sendUserSupportRequestAdminResponse,
   getAllUsersRfpsPendingApproval,
+  approveRfp,
+  rejectRfp,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -71,11 +73,13 @@ router.post(
   verifyAdminAndSAdminToken,
   approveAdvertisement
 );
+router.post('/approve-rfp', verifyAdminAndSAdminToken, approveRfp);
 router.post(
   '/reject-advertisement',
   verifyAdminAndSAdminToken,
   rejectAdvertisement
 );
+router.post('/reject-rfp', verifyAdminAndSAdminToken, rejectRfp);
 router.post('/update-plan', verifySAdminToken, updatePlanController);
 router.post(
   '/get-advertisement-details',

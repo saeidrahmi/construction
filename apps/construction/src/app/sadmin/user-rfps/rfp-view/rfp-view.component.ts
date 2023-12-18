@@ -1,14 +1,14 @@
 import { Router } from '@angular/router';
 
 import { Component, Input, inject } from '@angular/core';
-import { AdvertisementInterface } from '../../../models/advertisement';
+
 import { StorageService } from '../../../services/storage.service';
 import { UserService } from '../../../services/user-service';
 import { CommonUtilityService } from '../../../services/common-utility.service';
 import { RFPInterface } from '../../../models/rfp';
 
 @Component({
-  selector: 'app-admin-user-rfp-view',
+  selector: 'app-admin-rfp-view',
   templateUrl: './rfp-view.component.html',
   styleUrls: ['./rfp-view.component.css'],
 })
@@ -30,7 +30,7 @@ export class AdminRFPViewComponent {
       userAdvertisementId,
       'view'
     );
-    this.router.navigate(['/general/rfp-details']);
+    this.router.navigate(['/admin/rfp-details']);
   }
   getDaysLeft() {
     return this.userService.differenceInDays(

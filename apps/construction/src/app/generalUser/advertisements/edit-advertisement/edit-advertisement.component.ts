@@ -101,8 +101,6 @@ export class EditAdvertisementComponent {
                 this.formArray.get([0]).get('tags').setValue(this.myTags);
                 this.formArray.get([0]).updateValueAndValidity();
 
-                console.log(this.myTags, 'tags');
-
                 const selectAdResult = results;
                 this.sliderImages = [];
 

@@ -82,7 +82,6 @@ export class SupportComponent {
       errors: [],
     };
     if (this.feedbackForm.valid) {
-      console.log(messageId, userId);
       const adminUserId = this.storageService?.getUserId();
       this.apiService
         .sendUserSupportRequestAdminResponse(

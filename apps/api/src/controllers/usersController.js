@@ -1410,7 +1410,7 @@ async function getUserRatingsController(req, res) {
 
     const userId = selectUserResult[0]?.userId;
     const selectRatingResult = await getUserRatings(userId);
-    console.log('re', selectRatingResult);
+
     return res.status(200).json(selectRatingResult);
   } catch (error) {
     return res
@@ -3263,7 +3263,7 @@ async function saveUserRFPController(req, res) {
     }
 
     if (req.files['headerImage']) {
-      console.log('heder image');
+
       const image = req.files['headerImage'][0];
       const { buffer } = image;
       const insertImageResult = await insertRFPHeaderImage(

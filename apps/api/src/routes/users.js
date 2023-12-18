@@ -244,7 +244,7 @@ router.post(
 );
 router.post(
   '/get-user-rfp-details',
-  verifyGeneralToken,
+  verifyAllToken,
   getUserRfpDetailsController
 );
 router.post(
