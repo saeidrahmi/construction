@@ -18,6 +18,8 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { AdvertisementInterface } from '../../../models/advertisement';
@@ -87,6 +89,8 @@ export class EditRfpComponent {
           this.advertisement = results[0];
           if (results[0]?.tags?.length > 0)
             this.myTags = results[0]?.tags?.split(',');
+          this.formArray.get([0]).get('tags').setValue(this.myTags);
+          this.formArray.get([0]).updateValueAndValidity();
 
           const selectAdResult = results;
           this.sliderImages = [];
@@ -193,9 +197,14 @@ export class EditRfpComponent {
 
     this.form = this.fb.group({
       formArray: this.fb.array([
-        this.fb.group({
-          tags: new FormControl('', [Validators.required]),
-        }),
+        this.fb.group(
+          {
+            tags: new FormControl('', [Validators.required]),
+          },
+          {
+            // validator: this.tagsRequiredValidator.bind(this), // Add your custom validator function here
+          }
+        ),
         this.fb.group({
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
@@ -225,6 +234,7 @@ export class EditRfpComponent {
       )
     );
   }
+
   private _filterTags(value: string): string[] {
     const filterValue = value.toLowerCase();
 

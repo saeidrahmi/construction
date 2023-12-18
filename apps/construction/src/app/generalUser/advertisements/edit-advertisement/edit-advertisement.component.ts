@@ -98,6 +98,10 @@ export class EditAdvertisementComponent {
                 this.advertisement = results[0];
                 if (results[0]?.tags?.length > 0)
                   this.myTags = results[0]?.tags?.split(',');
+                this.formArray.get([0]).get('tags').setValue(this.myTags);
+                this.formArray.get([0]).updateValueAndValidity();
+
+                console.log(this.myTags, 'tags');
 
                 const selectAdResult = results;
                 this.sliderImages = [];
