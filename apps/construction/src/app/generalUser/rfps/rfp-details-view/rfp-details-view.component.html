@@ -94,6 +94,7 @@
             <div class="col-8">
               <h5>{{ advertisement.title }}</h5>
             </div>
+
             <div class="col-1">
               <i
                 class="bi bi-heart-fill cursor"
@@ -102,6 +103,7 @@
               ></i>
             </div>
           </div>
+
           <div class="row my-2">
             <div class="col-8">
               <div class="container-fluid">
@@ -122,6 +124,27 @@
                     }}
                   </div>
                 </div>
+                <hr />
+                <div class="row">
+                  <div class="col-4">
+                    <span class="fw-bold">Bidding Start Date: </span
+                    >{{ advertisement.startDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Bidding End Date:</span>
+                    {{ advertisement.endDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Project Start Date:</span>
+                    {{ advertisement.projectStartDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Days Left:</span>
+                    {{ getDaysLeft() }} days.
+                  </div>
+                </div>
+
+                <br />
                 <hr />
 
                 <div class="row">

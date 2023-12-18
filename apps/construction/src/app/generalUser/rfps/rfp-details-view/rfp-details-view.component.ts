@@ -161,19 +161,14 @@ export class UserRfpDetailsViewComponent {
 
       .subscribe();
   }
-  sendMessage() {
-    this.toastService.error(
-      'You are unable to send a message to yourself.',
-      'Error',
-      {
-        timeOut: 3000,
-        positionClass: 'toast-top-right',
-        closeButton: true,
-        progressBar: true,
-      }
-    );
-  }
+
   setImage(imageUrl) {
     this.selectedImage = imageUrl;
+  }
+  getDaysLeft() {
+    return this.userService.differenceInDays(
+      new Date(this.advertisement?.endDate),
+      new Date()
+    );
   }
 }

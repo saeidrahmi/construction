@@ -1341,6 +1341,27 @@ export class ApiService {
         })
       );
   }
+  editRfp(data: FormData): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/edit-rfp', data)
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Editing RFP Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          throw error;
+        })
+      );
+  }
   getUserAdvertisements(userId: string): Observable<any> {
     this.spinner.show();
     return this.httpClient

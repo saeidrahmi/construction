@@ -2016,6 +2016,37 @@ async function updateUserAdvertisement(connection, data) {
     ? insertResult
     : null;
 }
+async function updateUserRfp(connection, data) {
+  const selectQuery = `update userRFPs set  title=?, description=?, tags=?,
+                        startDate=?, endDate=?, projectStartDate=?,   showPicture=?,  isTurnkey=?,showPhone=?,showEmail=?,
+                        showAddress=?,contractorQualifications=?,
+                        insuranceRequirements=?, milestones=?, budgetInformation=?, approvedByAdmin=0
+                        where userId=? and rfpId=?`;
+  const values = [
+    data.title,
+    data.description,
+    data.tags,
+    new Date(data.startDate),
+    new Date(data.endDate),
+    data.projectStartDate ? new Date(data.projectStartDate) : null,
+    data.showPicture,
+    data.isTurnkey,
+    data.showPhone,
+    data.showEmail,
+    data.showAddress,
+    data.contractorQualifications,
+    data.insuranceRequirements,
+    data.milestones,
+    data.budgetInformation,
+    data.userId,
+    data.rfpId,
+  ];
+
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
 
 async function insertHeaderImage(connection, buffer, insertId) {
   const insertImageQuery =
@@ -2036,6 +2067,7 @@ async function insertUserAdvertisementSliderImages(connection, data) {
     ? insertResult
     : null;
 }
+
 async function deleteUserAdvertisementSliderImages(connection, data) {
   const selectQuery = `DELETE FROM userAdvertisementImages  where userAdvertisementId = ?`;
   const values = [data.userAdvertisementId];
@@ -2044,9 +2076,25 @@ async function deleteUserAdvertisementSliderImages(connection, data) {
     ? insertResult
     : null;
 }
+async function deleteUserRfpSliderImages(connection, data) {
+  const selectQuery = `DELETE FROM userRFPImages  where rfpId = ?`;
+  const values = [data.rfpId];
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
 async function updateUserAdvertisementHeaderImages(connection, data) {
   const selectQuery = `Update  userAdvertisements set headerImage= NULL where userAdvertisementId = ?`;
   const values = [data.userAdvertisementId];
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
+async function updateUserRfpHeaderImages(connection, data) {
+  const selectQuery = `Update  userRFPs set headerImage= NULL where rfpId = ?`;
+  const values = [data.rfpId];
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId
     ? insertResult
@@ -2783,6 +2831,111 @@ async function editAdvertisementController(req, res) {
     }
   }
 }
+
+async function editRfpController(req, res) {
+  let connection;
+  try {
+    const data = req.body;
+    const userId = decryptItem(data.userId, webSecretKey);
+    const rfpId = req.body.rfpId;
+    const tags = req.body.tags;
+
+    connection = await connectToDatabase();
+    await connection.beginTransaction();
+
+    const updateResult = await updateUserRfp(connection, {
+      title: data.title,
+      description: data.description,
+      tags: tags,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      projectStartDate: data.projectStartDate,
+      showPicture: data.showPicture,
+      isTurnkey: data.isTurnkey,
+      showPhone: data.showPhone,
+      showEmail: data.showEmail,
+      showAddress: data.showAddress,
+      contractorQualifications: data.contractorQualifications,
+      insuranceRequirements: data.insuranceRequirements,
+      milestones: data.milestones,
+      budgetInformation: data.budgetInformation,
+      userId: userId,
+      rfpId: rfpId,
+    });
+
+    if (!updateResult) {
+      await connection.rollback();
+      return res.status(500).json({
+        errorMessage: 'Failed to update information. Please try again.',
+      });
+    }
+
+    if (req.files['headerImage']) {
+      const image = req.files['headerImage'][0];
+      const { buffer } = image;
+      const insertImageResult = await insertRFPHeaderImage(
+        connection,
+        buffer,
+        rfpId
+      );
+
+      if (!insertImageResult) {
+        await connection.rollback();
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
+      }
+    } else {
+      const updateImageResult = await updateUserRfpHeaderImages(connection, {
+        rfpId: rfpId,
+      });
+    }
+    await deleteUserRfpSliderImages(connection, {
+      rfpId: rfpId,
+    });
+    if (req.files['sliderImages']) {
+      for (const file of req.files['sliderImages']) {
+        const { buffer } = file;
+        const insertSliderImageResult = await insertUserRFPSliderImages(
+          connection,
+          {
+            rfpId: rfpId,
+            userRFPImage: buffer,
+          }
+        );
+
+        if (!insertSliderImageResult) {
+          await connection.rollback();
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
+        }
+      }
+    }
+
+    await connection.commit();
+    return res.status(200).json(true);
+  } catch (error) {
+    if (connection) {
+      try {
+        await connection.rollback();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  } finally {
+    if (connection) {
+      try {
+        await connection.end();
+      } catch (error) {
+        console.error('Error closing database connection:', error);
+      }
+    }
+  }
+}
 async function getAdvertisementEditInfoController(req, res) {
   try {
     const userId = decryptItem(req.body.userId, webSecretKey);
@@ -3056,12 +3209,11 @@ async function insertUserRFPPayment(connection, data) {
     ? insertResult
     : null;
 }
-async function insertRFPHeaderImage(connection, buffer, insertId) {
+async function insertRFPHeaderImage(connection, buffer, rfpId) {
   const insertImageQuery = 'update userRFPs set headerImage=? where rfpId =?';
-  console.log(insertImageQuery, insertId);
   const [insertImageResult] = await connection.execute(insertImageQuery, [
     buffer,
-    insertId,
+    rfpId,
   ]);
 
   return insertImageResult.affectedRows > 0 || insertImageResult.insertId
@@ -3256,4 +3408,5 @@ module.exports = {
   isRfpUserFavoriteAdController,
   addFavoriteRfpController,
   getRfpEditInfoController,
+  editRfpController,
 };

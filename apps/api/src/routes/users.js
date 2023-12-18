@@ -70,6 +70,7 @@ const {
   isRfpUserFavoriteAdController,
   addFavoriteRfpController,
   getRfpEditInfoController,
+  editRfpController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -324,6 +325,7 @@ router.post(
   verifyGeneralToken,
   canUserEditAdvertisementController
 );
+
 router.post(
   '/edit-advertisement',
   verifyGeneralToken,
@@ -332,6 +334,15 @@ router.post(
     { name: 'sliderImages', maxCount: 30 }, // You can adjust the number of allowed files
   ]),
   editAdvertisementController
+);
+router.post(
+  '/edit-rfp',
+  verifyGeneralToken,
+  upload.fields([
+    { name: 'headerImage', maxCount: 1 },
+    { name: 'sliderImages', maxCount: 30 }, // You can adjust the number of allowed files
+  ]),
+  editRfpController
 );
 router.post(
   '/advertisement-general-edit-info',

@@ -274,6 +274,8 @@
                             </div>
                           </div>
                         </div>
+
+
                         <div class="row">
                           <div class="col-md-3 mt-1 form-labe">Title</div>
                           <div class="col-md-8">
@@ -285,14 +287,159 @@
                             />
                           </div>
                         </div>
-
                         <div class="row">
-                          <div class="col-md-3 mt-2">Description</div>
+                          <div class="col-12 alert alert-info">
+                            <section>
+                              <h2>Project Scope</h2>
+                              <ul>
+                                <li>Define the scope of work in detail.</li>
+                                <li>
+                                  Specify the types of construction services
+                                  required.
+                                </li>
+                                <li>
+                                  Outline any specific materials, methods, or
+                                  technologies to be used.
+                                </li>
+                              </ul>
+                            </section>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-2">Description/Scope</div>
                           <div class="col-md-8">
                             <quill-editor
                               class="quill-editor"
                               [(ngModel)]="advertisement.description"
                               formControlName="description"
+                            ></quill-editor>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 alert alert-info">
+                            <section>
+                              <h2>Qualification Requirements</h2>
+                              <ul>
+                                <li>
+                                  Clearly state the qualifications required for
+                                  contractors.
+                                </li>
+                                <li>
+                                  Include information on licensing, bonding,
+                                  insurance, and relevant certifications.
+                                </li>
+                                <li>
+                                  Specify the minimum experience and track
+                                  record needed.
+                                </li>
+                              </ul>
+                            </section>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-2">
+                            Contractor's Qualifications Requirements
+                          </div>
+                          <div class="col-md-8">
+                            <quill-editor
+                              class="quill-editor"
+                              [(ngModel)]="
+                                advertisement.contractorQualifications
+                              "
+                              formControlName="contractorQualifications"
+                            ></quill-editor>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 alert alert-info">
+                            <section>
+                              <h2>Insurance and Liability</h2>
+                              <ul>
+                                <li>
+                                  Clearly outline insurance requirements for
+                                  contractors.
+                                </li>
+                                <li>
+                                  Specify liability limits and coverage types.
+                                </li>
+                              </ul>
+                            </section>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-2">
+                            Insurance Requirements
+                          </div>
+                          <div class="col-md-8">
+                            <quill-editor
+                              class="quill-editor"
+                              [(ngModel)]="advertisement.insuranceRequirements"
+                              formControlName="insuranceRequirements"
+                            ></quill-editor>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-12 alert alert-info">
+                            <section>
+                              <h2>Timeline and Milestones</h2>
+                              <ul>
+                                <li>
+                                  Clearly outline the project timeline,
+                                  including key milestones.
+                                </li>
+                                <li>
+                                  Specify the start and end dates of the
+                                  project.
+                                </li>
+                                <li>
+                                  Include any critical dates or deadlines.
+                                </li>
+                              </ul>
+                            </section>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-3 mt-2">
+                            Timeline and Milestones
+                          </div>
+                          <div class="col-md-8">
+                            <quill-editor
+                              class="quill-editor"
+                              [(ngModel)]="advertisement.milestones"
+                              formControlName="milestones"
+                            ></quill-editor>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-12 alert alert-info">
+                            <section>
+                              <h2>Budget Information</h2>
+                              <ul>
+                                <li>
+                                  Provide a budget range or estimate for the
+                                  project.
+                                </li>
+                                <li>
+                                  Clearly outline any budgetary constraints.
+                                </li>
+                                <li>
+                                  Indicate whether alternative proposals will be
+                                  considered.
+                                </li>
+                              </ul>
+                            </section>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-md-3 mt-2">Budget Information</div>
+                          <div class="col-md-8">
+                            <quill-editor
+                              class="quill-editor"
+                              [(ngModel)]="advertisement.budgetInformation"
+                              formControlName="budgetInformation"
                             ></quill-editor>
                           </div>
                         </div>
@@ -366,7 +513,6 @@
                             />
                           </div>
                         </div>
-
                         <div class="row">
                           <div class="col-md-3 mt-1 form-labe">Show Email</div>
                           <div class="col-md-8">
@@ -375,6 +521,19 @@
                               type="checkbox"
                               formControlName="showEmail"
                               [(ngModel)]="advertisement.showEmail"
+                            />
+                          </div>
+                        </div>
+                        <div class="row">
+                          <div class="col-md-3 mt-1 form-labe">
+                            Turnkey Project
+                          </div>
+                          <div class="col-md-8">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              formControlName="isTurnkey"
+                              [(ngModel)]="advertisement.isTurnkey"
                             />
                           </div>
                         </div>

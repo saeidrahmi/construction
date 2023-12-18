@@ -200,13 +200,17 @@ export class EditRfpComponent {
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
           headerImage: new FormControl('', []),
+          contractorQualifications: new FormControl('', []),
+          milestones: new FormControl('', []),
+          insuranceRequirements: new FormControl('', []),
+          budgetInformation: new FormControl('', []),
         }),
         this.fb.group({
-          showPhone: new FormControl('', []),
-          showAddress: new FormControl('', []),
-          showEmail: new FormControl('', []),
           showPicture: new FormControl('', []),
-          showChat: new FormControl('', []),
+          showPhone: new FormControl('', []),
+          showEmail: new FormControl('', []),
+          showAddress: new FormControl('', []),
+          isTurnkey: new FormControl('', []),
           sliderImages: new FormArray([]),
         }),
         this.fb.group({
@@ -334,7 +338,7 @@ export class EditRfpComponent {
       const userId = this.storageService?.getUserId();
       const formData = new FormData();
       formData.append('userId', this.encryptionService.encryptItem(userId()));
-      formData.append('userAdvertisementId', this.advertisement?.rfpId);
+      formData.append('rfpId', this.advertisement?.rfpId);
       if (this.headerImageFile)
         formData.append(
           'headerImage',
@@ -354,28 +358,72 @@ export class EditRfpComponent {
       formData.append('description', this.advertisement?.description);
 
       formData.append(
-        'showPhone',
-        `${this.advertisement?.showPhone ? '1' : '0'}`
+        'showPicture',
+        `${this.advertisement?.showPicture ? '1' : '0'}`
       );
       formData.append(
-        'showAddress',
-        `${this.advertisement?.showAddress ? '1' : '0'}`
+        'showPhone',
+        `${this.advertisement?.showPhone ? '1' : '0'}`
       );
       formData.append(
         'showEmail',
         `${this.advertisement?.showEmail ? '1' : '0'}`
       );
       formData.append(
-        'showPicture',
-        `${this.advertisement?.showPicture ? '1' : '0'}`
+        'showAddress',
+        `${this.advertisement?.showAddress ? '1' : '0'}`
+      );
+      formData.append(
+        'isTurnkey',
+        `${this.advertisement?.isTurnkey ? '1' : '0'}`
+      );
+      formData.append(
+        'insuranceRequirements',
+        `${
+          this.advertisement?.insuranceRequirements
+            ? this.advertisement?.insuranceRequirements
+            : ''
+        }`
       );
 
+      formData.append('startDate', `${this.advertisement?.startDate}`);
+      formData.append(
+        'projectStartDate',
+        `${
+          this.advertisement?.projectStartDate
+            ? this.advertisement?.projectStartDate
+            : ''
+        }`
+      );
+      formData.append('endDate', `${this.advertisement?.endDate}`);
+      formData.append(
+        'milestones',
+        `${
+          this.advertisement?.milestones ? this.advertisement?.milestones : ''
+        }`
+      );
+      formData.append(
+        'budgetInformation',
+        `${
+          this.advertisement?.budgetInformation
+            ? this.advertisement?.budgetInformation
+            : ''
+        }`
+      );
+      formData.append(
+        'contractorQualifications',
+        `${
+          this.advertisement?.contractorQualifications
+            ? this.advertisement?.contractorQualifications
+            : ''
+        }`
+      );
       this.apiService
-        .editAdvertisement(formData)
+        .editRfp(formData)
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
-            this.router.navigate(['/general/user-advertisements']);
+            this.router.navigate(['/general/my-rfps']);
             this.toastService.success('Saved Successfully. ', 'Successful', {
               timeOut: 3000,
               positionClass: 'toast-top-right',
