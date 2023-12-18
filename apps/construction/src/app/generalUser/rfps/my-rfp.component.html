@@ -156,7 +156,7 @@
                     *ngIf="
                       userService.getDaysRemaining(
                         currentDate,
-                        advertisement?.expiryDate
+                        advertisement?.endDate
                       ) >= 1
                     "
                   >
@@ -196,7 +196,7 @@
                       *ngIf="
                         userService.getDaysRemaining(
                           currentDate,
-                          advertisement?.expiryDate
+                          advertisement?.endDate
                         ) >= 1 && advertisement?.active === 0
                       "
                     >
@@ -210,7 +210,7 @@
                       *ngIf="
                         userService.getDaysRemaining(
                           currentDate,
-                          advertisement?.expiryDate
+                          advertisement?.endDate
                         ) >= 1 && advertisement?.active === 1
                       "
                     >
@@ -232,7 +232,7 @@
                       *ngIf="
                         userService.getDaysRemaining(
                           currentDate,
-                          advertisement?.expiryDate
+                          advertisement?.endDate
                         ) >= 1 && advertisement?.active === 1
                       "
                       (click)="editAdvertisement(advertisement?.rfpId)"

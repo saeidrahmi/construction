@@ -17,6 +17,8 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
 import { ChangePasswordComponent } from '../common-components/change-password/change-password.component';
 import { ViewUserComponent } from './users/view-user/view-user.component';
 import { SupportComponent } from './support/support.component';
+import { AdminRfpDetailsViewComponent } from './user-rfps/rfp-details-view/rfp-details-view.component';
+import { RfpPendingApprovalComponent } from './user-rfps/rfp-pending-approval.component';
 
 const routes: Routes = [
   {
@@ -56,8 +58,16 @@ const routes: Routes = [
         component: AdvertisementsPendingApprovalComponent,
       },
       {
+        path: 'rfps-pending-approval',
+        component: RfpPendingApprovalComponent,
+      },
+      {
         path: 'advertisement-details',
         component: AdminAdvertisementDetailsViewComponent,
+      },
+      {
+        path: 'rfp-details',
+        component: AdminRfpDetailsViewComponent,
       },
       {
         path: 'create-user',

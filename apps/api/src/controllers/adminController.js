@@ -330,6 +330,17 @@ async function getAllUsersAdvertisementsPendingApproval(req, res) {
     });
   }
 }
+async function getAllUsersRfpsPendingApproval(req, res) {
+  try {
+    const selectQuery = `SELECT  * FROM userRFPs WHERE   approvedByAdmin = 0 and active=1 and deleted=0 and  endDate  > CURDATE() ORDER BY dateCreated DESC`;
+    const selectResult = await executeQuery(selectQuery, []);
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 
 async function approveAdvertisement(req, res) {
   try {
@@ -913,4 +924,5 @@ module.exports = {
   createNewUserController,
   listUserRequestSupportMessagesController,
   sendUserSupportRequestAdminResponse,
+  getAllUsersRfpsPendingApproval,
 };

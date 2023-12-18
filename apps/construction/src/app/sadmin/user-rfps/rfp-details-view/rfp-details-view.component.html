@@ -1,0 +1,647 @@
+<div class="container-fluid">
+  <div *ngIf="advertisementExists; then show; else noShow"></div>
+  <ng-template #show>
+    <div
+      class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2 gy-3"
+    >
+      <col-12>
+        <div class="border border-1 p-2">
+          <a class="btn btn-outline-primary" routerLink="/general/my-rfps">
+            Back to my RFPs
+          </a>
+        </div>
+      </col-12>
+      <div class="col-12" *ngIf="sliderImages?.length > 0">
+        <div
+          style="width: 100%"
+          id="carouselAdSliderIndicators"
+          class="carousel carousel-dark slide"
+          data-bs-ride="carousel"
+        >
+          <div class="carousel-indicators">
+            <button
+              *ngFor="let imageUrl of sliderImages; let i = index"
+              type="button"
+              [attr.data-bs-target]="'#carouselAdSliderIndicators'"
+              [attr.data-bs-slide-to]="i"
+              [class.active]="i === 0"
+              [attr.aria-current]="i === 0 ? 'true' : null"
+              [attr.aria-label]="'Slide ' + (i + 1)"
+            ></button>
+          </div>
+          <div class="carousel-inner">
+            <div
+              *ngFor="let imageUrl of sliderImages; let i = index"
+              class="carousel-item"
+              [class.active]="i === 0"
+              [attr.data-bs-interval]="8000"
+            >
+              <img
+                [src]="imageService.bufferToSafeUrl(imageUrl)"
+                style="height: 500px"
+                class="d-block w-100 rounded opacity-100"
+                alt="..."
+                data-bs-toggle="modal"
+                data-bs-target="#imageModal"
+                (click)="setImage(imageUrl)"
+              />
+              <!-- Your content goes here for each slide -->
+            </div>
+          </div>
+          <button
+            class="carousel-control-prev"
+            type="button"
+            [attr.data-bs-target]="'#carouselAdSliderIndicators'"
+            data-bs-slide="prev"
+          >
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button
+            class="carousel-control-next"
+            type="button"
+            [attr.data-bs-target]="'#carouselAdSliderIndicators'"
+            data-bs-slide="next"
+          >
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="col-2 align-middle background-container rounded-1 border border-1"
+      ></div>
+      <div class="col-10">
+        <div class="continer-fluid">
+          <div class="row border border-1 rounded p-2">
+            <div class="col-2">
+              <div *ngIf="headerImage; then imageSection; else noImage"></div>
+              <ng-template #imageSection>
+                <img
+                  class="img-thumbnail rounded"
+                  width="200"
+                  height="200"
+                  [src]="imageService.bufferToSafeUrl(headerImage)"
+              /></ng-template>
+              <ng-template #noImage>
+                <img
+                  class="img-thumbnail rounded"
+                  width="200"
+                  height="200"
+                  src="../../../assets/images/questionmark.png"
+              /></ng-template>
+            </div>
+            <div class="col-8">
+              <h5>{{ advertisement.title }}</h5>
+            </div>
+
+            <div class="col-1">
+              <i
+                class="bi bi-heart-fill cursor"
+                [ngStyle]="{ 'font-size': '2rem', color: heartColor }"
+                (click)="addFavoriteAd(advertisement?.rfpId)"
+              ></i>
+            </div>
+          </div>
+
+          <div class="row my-2">
+            <div class="col-8">
+              <div class="container-fluid">
+                <div class="row" *ngIf="advertisement?.isTurnkey">
+                  <div class="col">
+                    <button type="button" class="btn btn-outline-info">
+                      Turnkey Project
+                    </button>
+                  </div>
+                </div>
+                <div class="row my-1">
+                  <div class="col">
+                    {{ userInfo?.city }} |
+                    {{
+                      userService.formatTimeDifference(
+                        advertisement?.dateCreated
+                      )
+                    }}
+                  </div>
+                </div>
+                <hr />
+                <div class="row">
+                  <div class="col-4">
+                    <span class="fw-bold">Bidding Start Date: </span
+                    >{{ advertisement.startDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Bidding End Date:</span>
+                    {{ advertisement.endDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Project Start Date:</span>
+                    {{ advertisement.projectStartDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Days Left:</span>
+                    {{ getDaysLeft() }} days.
+                  </div>
+                </div>
+
+                <br />
+                <hr />
+
+                <div class="row">
+                  <div class="col">
+                    <h5>Project Scope</h5>
+                    <quill-view-html
+                      [content]="advertisement?.description"
+                      theme="snow"
+                    ></quill-view-html>
+                  </div>
+                </div>
+                <hr />
+                <div class="row border rounded p-2">
+                  <div class="col">
+                    <h5 class="border-bottom">Qualification Requirements</h5>
+
+                    <quill-view-html
+                      [content]="advertisement?.contractorQualifications"
+                      theme="snow"
+                    ></quill-view-html>
+                  </div>
+                </div>
+                <hr />
+                <div class="row border rounded p-2">
+                  <div class="col">
+                    <h5 class="border-bottom">Budget Information</h5>
+
+                    <quill-view-html
+                      [content]="advertisement?.budgetInformation"
+                      theme="snow"
+                    ></quill-view-html>
+                  </div>
+                </div>
+                <hr />
+                <div class="row border rounded p-2">
+                  <div class="col">
+                    <h5 class="border-bottom">Insurance and Liability</h5>
+
+                    <quill-view-html
+                      [content]="advertisement?.insuranceRequirements"
+                      theme="snow"
+                    ></quill-view-html>
+                  </div>
+                </div>
+                <hr />
+                <div class="row border rounded p-2">
+                  <div class="col">
+                    <h5 class="border-bottom">Timeline and Milestones</h5>
+
+                    <quill-view-html
+                      [content]="advertisement?.milestones"
+                      theme="snow"
+                    ></quill-view-html>
+                  </div>
+                </div>
+                <hr />
+
+                <div class="row m-2">
+                  <div class="col border border-1 p-2">
+                    <div
+                      *ngIf="advertisement.showAddress; then showAd; else noAd"
+                    ></div>
+                    <ng-template #showAd>
+                      {{
+                        user().address +
+                          ', ' +
+                          user().city +
+                          ', ' +
+                          user().province +
+                          ', ' +
+                          user().postalCode
+                      }}&nbsp;
+                    </ng-template>
+                    <ng-template #noAd>
+                      {{
+                        user().city + ', ' + user().province
+                      }}&nbsp;</ng-template
+                    >
+                  </div>
+                </div>
+
+                <hr />
+                <div class="row m-2">
+                  <div class="col border border-1 p-2">
+                    <i class="bi bi-eye"></i>
+                    {{ advertisement.numberOfVisits }} Visits
+                  </div>
+                </div>
+
+                <div class="row mt-4" *ngIf="advertisement.tags">
+                  <div class="col">
+                    <hr />
+                    <i>
+                      Categories:
+                      {{ advertisement.tags }}
+                    </i>
+                  </div>
+                </div>
+                <hr />
+                <div class="row m-2">
+                  <div class="col">
+                    <i
+                      class="bi bi-heart-fill cursor"
+                      [ngStyle]="{ color: heartColor }"
+                      (click)="
+                        addFavoriteAd(advertisement?.userAdvertisementId)
+                      "
+                    ></i
+                    ><i class="bi bi-flag mx-3"></i
+                    ><i class="bi bi-facebook mx-3"></i>
+                    <i class="bi bi-twitter mx-3"></i>
+                    <i class="bi bi-pinterest mx-3"></i
+                    ><i class="bi bi-envelope mx-3"></i
+                    ><i class="bi bi-printer mx-3"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-4 border rounded p-2">
+              <div class="container-fluid">
+                <div class="row">
+                  <div class="col">
+                    <div
+                      *ngIf="
+                        advertisement?.showPicture && userInfo?.profileImage;
+                        then showPic;
+                        else noShow
+                      "
+                    ></div>
+                    <ng-template #showPic>
+                      <img
+                        class="img-thumbnail rounded"
+                        width="100"
+                        height="100"
+                        [src]="
+                          imageService.bufferToSafeUrl(userInfo?.profileImage)
+                        "
+                    /></ng-template>
+                    <ng-template #noShow>
+                      <i
+                        class="bi bi-person"
+                        style="font-size: 4rem; color: cornflowerblue"
+                      ></i>
+                    </ng-template>
+                  </div>
+                </div>
+
+                <div class="row border-top">
+                  <div class="border">
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">
+                        <rating
+                          [(ngModel)]="userRating.average_overall_rating"
+                          [max]="max"
+                          [readonly]="true"
+                        ></rating>
+                      </li>
+                      <div class="accordion" id="rating">
+                        <div class="accordion-item">
+                          <h2 class="accordion-header">
+                            <button
+                              class="accordion-button"
+                              type="button"
+                              data-bs-toggle="collapse"
+                              data-bs-target="#collapseOne"
+                              aria-expanded="true"
+                              aria-controls="collapseOne"
+                            >
+                              Rating Details
+                            </button>
+                          </h2>
+                          <div
+                            id="collapseOne"
+                            class="accordion-collapse collapse"
+                            data-bs-parent="#rating"
+                          >
+                            <div class="accordion-body">
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index">
+                                  <span class="mx-2"
+                                    >Customer <br />
+                                    <span class="mx-4">Satisfaction</span>
+                                  </span></i
+                                >
+                                <rating
+                                  [(ngModel)]="
+                                    userRating.average_overall_rating
+                                  "
+                                  [max]="max"
+                                  [readonly]="true"
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Cleanliness</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="userRating.average_cleanliness"
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_cleanliness,
+                                      'average_cleanliness'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Communication</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="
+                                    userRating.average_communicationSkills
+                                  "
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_communicationSkills,
+                                      'average_communicationSkills'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Cost management</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="
+                                    userRating.average_costManagement
+                                  "
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_costManagement,
+                                      'average_costManagement'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Flexibility</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="userRating.average_flexibility"
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_flexibility,
+                                      'average_flexibility'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2"
+                                    >Materials <br />
+                                    <span class="mx-4">Equipments</span>
+                                  </span></i
+                                >
+                                <rating
+                                  [(ngModel)]="
+                                    userRating.average_materialsAndEquipment
+                                  "
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_materialsAndEquipment,
+                                      'average_materialsAndEquipment'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Performance</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="userRating.average_performance"
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_performance,
+                                      'average_performance'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Professionalism</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="
+                                    userRating.average_professionalism
+                                  "
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_professionalism,
+                                      'average_professionalism'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Quality</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="userRating.average_qualityOfWork"
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_qualityOfWork,
+                                      'average_qualityOfWork'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Safety</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="userRating.average_safety"
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_safety,
+                                      'average_safety'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <i class="bi bi-hand-index"
+                                  ><span class="mx-2">Timeliness</span></i
+                                >
+                                <rating
+                                  [(ngModel)]="userRating.average_timeliness"
+                                  [max]="max"
+                                  [readonly]="true"
+                                  (click)="
+                                    updateUserOverallRating(
+                                      userRating.average_timeliness,
+                                      'average_timeliness'
+                                    )
+                                  "
+                                ></rating>
+                              </li>
+                              <li
+                                class="list-group-item d-flex justify-content-between align-items-center"
+                              >
+                                <a
+                                  type="button"
+                                  class="btn btn-outline-secondary"
+                                >
+                                  View Reviews & Comments
+                                </a>
+                              </li>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <li class="list-group-item">
+                        <i class="bi bi-person-add"
+                          ><span class="mx-2">{{
+                            userInfo?.firstName
+                          }}</span></i
+                        >
+                      </li>
+                      <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <i class="bi bi-chat-heart"
+                          ><span class="mx-2"
+                            >on {{ env.getSystemName() }}</span
+                          ></i
+                        >
+                        <span class="badge bg-primary rounded-pill">{{
+                          userService.formatTimeDifference(registeredDate)
+                        }}</span>
+                      </li>
+                      <li
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <i class="bi bi-chat-heart"
+                          ><span class="mx-2">Listing</span></i
+                        >
+                        <span class="badge bg-primary rounded-pill"
+                          >View {{ acitveAds }} listings
+                        </span>
+                      </li>
+
+                      <li
+                        *ngIf="advertisement?.showPhone"
+                        class="list-group-item d-flex justify-content-between align-items-center"
+                      >
+                        <i class="bi bi-chat-heart"
+                          ><span class="mx-2">Phone</span></i
+                        >
+                        <span class="badge bg-primary rounded-pill"
+                          >{{ userInfo?.phone | phoneNumber }}
+                        </span>
+                      </li>
+                      <li class="list-group-item d-flex align-items-center">
+                        <a
+                          type="button"
+                          class="btn btn-outline-secondary"
+                          [href]="userInfo?.website"
+                          target="_blank"
+                        >
+                          Visit website
+                        </a>
+
+                        <a
+                          *ngIf="advertisement?.showEmail"
+                          type="button"
+                          class="btn btn-outline-secondary mx-2"
+                          href="mailto:{{ userInfo?.userId }}"
+                        >
+                          Email
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #noShow>
+    <div
+      class="border bordr-1 rounded p-3 text-center h2 h-100 my-5 pt-5"
+      style="min-height: 100vh"
+    >
+      Advertisement does not exist.
+    </div>
+  </ng-template>
+</div>
+<div
+  class="modal fade"
+  id="imageModal"
+  tabindex="-1"
+  aria-labelledby="imageModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <img
+          *ngIf="selectedImage"
+          class="rounded float-center"
+          width="600px"
+          height="600p"
+          [src]="imageService.bufferToSafeUrl(selectedImage)"
+        />
+      </div>
+    </div>
+  </div>
+</div>

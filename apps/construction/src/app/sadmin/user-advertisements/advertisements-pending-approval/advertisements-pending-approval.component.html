@@ -6,164 +6,178 @@
           <h2 class="card-title">
             <span class="col-12">User Advertisements Pending Approval</span>
           </h2>
-
-          <div class="border border-1 p-2 rounded my-2">
-            <ng-container *ngFor="let advertisement of allAdvertisements">
-              <div class="container">
-                <div class="row">
-                  <div class="col-3 border border-1 p-2">
-                    <h6 class="text-primary">
-                      Purchased Date: {{ advertisement?.dateCreated | date }}
-                    </h6>
-                    <h6 class="text-primary">
-                      Expiry Date: {{ advertisement?.expiryDate | date }}
-                    </h6>
-                  </div>
-                  <div
-                    class="col-1 border border-1 pt-3 text-primary"
-                    *ngIf="
-                      userService.getDaysRemaining(
-                        currentDate,
-                        advertisement?.expiryDate
-                      ) < 1
-                    "
-                  >
-                    <h6>
-                      {{
-                        userService.getDaysRemaining(
-                          currentDate,
-                          advertisement?.expiryDate
-                        ) < 1
-                          ? 'Expired'
-                          : ''
-                      }}
-                    </h6>
-                  </div>
-                  <div
-                    class="col-1 border border-1 p-2 text-primary pt-3"
-                    *ngIf="
-                      userService.getDaysRemaining(
-                        currentDate,
-                        advertisement?.expiryDate
-                      ) >= 1
-                    "
-                  >
-                    <h6 class="">
-                      Expires in
-                      {{
-                        userService.getDaysRemaining(
-                          currentDate,
-                          advertisement?.expiryDate
-                        )
-                      }}
-                      days
-                    </h6>
-                  </div>
-                  <div class="col-1 border border-1 pt-3">
-                    <h6 class="text-primary">
-                      {{ advertisement?.active === 1 ? 'Active' : 'Paused' }}
-                    </h6>
-                  </div>
-                  <div class="col-1 border border-1 pt-3">
-                    <h6 class="text-primary">
-                      {{
-                        advertisement?.approvedByAdmin === 1
-                          ? 'Approved'
-                          : 'Pending Approval'
-                      }}
-                    </h6>
-                  </div>
-                  <div
-                    class="col-6 border border-1 p-2"
-                    *ngIf="
-                      userRole() === 'SAdmin' ||
-                      this.userPermissions().approveAdvertisement
-                    "
-                  >
-                    <button
-                      mat-stroked-button
-                      color="primary"
-                      class="mx-1"
-                      (click)="approveAd(advertisement?.userAdvertisementId)"
-                      *ngIf="
-                        userService.getDaysRemaining(
-                          currentDate,
-                          advertisement?.expiryDate
-                        ) >= 1 &&
-                        advertisement?.active === 1 &&
-                        advertisement?.approvedByAdmin === 0
-                      "
-                    >
-                      Approve
-                    </button>
-                  </div>
-                </div>
-                <div
-                  class="row my-2"
-                  *ngIf="
-                    userRole() === 'SAdmin' ||
-                    this.userPermissions().approveAdvertisement
-                  "
-                >
-                  <form action="" [formGroup]="form">
-                    <div class="col-p-3">
-                      <mat-form-field style="width: 500px">
-                        <mat-label>Reject Reasons</mat-label>
-                        <mat-select
-                          multiple
-                          [(ngModel)]="reason"
-                          formControlName="reasonControl"
-                          placeholder="Select reasons"
-                        >
-                          <mat-option value="In-appropriate content"
-                            >In-appropriate content</mat-option
-                          >
-                          <mat-option value="In-appropriate images"
-                            >In-appropriate images</mat-option
-                          >
-                        </mat-select>
-                      </mat-form-field>
-
-                      <button
-                        [disabled]="form.invalid"
-                        mat-stroked-button
-                        color="primary"
-                        class="mx-1"
-                        (click)="rejectAd(advertisement?.userAdvertisementId)"
+          <div
+            class="alert alert-info text-center h2 my-5"
+            *ngIf="allAdvertisements?.length === 0"
+          >
+            No pending advertisements for Approval
+            <div *ngIf="allAdvertisements?.length > 0">
+              <div class="border border-1 p-2 rounded my-2">
+                <ng-container *ngFor="let advertisement of allAdvertisements">
+                  <div class="container">
+                    <div class="row">
+                      <div class="col-3 border border-1 p-2">
+                        <h6 class="text-primary">
+                          Purchased Date:
+                          {{ advertisement?.dateCreated | date }}
+                        </h6>
+                        <h6 class="text-primary">
+                          Expiry Date: {{ advertisement?.expiryDate | date }}
+                        </h6>
+                      </div>
+                      <div
+                        class="col-1 border border-1 pt-3 text-primary"
                         *ngIf="
                           userService.getDaysRemaining(
                             currentDate,
                             advertisement?.expiryDate
-                          ) >= 1 && advertisement?.active === 1
+                          ) < 1
                         "
                       >
-                        Reject
-                      </button>
-                    </div>
-                  </form>
-                </div>
-
-                <div class="row" *ngIf="advertisement?.rejected === 1">
-                  <div class="col border border-1 pt-3">
-                    <h6 class="text-primary">
-                      <div class="alert alert-danger" role="alert">
-                        This Advertisement has been rejected by Administrator
-                        due to
-                        {{
-                          commonUtility.formatStringWithAnd(
-                            advertisement?.rejectedReason
-                          )
-                        }}
+                        <h6>
+                          {{
+                            userService.getDaysRemaining(
+                              currentDate,
+                              advertisement?.expiryDate
+                            ) < 1
+                              ? 'Expired'
+                              : ''
+                          }}
+                        </h6>
                       </div>
-                    </h6>
-                  </div>
-                </div>
-              </div>
+                      <div
+                        class="col-1 border border-1 p-2 text-primary pt-3"
+                        *ngIf="
+                          userService.getDaysRemaining(
+                            currentDate,
+                            advertisement?.expiryDate
+                          ) >= 1
+                        "
+                      >
+                        <h6 class="">
+                          Expires in
+                          {{
+                            userService.getDaysRemaining(
+                              currentDate,
+                              advertisement?.expiryDate
+                            )
+                          }}
+                          days
+                        </h6>
+                      </div>
+                      <div class="col-1 border border-1 pt-3">
+                        <h6 class="text-primary">
+                          {{
+                            advertisement?.active === 1 ? 'Active' : 'Paused'
+                          }}
+                        </h6>
+                      </div>
+                      <div class="col-1 border border-1 pt-3">
+                        <h6 class="text-primary">
+                          {{
+                            advertisement?.approvedByAdmin === 1
+                              ? 'Approved'
+                              : 'Pending Approval'
+                          }}
+                        </h6>
+                      </div>
+                      <div
+                        class="col-6 border border-1 p-2"
+                        *ngIf="
+                          userRole() === 'SAdmin' ||
+                          this.userPermissions().approveAdvertisement
+                        "
+                      >
+                        <button
+                          mat-stroked-button
+                          color="primary"
+                          class="mx-1"
+                          (click)="
+                            approveAd(advertisement?.userAdvertisementId)
+                          "
+                          *ngIf="
+                            userService.getDaysRemaining(
+                              currentDate,
+                              advertisement?.expiryDate
+                            ) >= 1 &&
+                            advertisement?.active === 1 &&
+                            advertisement?.approvedByAdmin === 0
+                          "
+                        >
+                          Approve
+                        </button>
+                      </div>
+                    </div>
+                    <div
+                      class="row my-2"
+                      *ngIf="
+                        userRole() === 'SAdmin' ||
+                        this.userPermissions().approveAdvertisement
+                      "
+                    >
+                      <form action="" [formGroup]="form">
+                        <div class="col-p-3">
+                          <mat-form-field style="width: 500px">
+                            <mat-label>Reject Reasons</mat-label>
+                            <mat-select
+                              multiple
+                              [(ngModel)]="reason"
+                              formControlName="reasonControl"
+                              placeholder="Select reasons"
+                            >
+                              <mat-option value="In-appropriate content"
+                                >In-appropriate content</mat-option
+                              >
+                              <mat-option value="In-appropriate images"
+                                >In-appropriate images</mat-option
+                              >
+                            </mat-select>
+                          </mat-form-field>
 
-              <app-admin-advertisement-view
-                [advertisement]="advertisement"
-              ></app-admin-advertisement-view
-            ></ng-container>
+                          <button
+                            [disabled]="form.invalid"
+                            mat-stroked-button
+                            color="primary"
+                            class="mx-1"
+                            (click)="
+                              rejectAd(advertisement?.userAdvertisementId)
+                            "
+                            *ngIf="
+                              userService.getDaysRemaining(
+                                currentDate,
+                                advertisement?.expiryDate
+                              ) >= 1 && advertisement?.active === 1
+                            "
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+
+                    <div class="row" *ngIf="advertisement?.rejected === 1">
+                      <div class="col border border-1 pt-3">
+                        <h6 class="text-primary">
+                          <div class="alert alert-danger" role="alert">
+                            This Advertisement has been rejected by
+                            Administrator due to
+                            {{
+                              commonUtility.formatStringWithAnd(
+                                advertisement?.rejectedReason
+                              )
+                            }}
+                          </div>
+                        </h6>
+                      </div>
+                    </div>
+                  </div>
+
+                  <app-admin-advertisement-view
+                    [advertisement]="advertisement"
+                  ></app-admin-advertisement-view
+                ></ng-container>
+              </div>
+            </div>
           </div>
         </div>
       </div>

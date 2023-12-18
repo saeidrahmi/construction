@@ -1954,6 +1954,27 @@ export class ApiService {
         })
       );
   }
+  getAllUsersRfpsPendingApproval(): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .get<any>(this.backendApiUrl + '/admin/list-rfps-pending-approval')
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Retrieving RFPs Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          throw error;
+        })
+      );
+  }
   addFavoriteAdvertisement(
     userAdvertisementId: any,
     userId: any

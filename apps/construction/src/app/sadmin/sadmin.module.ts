@@ -43,6 +43,9 @@ import { SalesDashboardComponent } from './dashboard/sales-dashboard/sales-dashb
 import { PhoneNumberPipe } from '../pipes/phone-number.pipe';
 import { QuillModule } from 'ngx-quill';
 import { SupportComponent } from './support/support.component';
+import { AdminRfpDetailsViewComponent } from './user-rfps/rfp-details-view/rfp-details-view.component';
+import { RfpPendingApprovalComponent } from './user-rfps/rfp-pending-approval.component';
+import { AdminRFPViewComponent } from './user-rfps/rfp-view/rfp-view.component';
 
 @NgModule({
   declarations: [
@@ -64,6 +67,9 @@ import { SupportComponent } from './support/support.component';
     UserDashboardDetailsComponent,
     SalesDashboardComponent,
     SupportComponent,
+    RfpPendingApprovalComponent,
+    AdminRFPViewComponent,
+    AdminRfpDetailsViewComponent,
   ],
   imports: [
     NgChartsModule,

@@ -1,0 +1,105 @@
+<div class="container-fluid">
+  <div class="row shadow-lg p-3 mb-5 bg-body-tertiary rounded border border-2">
+    <div
+      *ngIf="advertisement.headerImageUrl; then imageSection; else noImage"
+    ></div>
+    <ng-template #imageSection>
+      <div
+        class="col-3 align-middle background-container rounded-1 border border-1"
+        [style.backgroundImage]="advertisement.headerImageUrl"
+      ></div
+    ></ng-template>
+    <ng-template #noImage>
+      <div
+        class="col-3 align-middle background-container rounded-1 border border-1"
+        [style.backgroundImage]="
+          'url(../../../../../../assets/images/questionmark.png)'
+        "
+      ></div
+    ></ng-template>
+
+    <div class="col-9">
+      <div class="continer-fluid">
+        <div class="row">
+          <div class="col-11">
+            <h5>{{ advertisement.title }}</h5>
+          </div>
+          <div class="col-1"><i class="bi bi-heart"></i></div>
+        </div>
+        <div class="row">
+          <div class="col" *ngIf="advertisement?.isTurnkey">
+            <button type="button" class="btn btn-outline-info">
+              Turnkey Project
+            </button>
+          </div>
+          <div class="row">
+            <div class="col">
+              {{ user().city }} |
+              {{
+                userService.formatTimeDifference(advertisement?.dateCreated) ===
+                'Now'
+                  ? 'Now'
+                  : userService.formatTimeDifference(
+                      advertisement?.dateCreated
+                    ) + ' ago'
+              }}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <quill-view-html
+                [content]="
+                  commonUtilityService.extractDescription(
+                    advertisement?.description
+                  )
+                "
+                theme="snow"
+              ></quill-view-html>
+            </div>
+          </div>
+
+          <div class="row my-2">
+            <div class="col">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="navigateDetails(advertisement, advertisement.rfpId)"
+              >
+                View more info
+              </button>
+            </div>
+          </div>
+          <hr />
+          <div class="row">
+            <div class="col-4">
+              <span class="fw-bold">Bidding Start Date: </span
+              >{{ advertisement.startDate | date }}
+            </div>
+            <div class="col-4">
+              <span class="fw-bold">Bidding End Date:</span>
+              {{ advertisement.endDate | date }}
+            </div>
+            <div class="col-4">
+              <span class="fw-bold">Project Start Date:</span>
+              {{ advertisement.projectStartDate | date }}
+            </div>
+            <div class="col-4">
+              <span class="fw-bold">Days Left:</span> {{ getDaysLeft() }} days.
+            </div>
+          </div>
+
+          <div class="row mt-4" *ngIf="advertisement.tags">
+            <div class="col">
+              <hr />
+              <i>
+                Categories:
+                {{ advertisement.tags }}
+              </i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

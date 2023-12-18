@@ -25,6 +25,7 @@ const {
   getUsersCountBasedOnPlanTypesDashboard,
   listUserRequestSupportMessagesController,
   sendUserSupportRequestAdminResponse,
+  getAllUsersRfpsPendingApproval,
 } = require('../controllers/adminController');
 const {
   verifySAdminToken,
@@ -59,6 +60,11 @@ router.get(
   '/list-advertisements-pending-approval',
   verifyAdminAndSAdminToken,
   getAllUsersAdvertisementsPendingApproval
+);
+router.get(
+  '/list-rfps-pending-approval',
+  verifyAdminAndSAdminToken,
+  getAllUsersRfpsPendingApproval
 );
 router.post(
   '/approve-advertisement',
