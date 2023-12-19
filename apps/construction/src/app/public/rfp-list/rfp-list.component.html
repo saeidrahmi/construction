@@ -1,0 +1,487 @@
+<div class="container-fluid my-3">
+  <div class="p-3 m-1 border rounded border-secondary">
+    <div class="row">
+      <div class="col border rounded border-secondary p-3 my-2">
+        <div class="accordion" id="accordionExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseOne"
+                aria-expanded="true"
+                aria-controls="collapseOne"
+              >
+                Modify Search
+              </button>
+            </h2>
+            <div
+              id="collapseOne"
+              class="accordion-collapse collapse show"
+              data-bs-parent="#accordionExample"
+            >
+              <div class="accordion-body">
+                <form class="align-items-center" [formGroup]="searchForm">
+                  <ng-container *ngIf="formErrors">
+                    <div class="row">
+                      <div class="col-6 m-3 p-3">
+                        <app-form-errors
+                          *ngIf="formErrors"
+                          [formErrors]="formErrors"
+                        ></app-form-errors>
+                        <!-- <api-server-error *ngIf="serverError" [error]="serverError" /> -->
+                      </div>
+                    </div>
+                  </ng-container>
+
+                  <div class="row">
+                    <div class="col-md-4">
+                      <label
+                        for="exampleFormControlInput1"
+                        class="form-label fw-bold"
+                        >Search Input</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        formControlName="searchText"
+                        placeholder="What are you searching for?"
+                      />
+                      <div
+                        class="invalid-feedback"
+                        *ngIf="
+                          searchForm.get('searchText').hasError('required')
+                        "
+                      >
+                        Please enter a message in the textarea.
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mt-2">
+                    <div class="col-md-8">
+                      <label
+                        for="exampleFormControlInput1"
+                        class="form-label fw-bold"
+                        >Select Categories/Tags</label
+                      >
+                      <mat-form-field class="chip-list">
+                        <mat-label>Selected Categories</mat-label>
+                        <mat-chip-grid
+                          #chipGrid
+                          aria-label="Service selection"
+                          formControlName="tags"
+                        >
+                          <mat-chip-row
+                            *ngFor="let tag of myTags"
+                            (removed)="removeTag(tag)"
+                          >
+                            <span class="text-primary">{{ tag }}</span>
+                            <button
+                              matChipRemove
+                              [attr.aria-label]="'remove ' + tag"
+                            >
+                              <mat-icon>cancel</mat-icon>
+                            </button>
+                          </mat-chip-row>
+                        </mat-chip-grid>
+                        <input
+                          placeholder="Add New Category"
+                          #tagInput
+                          [formControl]="tagCtrl"
+                          [matChipInputFor]="chipGrid"
+                          [matAutocomplete]="auto"
+                          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                          (matChipInputTokenEnd)="addTag($event)"
+                        />
+                        <mat-autocomplete
+                          #auto="matAutocomplete"
+                          (optionSelected)="selectedTag($event)"
+                        >
+                          <mat-option
+                            *ngFor="let tag of filteredTags | async"
+                            [value]="tag"
+                          >
+                            <span class="">{{ tag }}</span>
+                          </mat-option>
+                        </mat-autocomplete>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="border rounded p-3 my-1">
+                    <!-- <div class="row">
+                      <div class="col-md-2 mt-1 form-label">
+                        <i class="bi bi-geo-alt me-1"></i
+                        ><span class="fw-bold">Search Nearby</span>
+                      </div>
+                      <div class="col-md-8">
+                        <input
+                          type="checkbox"
+                          formControlName="currentAddress"
+                          name="currentAddress"
+                          id=""
+                        />
+                        {{ address }}
+                      </div>
+                    </div> -->
+                    <div class="row">
+                      <div class="col-md-2 mt-1 form-label">
+                        <span class="fw-bold"><b> </b>Search by MAP</span>
+                        <i class="bi bi-location"></i>
+                      </div>
+                      <div class="col-md-8">
+                        <a
+                          type="submit"
+                          class="btn btn-success"
+                          [routerLink]="['/map-location']"
+                          routerLinkActive="router-link-active"
+                        >
+                          Select location from Map
+                        </a>
+                      </div>
+                    </div>
+                    <div class="row mt-2">
+                      <div class="col-md-8">
+                        <label
+                          for="exampleFormControlInput1"
+                          class="form-label fw-bold"
+                          ><b>OR </b>Select Provinces/Cities</label
+                        >
+                        <mat-form-field class="chip-list">
+                          <mat-label>Selected Cities</mat-label>
+                          <mat-chip-grid
+                            #chipLocationGrid
+                            aria-label="Selected Locations"
+                            formControlName="locations"
+                          >
+                            <mat-chip-row
+                              *ngFor="let location of myLocations"
+                              (removed)="removeLocation(location)"
+                            >
+                              <span class="text-primary">{{ location }}</span>
+                              <button
+                                matChipRemove
+                                [attr.aria-label]="'remove ' + location"
+                              >
+                                <mat-icon>cancel</mat-icon>
+                              </button>
+                            </mat-chip-row>
+                          </mat-chip-grid>
+                          <input
+                            placeholder="Select location"
+                            #locationInput
+                            [formControl]="locationCtrl"
+                            [matChipInputFor]="chipLocationGrid"
+                            [matAutocomplete]="auto2"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            (matChipInputTokenEnd)="addLocation($event)"
+                          />
+                          <mat-autocomplete
+                            #auto2="matAutocomplete"
+                            (optionSelected)="selectedLocation($event)"
+                          >
+                            <mat-option
+                              *ngFor="let location of filteredLocations | async"
+                              [value]="location"
+                            >
+                              <span class="">{{ location }}</span>
+                            </mat-option>
+                          </mat-autocomplete>
+                        </mat-form-field>
+                      </div>
+
+                      <div class="col-12">
+                        <button
+                          class="btn btn-success"
+                          (click)="clearAddrress()"
+                        >
+                          Clear Locations
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mt-2">
+                    <div class="col-md-2">
+                      <select
+                        formControlName="sortBy"
+                        class="form-select"
+                        [(ngModel)]="sortBy"
+                      >
+                        <option value="">Sort by</option>
+                        <option value="new">New advertisement first</option>
+                        <option value="old">Old advertisement first</option>
+                      </select>
+                    </div>
+                    <div class="col-1">
+                      <button
+                        type="submit"
+                        class="btn btn-primary form-control"
+                        (click)="search()"
+                      >
+                        Search
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-2 border rounded p-3">
+        <ul class="list-group">
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <span class="text-secondary fw-bold border-bottom h5"
+              >Results Found
+            </span>
+            <span class="badge bg-primary rounded-pill">{{
+              allAdvertisements?.length
+            }}</span>
+          </li>
+          <!-- <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <span
+              class="text-secondary fw-bold border-bottom text-danger cursor"
+              (click)="clearAllFilters()"
+            >
+              <i class="bi bi-trash"></i> Clear all filters
+            </span>
+          </li> -->
+          <li class="list-group-item">
+            <span class="text-primary fw-bold border-bottom h5"
+              >Star rating</span
+            >
+            <ul
+              class="list-group list-group-flush"
+              *ngFor="let item of this.ratingFilter"
+            >
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === 10"
+              >
+                <span class="cursor" (click)="filterRating(10)"
+                  >10 stars <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill"
+                  (click)="filterRating(10)"
+                  >{{ item.count }}</span
+                >
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === 9"
+              >
+                <span class="cursor" (click)="filterRating(9)"
+                  >9+ stars <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterRating(9)"
+                  >{{ item.count }}</span
+                >
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === 8"
+              >
+                <span class="cursor" (click)="filterRating(8)"
+                  >8+ stars <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterRating(8)"
+                  >{{ item.count }}</span
+                >
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === 7"
+              >
+                <span class="cursor" (click)="filterRating(7)"
+                  >7+ stars <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterRating(7)"
+                  >{{ item.count }}</span
+                >
+              </li>
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                *ngIf="item.rating === -1"
+              >
+                <span class="cursor" (click)="filterRating(0)"
+                  >All ratings <i class="bi bi-star"></i
+                ></span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterRating(0)"
+                  >{{ item.count }}</span
+                >
+              </li>
+            </ul>
+          </li>
+          <li class="list-group-item">
+            <span class="text-primary fw-bold border-bottom h5">Locations</span>
+          </li>
+          <li
+            class="list-group-item"
+            *ngFor="let province of citiesByProvince | keyvalue"
+          >
+            <span
+              class="text-secondary fw-bold border-bottom h5 cursor"
+              (click)="filterProvince(province.key)"
+              >{{ province.key }} ({{ province.value.count }})</span
+            >
+            <ul class="list-group list-group-flush">
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+                *ngFor="let city of province.value.cities"
+              >
+                <span
+                  (click)="filterCity(city.cityName, province.key)"
+                  class="cursor"
+                  >{{ city.cityName }}
+                </span>
+                <span
+                  class="badge bg-primary rounded-pill cursor"
+                  (click)="filterCity(city.cityName, province.key)"
+                  >{{ city.count }}</span
+                >
+              </li>
+            </ul>
+          </li>
+          <li class="list-group-item">
+            <span class="text-primary fw-bold border-bottom h5"
+              >Categories</span
+            >
+            <ul
+              class="list-group list-group-flush"
+              *ngFor="let item of this.tagsCategorized"
+            >
+              <li
+                class="list-group-item d-flex justify-content-between align-items-center"
+              >
+                <span class="cursor" (click)="filterCategory(item.tag)"
+                  >{{ item.tag }}
+                </span>
+                <span
+                  class="badge bg-primary rounded-pill"
+                  (click)="filterRating(10)"
+                  >{{ item.count }}</span
+                >
+              </li>
+            </ul>
+          </li>
+          <li
+            class="list-group-item d-flex justify-content-between align-items-center"
+          >
+            <span
+              class="text-secondary fw-bold border-bottom text-danger cursor"
+            >
+              <button class="btn btn-success" (click)="filterResults()">
+                Filter results
+              </button>
+
+              <button
+                class="btn btn-danger mx-1"
+                (click)="clearAllFilters()"
+                *ngIf="this.storageService.getRfpSearchFilters()()?.length > 0"
+              >
+                Clear filters
+              </button>
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="col-10 border rounded border-secondary p-3">
+        <div class="container-fluid my-3">
+          <div class="row">
+            <div class="col">
+              <div class="card" aria-hidden="true">
+                <div class="card-body">
+                  <div class="container-fluid">
+                    <div class="row alert alert-info">
+                      <div class="col-10"></div>
+                      <div class="col-2">
+                        {{ filteredAdvertisements?.length }} RFPs found.
+                      </div>
+                    </div>
+                    <ng-container
+                      *ngIf="
+                        this.storageService.getRfpSearchFilters()()?.length > 0
+                      "
+                    >
+                      <div class="row mt-1 border rounded p-3">
+                        <div class="col alert alert-warning">
+                          <mat-label>Filters</mat-label>
+                          <mat-chip-listbox aria-label="Dog selection">
+                            <mat-chip
+                              *ngFor="
+                                let filter of this.storageService.getRfpSearchFilters()()
+                              "
+                            >
+                              {{ filter }}
+                              <button
+                                (click)="remove(filter)"
+                                matChipRemove
+                                [attr.aria-label]="'remove ' + filter"
+                              >
+                                <mat-icon>cancel</mat-icon>
+                              </button>
+                            </mat-chip>
+                          </mat-chip-listbox>
+                        </div>
+                      </div>
+                    </ng-container>
+                    <ng-container *ngIf="filteredAdvertisements?.length === 0">
+                      <div class="row mt-1 border rounded p-3">
+                        <div class="col alert alert-warning">
+                          No RFP match the provided search query. Please
+                          consider modifying your search criteria to find
+                          relevant results.
+                        </div>
+                      </div>
+                    </ng-container>
+
+                    <hr />
+                    <div
+                      class="row mt-1"
+                      *ngIf="filteredAdvertisements?.length > 0"
+                    >
+                      <div class="col">
+                        <app-advertisement-view
+                          *ngFor="
+                            let advertisement of filteredAdvertisements
+                              | paginate : configFilter
+                          "
+                          [advertisement]="advertisement"
+                        >
+                        </app-advertisement-view>
+                        <div class="d-flex justify-content-center">
+                          <pagination-controls
+                            (pageChange)="
+                              pageChangedFilter($event, configFilter)
+                            "
+                          ></pagination-controls>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

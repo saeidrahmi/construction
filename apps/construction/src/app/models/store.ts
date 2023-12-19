@@ -16,4 +16,5 @@ export interface StoreInterface {
   userIdSelected?: string;
   mapSearchSelectedCities?: string[];
   advertisementSearchFilters?: string[];
+  rfpSearchFilters?: string[];
 }

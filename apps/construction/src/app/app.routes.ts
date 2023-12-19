@@ -95,6 +95,13 @@ export const appRoutes: Route[] = [
         './common-components/advertisement/advertisement-details-view/advertisement-details-view.component'
       ).then((com) => com.AdvertisementDetailsViewComponent),
   },
+  {
+    path: 'rfps',
+    loadComponent: () =>
+      import('./public/rfp-list/rfp-list.component').then(
+        (com) => com.RfpListComponent
+      ),
+  },
 
   {
     path: 'reset-expired-password',

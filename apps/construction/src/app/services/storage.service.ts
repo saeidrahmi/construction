@@ -92,6 +92,9 @@ export class StorageService {
   getAdvertisementSearchFilters(): Signal<string[] | undefined> {
     return computed(() => this.store()?.advertisementSearchFilters);
   }
+  getRfpSearchFilters(): Signal<string[] | undefined> {
+    return computed(() => this.store()?.rfpSearchFilters);
+  }
   getUserSelected(): Signal<any | undefined> {
     return computed(() => this.store()?.userSelected);
   }
@@ -178,6 +181,43 @@ export class StorageService {
       };
     });
   }
+  updateRfpSearchFilters(filterStr: string, province: string) {
+    this.store.update((state) => {
+      // Ensure that state.advertisementSearchFilters is an array or initialize it as an empty array
+      const existingFilters = Array.isArray(state.rfpSearchFilters)
+        ? state.rfpSearchFilters
+        : [];
+      let updatedFilters = [];
+      if (filterStr?.toLowerCase()?.includes('rating'))
+        updatedFilters = existingFilters.filter(
+          (filter) => !filter?.toLowerCase()?.includes('rating')
+        );
+      else if (filterStr?.toLowerCase()?.includes('province'))
+        updatedFilters = existingFilters.filter(
+          (filter) =>
+            !filter
+              ?.toLowerCase()
+              ?.includes('location (' + province?.toLowerCase())
+        );
+      else if (filterStr?.toLowerCase()?.includes('category'))
+        updatedFilters = existingFilters.filter(
+          (filter) => filter !== filterStr
+        );
+      else if (filterStr?.toLowerCase()?.includes('location'))
+        updatedFilters = existingFilters.filter(
+          (filter) =>
+            !filter
+              ?.toLowerCase()
+              ?.includes('province (' + province?.toLowerCase()) &&
+            filter !== filterStr
+        );
+
+      return {
+        ...state,
+        rfpSearchFilters: [...updatedFilters, filterStr],
+      };
+    });
+  }
   removeAdvertisementSearchFilters(filterToRemove: string) {
     this.store.update((state) => {
       // Ensure that state.advertisementSearchFilters is an array or initialize it as an empty array
@@ -193,6 +233,24 @@ export class StorageService {
       return {
         ...state,
         advertisementSearchFilters: updatedFilters,
+      };
+    });
+  }
+  removeRfpSearchFilters(filterToRemove: string) {
+    this.store.update((state) => {
+      // Ensure that state.advertisementSearchFilters is an array or initialize it as an empty array
+      const existingFilters = Array.isArray(state.rfpSearchFilters)
+        ? state.rfpSearchFilters
+        : [];
+
+      // Create a new array without the filter to remove
+      const updatedFilters = existingFilters.filter(
+        (filter) => filter !== filterToRemove
+      );
+
+      return {
+        ...state,
+        rfpSearchFilters: updatedFilters,
       };
     });
   }

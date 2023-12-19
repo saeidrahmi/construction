@@ -1940,6 +1940,31 @@ export class ApiService {
       );
   }
 
+  getAllRfps(loggedIn: boolean, userId: string): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/public/list-rfps', {
+        userId: userId,
+        loggedIn: loggedIn,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiLongSearchTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Retrieving RFPs Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
+          throw error;
+        })
+      );
+  }
+
   searchAdvertisements(
     loggedIn: boolean,
     userId: string,
@@ -1970,6 +1995,32 @@ export class ApiService {
               progressBar: true,
             }
           );
+          throw error;
+        })
+      );
+  }
+  searchRfps(loggedIn: boolean, userId: string, data): Observable<any> {
+    this.spinner.show();
+    console.log(data);
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/public/search-rfps', {
+        userId: userId,
+        loggedIn: loggedIn,
+        data: data,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiLongSearchTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(error.message, 'Retrieving RFPs Failed', {
+            timeOut: this.toastrTimeoutValue,
+            positionClass: 'toast-top-right',
+            closeButton: true,
+            progressBar: true,
+          });
           throw error;
         })
       );

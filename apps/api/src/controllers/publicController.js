@@ -118,6 +118,63 @@ async function listAdvertisementsController(req, res) {
     });
   }
 }
+
+async function listRfpsController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const loggedIn = req.body.loggedIn;
+    if (loggedIn) {
+      const selectAdQuery = `SELECT userRFPs.*, users.city, users.province,  users.profileImage as userProfileImage,
+                          (SELECT CEIL(AVG(cleanliness)) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
+                          (SELECT CEIL(AVG(flexibility))  FROM userRatings WHERE userId = users.userId) as average_flexibility,
+                          (SELECT CEIL(AVG(qualityOfWork))  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
+                          (SELECT CEIL(AVG(performance)) FROM userRatings WHERE userId = users.userId) as average_performance,
+                          (SELECT CEIL(AVG(communicationSkills)) FROM userRatings WHERE userId = users.userId) as average_communicationSkills,
+                          (SELECT CEIL(AVG(timeliness) )  FROM userRatings WHERE userId = users.userId) as average_timeliness,
+                          (SELECT CEIL(AVG(costManagement))   FROM userRatings WHERE userId = users.userId) as average_costManagement,
+                          (SELECT CEIL(AVG(professionalism))   FROM userRatings WHERE userId = users.userId) as average_professionalism,
+                          (SELECT CEIL(AVG(safety) )  FROM userRatings WHERE userId = users.userId) as average_safety,
+                          (SELECT CEIL(AVG(materialsAndEquipment))  FROM userRatings WHERE userId = users.userId) as average_materialsAndEquipment,
+                          (SELECT AVG(overallCustomerSatisfaction) AS average_rating FROM userRatings WHERE userId = users.userId) as average_userOverallRating,
+                          (SELECT count(*) FROM userFavoriteRfps WHERE userId = ? and rfpId=userRFPs.rfpId ) as isFavorite
+                          FROM userRFPs
+                          JOIN users ON userRFPs.userId = users.userId
+                          WHERE userRFPs.deleted = 0 and userRFPs.active = 1
+                           and userRFPs.approvedByAdmin = 1 and  userRFPs.endDate  > CURDATE()
+                           ORDER BY userRFPs.dateCreated DESC `;
+
+      const selectResult = await executeQuery(selectAdQuery, [userId]);
+
+      return res.status(200).json(selectResult);
+    } else {
+      const selectAdQuery = `SELECT userRFPs.*, users.city, users.province,  users.profileImage as userProfileImage,
+                          (SELECT CEIL(AVG(cleanliness)) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
+                          (SELECT CEIL(AVG(flexibility))  FROM userRatings WHERE userId = users.userId) as average_flexibility,
+                          (SELECT CEIL(AVG(qualityOfWork))  FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
+                          (SELECT CEIL(AVG(performance)) FROM userRatings WHERE userId = users.userId) as average_performance,
+                          (SELECT CEIL(AVG(communicationSkills)) FROM userRatings WHERE userId = users.userId) as average_communicationSkills,
+                          (SELECT CEIL(AVG(timeliness) )  FROM userRatings WHERE userId = users.userId) as average_timeliness,
+                          (SELECT CEIL(AVG(costManagement))   FROM userRatings WHERE userId = users.userId) as average_costManagement,
+                          (SELECT CEIL(AVG(professionalism))   FROM userRatings WHERE userId = users.userId) as average_professionalism,
+                          (SELECT CEIL(AVG(safety) )  FROM userRatings WHERE userId = users.userId) as average_safety,
+                          (SELECT CEIL(AVG(materialsAndEquipment))  FROM userRatings WHERE userId = users.userId) as average_materialsAndEquipment,
+                          (SELECT AVG(overallCustomerSatisfaction) AS average_rating FROM userRatings WHERE userId = users.userId) as average_userOverallRating
+                          FROM userRFPs
+                          JOIN users ON userRFPs.userId = users.userId
+                          WHERE userRFPs.deleted = 0 and userRFPs.active = 1
+                           and userRFPs.approvedByAdmin = 1 and  userRFPs.endDate  > CURDATE()
+                           ORDER BY userRFPs.dateCreated DESC `;
+
+      const selectResult = await executeQuery(selectAdQuery, []);
+
+      return res.status(200).json(selectResult);
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 async function searchAdvertisementsController(req, res) {
   try {
     const userId = decryptItem(req.body.userId, webSecretKey);
@@ -270,7 +327,112 @@ async function listUserActiveAdvertisementsController(req, res) {
     });
   }
 }
+async function searchRfpsController(req, res) {
+  try {
+    const userId = decryptItem(req.body.userId, webSecretKey);
+    const loggedIn = req.body.loggedIn;
+    const searchQuery = req.body.data;
+    const searchText = searchQuery?.searchText;
+    const tagsArray = searchQuery?.tags;
+    const placeholders = tagsArray
+      .map(
+        (tag) =>
+          // `FIND_IN_SET('${tag.toLowerCase()}',  LOWER(userAdvertisements.tags)) > 0`
+          `LOWER(userAdvertisements.tags) LIKE LOWER('%${tag}%')`
+      )
+      .join(' OR ');
 
+    const locations = searchQuery?.locations;
+    let locationsClause = '';
+    if (locations?.includes('Canada-wide') || locations?.length === 0)
+      locationsClause = '';
+    else {
+      const generateConditions = (location) => {
+        const parts = location.split(',').map((part) => part.trim());
+
+        if (parts.length === 1) {
+          // If there is no comma, it is a province
+          return `users.province = '${parts[0]}'`;
+        } else {
+          // If there is a comma, consider the first part as province and the second as city
+          return `users.province = '${parts[0]}' AND users.city = '${parts[1]}'`;
+        }
+      };
+
+      // Generate the WHERE clause for the SQL query
+      locationsClause = locations.map(generateConditions).join(' OR ');
+    }
+
+    const sortBy = searchQuery?.sortBy === 'new' ? 'DESC' : 'ASC';
+
+    if (loggedIn) {
+      const selectAdQuery = `SELECT userRFPs.*, users.city, users.province, users.profileImage as userProfileImage,
+                          (SELECT CEIL(AVG(cleanliness)) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
+                          (SELECT CEIL(AVG(flexibility) ) FROM userRatings WHERE userId = users.userId) as average_flexibility,
+                          (SELECT CEIL(AVG(qualityOfWork) ) FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
+                          (SELECT CEIL(AVG(performance)) FROM userRatings WHERE userId = users.userId) as average_performance,
+                          (SELECT CEIL(AVG(communicationSkills)) FROM userRatings WHERE userId = users.userId) as average_communicationSkills,
+                          (SELECT CEIL(AVG(timeliness) )  FROM userRatings WHERE userId = users.userId) as average_timeliness,
+                          (SELECT CEIL(AVG(costManagement))   FROM userRatings WHERE userId = users.userId) as average_costManagement,
+                          (SELECT CEIL(AVG(professionalism) )  FROM userRatings WHERE userId = users.userId) as average_professionalism,
+                          (SELECT CEIL(AVG(safety))   FROM userRatings WHERE userId = users.userId) as average_safety,
+                          (SELECT CEIL(AVG(materialsAndEquipment))   FROM userRatings WHERE userId = users.userId) as average_materialsAndEquipment,
+                          (SELECT CEIL(AVG(overallCustomerSatisfaction)) AS average_rating FROM userRatings WHERE userId = users.userId) as average_userOverallRating,
+                          (SELECT count(*) FROM userFavoriteRfps WHERE userId = ? and rfpId=userRFPs.rfpId ) as isFavorite
+                          FROM userRFPs
+
+                          JOIN users ON userPlans.userId = users.userId
+                          WHERE userRFPs.deleted = 0 and userRFPs.active = 1
+                          and userRFPs.approvedByAdmin = 1 and  userRFPs.end  > CURDATE()
+                            ${
+                              tagsArray.length > 0
+                                ? `and (${placeholders})`
+                                : ''
+                            }
+                          and (LOWER(userRFPs.description) LIKE LOWER('%${searchText}%') or LOWER(userRFPs.title) LIKE LOWER('%${searchText}%') )
+                          ${locationsClause ? ` AND ${locationsClause}` : ''}
+                          ORDER BY userRFPs.dateCreated ${sortBy} `;
+
+      const selectResult = await executeQuery(selectAdQuery, [userId]);
+
+      return res.status(200).json(selectResult);
+    } else {
+      const selectAdQuery = `SELECT userRFPs.*, users.city, users.province, users.profileImage as userProfileImage,
+                          (SELECT CEIL(AVG(cleanliness)) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
+                          (SELECT CEIL(AVG(flexibility) ) FROM userRatings WHERE userId = users.userId) as average_flexibility,
+                          (SELECT CEIL(AVG(qualityOfWork) ) FROM userRatings WHERE userId = users.userId) as average_qualityOfWork,
+                          (SELECT CEIL(AVG(performance)) FROM userRatings WHERE userId = users.userId) as average_performance,
+                          (SELECT CEIL(AVG(communicationSkills)) FROM userRatings WHERE userId = users.userId) as average_communicationSkills,
+                          (SELECT CEIL(AVG(timeliness) )  FROM userRatings WHERE userId = users.userId) as average_timeliness,
+                          (SELECT CEIL(AVG(costManagement))   FROM userRatings WHERE userId = users.userId) as average_costManagement,
+                          (SELECT CEIL(AVG(professionalism) )  FROM userRatings WHERE userId = users.userId) as average_professionalism,
+                          (SELECT CEIL(AVG(safety))   FROM userRatings WHERE userId = users.userId) as average_safety,
+                          (SELECT CEIL(AVG(materialsAndEquipment))   FROM userRatings WHERE userId = users.userId) as average_materialsAndEquipment,
+                          (SELECT CEIL(AVG(overallCustomerSatisfaction)) AS average_rating FROM userRatings WHERE userId = users.userId) as average_userOverallRating,
+                          (SELECT count(*) FROM userFavoriteRfps WHERE userId = ? and rfpId=userRFPs.rfpId ) as isFavorite
+                          FROM userRFPs
+
+                          JOIN users ON userPlans.userId = users.userId
+                          WHERE userRFPs.deleted = 0 and userRFPs.active = 1
+                          and userRFPs.approvedByAdmin = 1 and  userRFPs.end  > CURDATE()
+                            ${
+                              tagsArray.length > 0
+                                ? `and (${placeholders})`
+                                : ''
+                            }
+                          and (LOWER(userRFPs.description) LIKE LOWER('%${searchText}%') or LOWER(userRFPs.title) LIKE LOWER('%${searchText}%') )
+                          ${locationsClause ? ` AND ${locationsClause}` : ''}
+                          ORDER BY userRFPs.dateCreated ${sortBy} `;
+      const selectResult = await executeQuery(selectAdQuery, []);
+
+      return res.status(200).json(selectResult);
+    }
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 module.exports = {
   listUserActiveAdvertisementsController,
   freeTrialInfoController,
@@ -280,4 +442,6 @@ module.exports = {
   getTopAdInfoController,
   listAdvertisementsController,
   searchAdvertisementsController,
+  listRfpsController,
+  searchRfpsController,
 };
