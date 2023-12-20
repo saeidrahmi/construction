@@ -1722,11 +1722,12 @@ export class ApiService {
         })
       );
   }
-  getAllUserRatingsDetails(userAdvertisementId: any): Observable<any> {
+  getAllUserRatingsDetails(id: any, type: string): Observable<any> {
     this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/users/user-ratings-details', {
-        userAdvertisementId: userAdvertisementId,
+        id: id,
+        type: type,
       })
       .pipe(
         take(1),

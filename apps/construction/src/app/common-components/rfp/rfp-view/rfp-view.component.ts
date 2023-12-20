@@ -61,7 +61,8 @@ export class RFPViewComponent {
     );
   }
   navigateRatingDetails() {
-    this.storageService.updateAdvertisementState(
+    this.storageService.setSearchPreviousPage('rfp');
+    this.storageService.updateRfpState(
       this.advertisement,
       this.advertisement.rfpId,
       'view'

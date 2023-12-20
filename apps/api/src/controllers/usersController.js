@@ -1434,12 +1434,16 @@ async function getUserRatingsByUserIdController(req, res) {
 }
 async function getUserRatingsDetailsController(req, res) {
   try {
-    let userAdvertisementId = req.body.userAdvertisementId;
+    let id = req.body.id;
+    let type = req.body.type;
     // get userId
-    const selectUserQuery = `select userId from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.userAdvertisementId=?;`;
-    const selectUserResult = await executeQuery(selectUserQuery, [
-      userAdvertisementId,
-    ]);
+    let selectUserQuery = '';
+    if (type === 'rfp')
+      selectUserQuery = `select userId from userRFPs where  rfpId=?;`;
+    else if (type === 'advertisement')
+      selectUserQuery = `select userId from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where  userAdvertisements.userAdvertisementId=?;`;
+
+    const selectUserResult = await executeQuery(selectUserQuery, [id]);
     if (selectUserResult?.length === 0)
       return res
         .status(500)

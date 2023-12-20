@@ -149,6 +149,7 @@ export class AdvertisementDetailsViewComponent {
     });
   }
   navigateRatingDetails() {
+    this.storageService.setSearchPreviousPage('advertisement');
     this.storageService.updateAdvertisementState(
       this.advertisement,
       this.advertisement.userAdvertisementId,

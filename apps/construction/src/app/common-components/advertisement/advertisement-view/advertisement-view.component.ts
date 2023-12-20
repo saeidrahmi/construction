@@ -49,6 +49,7 @@ export class AdvertisementViewComponent {
     this.router.navigate(['/view-advertisement-details']);
   }
   navigateRatingDetails() {
+    this.storageService.setSearchPreviousPage('advertisement');
     this.storageService.updateAdvertisementState(
       this.advertisement,
       this.advertisement.userAdvertisementId,

@@ -56,7 +56,12 @@ export class ViewReviewsComponent {
   formErrors: any[] = [];
   adObject = this.storageService?.getAdvertisement()();
   userRatingDetails$ = this.apiService
-    .getAllUserRatingsDetails(this.adObject?.advertisementIdSelected)
+    .getAllUserRatingsDetails(
+      this.storageService.getSearchPreviousPage()() === 'rfp'
+        ? this.storageService.getSelectedRfpId()()
+        : this.adObject?.advertisementIdSelected,
+      this.storageService.getSearchPreviousPage()()
+    )
     .pipe(
       takeUntilDestroyed(),
       tap((data: any) => {

@@ -173,6 +173,7 @@ export class UserRfpDetailsViewComponent {
     );
   }
   navigateRatingDetails() {
+    this.storageService.setSearchPreviousPage('rfp');
     this.storageService.updateRfpState(
       this.advertisement,
       this.advertisement.rfpId,
