@@ -1418,6 +1418,20 @@ async function getUserRatingsController(req, res) {
       .json({ errorMessage: 'Error getting user ratings.' });
   }
 }
+async function getUserRatingsByUserIdController(req, res) {
+  try {
+    let userId = decryptItem(req.body.userId, webSecretKey);
+    // get userId
+
+    const selectRatingResult = await getUserRatings(userId);
+
+    return res.status(200).json(selectRatingResult);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ errorMessage: 'Error getting user ratings.' });
+  }
+}
 async function getUserRatingsDetailsController(req, res) {
   try {
     let userAdvertisementId = req.body.userAdvertisementId;
@@ -3476,4 +3490,5 @@ module.exports = {
   getRfpEditInfoController,
   editRfpController,
   getRfpDetailsController,
+  getUserRatingsByUserIdController,
 };

@@ -186,7 +186,9 @@ export class AdvertisementDetailsViewComponent {
           }),
           switchMap(() =>
             this.apiService
-              .getUserRatings(this.advertisement?.userAdvertisementId)
+              .getUserRatingsByUserId(
+                this.encryptionService.encryptItem(this.userInfo?.userId)
+              )
               .pipe(
                 takeUntilDestroyed(this.destroyRef),
                 tap((ratings: any) => {

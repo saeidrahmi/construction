@@ -162,12 +162,16 @@ export class RFPDetailsViewComponent {
             return of(err);
           }),
           switchMap(() =>
-            this.apiService.getUserRatings(this.advertisement?.rfpId).pipe(
-              takeUntilDestroyed(this.destroyRef),
-              tap((ratings: any) => {
-                this.userRating = { ...ratings };
-              })
-            )
+            this.apiService
+              .getUserRatingsByUserId(
+                this.encryptionService.encryptItem(this.userInfo?.userId)
+              )
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                tap((ratings: any) => {
+                  this.userRating = { ...ratings };
+                })
+              )
           )
         )
 

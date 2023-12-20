@@ -10,8 +10,10 @@
         <div class="alert alert-warning">
           <p><strong>Important Notice:</strong></p>
           <p>
-            Important Notice for Website Users Reviewing Construction Request
-            for Proposals (RFPs):
+            These statements are crucial for individuals or entities considering
+            the submission of proposals in response to this Request for Proposal
+            (RFP). When preparing your proposal and contemplating engagement in
+            construction projects, we strongly advise the following:
           </p>
           <p>
             This Request for Proposal (RFP) is presented for informational
@@ -21,8 +23,9 @@
           </p>
           <ul>
             <li>
-              Verify Qualifications: Thoroughly review the qualifications and
-              credentials of the proposing entities or contractors.
+              Verify Your Qualifications: Ensure that your qualifications align
+              with the requirements outlined in the RFP and showcase your
+              credentials effectively.
             </li>
             <li>
               Validate Authorizations: Ensure that the proposing organizations
@@ -41,8 +44,9 @@
             </li>
           </ul>
           <p>
-            Remember that your safety and the quality of work depend on hiring
-            experienced and licensed professionals.
+            Remember, the success of your proposal and the overall project
+            depends on thorough preparation and adherence to the outlined
+            guidelines.
           </p>
           <p>
             <strong>Disclaimer:</strong> [Your Platform/Company Name] disclaims
@@ -299,9 +303,7 @@
                     <i
                       class="bi bi-heart-fill cursor"
                       [ngStyle]="{ color: heartColor }"
-                      (click)="
-                        addFavoriteAd(advertisement?.userAdvertisementId)
-                      "
+                      (click)="addFavoriteAd(advertisement?.rfpId)"
                     ></i
                     ><i class="bi bi-flag mx-3"></i
                     ><i class="bi bi-facebook mx-3"></i>
@@ -349,7 +351,7 @@
                         <rating
                           [(ngModel)]="userRating.average_overall_rating"
                           [max]="max"
-                          [readonly]="true"
+                          [readonly]="false"
                         ></rating>
                       </li>
                       <div class="accordion" id="rating">
@@ -386,7 +388,7 @@
                                     userRating.average_overall_rating
                                   "
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                 ></rating>
                               </li>
                               <li
@@ -398,7 +400,7 @@
                                 <rating
                                   [(ngModel)]="userRating.average_cleanliness"
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_cleanliness,
@@ -418,7 +420,7 @@
                                     userRating.average_communicationSkills
                                   "
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_communicationSkills,
@@ -438,7 +440,7 @@
                                     userRating.average_costManagement
                                   "
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_costManagement,
@@ -456,7 +458,7 @@
                                 <rating
                                   [(ngModel)]="userRating.average_flexibility"
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_flexibility,
@@ -479,7 +481,7 @@
                                     userRating.average_materialsAndEquipment
                                   "
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_materialsAndEquipment,
@@ -497,7 +499,7 @@
                                 <rating
                                   [(ngModel)]="userRating.average_performance"
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_performance,
@@ -517,7 +519,7 @@
                                     userRating.average_professionalism
                                   "
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_professionalism,
@@ -536,7 +538,7 @@
                                 <rating
                                   [(ngModel)]="userRating.average_qualityOfWork"
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_qualityOfWork,
@@ -554,7 +556,7 @@
                                 <rating
                                   [(ngModel)]="userRating.average_safety"
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_safety,
@@ -572,7 +574,7 @@
                                 <rating
                                   [(ngModel)]="userRating.average_timeliness"
                                   [max]="max"
-                                  [readonly]="true"
+                                  [readonly]="false"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_timeliness,

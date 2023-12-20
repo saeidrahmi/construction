@@ -1695,6 +1695,33 @@ export class ApiService {
         })
       );
   }
+  getUserRatingsByUserId(userId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/user-ratings-byId', {
+        userId: userId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving User Ratings Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
   getAllUserRatingsDetails(userAdvertisementId: any): Observable<any> {
     this.spinner.show();
     return this.httpClient

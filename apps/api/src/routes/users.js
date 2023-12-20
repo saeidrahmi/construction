@@ -72,6 +72,7 @@ const {
   getRfpEditInfoController,
   editRfpController,
   getRfpDetailsController,
+  getUserRatingsByUserIdController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -89,6 +90,7 @@ router.post('/register-free', registerFreeUserController);
 router.post('/register-paid', registerPaidUserController);
 router.post('/reset-password', resetPasswordController);
 router.post('/user-ratings', getUserRatingsController);
+router.post('/user-ratings-byId', getUserRatingsByUserIdController);
 router.post(
   '/user-ratings-info',
   verifyGeneralToken,
