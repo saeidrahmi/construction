@@ -139,16 +139,20 @@ export class AdvertisementsListComponent {
     private http: HttpClient,
     private formService: FormService
   ) {
-    (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
-      // this.getCurrentLocation();
-      (this.searchForm = this.fb.group({
-        searchText: new FormControl('', []),
-        tags: new FormControl('', []),
-        //currentAddress: new FormControl('', []),
+    if (
+      this.storageService.getMapSearchSelectedCities()() &&
+      this.storageService.getSearchPreviousPage()() === 'advertisement'
+    )
+      this.myLocations = this.storageService.getMapSearchSelectedCities()();
+    // this.getCurrentLocation();
+    this.searchForm = this.fb.group({
+      searchText: new FormControl('', []),
+      tags: new FormControl('', []),
+      //currentAddress: new FormControl('', []),
 
-        locations: new FormControl('', []),
-        sortBy: new FormControl('Sort by', []),
-      }));
+      locations: new FormControl('', []),
+      sortBy: new FormControl('Sort by', []),
+    });
     this.http
       .get<CanadaInterface[]>('../../assets/canadian-cities.json')
       .pipe(
@@ -205,6 +209,11 @@ export class AdvertisementsListComponent {
       )
     );
   }
+  navigateSelectFromMap() {
+    this.storageService.setSearchPreviousPage('advertisement');
+    this.router.navigate(['map-location']);
+  }
+
   moveLastToBeginning() {
     if (this.filteredTopAdvertisements.length > 2) {
       const lastItem = this.filteredTopAdvertisements.pop(); // Remove the last item

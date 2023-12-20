@@ -9,7 +9,7 @@ import {
   inject,
 } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RouterLink, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { ApiServerErrorComponent } from '../apiServerError/api-server-error.component';
 import { SpinnerComponent } from '../spinner/spinner.component';
 
@@ -45,10 +45,10 @@ export class SelectMapLocationComponent implements AfterViewInit {
   center: google.maps.LatLngLiteral = { lat: 0, lng: 0 };
   citiesCovered: string[] = [];
   formattedAddrress: string[] = [];
-
   circleOptions: google.maps.CircleOptions;
   circle: google.maps.Circle;
   storageService = inject(StorageService);
+  router = inject(Router);
 
   constructor() {
     this.getCurrentLocation();
@@ -324,5 +324,11 @@ export class SelectMapLocationComponent implements AfterViewInit {
       }
     }
     return null;
+  }
+
+  navigateSearchPage() {
+    this.storageService.getSearchPreviousPage()() === 'rfp'
+      ? this.router.navigate(['rfps'])
+      : this.router.navigate(['advertisements']);
   }
 }

@@ -134,8 +134,7 @@
                         <a
                           type="submit"
                           class="btn btn-success"
-                          [routerLink]="['/map-location']"
-                          routerLinkActive="router-link-active"
+                          (click)="navigateSelectFromMap()"
                         >
                           Select location from Map
                         </a>

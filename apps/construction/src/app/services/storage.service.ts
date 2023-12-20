@@ -98,6 +98,9 @@ export class StorageService {
   getUserSelected(): Signal<any | undefined> {
     return computed(() => this.store()?.userSelected);
   }
+  getSearchPreviousPage(): Signal<any | undefined> {
+    return computed(() => this.store()?.searchPreviousPage);
+  }
   getMapSearchSelectedCities(): Signal<string[] | undefined> {
     return computed(() => this.store()?.mapSearchSelectedCities);
   }
@@ -347,6 +350,11 @@ export class StorageService {
       return { ...state, userSelected: user };
     });
   }
+  setSearchPreviousPage(page: any) {
+    this.store.update((state) => {
+      return { ...state, searchPreviousPage: page };
+    });
+  }
   updateUserIdSelected(userId: string) {
     this.store.update((state) => {
       return { ...state, userIdSelected: userId };
@@ -548,6 +556,7 @@ export class StorageService {
       general: { theme: 'light' },
       plan: null,
       advertisement: null,
+      searchPreviousPage: null,
       rfp: null,
       mapSearchSelectedCities: [],
       advertisementSearchFilters: [],

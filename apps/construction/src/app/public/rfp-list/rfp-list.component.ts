@@ -140,16 +140,20 @@ export class RfpListComponent {
     private http: HttpClient,
     private formService: FormService
   ) {
-    (this.myLocations = this.storageService.getMapSearchSelectedCities()()),
-      // this.getCurrentLocation();
-      (this.searchForm = this.fb.group({
-        searchText: new FormControl('', []),
-        tags: new FormControl('', []),
-        //currentAddress: new FormControl('', []),
+    if (
+      this.storageService.getMapSearchSelectedCities()() &&
+      this.storageService.getSearchPreviousPage()() === 'rfp'
+    )
+      this.myLocations = this.storageService.getMapSearchSelectedCities()();
+    // this.getCurrentLocation();
+    this.searchForm = this.fb.group({
+      searchText: new FormControl('', []),
+      tags: new FormControl('', []),
+      //currentAddress: new FormControl('', []),
 
-        locations: new FormControl('', []),
-        sortBy: new FormControl('Sort by', []),
-      }));
+      locations: new FormControl('', []),
+      sortBy: new FormControl('Sort by', []),
+    });
     this.http
       .get<CanadaInterface[]>('../../assets/canadian-cities.json')
       .pipe(
@@ -319,6 +323,10 @@ export class RfpListComponent {
         this.citiesByProvince[province].count += 1;
       }
     });
+  }
+  navigateSelectFromMap() {
+    this.storageService.setSearchPreviousPage('rfp');
+    this.router.navigate(['map-location']);
   }
 
   clearAddrress() {

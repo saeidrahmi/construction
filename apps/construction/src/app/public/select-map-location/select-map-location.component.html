@@ -9,8 +9,7 @@
       <button
         type="submit"
         class="btn btn-primary align-center"
-        [routerLink]="['/advertisements']"
-        routerLinkActive="router-link-active"
+        (click)="navigateSearchPage()"
         [disabled]="disableSelect"
       >
         Select map locations
