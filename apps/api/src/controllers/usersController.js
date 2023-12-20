@@ -1661,6 +1661,73 @@ async function getAdvertisementDetailsController(req, res) {
     });
   }
 }
+async function getRfpDetailsController(req, res) {
+  try {
+    let rfpId = req.body.rfpId;
+
+    // get userId
+    const selectUserQuery = `select userId from userRFPs  where rfpId=?;`;
+    const selectUserResult = await executeQuery(selectUserQuery, [rfpId]);
+
+    const userId = selectUserResult[0].userId;
+
+    // get user general info
+    const selectUserInfoQuery = `select userId,firstName,lastName,registeredDate,phone,fax,address, city, province, postalCode, website,  profileImage from  users where userId=?`;
+
+    const selectUserInfoResult = await executeQuery(selectUserInfoQuery, [
+      userId,
+    ]);
+
+    // update visits
+    const updateQuery = `update  userRFPs set numberOfVisits=numberOfVisits+1  where rfpId=?`;
+    const updateResult = await executeQuery(updateQuery, [rfpId]);
+
+    // get Ad details
+
+    const selectAdQuery = `SELECT userRFPs.*,userRFPImages.userRFPImage
+                          FROM userRFPs
+
+                          LEFT JOIN userRFPImages ON userRFPs.rfpId = userRFPImages.rfpId
+                          WHERE userRFPs.rfpId=? and userRFPs.deleted = 0 and userRFPs.active = 1  and userRFPs.approvedByAdmin = 1
+                           and  userRFPs.endDAte  > CURDATE() `;
+    const selectAdResult = await executeQuery(selectAdQuery, [rfpId]);
+
+    // get user registered date
+    const selectRegDateQuery = `SELECT registeredDate FROM users where userId=?`;
+    const selectRegDateResult = await executeQuery(selectRegDateQuery, [
+      userId,
+    ]);
+    // get user rating
+
+    const selectRatingResult = await getUserRatings(userId);
+
+    // get number of active ads
+    const selectActiveAdsQuery = `select count(*) as countAds from userAdvertisements JOIN userPlans ON userAdvertisements.userPlanId  = userPlans.userPlanId where
+                                  userAdvertisements.active=1 and userAdvertisements.rejected=0 and  userAdvertisements.deleted=0 and userAdvertisements.approvedByAdmin=1  and userAdvertisements.expiryDate  > CURDATE() And userPlans.userId =?;`;
+    const selectActiveAdsResult = await executeQuery(selectActiveAdsQuery, [
+      userId,
+    ]);
+    // get settings
+    const selectSettingQuery = `SELECT * FROM settings`;
+    const selectSettingResult = await executeQuery(selectSettingQuery, []);
+
+    // info
+    const info = {
+      registeredDate: selectRegDateResult[0].registeredDate,
+      acitveAds: selectActiveAdsResult[0].countAds,
+      userRate: selectRatingResult,
+      appSettings: selectSettingResult[0],
+
+      selectAdResult: selectAdResult,
+      userInfo: selectUserInfoResult[0],
+    };
+    return res.status(200).json(info);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to retrieve information. Please try again later.',
+    });
+  }
+}
 async function getUserAdvertisementDetailsController(req, res) {
   try {
     let userAdvertisementId = req.body.userAdvertisementId;
@@ -3263,7 +3330,6 @@ async function saveUserRFPController(req, res) {
     }
 
     if (req.files['headerImage']) {
-
       const image = req.files['headerImage'][0];
       const { buffer } = image;
       const insertImageResult = await insertRFPHeaderImage(
@@ -3409,4 +3475,5 @@ module.exports = {
   addFavoriteRfpController,
   getRfpEditInfoController,
   editRfpController,
+  getRfpDetailsController,
 };

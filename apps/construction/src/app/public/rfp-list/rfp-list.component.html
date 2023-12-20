@@ -458,14 +458,14 @@
                       *ngIf="filteredAdvertisements?.length > 0"
                     >
                       <div class="col">
-                        <app-advertisement-view
+                        <app-rfp-view
                           *ngFor="
                             let advertisement of filteredAdvertisements
                               | paginate : configFilter
                           "
                           [advertisement]="advertisement"
                         >
-                        </app-advertisement-view>
+                        </app-rfp-view>
                         <div class="d-flex justify-content-center">
                           <pagination-controls
                             (pageChange)="

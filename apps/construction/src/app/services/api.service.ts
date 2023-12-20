@@ -1641,6 +1641,33 @@ export class ApiService {
         })
       );
   }
+  getRfpDetails(rfpId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/get-rfp-details', {
+        rfpId: rfpId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving RFP Details Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
   getUserRatings(userAdvertisementId: any): Observable<any> {
     this.spinner.show();
     return this.httpClient

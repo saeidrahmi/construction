@@ -96,6 +96,13 @@ export const appRoutes: Route[] = [
       ).then((com) => com.AdvertisementDetailsViewComponent),
   },
   {
+    path: 'view-rfp-details',
+    loadComponent: () =>
+      import(
+        './common-components/rfp/rfp-details-view/rfp-details-view.component'
+      ).then((com) => com.RFPDetailsViewComponent),
+  },
+  {
     path: 'rfps',
     loadComponent: () =>
       import('./public/rfp-list/rfp-list.component').then(

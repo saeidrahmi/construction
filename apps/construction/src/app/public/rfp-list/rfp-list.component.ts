@@ -54,6 +54,7 @@ import { FormErrorsComponent } from '../form-errors.component';
 import { FormService } from '../../services/form.service';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { RFPViewComponent } from '../../common-components/rfp/rfp-view/rfp-view.component';
 @Component({
   selector: 'app-rfp-list',
   templateUrl: './rfp-list.component.html',
@@ -63,7 +64,7 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
     CommonModule,
     RatingModule,
     FormsModule,
-    AdvertisementViewComponent,
+    RFPViewComponent,
     RouterModule,
     ReactiveFormsModule,
     MatFormFieldModule,

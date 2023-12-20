@@ -28,6 +28,7 @@ import { PhoneNumberPipe } from '../../../pipes/phone-number.pipe';
 import { CommonUtilityService } from '../../../services/common-utility.service';
 import { RatingInterface } from '../../../models/rating';
 import { QuillModule } from 'ngx-quill';
+import { RFPInterface } from '../../../models/rfp';
 
 @Component({
   selector: 'app-rfp-details-view',
@@ -46,7 +47,7 @@ import { QuillModule } from 'ngx-quill';
   ],
 })
 export class RFPDetailsViewComponent {
-  advertisement: AdvertisementInterface = {};
+  advertisement: RFPInterface = {};
   env: EnvironmentInfo = new EnvironmentInfo();
   storageService = inject(StorageService);
   userService = inject(UserService);
@@ -79,65 +80,52 @@ export class RFPDetailsViewComponent {
   headerImage: any;
   sliderImages: any[];
   formErrors: string[] = [];
+  selectedImage: any;
 
   constructor(private sanitizer: DomSanitizer) {
     this.max = this.commonUtility.getMaxUserRating();
-    const adObject = this.storageService?.getAdvertisement()();
-    if (
-      adObject?.advertisementIdSelected &&
-      adObject?.advertisementAction === 'view'
-    ) {
+    const adObject = this.storageService?.getRfp()();
+    if (adObject?.rfpIdSelected && adObject?.rfpAction === 'view') {
       this.apiService
-        .getAdvertisementDetails(adObject?.advertisementIdSelected)
+        .getRfpDetails(adObject?.rfpIdSelected)
         .pipe(
           takeUntilDestroyed(),
+
           tap((info: any) => {
             if (info?.selectAdResult?.length < 1)
               this.advertisementExists = false;
             else {
               this.advertisementExists = true;
               this.advertisement = info?.selectAdResult[0];
-
               this.headerImage = info?.selectAdResult[0]?.headerImage;
               const selectAdResult = info?.selectAdResult;
               this.sliderImages = [];
               selectAdResult.forEach((item) => {
-                if (item?.userAdvertisementImage) {
-                  this.sliderImages.push(item?.userAdvertisementImage);
+                if (item?.userRFPImage) {
+                  this.sliderImages.push(item?.userRFPImage);
                 }
               });
+
               this.userInfo = info?.userInfo;
-              this.advertisement.userId = this.userInfo?.userId;
               this.registeredDate = new Date(info?.registeredDate);
               this.acitveAds = info.acitveAds;
               this.userRating = info.userRate;
-              this.myServices = info?.services;
-              this.locationType = info?.locations?.serviceCoverageType;
-              if (this.locationType === 'province') {
-                this.myLocations = info?.locations?.provinces;
-              } else if (this.locationType === 'city') {
-                this.myLocations = info?.locations?.cities;
-              } else if (this.locationType === 'country') {
-                this.myLocations.push('All over Canada');
-              }
             }
           }),
 
           switchMap(() => {
-            if (this.isLoggedIn())
-              return this.apiService
-                .isUserFavoriteAd(
-                  this.storageService?.getSelectedAdvertisementId()(),
-                  this.encryptionService.encryptItem(this.userId())
-                )
-                .pipe(
-                  takeUntilDestroyed(this.destroyRef),
-                  tap((isFavorite) => {
-                    if (isFavorite) this.heartColor = 'red';
-                    else this.heartColor = '';
-                  })
-                );
-            else return of(null);
+            return this.apiService
+              .isRfpUserFavoriteAd(
+                this.storageService?.getSelectedRfpId()(),
+                this.encryptionService.encryptItem(this.userId())
+              )
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                tap((isFavorite) => {
+                  if (isFavorite) this.heartColor = 'red';
+                  else this.heartColor = '';
+                })
+              );
           })
         )
 
@@ -147,18 +135,6 @@ export class RFPDetailsViewComponent {
     this.messageForm = this.fb.group({
       message: new FormControl('', [Validators.required]),
     });
-  }
-  navigateRatingDetails() {
-    this.storageService.updateAdvertisementState(
-      this.advertisement,
-      this.advertisement.userAdvertisementId,
-      'view'
-    );
-    this.router.navigate(['/user-ratings-details']);
-  }
-  naviagteUserAds(id: string) {
-    this.storageService.updateSelectedAdvertisementId(id);
-    this.router.navigate(['/user-advertisements']);
   }
 
   updateUserOverallRating(rate: any, rateType: string) {
@@ -170,6 +146,7 @@ export class RFPDetailsViewComponent {
           this.encryptionService.encryptItem(this.userId()),
           rateType
         )
+
         .pipe(
           takeUntilDestroyed(this.destroyRef),
           tap(() => {
@@ -185,15 +162,12 @@ export class RFPDetailsViewComponent {
             return of(err);
           }),
           switchMap(() =>
-            this.apiService
-              .getUserRatings(this.advertisement?.userAdvertisementId)
-              .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                tap((ratings: any) => {
-
-                  this.userRating = { ...ratings };
-                })
-              )
+            this.apiService.getUserRatings(this.advertisement?.rfpId).pipe(
+              takeUntilDestroyed(this.destroyRef),
+              tap((ratings: any) => {
+                this.userRating = { ...ratings };
+              })
+            )
           )
         )
 
@@ -227,10 +201,8 @@ export class RFPDetailsViewComponent {
   addFavoriteAd(id: any) {
     if (this.isLoggedIn())
       this.apiService
-        .addFavoriteAdvertisement(
-          id,
-          this.encryptionService.encryptItem(this.userId())
-        )
+
+        .addFavoriteRfp(id, this.encryptionService.encryptItem(this.userId()))
         .pipe(
           takeUntilDestroyed(this.destroyRef),
 
@@ -259,41 +231,25 @@ export class RFPDetailsViewComponent {
         progressBar: true,
       });
   }
-  sendMessage() {
-    this.formErrors = [];
-    if (this.messageForm.valid) {
-      if (this.isLoggedIn())
-        this.apiService
-          .sendAdvertisementMessage(
-            this.encryptionService.encryptItem(this.userInfo?.userId),
-            this.encryptionService.encryptItem(this.userId()),
-            this.advertisement?.userAdvertisementId,
-            this.message
-          )
-          .pipe(
-            takeUntilDestroyed(this.destroyRef),
-
-            tap((info: any) => {
-              this.toastService.success('success', 'success', {
-                timeOut: 3000,
-                positionClass: 'toast-top-right',
-                closeButton: true,
-                progressBar: true,
-              });
-            })
-          )
-
-          .subscribe();
-      else
-        this.toastService.error('Please login first', 'Failed', {
-          timeOut: 3000,
-          positionClass: 'toast-top-right',
-          closeButton: true,
-          progressBar: true,
-        });
-    } else
-      this.formErrors = this.formService.getFormValidationErrorMessages(
-        this.messageForm
-      );
+  getDaysLeft() {
+    return this.userService.differenceInDays(
+      new Date(this.advertisement?.endDate),
+      new Date()
+    );
+  }
+  navigateRatingDetails() {
+    this.storageService.updateRfpState(
+      this.advertisement,
+      this.advertisement.rfpId,
+      'view'
+    );
+    this.router.navigate(['/user-ratings-details']);
+  }
+  naviagteUserAds(id: string) {
+    this.storageService.updateSelectedRfpId(id);
+    this.router.navigate(['/user-advertisements']);
+  }
+  setImage(imageUrl) {
+    this.selectedImage = imageUrl;
   }
 }

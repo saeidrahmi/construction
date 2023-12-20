@@ -1,7 +1,7 @@
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, Input, inject } from '@angular/core';
-import { AdvertisementInterface } from '../../../models/advertisement';
+
 import { StorageService } from '../../../services/storage.service';
 import { UserService } from '../../../services/user-service';
 
@@ -16,6 +16,7 @@ import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { DomSanitizer } from '@angular/platform-browser';
 import { QuillModule } from 'ngx-quill';
+import { RFPInterface } from '../../../models/rfp';
 
 @Component({
   selector: 'app-rfp-view',
@@ -25,7 +26,7 @@ import { QuillModule } from 'ngx-quill';
   imports: [CommonModule, FormsModule, RouterModule, RatingModule, QuillModule],
 })
 export class RFPViewComponent {
-  @Input('advertisement') advertisement: AdvertisementInterface = {};
+  @Input('advertisement') advertisement: RFPInterface = {};
 
   storageService = inject(StorageService);
   commonUtility = inject(CommonUtilityService);
@@ -39,19 +40,30 @@ export class RFPViewComponent {
   imageService = inject(ImageService);
   destroyRef = inject(DestroyRef);
   userId = this.storageService?.getUserId();
-  constructor(public sanitizer: DomSanitizer) {}
 
-  navigateDetails(userAdvertisementId) {
-    this.storageService.updateAdvertisementIdAndAction(
+  currentDate: Date;
+  constructor(public sanitizer: DomSanitizer) {
+    this.currentDate = new Date();
+  }
+
+  navigateDetails(advertisement, userAdvertisementId) {
+    this.storageService.updateRfpState(
+      advertisement,
       userAdvertisementId,
       'view'
     );
-    this.router.navigate(['/view-advertisement-details']);
+    this.router.navigate(['/view-rfp-details']);
+  }
+  getDaysLeft() {
+    return this.userService.differenceInDays(
+      new Date(this.advertisement?.endDate),
+      this.currentDate
+    );
   }
   navigateRatingDetails() {
     this.storageService.updateAdvertisementState(
       this.advertisement,
-      this.advertisement.userAdvertisementId,
+      this.advertisement.rfpId,
       'view'
     );
     this.router.navigate(['/user-ratings-details']);
@@ -59,10 +71,7 @@ export class RFPViewComponent {
   addFavoriteAd(id: any) {
     if (this.isUserLoggedIn())
       this.apiService
-        .addFavoriteAdvertisement(
-          id,
-          this.encryptionService.encryptItem(this.userId())
-        )
+        .addFavoriteRfp(id, this.encryptionService.encryptItem(this.userId()))
         .pipe(
           takeUntilDestroyed(this.destroyRef),
 

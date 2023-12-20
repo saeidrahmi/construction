@@ -1,4 +1,4 @@
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { Component, DestroyRef, Input, inject } from '@angular/core';
 import { AdvertisementInterface } from '../../../models/advertisement';
@@ -64,6 +64,7 @@ export class UserRfpDetailsViewComponent {
   selectedImage: any;
   profileImage: string;
   userRating: RatingInterface = {};
+  router = inject(Router);
   constructor(private sanitizer: DomSanitizer) {
     this.max = this.commonUtility.getMaxUserRating();
     const adObject = this.storageService?.getRfp()();
@@ -170,5 +171,17 @@ export class UserRfpDetailsViewComponent {
       new Date(this.advertisement?.endDate),
       new Date()
     );
+  }
+  navigateRatingDetails() {
+    this.storageService.updateRfpState(
+      this.advertisement,
+      this.advertisement.rfpId,
+      'view'
+    );
+    this.router.navigate(['/user-ratings-details']);
+  }
+  naviagteUserAds(id: string) {
+    this.storageService.updateSelectedRfpId(id);
+    this.router.navigate(['/user-advertisements']);
   }
 }

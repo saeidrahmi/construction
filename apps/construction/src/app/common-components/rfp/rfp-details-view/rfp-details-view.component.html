@@ -10,26 +10,34 @@
         <div class="alert alert-warning">
           <p><strong>Important Notice:</strong></p>
           <p>
-            This advertisement is for informational purposes only. When seeking
-            professional services or considering construction work, we strongly
-            recommend the following:
+            Important Notice for Website Users Reviewing Construction Request
+            for Proposals (RFPs):
+          </p>
+          <p>
+            This Request for Proposal (RFP) is presented for informational
+            purposes only. When engaging with professional services or
+            considering construction projects, we strongly recommend the
+            following:
           </p>
           <ul>
             <li>
-              Verify the license and credentials of the service provider or
-              contractor.
+              Verify Qualifications: Thoroughly review the qualifications and
+              credentials of the proposing entities or contractors.
             </li>
             <li>
-              Ensure the professionals you hire are licensed and authorized to
-              perform the specific services.
+              Validate Authorizations: Ensure that the proposing organizations
+              are duly authorized and possess the required licenses to carry out
+              the proposed services.
             </li>
             <li>
-              Take necessary precautions for construction works, such as
-              plumbing and electrical installations.
+              Safety Considerations: Pay special attention to safety measures,
+              particularly for projects involving complex construction
+              activities.
             </li>
             <li>
-              When in doubt, consult with qualified professionals for advice and
-              assistance.
+              Consult with Professionals: When uncertain about any aspect of the
+              proposals, seek advice from qualified professionals who can
+              provide guidance tailored to your specific needs.
             </li>
           </ul>
           <p>
@@ -37,13 +45,18 @@
             experienced and licensed professionals.
           </p>
           <p>
-            <strong>Disclaimer:</strong> [Your Platform/Company Name] takes no
-            responsibility for the services provided by advertisers. Users are
-            encouraged to independently verify credentials and exercise caution
-            when entering into transactions.
+            <strong>Disclaimer:</strong> [Your Platform/Company Name] disclaims
+            any responsibility for the proposals submitted by advertisers. Users
+            are urged to independently verify qualifications and exercise
+            caution when entering into agreements.
           </p>
         </div>
       </div>
+      <col-12>
+        <div class="border border-1 p-2">
+          <a class="btn btn-outline-primary" routerLink="/rfps"> Back RFPs </a>
+        </div>
+      </col-12>
       <div class="col-12" *ngIf="sliderImages?.length > 0">
         <div
           style="width: 100%"
@@ -74,6 +87,9 @@
                 style="height: 500px"
                 class="d-block w-100 rounded opacity-100"
                 alt="..."
+                data-bs-toggle="modal"
+                data-bs-target="#imageModal"
+                (click)="setImage(imageUrl)"
               />
               <!-- Your content goes here for each slide -->
             </div>
@@ -103,47 +119,44 @@
       ></div>
       <div class="col-10">
         <div class="continer-fluid">
+          <div class="row border border-1 rounded p-2">
+            <div class="col-2">
+              <div *ngIf="headerImage; then imageSection; else noImage"></div>
+              <ng-template #imageSection>
+                <img
+                  class="img-thumbnail rounded"
+                  width="200"
+                  height="200"
+                  [src]="imageService.bufferToSafeUrl(headerImage)"
+              /></ng-template>
+              <ng-template #noImage>
+                <img
+                  class="img-thumbnail rounded"
+                  width="200"
+                  height="200"
+                  src="../../../assets/images/questionmark.png"
+              /></ng-template>
+            </div>
+            <div class="col-8">
+              <h5>{{ advertisement.title }}</h5>
+            </div>
+
+            <div class="col-1">
+              <i
+                class="bi bi-heart-fill cursor"
+                [ngStyle]="{ 'font-size': '2rem', color: heartColor }"
+                (click)="addFavoriteAd(advertisement?.rfpId)"
+              ></i>
+            </div>
+          </div>
+
           <div class="row my-2">
             <div class="col-8">
               <div class="container-fluid">
-                <div class="row border border-1 rounded p-2">
-                  <div class="col-2">
-                    <div
-                      *ngIf="headerImage; then imageSection; else noImage"
-                    ></div>
-                    <ng-template #imageSection>
-                      <img
-                        class="img-thumbnail rounded"
-                        width="200"
-                        height="200"
-                        [src]="imageService.bufferToSafeUrl(headerImage)"
-                    /></ng-template>
-                    <ng-template #noImage>
-                      <img
-                        class="img-thumbnail rounded"
-                        width="200"
-                        height="200"
-                        src="../../../assets/images/questionmark.png"
-                    /></ng-template>
-                  </div>
-                  <div class="col-8">
-                    <h5>{{ advertisement.title }}</h5>
-                  </div>
-                  <div class="col-1">
-                    <i
-                      class="bi bi-heart-fill cursor"
-                      [ngStyle]="{ 'font-size': '2rem', color: heartColor }"
-                      (click)="
-                        addFavoriteAd(advertisement?.userAdvertisementId)
-                      "
-                    ></i>
-                  </div>
-                </div>
-
-                <div class="row" *ngIf="advertisement?.topAdvertisement">
+                <div class="row" *ngIf="advertisement?.isTurnkey">
                   <div class="col">
                     <button type="button" class="btn btn-outline-info">
-                      TOP AD
+                      Turnkey Project
                     </button>
                   </div>
                 </div>
@@ -158,10 +171,31 @@
                   </div>
                 </div>
                 <hr />
+                <div class="row">
+                  <div class="col-4">
+                    <span class="fw-bold">Bidding Start Date: </span
+                    >{{ advertisement.startDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Bidding End Date:</span>
+                    {{ advertisement.endDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Project Start Date:</span>
+                    {{ advertisement.projectStartDate | date }}
+                  </div>
+                  <div class="col-4">
+                    <span class="fw-bold">Days Left:</span>
+                    {{ getDaysLeft() }} days.
+                  </div>
+                </div>
+
+                <br />
+                <hr />
 
                 <div class="row">
                   <div class="col">
-                    <h5>Description</h5>
+                    <h5>Project Scope</h5>
                     <quill-view-html
                       [content]="advertisement?.description"
                       theme="snow"
@@ -171,45 +205,70 @@
                 <hr />
                 <div class="row border rounded p-2">
                   <div class="col">
-                    <h5 class="border-bottom">My Services</h5>
-                    <h6>The following services are made available:</h6>
+                    <h5 class="border-bottom">Qualification Requirements</h5>
 
-                    <ul class="list-group list-group-flush">
-                      <li
-                        class="list-group-item"
-                        *ngFor="let service of myServices"
-                      >
-                        {{ service }}
-                      </li>
-                    </ul>
+                    <quill-view-html
+                      [content]="advertisement?.contractorQualifications"
+                      theme="snow"
+                    ></quill-view-html>
                   </div>
                 </div>
                 <hr />
                 <div class="row border rounded p-2">
                   <div class="col">
-                    <h5 class="border-bottom">Covered locations</h5>
-                    <h6>My services are available in following locations:</h6>
-                    <ul class="list-group list-group-flush">
-                      <li
-                        class="list-group-item"
-                        *ngFor="let location of myLocations"
-                      >
-                        {{ location }}
-                      </li>
-                    </ul>
+                    <h5 class="border-bottom">Budget Information</h5>
+
+                    <quill-view-html
+                      [content]="advertisement?.budgetInformation"
+                      theme="snow"
+                    ></quill-view-html>
                   </div>
                 </div>
-                <div class="row m-2" *ngIf="advertisement?.showAddress">
+                <hr />
+                <div class="row border rounded p-2">
+                  <div class="col">
+                    <h5 class="border-bottom">Insurance and Liability</h5>
+
+                    <quill-view-html
+                      [content]="advertisement?.insuranceRequirements"
+                      theme="snow"
+                    ></quill-view-html>
+                  </div>
+                </div>
+                <hr />
+                <div class="row border rounded p-2">
+                  <div class="col">
+                    <h5 class="border-bottom">Timeline and Milestones</h5>
+
+                    <quill-view-html
+                      [content]="advertisement?.milestones"
+                      theme="snow"
+                    ></quill-view-html>
+                  </div>
+                </div>
+                <hr />
+
+                <div class="row m-2">
                   <div class="col border border-1 p-2">
-                    {{
-                      userInfo?.address +
-                        ', ' +
-                        userInfo?.city +
-                        ', ' +
-                        userInfo?.province +
-                        ', ' +
-                        userInfo?.postalCode
-                    }}&nbsp;
+                    <div
+                      *ngIf="advertisement.showAddress; then showAd; else noAd"
+                    ></div>
+                    <ng-template #showAd>
+                      {{
+                        user().address +
+                          ', ' +
+                          user().city +
+                          ', ' +
+                          user().province +
+                          ', ' +
+                          user().postalCode
+                      }}&nbsp;
+                    </ng-template>
+                    <ng-template #noAd>
+                      {{
+                        user().city + ', ' + user().province
+                      }}&nbsp;</ng-template
+                    >
 
                     <a [href]="createGoogleMapsURL()" target="_blank"
                       >View Google Maps</a
@@ -224,6 +283,7 @@
                     {{ advertisement.numberOfVisits }} Visits
                   </div>
                 </div>
+
                 <div class="row mt-4" *ngIf="advertisement.tags">
                   <div class="col">
                     <hr />
@@ -233,7 +293,6 @@
                     </i>
                   </div>
                 </div>
-
                 <hr />
                 <div class="row m-2">
                   <div class="col">
@@ -293,7 +352,6 @@
                           [readonly]="true"
                         ></rating>
                       </li>
-
                       <div class="accordion" id="rating">
                         <div class="accordion-item">
                           <h2 class="accordion-header">
@@ -317,7 +375,7 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-emoji-smile">
+                                <i class="bi bi-hand-index">
                                   <span class="mx-2"
                                     >Customer <br />
                                     <span class="mx-4">Satisfaction</span>
@@ -328,25 +386,19 @@
                                     userRating.average_overall_rating
                                   "
                                   [max]="max"
-                                  [readonly]="false"
-                                  (click)="
-                                    updateUserOverallRating(
-                                      userRating.average_overall_rating,
-                                      'average_overall_rating'
-                                    )
-                                  "
+                                  [readonly]="true"
                                 ></rating>
                               </li>
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-droplet"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Cleanliness</span></i
                                 >
                                 <rating
                                   [(ngModel)]="userRating.average_cleanliness"
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_cleanliness,
@@ -358,7 +410,7 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-megaphone"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Communication</span></i
                                 >
                                 <rating
@@ -366,7 +418,7 @@
                                     userRating.average_communicationSkills
                                   "
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_communicationSkills,
@@ -378,7 +430,7 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-calculator"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Cost management</span></i
                                 >
                                 <rating
@@ -386,7 +438,7 @@
                                     userRating.average_costManagement
                                   "
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_costManagement,
@@ -398,13 +450,13 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-shuffle"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Flexibility</span></i
                                 >
                                 <rating
                                   [(ngModel)]="userRating.average_flexibility"
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_flexibility,
@@ -416,7 +468,7 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-hammer"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2"
                                     >Materials <br />
                                     <span class="mx-4">Equipments</span>
@@ -427,7 +479,7 @@
                                     userRating.average_materialsAndEquipment
                                   "
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_materialsAndEquipment,
@@ -439,13 +491,13 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-speedometer"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Performance</span></i
                                 >
                                 <rating
                                   [(ngModel)]="userRating.average_performance"
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_performance,
@@ -457,7 +509,7 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-gem"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Professionalism</span></i
                                 >
                                 <rating
@@ -465,7 +517,7 @@
                                     userRating.average_professionalism
                                   "
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_professionalism,
@@ -478,13 +530,13 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-award"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Quality</span></i
                                 >
                                 <rating
                                   [(ngModel)]="userRating.average_qualityOfWork"
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_qualityOfWork,
@@ -496,13 +548,13 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-shield"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Safety</span></i
                                 >
                                 <rating
                                   [(ngModel)]="userRating.average_safety"
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_safety,
@@ -514,13 +566,13 @@
                               <li
                                 class="list-group-item d-flex justify-content-between align-items-center"
                               >
-                                <i class="bi bi-stopwatch"
+                                <i class="bi bi-hand-index"
                                   ><span class="mx-2">Timeliness</span></i
                                 >
                                 <rating
                                   [(ngModel)]="userRating.average_timeliness"
                                   [max]="max"
-                                  [readonly]="false"
+                                  [readonly]="true"
                                   (click)="
                                     updateUserOverallRating(
                                       userRating.average_timeliness,
@@ -544,7 +596,6 @@
                           </div>
                         </div>
                       </div>
-
                       <li class="list-group-item">
                         <i class="bi bi-person-add"
                           ><span class="mx-2">{{
@@ -573,9 +624,7 @@
                         <span
                           class="badge bg-primary rounded-pill"
                           style="cursor: pointer"
-                          (click)="
-                            naviagteUserAds(advertisement?.userAdvertisementId)
-                          "
+                          (click)="naviagteUserAds(advertisement?.rfpId)"
                           >View {{ acitveAds }} listings
                         </span>
                       </li>
@@ -613,45 +662,6 @@
                     </ul>
                   </div>
                 </div>
-                <div
-                  class="row border rounded p-2"
-                  *ngIf="advertisement.showChat"
-                >
-                  <form [formGroup]="messageForm">
-                    <div class="col">
-                      <h5 class=" ">Contact me</h5>
-                      <p class="font-sm">
-                        To deter and identify potential fraud, spam or
-                        suspicious behavior, we anonymize your email address (as
-                        applicable) and reserve the right to monitor
-                        conversations. By sending the message you agree to our
-                        Terms of Use and Privacy Policy.
-                      </p>
-                      <app-form-errors
-                        [formErrors]="formErrors"
-                      ></app-form-errors>
-                      <textarea
-                        class="form-control"
-                        placeholder="Enter message"
-                        [(ngModel)]="message"
-                        maxlength="400"
-                        formControlName="message"
-                        rows="5"
-                        minlength="2"
-                        maxlength="1000"
-                      ></textarea>
-                      {{ message?.length }}/1000
-                      <br />
-                      <button
-                        type="button"
-                        class="btn btn-outline-secondary my-1 text-center"
-                        (click)="sendMessage()"
-                      >
-                        Submit
-                      </button>
-                    </div>
-                  </form>
-                </div>
               </div>
             </div>
           </div>
@@ -667,4 +677,25 @@
       Advertisement does not exist.
     </div>
   </ng-template>
+</div>
+<div
+  class="modal fade"
+  id="imageModal"
+  tabindex="-1"
+  aria-labelledby="imageModal"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <img
+          *ngIf="selectedImage"
+          class="rounded float-center"
+          width="600px"
+          height="600p"
+          [src]="imageService.bufferToSafeUrl(selectedImage)"
+        />
+      </div>
+    </div>
+  </div>
 </div>
