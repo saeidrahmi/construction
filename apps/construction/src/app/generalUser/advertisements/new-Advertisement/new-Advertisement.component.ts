@@ -161,12 +161,26 @@ export class NewAdvertisementComponent {
         // }),
       ]),
     });
+    this.setFilterTags();
+  }
+  setFilterTags() {
     this.filteredTags = this.tagCtrl?.valueChanges.pipe(
       startWith(null),
       map((item: string | null) =>
         item ? this._filterTags(item) : this.constructionServices.slice()
       )
     );
+  }
+  setTags() {
+    if (this.advertisement?.adType === 'service')
+      this.constructionServices = this.userService.getConstructionServices();
+    else if (this.advertisement?.adType === 'rental')
+      this.constructionServices = this.userService.getConstructionRentalsTags();
+    else if (this.advertisement?.adType === 'job')
+      this.constructionServices = this.userService.getConstructionJobs();
+    else if (this.advertisement?.adType === 'sale')
+      this.constructionServices = this.userService.getConstructionSales();
+    this.setFilterTags();
   }
   private _filterTags(value: string): string[] {
     const filterValue = value.toLowerCase();

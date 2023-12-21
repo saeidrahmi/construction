@@ -375,11 +375,12 @@
                               </div>
                             </div>
 
-                            <div class="col-md-3 my-2">
+                            <div class="col-md-4 my-2">
                               <select
                                 formControlName="type"
                                 class="form-select"
                                 [(ngModel)]="advertisement.adType"
+                                (change)="setTags()"
                               >
                                 <option value="">Select Type</option>
                                 <option value="service">
@@ -387,10 +388,10 @@
                                 </option>
                                 <option value="job">Construction Job</option>
                                 <option value="sale">
-                                  Construction Materials/Equipments Sales
+                                  Construction Equipments Sales
                                 </option>
                                 <option value="rental">
-                                  Construction Materials/Equipments Rentals
+                                  Construction Equipments Rentals
                                 </option>
                               </select>
                             </div>
