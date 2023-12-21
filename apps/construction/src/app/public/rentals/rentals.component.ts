@@ -141,7 +141,7 @@ export class EquipmentRentalsComponent {
   ) {
     if (
       this.storageService.getMapSearchSelectedCities()() &&
-      this.storageService.getSearchPreviousPage()() === 'advertisement'
+      this.storageService.getSearchPreviousPage()() === 'rentals'
     )
       this.myLocations = this.storageService.getMapSearchSelectedCities()();
     // this.getCurrentLocation();
@@ -211,7 +211,7 @@ export class EquipmentRentalsComponent {
     );
   }
   navigateSelectFromMap() {
-    this.storageService.setSearchPreviousPage('advertisement');
+    this.storageService.setSearchPreviousPage('rentals');
     this.router.navigate(['map-location']);
   }
 

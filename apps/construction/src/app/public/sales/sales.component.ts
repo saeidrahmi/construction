@@ -141,7 +141,7 @@ export class ConstructionSalesComponent {
   ) {
     if (
       this.storageService.getMapSearchSelectedCities()() &&
-      this.storageService.getSearchPreviousPage()() === 'advertisement'
+      this.storageService.getSearchPreviousPage()() === 'sales'
     )
       this.myLocations = this.storageService.getMapSearchSelectedCities()();
     // this.getCurrentLocation();
@@ -211,7 +211,7 @@ export class ConstructionSalesComponent {
     );
   }
   navigateSelectFromMap() {
-    this.storageService.setSearchPreviousPage('advertisement');
+    this.storageService.setSearchPreviousPage('sales');
     this.router.navigate(['map-location']);
   }
 

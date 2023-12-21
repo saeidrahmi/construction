@@ -327,8 +327,15 @@ export class SelectMapLocationComponent implements AfterViewInit {
   }
 
   navigateSearchPage() {
-    this.storageService.getSearchPreviousPage()() === 'rfp'
-      ? this.router.navigate(['rfps'])
-      : this.router.navigate(['advertisements']);
+    if (this.storageService.getSearchPreviousPage()() === 'rfp')
+      this.router.navigate(['rfps']);
+    else if (this.storageService.getSearchPreviousPage()() === 'advertisement')
+      this.router.navigate(['advertisements']);
+    else if (this.storageService.getSearchPreviousPage()() === 'rentals')
+      this.router.navigate(['rentals']);
+    else if (this.storageService.getSearchPreviousPage()() === 'sales')
+      this.router.navigate(['sales']);
+    else if (this.storageService.getSearchPreviousPage()() === 'jobs')
+      this.router.navigate(['jobs']);
   }
 }
