@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Dec 16, 2023 at 06:32 PM
+-- Generation Time: Dec 21, 2023 at 08:34 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -114,7 +114,18 @@ CREATE TABLE `userAdvertisements` (
   `showChat` tinyint(1) DEFAULT NULL,
   `numberOfVisits` int DEFAULT '0',
   `dateCreated` timestamp NOT NULL,
-  `expiryDate` timestamp NOT NULL
+  `expiryDate` timestamp NOT NULL,
+  `jobQualifications` varchar(2000) DEFAULT NULL,
+  `jobBenefits` varchar(1000) DEFAULT NULL,
+  `jobRequirements` varchar(2000) DEFAULT NULL,
+  `jobHowToApply` varchar(1000) DEFAULT NULL,
+  `jobDuration` varchar(400) DEFAULT NULL,
+  `jobSalary` varchar(400) DEFAULT NULL,
+  `jobShifts` varchar(1000) DEFAULT NULL,
+  `jobLocation` varchar(1000) DEFAULT NULL,
+  `jobType` varchar(80) DEFAULT NULL,
+  `adType` varchar(80) DEFAULT NULL,
+  `jobResponsibilities` varchar(2000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
