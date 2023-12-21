@@ -379,7 +379,7 @@
                               <select
                                 formControlName="type"
                                 class="form-select"
-                                [(ngModel)]="adType"
+                                [(ngModel)]="advertisement.adType"
                               >
                                 <option value="">Select Type</option>
                                 <option value="service">
@@ -590,7 +590,11 @@
                           </div>
                           <div class="row">
                             <div class="col-md-3 mt-1 form-labe">
-                              {{ adType === 'service' ? 'Title' : 'Job Title' }}
+                              {{
+                                advertisement.adType === 'service'
+                                  ? 'Title'
+                                  : 'Job Title'
+                              }}
                             </div>
                             <div class="col-md-8">
                               <input
@@ -605,7 +609,7 @@
                           <div class="row">
                             <div class="col-md-3 mt-2">
                               {{
-                                adType === 'service'
+                                advertisement.adType === 'service'
                                   ? 'Description'
                                   : 'Job Description'
                               }}
@@ -618,7 +622,7 @@
                               ></quill-editor>
                             </div>
                           </div>
-                          <ng-container *ngIf="adType === 'job'">
+                          <ng-container *ngIf="advertisement.adType === 'job'">
                             <div class="row">
                               <div class="col-md-3 mt-2">
                                 Qualifications & Experience:
@@ -638,8 +642,20 @@
                               <div class="col-md-8">
                                 <quill-editor
                                   class="quill-editor"
-                                  [(ngModel)]="advertisement.jobQualifications"
+                                  [(ngModel)]="
+                                    advertisement.jobResponsibilities
+                                  "
                                   formControlName="jobResponsibilities"
+                                ></quill-editor>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col-md-3 mt-2">Job Requirements:</div>
+                              <div class="col-md-8">
+                                <quill-editor
+                                  class="quill-editor"
+                                  [(ngModel)]="advertisement.jobRequirements"
+                                  formControlName="jobRequirements"
                                 ></quill-editor>
                               </div>
                             </div>
@@ -714,7 +730,7 @@
                                 <select
                                   formControlName="jobType"
                                   class="form-select"
-                                  [(ngModel)]="jobType"
+                                  [(ngModel)]="advertisement.jobType"
                                 >
                                   <option value="">Job type</option>
                                   <option

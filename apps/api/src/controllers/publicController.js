@@ -64,6 +64,7 @@ async function listAdvertisementsController(req, res) {
   try {
     const userId = decryptItem(req.body.userId, webSecretKey);
     const loggedIn = req.body.loggedIn;
+    const type = req.body.type;
     if (loggedIn) {
       const selectAdQuery = `SELECT userAdvertisements.*, users.city, users.province,  users.profileImage as userProfileImage,
                           (SELECT CEIL(AVG(cleanliness)) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
@@ -81,11 +82,11 @@ async function listAdvertisementsController(req, res) {
                           FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           JOIN users ON userPlans.userId = users.userId
-                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1
+                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1 and userAdvertisements.adType = ?
                            and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
                            ORDER BY userAdvertisements.dateCreated DESC `;
 
-      const selectResult = await executeQuery(selectAdQuery, [userId]);
+      const selectResult = await executeQuery(selectAdQuery, [userId, type]);
 
       return res.status(200).json(selectResult);
     } else {
@@ -104,11 +105,11 @@ async function listAdvertisementsController(req, res) {
                            FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           JOIN users ON userPlans.userId = users.userId
-                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1
+                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1 and userAdvertisements.adType = ?
                            and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
                            ORDER BY userAdvertisements.dateCreated DESC `;
 
-      const selectResult = await executeQuery(selectAdQuery, []);
+      const selectResult = await executeQuery(selectAdQuery, [type]);
 
       return res.status(200).json(selectResult);
     }
@@ -123,6 +124,7 @@ async function listRfpsController(req, res) {
   try {
     const userId = decryptItem(req.body.userId, webSecretKey);
     const loggedIn = req.body.loggedIn;
+
     if (loggedIn) {
       const selectAdQuery = `SELECT userRFPs.*, users.city, users.province,  users.profileImage as userProfileImage,
                           (SELECT CEIL(AVG(cleanliness)) FROM userRatings WHERE userId = users.userId) as average_cleanliness,
@@ -180,6 +182,7 @@ async function searchAdvertisementsController(req, res) {
     const userId = decryptItem(req.body.userId, webSecretKey);
     const loggedIn = req.body.loggedIn;
     const searchQuery = req.body.data;
+    const type = req.body.type;
     const searchText = searchQuery?.searchText;
     const tagsArray = searchQuery?.tags;
     const placeholders = tagsArray
@@ -230,7 +233,7 @@ async function searchAdvertisementsController(req, res) {
                           FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           JOIN users ON userPlans.userId = users.userId
-                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1
+                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1 and userAdvertisements.adType=?
                           and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
                             ${
                               tagsArray.length > 0
@@ -241,7 +244,7 @@ async function searchAdvertisementsController(req, res) {
                           ${locationsClause ? ` AND ${locationsClause}` : ''}
                           ORDER BY userAdvertisements.dateCreated ${sortBy} `;
 
-      const selectResult = await executeQuery(selectAdQuery, [userId]);
+      const selectResult = await executeQuery(selectAdQuery, [userId, type]);
 
       return res.status(200).json(selectResult);
     } else {
@@ -260,7 +263,7 @@ async function searchAdvertisementsController(req, res) {
                            FROM userAdvertisements
                           JOIN userPlans ON userAdvertisements.userPlanId = userPlans.userPlanId
                           JOIN users ON userPlans.userId = users.userId
-                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1
+                          WHERE userAdvertisements.deleted = 0 and userAdvertisements.active = 1 and userAdvertisements.adType=?
                            and userAdvertisements.approvedByAdmin = 1 and  userAdvertisements.expiryDate  > CURDATE()
                               ${
                                 tagsArray.length > 0
@@ -271,7 +274,7 @@ async function searchAdvertisementsController(req, res) {
                            ${locationsClause ? ` AND ${locationsClause}` : ''}
                                ORDER BY userAdvertisements.dateCreated ${sortBy} `;
 
-      const selectResult = await executeQuery(selectAdQuery, []);
+      const selectResult = await executeQuery(selectAdQuery, [type]);
 
       return res.status(200).json(selectResult);
     }

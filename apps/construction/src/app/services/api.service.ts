@@ -1966,12 +1966,17 @@ export class ApiService {
       );
   }
 
-  getAllAdvertisements(loggedIn: boolean, userId: string): Observable<any> {
+  getAllAdvertisements(
+    loggedIn: boolean,
+    userId: string,
+    type: string
+  ): Observable<any> {
     this.spinner.show();
     return this.httpClient
       .post<any>(this.backendApiUrl + '/public/list-advertisements', {
         userId: userId,
         loggedIn: loggedIn,
+        type: type,
       })
       .pipe(
         take(1),
@@ -2023,7 +2028,8 @@ export class ApiService {
   searchAdvertisements(
     loggedIn: boolean,
     userId: string,
-    data
+    data: any,
+    type: string
   ): Observable<any> {
     this.spinner.show();
     console.log(data);
@@ -2032,6 +2038,7 @@ export class ApiService {
         userId: userId,
         loggedIn: loggedIn,
         data: data,
+        type: type,
       })
       .pipe(
         take(1),

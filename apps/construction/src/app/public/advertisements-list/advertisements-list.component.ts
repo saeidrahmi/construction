@@ -175,7 +175,8 @@ export class AdvertisementsListComponent {
     this.apiService
       .getAllAdvertisements(
         this.loggedIn(),
-        this.encryptionService.encryptItem(this.userId())
+        this.encryptionService.encryptItem(this.userId()),
+        'service'
       )
       .pipe(
         takeUntilDestroyed(),
@@ -445,7 +446,8 @@ export class AdvertisementsListComponent {
         .searchAdvertisements(
           this.loggedIn(),
           this.encryptionService.encryptItem(this.userId()),
-          data
+          data,
+          'service'
         )
         .pipe(
           takeUntilDestroyed(this.destroyRef),

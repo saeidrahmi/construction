@@ -1972,6 +1972,17 @@ async function saveUserRegularAdController(req, res) {
       showChat: info.showChat,
       numberOfVisits: info.numberOfVisits,
       tags: tags,
+      jobQualifications: info.jobQualifications,
+      jobBenefits: info.jobBenefits,
+      jobRequirements: info.jobRequirements,
+      jobHowToApply: info.jobHowToApply,
+      jobDuration: info.jobDuration,
+      jobSalary: info.jobSalary,
+      jobShifts: info.jobShifts,
+      jobLocation: info.jobLocation,
+      jobType: info.jobType,
+      adType: info.adType,
+      jobResponsibilities: info.jobResponsibilities,
     });
 
     if (!insertResult) {
@@ -2060,7 +2071,24 @@ async function saveUserRegularAdController(req, res) {
 }
 
 async function insertUserAdvertisement(connection, data) {
-  const selectQuery = `INSERT INTO userAdvertisements (userPlanId, dateCreated, expiryDate, title, description, active,approvedByAdmin, topAdvertisement, showPhone, showAddress, showEmail, showPicture, showChat, numberOfVisits,tags) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+  const selectQuery = `INSERT INTO userAdvertisements (userPlanId, dateCreated, expiryDate, title, description, active,approvedByAdmin, topAdvertisement, showPhone,
+    showAddress, showEmail, showPicture, showChat, numberOfVisits,tags,
+   jobBenefits,
+    jobRequirements,
+    jobHowToApply,
+    jobDuration,
+    jobSalary,
+   jobShifts,
+    jobLocation,
+    jobType,
+    adType,
+   jobQualifications,
+   jobResponsibilities
+
+
+
+
+    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
   const values = [
     data.userPlanId,
     data.dateCreated,
@@ -2077,6 +2105,17 @@ async function insertUserAdvertisement(connection, data) {
     data.showChat,
     data.numberOfVisits,
     data.tags,
+    data.jobBenefits,
+    data.jobRequirements,
+    data.jobHowToApply,
+    data.jobDuration,
+    data.jobSalary,
+    data.jobShifts,
+    data.jobLocation,
+    data.jobType,
+    data.adType,
+    data.jobQualifications,
+    data.jobResponsibilities,
   ];
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId

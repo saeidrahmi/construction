@@ -101,6 +101,8 @@ export class NewAdvertisementComponent {
     private userService: UserService
   ) {
     this.advertisement = {};
+    this.advertisement.adType = '';
+    this.advertisement.jobType = '';
     this.advertisement.dateCreated = new Date();
     this.advertisement.sliderImages = [];
     this.advertisement.sliderImageFiles = [];
@@ -320,8 +322,8 @@ export class NewAdvertisementComponent {
         'jobResponsibilities',
         this.advertisement?.jobResponsibilities
       );
-      formData.append('adType', this.adType);
-      formData.append('jobType', this.jobType);
+      formData.append('adType', this.advertisement?.adType);
+      formData.append('jobType', this.advertisement.jobType);
 
       formData.append('tags', this.myTags.join(', '));
       formData.append('description', this.advertisement?.description);

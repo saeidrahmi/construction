@@ -169,36 +169,140 @@
                   </div>
                 </div>
                 <hr />
-                <div class="row border rounded p-2">
-                  <div class="col">
-                    <h5 class="border-bottom">My Services</h5>
-                    <h6>The following services are made available:</h6>
+                <ng-container *ngIf="advertisement?.adType !== 'job'">
+                  <div class="row border rounded p-2">
+                    <div class="col">
+                      <h5 class="border-bottom">My Services</h5>
+                      <h6>The following services are made available:</h6>
 
-                    <ul class="list-group list-group-flush">
-                      <li
-                        class="list-group-item"
-                        *ngFor="let service of myServices"
-                      >
-                        {{ service }}
-                      </li>
-                    </ul>
+                      <ul class="list-group list-group-flush">
+                        <li
+                          class="list-group-item"
+                          *ngFor="let service of myServices"
+                        >
+                          {{ service }}
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </div>
-                <hr />
-                <div class="row border rounded p-2">
-                  <div class="col">
-                    <h5 class="border-bottom">Covered locations</h5>
-                    <h6>My services are available in following locations:</h6>
-                    <ul class="list-group list-group-flush">
-                      <li
-                        class="list-group-item"
-                        *ngFor="let location of myLocations"
-                      >
-                        {{ location }}
-                      </li>
-                    </ul>
+                  <hr />
+                  <div class="row border rounded p-2">
+                    <div class="col">
+                      <h5 class="border-bottom">Covered locations</h5>
+                      <h6>My services are available in following locations:</h6>
+                      <ul class="list-group list-group-flush">
+                        <li
+                          class="list-group-item"
+                          *ngFor="let location of myLocations"
+                        >
+                          {{ location }}
+                        </li>
+                      </ul>
+                    </div>
                   </div>
-                </div>
+                </ng-container>
+                <ng-container *ngIf="advertisement?.adType === 'job'">
+                  <div class="row">
+                    <div class="col">
+                      <h5>Job Requirements</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobRequirements"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col">
+                      <h5>Job Qualifications</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobQualifications"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Job Responsibilities</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobResponsibilities"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Description</h5>
+                      <quill-view-html
+                        [content]="advertisement?.description"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Benefits</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobBenefits"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Duration</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobDuration"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Job Shifts/Schedule</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobShifts"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Job Site/Location</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobLocation"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Salary</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobSalary"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>Job Type</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobType"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col">
+                      <h5>How to apply</h5>
+                      <quill-view-html
+                        [content]="advertisement?.jobHowToApply"
+                        theme="snow"
+                      ></quill-view-html>
+                    </div>
+                  </div>
+                </ng-container>
                 <div class="row m-2" *ngIf="advertisement?.showAddress">
                   <div class="col border border-1 p-2">
                     {{
