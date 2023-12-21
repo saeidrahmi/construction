@@ -68,6 +68,8 @@ export class NewAdvertisementComponent {
   canAdvertise: boolean;
   tagCtrl = new FormControl('');
   generalInfo: any;
+  adType = '';
+  jobType = '';
   tax;
   headerImageFile: any;
   topAdPrice: any;
@@ -126,11 +128,22 @@ export class NewAdvertisementComponent {
       formArray: this.fb.array([
         this.fb.group({
           tags: new FormControl('', [Validators.required]),
+          type: new FormControl('', [Validators.required]),
         }),
         this.fb.group({
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
           headerImage: new FormControl('', []),
+          jobQualifications: new FormControl('', []),
+          jobBenefits: new FormControl('', []),
+          jobRequirements: new FormControl('', []),
+          jobHowToApply: new FormControl('', []),
+          jobDuration: new FormControl('', []),
+          jobSalary: new FormControl('', []),
+          jobShifts: new FormControl('', []),
+          jobLocation: new FormControl('', []),
+          jobType: new FormControl('', []),
+          jobResponsibilities: new FormControl('', []),
         }),
         this.fb.group({
           topAdvertisement: new FormControl('', []),
@@ -292,6 +305,24 @@ export class NewAdvertisementComponent {
       } else formData.append('sliderImages', '');
 
       formData.append('title', this.advertisement?.title);
+      formData.append(
+        'jobQualifications',
+        this.advertisement?.jobQualifications
+      );
+      formData.append('jobBenefits', this.advertisement?.jobBenefits);
+      formData.append('jobRequirements', this.advertisement?.jobRequirements);
+      formData.append('jobHowToApply', this.advertisement?.jobHowToApply);
+      formData.append('jobDuration', this.advertisement?.jobDuration);
+      formData.append('jobSalary', this.advertisement?.jobSalary);
+      formData.append('jobShifts', this.advertisement?.jobShifts);
+      formData.append('jobLocation', this.advertisement?.jobLocation);
+      formData.append(
+        'jobResponsibilities',
+        this.advertisement?.jobResponsibilities
+      );
+      formData.append('adType', this.adType);
+      formData.append('jobType', this.jobType);
+
       formData.append('tags', this.myTags.join(', '));
       formData.append('description', this.advertisement?.description);
 

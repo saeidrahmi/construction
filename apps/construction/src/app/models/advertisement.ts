@@ -35,4 +35,15 @@ export interface AdvertisementInterface {
   userProfileImage?: any;
   sliderImages?: string[];
   sliderImageFiles?: File[];
+  jobQualifications?: string;
+  jobBenefits?: string;
+  jobRequirements?: string;
+  jobHowToApply?: string;
+  jobDuration?: string;
+  jobSalary?: string;
+  jobShifts?: string;
+  jobLocation?: string;
+  jobType?: string;
+  adType?: string;
+  jobResponsibilities?: string;
 }
