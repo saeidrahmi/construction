@@ -66,6 +66,20 @@ export const appRoutes: Route[] = [
         (com) => com.JobListComponent
       ),
   },
+  {
+    path: 'rentals',
+    loadComponent: () =>
+      import('./public/rentals/rentals.component').then(
+        (com) => com.EquipmentRentalsComponent
+      ),
+  },
+  {
+    path: 'sales',
+    loadComponent: () =>
+      import('./public/sales/sales.component').then(
+        (com) => com.ConstructionSalesComponent
+      ),
+  },
 
   {
     path: 'user-advertisements',
