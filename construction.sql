@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Dec 21, 2023 at 08:34 PM
+-- Generation Time: Dec 23, 2023 at 09:23 PM
 -- Server version: 8.1.0
 -- PHP Version: 8.2.10
 
@@ -126,6 +126,20 @@ CREATE TABLE `userAdvertisements` (
   `jobType` varchar(80) DEFAULT NULL,
   `adType` varchar(80) DEFAULT NULL,
   `jobResponsibilities` varchar(2000) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userAdvertisementsItems`
+--
+
+CREATE TABLE `userAdvertisementsItems` (
+  `userAdvertisementId` bigint UNSIGNED NOT NULL,
+  `itemCategory` varchar(1000) NOT NULL,
+  `item` varchar(100) NOT NULL,
+  `itemDescription` varchar(1000) NOT NULL,
+  `itemImage` longblob NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -450,6 +464,12 @@ ALTER TABLE `userAdvertisements`
   ADD KEY `userplan_Id` (`userPlanId`);
 
 --
+-- Indexes for table `userAdvertisementsItems`
+--
+ALTER TABLE `userAdvertisementsItems`
+  ADD KEY `userAdvertisementId_item` (`userAdvertisementId`);
+
+--
 -- Indexes for table `userAdvertisementsMessages`
 --
 ALTER TABLE `userAdvertisementsMessages`
@@ -653,6 +673,12 @@ ALTER TABLE `userAdvertisementImages`
 --
 ALTER TABLE `userAdvertisements`
   ADD CONSTRAINT `userplan_Id` FOREIGN KEY (`userPlanId`) REFERENCES `userPlans` (`userPlanId`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `userAdvertisementsItems`
+--
+ALTER TABLE `userAdvertisementsItems`
+  ADD CONSTRAINT `userAdvertisementId_item` FOREIGN KEY (`userAdvertisementId`) REFERENCES `userAdvertisements` (`userAdvertisementId`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `userFavoriteAdvertisements`

@@ -215,11 +215,22 @@ export class EditAdvertisementComponent {
       formArray: this.fb.array([
         this.fb.group({
           tags: new FormControl('', [Validators.required]),
+          type: new FormControl('', [Validators.required]),
         }),
         this.fb.group({
           title: new FormControl('', [Validators.required]),
           description: new FormControl('', [Validators.required]),
           headerImage: new FormControl('', []),
+          jobQualifications: new FormControl('', []),
+          jobBenefits: new FormControl('', []),
+          jobRequirements: new FormControl('', []),
+          jobHowToApply: new FormControl('', []),
+          jobDuration: new FormControl('', []),
+          jobSalary: new FormControl('', []),
+          jobShifts: new FormControl('', []),
+          jobLocation: new FormControl('', []),
+          jobType: new FormControl('', []),
+          jobResponsibilities: new FormControl('', []),
         }),
         this.fb.group({
           showPhone: new FormControl('', []),
@@ -234,6 +245,20 @@ export class EditAdvertisementComponent {
         }),
       ]),
     });
+    this.setFilterTags();
+  }
+  setTags() {
+    if (this.advertisement?.adType === 'service')
+      this.constructionServices = this.userService.getConstructionServices();
+    else if (this.advertisement?.adType === 'rental')
+      this.constructionServices = this.userService.getConstructionRentalsTags();
+    else if (this.advertisement?.adType === 'job')
+      this.constructionServices = this.userService.getConstructionJobs();
+    else if (this.advertisement?.adType === 'sale')
+      this.constructionServices = this.userService.getConstructionSales();
+    this.setFilterTags();
+  }
+  setFilterTags() {
     this.filteredTags = this.tagCtrl?.valueChanges.pipe(
       startWith(null),
       map((item: string | null) =>
@@ -241,6 +266,7 @@ export class EditAdvertisementComponent {
       )
     );
   }
+
   private _filterTags(value: string): string[] {
     const filterValue = value.toLowerCase();
 
@@ -396,6 +422,23 @@ export class EditAdvertisementComponent {
         'showChat',
         `${this.advertisement?.showChat ? '1' : '0'}`
       );
+      formData.append(
+        'jobQualifications',
+        this.advertisement?.jobQualifications
+      );
+      formData.append('jobBenefits', this.advertisement?.jobBenefits);
+      formData.append('jobRequirements', this.advertisement?.jobRequirements);
+      formData.append('jobHowToApply', this.advertisement?.jobHowToApply);
+      formData.append('jobDuration', this.advertisement?.jobDuration);
+      formData.append('jobSalary', this.advertisement?.jobSalary);
+      formData.append('jobShifts', this.advertisement?.jobShifts);
+      formData.append('jobLocation', this.advertisement?.jobLocation);
+      formData.append(
+        'jobResponsibilities',
+        this.advertisement?.jobResponsibilities
+      );
+      formData.append('adType', this.advertisement?.adType);
+      formData.append('jobType', this.advertisement.jobType);
 
       this.apiService
         .editAdvertisement(formData)

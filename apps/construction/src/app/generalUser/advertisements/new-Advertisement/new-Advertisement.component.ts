@@ -146,6 +146,7 @@ export class NewAdvertisementComponent {
           jobLocation: new FormControl('', []),
           jobType: new FormControl('', []),
           jobResponsibilities: new FormControl('', []),
+          items: new FormArray([]),
         }),
         this.fb.group({
           topAdvertisement: new FormControl('', []),
@@ -192,33 +193,31 @@ export class NewAdvertisementComponent {
   get formArray(): AbstractControl | null {
     return this.form?.get('formArray');
   }
-  // getClienttFormArrayControls() {
-  //   return (this.formArray?.get([2]).get('sliderImages') as FormArray).controls;
-  // }
+  getItemsFormArrayControls() {
+    return (this.formArray?.get([1]).get('items') as FormArray).controls;
+  }
   goForward(stepper: MatStepper, index: number) {
     this.formErrors = this.formService.getFormValidationErrorMessages(
       this.formArray?.get([index]) as FormGroup
     );
     stepper.next();
   }
-  // removeClientFormGroup(index: number) {
-  //   (this.formArray?.get([2]).get('sliderImages') as FormArray).removeAt(index);
-  //   this.advertisement.sliderImages?.splice(index, 1);
-  //   this.sliderImages?.splice(index, 1);
-  // }
-  // addClientFormControl() {
-  //   (this.formArray?.get([2]).get('sliderImages') as FormArray).push(
-  //     new FormGroup({
-  //       sliderImage: new FormControl('', [Validators.required]),
-  //       // sliderTitle: new FormControl('', [Validators.required]),
-  //       // sliderDescription: new FormControl('', [Validators.required]),
-  //     })
-  //   );
-  // }
-  // preview() {
-  //   this.advertisementCommunicationService.sendMessage(this.advertisement);
-  //   this.router.navigate(['/general/preview-advertisement']);
-  // }
+  removeItemsFormGroup(index: number) {
+    (this.formArray?.get([1]).get('items') as FormArray).removeAt(index);
+    // this.advertisement.sliderImages?.splice(index, 1);
+    //this.sliderImages?.splice(index, 1);
+  }
+  addClientFormControl() {
+    (this.formArray?.get([1]).get('items') as FormArray).push(
+      new FormGroup({
+        itemImage: new FormControl('', [Validators.required]),
+        itemCategory: new FormControl('', [Validators.required]),
+        itemName: new FormControl('', [Validators.required]),
+        itemDescription: new FormControl('', [Validators.required]),
+      })
+    );
+  }
+
   getObjectURL(file: File): SafeUrl {
     return this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(file));
   }

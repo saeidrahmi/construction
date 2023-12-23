@@ -2123,7 +2123,12 @@ async function insertUserAdvertisement(connection, data) {
     : null;
 }
 async function updateUserAdvertisement(connection, data) {
-  const selectQuery = `update userAdvertisements set  approvedByAdmin=0, title=? , description=? ,  showPhone=? , showAddress=? , showEmail=? , showPicture=? , showChat=? , tags=? where userAdvertisementId=?   `;
+  const selectQuery = `update userAdvertisements set  approvedByAdmin=0, title=? , description=? ,  showPhone=? , showAddress=? , showEmail=? ,
+   showPicture=? , showChat=? , tags=?,
+   jobQualifications=? , jobBenefits=? , jobRequirements=?,
+   jobHowToApply=? , jobDuration=? , jobSalary=?,
+   jobShifts=? , jobLocation=? , jobType=?,  adType=? , jobResponsibilities=?
+   where userAdvertisementId=?   `;
   const values = [
     data.title,
     data.description,
@@ -2133,8 +2138,20 @@ async function updateUserAdvertisement(connection, data) {
     data.showPicture,
     data.showChat,
     data.tags,
+    data.jobQualifications,
+    data.jobBenefits,
+    data.jobRequirements,
+    data.jobHowToApply,
+    data.jobDuration,
+    data.jobSalary,
+    data.jobShifts,
+    data.jobLocation,
+    data.jobType,
+    data.adType,
+    data.jobResponsibilities,
     data.userAdvertisementId,
   ];
+
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId
     ? insertResult
@@ -2879,6 +2896,17 @@ async function editAdvertisementController(req, res) {
       showPicture: info.showPicture,
       showChat: info.showChat,
       tags: tags,
+      jobQualifications: info.jobQualifications,
+      jobBenefits: info.jobBenefits,
+      jobRequirements: info.jobRequirements,
+      jobHowToApply: info.jobHowToApply,
+      jobDuration: info.jobDuration,
+      jobSalary: info.jobSalary,
+      jobShifts: info.jobShifts,
+      jobLocation: info.jobLocation,
+      jobType: info.jobType,
+      adType: info.adType,
+      jobResponsibilities: info.jobResponsibilities,
     });
 
     if (!insertResult) {

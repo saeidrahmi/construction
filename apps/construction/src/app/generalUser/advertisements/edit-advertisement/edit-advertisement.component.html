@@ -80,6 +80,26 @@
                               </p>
                             </div>
                           </div>
+                          <div class="col-md-4 my-2">
+                            <select
+                              formControlName="type"
+                              class="form-select"
+                              [(ngModel)]="advertisement.adType"
+                              (change)="setTags()"
+                            >
+                              <option value="">Select Type</option>
+                              <option value="service">
+                                Construction Service
+                              </option>
+                              <option value="job">Construction Job</option>
+                              <option value="sale">
+                                Construction Equipments Sales
+                              </option>
+                              <option value="rental">
+                                Construction Equipments Rentals
+                              </option>
+                            </select>
+                          </div>
                           <div class="col-md-12 border rounded my-3 p-3">
                             <mat-form-field class="chip-list">
                               <mat-label>Current Categories/Tags</mat-label>
@@ -296,6 +316,123 @@
                             ></quill-editor>
                           </div>
                         </div>
+                        <ng-container *ngIf="advertisement.adType === 'job'">
+                          <div class="row">
+                            <div class="col-md-3 mt-2">
+                              Qualifications & Experience:
+                            </div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobQualifications"
+                                formControlName="jobQualifications"
+                              ></quill-editor>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-3 mt-2">
+                              Job Responsibilities:
+                            </div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobResponsibilities"
+                                formControlName="jobResponsibilities"
+                              ></quill-editor>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-3 mt-2">Job Requirements:</div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobRequirements"
+                                formControlName="jobRequirements"
+                              ></quill-editor>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-md-3 mt-2">How to apply:</div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobHowToApply"
+                                formControlName="jobHowToApply"
+                              ></quill-editor>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-3 mt-2">Benefits:</div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobBenefits"
+                                formControlName="jobBenefits"
+                              ></quill-editor>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-3 mt-2">Duration:</div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobDuration"
+                                formControlName="jobDuration"
+                              ></quill-editor>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-3 mt-2">Shift and schedule:</div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobShifts"
+                                formControlName="jobShifts"
+                              ></quill-editor>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-3 mt-2">
+                              Work Setting/Location::
+                            </div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobLocation"
+                                formControlName="jobLocation"
+                              ></quill-editor>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-3 mt-2">Salary:</div>
+                            <div class="col-md-8">
+                              <quill-editor
+                                class="quill-editor"
+                                [(ngModel)]="advertisement.jobSalary"
+                                formControlName="jobSalary"
+                              ></quill-editor>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-3 mt-2">Job type :</div>
+                            <div class="col-md-8">
+                              <select
+                                formControlName="jobType"
+                                class="form-select"
+                                [(ngModel)]="advertisement.jobType"
+                              >
+                                <option value="">Job type</option>
+                                <option value="Permanent, Fixed term contract">
+                                  Permanent, Fixed term contract
+                                </option>
+                                <option value="old">
+                                  Old advertisement first
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                        </ng-container>
                       </div>
 
                       <div class="mt-5">

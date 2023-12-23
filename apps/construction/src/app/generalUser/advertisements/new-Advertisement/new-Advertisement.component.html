@@ -749,6 +749,106 @@
                               </div>
                             </div>
                           </ng-container>
+                          <ng-container
+                            *ngIf="
+                              advertisement?.adType === 'rental' ||
+                              advertisement?.adType === 'sale'
+                            "
+                          >
+                            <div formArrayName="sliderImages">
+                              <div
+                                *ngFor="
+                                  let group of getItemsFormArrayControls();
+                                  let i = index
+                                "
+                                [formGroupName]="i"
+                                class="border border-1 p-2 my-2"
+                              >
+                                <div class="row">
+                                  <div class="col-md-3 mt-1 form-labe">
+                                    Image
+                                  </div>
+                                  <div class="col-md-8">
+                                    <input
+                                      type="file"
+                                      class="form-control"
+                                      placeholder="Enter description.."
+                                      formControlName="itemImage"
+                                      accept="image/*"
+                                      aria-describedby="fileHelpBlock"
+                                      (change)="sliderImageHandler($event, i)"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-3 mt-1 form-labe">
+                                    Category
+                                  </div>
+                                  <div class="col-md-8">
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="Enter Category.."
+                                      formControlName="itemCategory"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-3 mt-1 form-labe">
+                                    Item
+                                  </div>
+                                  <div class="col-md-8">
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="Enter Item Name.."
+                                      formControlName="itemName"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="row">
+                                  <div class="col-md-3 mt-1 form-labe">
+                                    Description
+                                  </div>
+                                  <div class="col-md-8">
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="Enter Description.."
+                                      formControlName="itemDescription"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div class="row">
+                                  <div class="col">
+                                    <button
+                                      type="button"
+                                      class="btn btn-secondary my-2"
+                                      (click)="removeItemsFormGroup(i)"
+                                    >
+                                      Remove Slider Image
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col">
+                                  <button
+                                    type="button"
+                                    class="btn btn-primary my-2"
+                                    (click)="addClientFormControl()"
+                                    [disabled]="
+                                      getItemsFormArrayControls().length >=
+                                      maxAdvertisementSliderImage
+                                    "
+                                  >
+                                    Add Item
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
                         </div>
                         <div class="mt-5">
                           <button
@@ -1023,62 +1123,6 @@
                                   </div>
                                 </div>
                               </div>
-                              <!--
-                              <div formArrayName="sliderImages">
-                                <div
-                                  *ngFor="
-                                    let group of getClienttFormArrayControls();
-                                    let i = index
-                                  "
-                                  [formGroupName]="i"
-                                  class="border border-1 p-2 my-2"
-                                >
-
-                                  <div class="row">
-                                    <div class="col-md-3 mt-1 form-labe">
-                                      Image
-                                    </div>
-                                    <div class="col-md-8">
-                                      <input
-                                        type="file"
-                                        class="form-control"
-                                        placeholder="Enter description.."
-                                        formControlName="sliderImage"
-                                        accept="image/*"
-                                        aria-describedby="fileHelpBlock"
-                                        (change)="sliderImageHandler($event, i)"
-                                      />
-                                    </div>
-                                  </div>
-
-                                  <div class="row">
-                                    <div class="col">
-                                      <button
-                                        type="button"
-                                        class="btn btn-secondary my-2"
-                                        (click)="removeClientFormGroup(i)"
-                                      >
-                                        Remove Slider Image
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div class="row">
-                                  <div class="col">
-                                    <button
-                                      type="button"
-                                      class="btn btn-primary my-2"
-                                      (click)="addClientFormControl()"
-                                      [disabled]="
-                                        getClienttFormArrayControls().length >=
-                                        maxAdvertisementSliderImage
-                                      "
-                                    >
-                                      Add Slider Image
-                                    </button>
-                                  </div>
-                                </div>
-                              </div> -->
                             </div>
                           </div>
                         </div>
