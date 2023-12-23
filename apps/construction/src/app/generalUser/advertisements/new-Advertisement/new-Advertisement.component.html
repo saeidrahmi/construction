@@ -785,11 +785,26 @@
                                     Category
                                   </div>
                                   <div class="col-md-8">
-                                    <input
+                                    <!-- <input
                                       type="text"
                                       class="form-control"
                                       placeholder="Enter Category.."
                                       formControlName="itemCategory"
+                                    /> -->
+
+                                    <input
+                                      id="typeahead-focus"
+                                      type="text"
+                                      class="form-control"
+                                      formControlName="itemCategory"
+                                      [ngbTypeahead]="searchCategories"
+                                      (focus)="
+                                        focus$.next($any($event).target.value)
+                                      "
+                                      (click)="
+                                        click$.next($any($event).target.value)
+                                      "
+                                      #instance="ngbTypeahead"
                                     />
                                   </div>
                                 </div>

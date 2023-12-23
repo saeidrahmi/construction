@@ -1,3 +1,5 @@
+import { AdvertisementsItemsInterface } from './advertisemnt-items';
+
 export interface AdvertisementInterface {
   userAdvertisementId?: any;
   userPlanId?: any;
@@ -46,4 +48,5 @@ export interface AdvertisementInterface {
   jobType?: string;
   adType?: string;
   jobResponsibilities?: string;
+  items?: AdvertisementsItemsInterface[];
 }

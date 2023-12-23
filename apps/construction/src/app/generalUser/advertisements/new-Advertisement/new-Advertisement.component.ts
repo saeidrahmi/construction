@@ -15,6 +15,12 @@ import {
   Observable,
   startWith,
   map,
+  Subject,
+  OperatorFunction,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  merge,
 } from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
@@ -39,6 +45,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserService } from '../../../services/user-service';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-new-Advertisement',
@@ -95,6 +102,37 @@ export class NewAdvertisementComponent {
     );
   imageWidth: number;
   imageHeight: number;
+  @ViewChild('instance', { static: true }) instance: NgbTypeahead;
+
+  focus$ = new Subject<string>();
+  click$ = new Subject<string>();
+  searchCategories: OperatorFunction<string, readonly string[]> = (
+    text$: Observable<string>
+  ) => {
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
+    const clicksWithClosedPopup$ = this.click$.pipe(
+      filter(() => !this.instance.isPopupOpen())
+    );
+    const inputFocus$ = this.focus$;
+
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
+      map((term) =>
+        (term === ''
+          ? this.advertisement.adType === 'rental'
+            ? this.userService.getConstructionRentalsTags()
+            : this.userService.getConstructionSales()
+          : this.advertisement.adType === 'rental'
+          ? this.userService.getConstructionRentalsTags()
+          : this.userService
+              .getConstructionSales()
+              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+        ).slice(0, 10)
+      )
+    );
+  };
 
   constructor(
     private sanitizer: DomSanitizer,
