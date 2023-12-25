@@ -14,7 +14,7 @@ import {
 import { EnvironmentInfo } from 'libs/common/src/models/common';
 import { ImageService } from '../../../services/image-service';
 import { ApiService } from '../../../services/api.service';
-import { tap, switchMap } from 'rxjs';
+import { tap, switchMap, of } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { EncryptionService } from '../../../services/encryption-service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -108,7 +108,58 @@ export class UserAdvertisementDetailsViewComponent {
               }
             }
           }),
+          switchMap((info: any) => {
+            const advertisement = info?.selectAdResult[0];
+            if (
+              advertisement?.adType === 'sale' ||
+              advertisement.adType === 'rental'
+            )
+              return this.apiService
+                .getAdvertisementItems(advertisement?.userAdvertisementId)
+                .pipe(
+                  takeUntilDestroyed(this.destroyRef),
+                  tap((items: any) => {
+                    this.advertisement.items = [];
 
+                    items.forEach((item) => {
+                      if (item?.itemImage) {
+                        const uint8Array = new Uint8Array(item?.itemImage.data);
+
+                        // Convert Uint8Array to Blob
+                        const blob = new Blob([uint8Array], {
+                          type: 'image/jpeg' /* specify MIME type if known */,
+                        });
+                        const temporaryFile = new File([blob], 'image.jpg', {
+                          type: 'image/jpeg',
+                        });
+
+                        // Create an Image object to get the dimensions
+                        const img = new Image();
+                        img.src = URL.createObjectURL(temporaryFile);
+
+                        img.onload = () => {
+                          // Set the dimensions on the temporaryFile
+                          temporaryFile['width'] = img.width;
+                          temporaryFile['height'] = img.height;
+
+                          // Now you can use temporaryFile with its dimensions
+
+                          // this.itemImageFiles.push(temporaryFile);
+                          const imageUrl = URL.createObjectURL(temporaryFile);
+                          // this.advertisement.sliderImages.push(`${imageUrl}`);
+                          this.advertisement.items.push({
+                            itemImage: `${imageUrl}`,
+                            itemCategory: item.itemCategory,
+                            itemName: item.itemName,
+                            itemDescription: item.itemDescription,
+                          });
+                        };
+                      }
+                    });
+                  })
+                );
+            else return of(null);
+          }),
           switchMap(() => {
             return this.apiService
               .isUserFavoriteAd(

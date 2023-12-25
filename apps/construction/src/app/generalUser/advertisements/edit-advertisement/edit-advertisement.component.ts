@@ -477,6 +477,7 @@ export class EditAdvertisementComponent {
     //this.sliderImages?.splice(index, 1);
   }
   addClientFormControl() {
+    if (!this.advertisement.items) this.advertisement.items = [];
     this.advertisement.items.push({
       itemImage: '',
       itemCategory: '',

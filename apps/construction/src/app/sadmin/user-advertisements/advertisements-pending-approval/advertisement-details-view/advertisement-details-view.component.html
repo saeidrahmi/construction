@@ -258,6 +258,36 @@
                     </div>
                   </div>
                 </ng-container>
+                <ng-container
+                  *ngIf="
+                    this.advertisement.items?.length > 0 &&
+                    (advertisement?.adType === 'rental' ||
+                      advertisement?.adType === 'sale')
+                  "
+                  class="my-2 rounded border"
+                >
+                  <h2>Items for {{ advertisement?.adType | titlecase }}</h2>
+                  <div class="row row-cols-2 gy-2">
+                    <div
+                      class="col-5"
+                      *ngFor="let item of this.advertisement.items"
+                    >
+                      <div class="card" style="width: 18rem">
+                        <img
+                          [src]="item.itemImage"
+                          class="card-img-top"
+                          alt="..."
+                        />
+                        <div class="card-body">
+                          <h5 class="card-title">{{ item.itemName }}</h5>
+                          <p class="card-text">{{ item.itemDescription }}.</p>
+                          {{ item.itemCategory }}
+                          <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
                 <div class="row m-2" *ngIf="advertisement?.showAddress">
                   <div class="col border border-1 p-2">
                     {{
