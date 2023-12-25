@@ -2025,6 +2025,38 @@ async function saveUserRegularAdController(req, res) {
         }
       }
     }
+    const itemNames = req.body.itemNames;
+    const itemCategorys = req.body.itemCategorys;
+    const itemDescriptions = req.body.itemDescriptions;
+
+    // Accessing files array
+    const itemImages = req.files['itemImages'];
+
+    for (let i = 0; i < itemImages.length; i++) {
+      const file = itemImages[i];
+      const itemCategory = itemCategorys[i];
+      const itemName = itemNames[i];
+      const itemDescription = itemDescriptions[i];
+
+      const { buffer } = file;
+      const insertItemsImageResult = await insertUserAdvertisementItemImage(
+        connection,
+        {
+          userAdvertisementId: insertResult.insertId,
+          itemImage: buffer,
+          itemCategory: itemCategory,
+          itemName: itemName,
+          itemDescription: itemDescription,
+        }
+      );
+
+      if (!insertItemsImageResult) {
+        await connection.rollback();
+        return res.status(500).json({
+          errorMessage: 'Failed to update information. Please try again.',
+        });
+      }
+    }
 
     if (info.topAdvertisement == '1') {
       const insertPaymentResult = await insertUserTopAdvertisementPayment(
@@ -2203,6 +2235,21 @@ async function insertHeaderImage(connection, buffer, insertId) {
 async function insertUserAdvertisementSliderImages(connection, data) {
   const selectQuery = `INSERT INTO userAdvertisementImages (userAdvertisementId , userAdvertisementImage) VALUES (?,?)`;
   const values = [data.userAdvertisementId, data.userAdvertisementImage];
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
+async function insertUserAdvertisementItemImage(connection, data) {
+  const selectQuery = `INSERT INTO userAdvertisementsItems (userAdvertisementId ,itemImage,itemCategory,itemDescription, itemName) VALUES (?,?,?,?,?)`;
+  const values = [
+    data.userAdvertisementId,
+    data.itemImage,
+    data.itemCategory,
+    data.itemDescription,
+    data.itemName,
+  ];
+
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId
     ? insertResult

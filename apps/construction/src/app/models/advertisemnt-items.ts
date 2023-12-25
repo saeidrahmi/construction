@@ -1,6 +1,6 @@
 export interface AdvertisementsItemsInterface {
-  itemImage: File;
+  itemImage: string;
   itemCategory: string;
-  item: string;
+  itemName: string;
   itemDescription: string;
 }

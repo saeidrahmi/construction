@@ -85,6 +85,7 @@ export class NewAdvertisementComponent {
   sliderImages: any[] = [];
   userId = this.storageService?.getUserId();
   constructionServices = this.userService.getConstructionServices();
+
   advertisement: AdvertisementInterface;
   getUserAdvertiseInfo$ = this.apiService
     .canUserAdvertise(this.encryptionService.encryptItem(this.userId()))
@@ -114,7 +115,7 @@ export class NewAdvertisementComponent {
       distinctUntilChanged()
     );
     const clicksWithClosedPopup$ = this.click$.pipe(
-      filter(() => !this.instance.isPopupOpen())
+      filter(() => !this.instance?.isPopupOpen())
     );
     const inputFocus$ = this.focus$;
 
@@ -144,6 +145,7 @@ export class NewAdvertisementComponent {
     this.advertisement.dateCreated = new Date();
     this.advertisement.sliderImages = [];
     this.advertisement.sliderImageFiles = [];
+    this.advertisement.items = [];
     this.apiService
       .getApplicationSetting()
       .pipe(
@@ -242,10 +244,20 @@ export class NewAdvertisementComponent {
   }
   removeItemsFormGroup(index: number) {
     (this.formArray?.get([1]).get('items') as FormArray).removeAt(index);
+    this.itemImageFiles.splice(index, 1);
+
+    // Remove the form group from the FormArray
+
     // this.advertisement.sliderImages?.splice(index, 1);
     //this.sliderImages?.splice(index, 1);
   }
   addClientFormControl() {
+    this.advertisement.items.push({
+      itemImage: '',
+      itemCategory: '',
+      itemName: '',
+      itemDescription: '',
+    });
     (this.formArray?.get([1]).get('items') as FormArray).push(
       new FormGroup({
         itemImage: new FormControl('', [Validators.required]),
@@ -327,6 +339,82 @@ export class NewAdvertisementComponent {
       };
     }
   }
+  itemImageFiles: File[] = [];
+  itemImageHandler(event: any, index: number): void {
+    const itemImageFile = event?.target?.files[0];
+
+    if (itemImageFile) {
+      const fileType = itemImageFile?.name?.split('.')?.pop()?.toLowerCase();
+      const allowedFileTypes = this.commonUtility._imageMimeTypes;
+      const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
+
+      // Check file type
+      if (fileType && !allowedFileTypes?.includes(fileType)) {
+        this.handleImageError(
+          'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+            allowedFileTypes.join(', '),
+          'Wrong File Type'
+        );
+
+        this.getItemsFormArrayControls()[index].get('itemImage').setValue('');
+        return;
+      }
+
+      // Check file size
+      if (itemImageFile.size === 0 || itemImageFile.size > maxFileSize) {
+        this.handleImageError(
+          `File size can not be empty and cannot exceed the maximum limit of ${this.utilityService.convertBytesToKbOrMb(
+            maxFileSize
+          )}`,
+          'Wrong File Size'
+        );
+        this.getItemsFormArrayControls()[index].get('itemImage').setValue('');
+        return;
+      }
+
+      // Check image dimensions
+      const [minWidth, maxWidth] =
+        this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[0];
+      const [minHeight, maxHeight] =
+        this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[1];
+
+      const img = new Image();
+      img.src = URL.createObjectURL(itemImageFile);
+
+      img.onload = () => {
+        const imageWidth = img.width;
+        this.imageWidth = img.width;
+        const imageHeight = img.height;
+        this.imageHeight = img.height;
+
+        if (
+          imageWidth < minWidth ||
+          imageWidth > maxWidth ||
+          imageHeight < minHeight ||
+          imageHeight > maxHeight
+        ) {
+          this.handleImageError(
+            `Image dimensions must be between ${minWidth}x${minHeight} and ${maxWidth}x${maxHeight} pixels.`,
+            'Invalid Image Dimensions'
+          );
+          this.getItemsFormArrayControls()[index].get('itemImage').setValue('');
+        } else {
+          // Image is within the specified dimensions
+          // this.advertisement.headerImageUrl = `url(${img.src})`;
+          // this.advertisement.headerImage = img.src;
+          // this.headerImageFile = headerImageFile;
+          // this.getItemsFormArrayControls()[index].get('itemImage').setValue('');
+          // file ok
+
+          // this.getItemsFormArrayControls()
+          //   [index].get('itemImage')
+          //   .setValue(itemImageFile);
+          this.itemImageFiles.push(itemImageFile);
+          this.advertisement.items[index].itemImage = img.src;
+        }
+      };
+    }
+  }
 
   private handleImageError(message: string, title: string): void {
     this.toastService.error(message, title, {
@@ -356,6 +444,26 @@ export class NewAdvertisementComponent {
           formData.append('sliderImages', file, file.name);
         }
       } else formData.append('sliderImages', '');
+
+      if (this.getItemsFormArrayControls()?.length > 0) {
+        for (const [
+          index,
+          item,
+        ] of this.getItemsFormArrayControls().entries()) {
+          formData.append(
+            'itemImages',
+            this.itemImageFiles[index],
+            this.itemImageFiles[index].name
+          );
+
+          formData.append('itemCategorys', item?.get('itemCategory').value);
+          formData.append('itemNames', item?.get('itemName').value);
+          formData.append(
+            'itemDescriptions',
+            item?.get('itemDescription').value
+          );
+        }
+      } else formData.append('itemImages', '');
 
       formData.append('title', this.advertisement?.title);
       formData.append(

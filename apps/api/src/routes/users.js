@@ -196,6 +196,7 @@ router.post(
   upload.fields([
     { name: 'headerImage', maxCount: 1 },
     { name: 'sliderImages', maxCount: 30 }, // You can adjust the number of allowed files
+    { name: 'itemImages', maxCount: 30 },
   ]),
   saveUserRegularAdController
 );
