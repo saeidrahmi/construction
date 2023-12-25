@@ -755,7 +755,10 @@
                               advertisement?.adType === 'sale'
                             "
                           >
-                            <div formArrayName="items" class="border rounded">
+                            <div
+                              formArrayName="items"
+                              class="border rounded p-3"
+                            >
                               <h2>Click Add Item to add sales/rental items</h2>
                               <hr />
                               <div
@@ -779,6 +782,22 @@
                                       accept="image/*"
                                       aria-describedby="fileHelpBlock"
                                       (change)="itemImageHandler($event, i)"
+                                    />
+                                  </div>
+                                </div>
+                                <div
+                                  class="row my-2"
+                                  *ngIf="this.advertisement?.items[i].itemImage"
+                                >
+                                  <div class="col-md-3 mt-1 form-labe">
+                                    &nbsp;
+                                  </div>
+                                  <div class="col-md-8">
+                                    <img
+                                      [src]="
+                                        this.advertisement?.items[i].itemImage
+                                      "
+                                      alt=""
                                     />
                                   </div>
                                 </div>
@@ -835,16 +854,22 @@
                                     Description
                                   </div>
                                   <div class="col-md-8">
-                                    <input
-                                      type="text"
+                                    <textarea
                                       class="form-control"
+                                      rows="3"
+                                      maxlength="200"
                                       placeholder="Enter Description.."
                                       formControlName="itemDescription"
                                       [(ngModel)]="
                                         (this.advertisement?.items[i])!
                                           .itemDescription
                                       "
-                                    />
+                                    ></textarea>
+                                    {{
+                                      this.advertisement?.items[i]
+                                        .itemDescription?.length
+                                    }}
+                                    / 200
                                   </div>
                                 </div>
 

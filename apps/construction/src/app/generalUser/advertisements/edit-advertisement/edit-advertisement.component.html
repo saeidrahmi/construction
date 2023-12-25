@@ -433,6 +433,153 @@
                             </div>
                           </div>
                         </ng-container>
+                        <ng-container
+                          *ngIf="
+                            advertisement?.adType === 'rental' ||
+                            advertisement?.adType === 'sale'
+                          "
+                        >
+                          <div formArrayName="items" class="border rounded p-3">
+                            <h2>Click Add Item to add sales/rental items</h2>
+                            <hr />
+                            <div
+                              *ngFor="
+                                let group of getItemsFormArrayControls();
+                                let i = index
+                              "
+                              [formGroupName]="i"
+                              class="border border-1 p-2 my-2"
+                            >
+                              <div class="row">
+                                <div class="col-md-3 mt-1 form-labe">Image</div>
+                                <div class="col-md-8">
+                                  <input
+                                    type="file"
+                                    class="form-control"
+                                    placeholder="Enter description.."
+                                    formControlName="itemImage"
+                                    accept="image/*"
+                                    aria-describedby="fileHelpBlock"
+                                    (change)="itemImageHandler($event, i)"
+                                  />
+                                </div>
+                              </div>
+                              <div
+                                class="row my-2"
+                                *ngIf="this.advertisement?.items[i].itemImage"
+                              >
+                                <div class="col-md-3 mt-1 form-labe">
+                                  &nbsp;
+                                </div>
+                                <div class="col-md-8">
+                                  <img
+                                    [src]="
+                                      this.advertisement?.items[i].itemImage
+                                    "
+                                    alt=""
+                                  />
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3 mt-1 form-labe">
+                                  Category
+                                </div>
+                                <div class="col-md-8">
+                                  <!-- <input
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="Enter Category.."
+                                      formControlName="itemCategory"
+                                    /> -->
+
+                                  <input
+                                    id="typeahead-focus"
+                                    type="text"
+                                    class="form-control"
+                                    formControlName="itemCategory"
+                                    [ngbTypeahead]="searchCategories"
+                                    (focus)="
+                                      focus$.next($any($event).target.value)
+                                    "
+                                    (click)="
+                                      click$.next($any($event).target.value)
+                                    "
+                                    #instance="ngbTypeahead"
+                                    [(ngModel)]="
+                                      (this.advertisement?.items[i])!
+                                        .itemCategory
+                                    "
+                                  />
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3 mt-1 form-labe">Item</div>
+                                <div class="col-md-8">
+                                  <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Enter Item Name.."
+                                    formControlName="itemName"
+                                    [(ngModel)]="
+                                      (this.advertisement?.items[i])!.itemName
+                                    "
+                                  />
+                                </div>
+                              </div>
+                              <div class="row">
+                                <div class="col-md-3 mt-1 form-labe">
+                                  Description
+                                </div>
+                                <div class="col-md-8">
+                                  <textarea
+                                    class="form-control"
+                                    rows="3"
+                                    maxlength="200"
+                                    placeholder="Enter Description.."
+                                    formControlName="itemDescription"
+                                    [(ngModel)]="
+                                      (this.advertisement?.items[i])!
+                                        .itemDescription
+                                    "
+                                  ></textarea>
+                                  {{
+                                    this.advertisement?.items[i].itemDescription
+                                      ?.length
+                                  }}
+                                  / 200
+                                </div>
+                              </div>
+
+                              <div class="row">
+                                <div class="col">
+                                  <button
+                                    type="button"
+                                    class="btn btn-secondary my-2"
+                                    (click)="removeItemsFormGroup(i)"
+                                  >
+                                    Remove Item
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row">
+                              <div class="col">
+                                <button
+                                  type="button"
+                                  class="btn btn-primary my-2"
+                                  (click)="addClientFormControl()"
+                                  [disabled]="
+                                    getItemsFormArrayControls().length >=
+                                      maxAdvertisementSliderImage ||
+                                    this.formArray.get([1]).get('items').invalid
+                                  "
+                                >
+                                  Add Item
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-container>
                       </div>
 
                       <div class="mt-5">

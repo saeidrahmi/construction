@@ -73,6 +73,7 @@ const {
   editRfpController,
   getRfpDetailsController,
   getUserRatingsByUserIdController,
+  getAdvertisementItemsController,
 } = require('../controllers/usersController');
 const {
   verifyAllToken,
@@ -97,6 +98,11 @@ router.post(
   getAllUserRatingsDetailsBasedOnUserId
 );
 router.post('/user-ratings-details', getUserRatingsDetailsController);
+router.post(
+  '/advertisement-items',
+  verifyAllToken,
+  getAdvertisementItemsController
+);
 router.post('/post-user-feedback', verifyAllToken, postUserFeedbackController);
 router.post(
   '/edit-user-profile',
@@ -340,7 +346,8 @@ router.post(
   verifyGeneralToken,
   upload.fields([
     { name: 'headerImage', maxCount: 1 },
-    { name: 'sliderImages', maxCount: 30 }, // You can adjust the number of allowed files
+    { name: 'sliderImages', maxCount: 30 },
+    { name: 'itemImages', maxCount: 30 },
   ]),
   editAdvertisementController
 );

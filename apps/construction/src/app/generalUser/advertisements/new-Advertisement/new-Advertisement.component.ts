@@ -215,12 +215,18 @@ export class NewAdvertisementComponent {
   setTags() {
     if (this.advertisement?.adType === 'service')
       this.constructionServices = this.userService.getConstructionServices();
-    else if (this.advertisement?.adType === 'rental')
+    else if (this.advertisement?.adType === 'rental') {
+      (this.formArray?.get([1]).get('items') as FormArray).clear();
+      (this.formArray?.get([1]).get('items') as FormArray).patchValue([]);
       this.constructionServices = this.userService.getConstructionRentalsTags();
-    else if (this.advertisement?.adType === 'job')
+    } else if (this.advertisement?.adType === 'job')
       this.constructionServices = this.userService.getConstructionJobs();
-    else if (this.advertisement?.adType === 'sale')
+    else if (this.advertisement?.adType === 'sale') {
+      (this.formArray?.get([1]).get('items') as FormArray).clear();
+      (this.formArray?.get([1]).get('items') as FormArray).patchValue([]);
       this.constructionServices = this.userService.getConstructionSales();
+    }
+
     this.setFilterTags();
   }
   private _filterTags(value: string): string[] {
@@ -245,6 +251,7 @@ export class NewAdvertisementComponent {
   removeItemsFormGroup(index: number) {
     (this.formArray?.get([1]).get('items') as FormArray).removeAt(index);
     this.itemImageFiles.splice(index, 1);
+    this.advertisement.items.splice(index, 1);
 
     // Remove the form group from the FormArray
 

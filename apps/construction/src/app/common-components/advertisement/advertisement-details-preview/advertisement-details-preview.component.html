@@ -266,8 +266,9 @@
               </ng-container>
               <ng-container
                 *ngIf="
-                  advertisement?.adType === 'rental' ||
-                  advertisement?.adType === 'sale'
+                  this.advertisement.items?.length > 0 &&
+                  (advertisement?.adType === 'rental' ||
+                    advertisement?.adType === 'sale')
                 "
                 class="my-2 rounded border"
               >

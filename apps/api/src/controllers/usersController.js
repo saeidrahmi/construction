@@ -2025,36 +2025,42 @@ async function saveUserRegularAdController(req, res) {
         }
       }
     }
-    const itemNames = req.body.itemNames;
-    const itemCategorys = req.body.itemCategorys;
-    const itemDescriptions = req.body.itemDescriptions;
 
-    // Accessing files array
-    const itemImages = req.files['itemImages'];
+    if (
+      req.files['itemImages'] &&
+      (info.adType === 'sale' || info.adType === 'rental')
+    ) {
+      const itemNames = req.body.itemNames;
+      const itemCategorys = req.body.itemCategorys;
+      const itemDescriptions = req.body.itemDescriptions;
 
-    for (let i = 0; i < itemImages.length; i++) {
-      const file = itemImages[i];
-      const itemCategory = itemCategorys[i];
-      const itemName = itemNames[i];
-      const itemDescription = itemDescriptions[i];
+      // Accessing files array
+      const itemImages = req.files['itemImages'];
 
-      const { buffer } = file;
-      const insertItemsImageResult = await insertUserAdvertisementItemImage(
-        connection,
-        {
-          userAdvertisementId: insertResult.insertId,
-          itemImage: buffer,
-          itemCategory: itemCategory,
-          itemName: itemName,
-          itemDescription: itemDescription,
+      for (let i = 0; i < itemImages.length; i++) {
+        const file = itemImages[i];
+        const itemCategory = itemCategorys[i];
+        const itemName = itemNames[i];
+        const itemDescription = itemDescriptions[i];
+
+        const { buffer } = file;
+        const insertItemsImageResult = await insertUserAdvertisementItemImage(
+          connection,
+          {
+            userAdvertisementId: insertResult.insertId,
+            itemImage: buffer,
+            itemCategory: itemCategory,
+            itemName: itemName,
+            itemDescription: itemDescription,
+          }
+        );
+
+        if (!insertItemsImageResult) {
+          await connection.rollback();
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
         }
-      );
-
-      if (!insertItemsImageResult) {
-        await connection.rollback();
-        return res.status(500).json({
-          errorMessage: 'Failed to update information. Please try again.',
-        });
       }
     }
 
@@ -2258,6 +2264,14 @@ async function insertUserAdvertisementItemImage(connection, data) {
 
 async function deleteUserAdvertisementSliderImages(connection, data) {
   const selectQuery = `DELETE FROM userAdvertisementImages  where userAdvertisementId = ?`;
+  const values = [data.userAdvertisementId];
+  const [insertResult] = await connection.execute(selectQuery, values);
+  return insertResult.affectedRows > 0 || insertResult.insertId
+    ? insertResult
+    : null;
+}
+async function deleteUserAdvertisementItems(connection, data) {
+  const selectQuery = `DELETE FROM userAdvertisementsItems  where userAdvertisementId = ?`;
   const values = [data.userAdvertisementId];
   const [insertResult] = await connection.execute(selectQuery, values);
   return insertResult.affectedRows > 0 || insertResult.insertId
@@ -3006,6 +3020,47 @@ async function editAdvertisementController(req, res) {
         }
       }
     }
+    // items
+    await deleteUserAdvertisementItems(connection, {
+      userAdvertisementId: userAdvertisementId,
+    });
+    if (
+      req.files['itemImages'] &&
+      (info.adType === 'sale' || info.adType === 'rental')
+    ) {
+      const itemNames = req.body.itemNames;
+      const itemCategorys = req.body.itemCategorys;
+      const itemDescriptions = req.body.itemDescriptions;
+
+      // Accessing files array
+      const itemImages = req.files['itemImages'];
+
+      for (let i = 0; i < itemImages.length; i++) {
+        const file = itemImages[i];
+        const itemCategory = itemCategorys[i];
+        const itemName = itemNames[i];
+        const itemDescription = itemDescriptions[i];
+
+        const { buffer } = file;
+        const insertItemsImageResult = await insertUserAdvertisementItemImage(
+          connection,
+          {
+            userAdvertisementId: userAdvertisementId,
+            itemImage: buffer,
+            itemCategory: itemCategory,
+            itemName: itemName,
+            itemDescription: itemDescription,
+          }
+        );
+
+        if (!insertItemsImageResult) {
+          await connection.rollback();
+          return res.status(500).json({
+            errorMessage: 'Failed to update information. Please try again.',
+          });
+        }
+      }
+    }
 
     await connection.commit();
     return res.status(200).json(true);
@@ -3150,6 +3205,21 @@ async function getAdvertisementEditInfoController(req, res) {
       advertisementId,
       userId,
     ]);
+
+    return res.status(200).json(selectResult);
+  } catch (error) {
+    return res.status(500).json({
+      errorMessage: 'Failed to update information. Please try again.',
+    });
+  }
+}
+async function getAdvertisementItemsController(req, res) {
+  try {
+    const advertisementId = req.body.advertisementId;
+
+    const selectAdQuery = `SELECT *  FROM userAdvertisementsItems  WHERE  userAdvertisementId=?  `;
+
+    const selectResult = await executeQuery(selectAdQuery, [advertisementId]);
 
     return res.status(200).json(selectResult);
   } catch (error) {
@@ -3609,4 +3679,5 @@ module.exports = {
   editRfpController,
   getRfpDetailsController,
   getUserRatingsByUserIdController,
+  getAdvertisementItemsController,
 };

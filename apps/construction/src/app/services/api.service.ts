@@ -892,6 +892,33 @@ export class ApiService {
         })
       );
   }
+  getAdvertisementItems(advertisementId: any): Observable<any> {
+    this.spinner.show();
+    return this.httpClient
+      .post<any>(this.backendApiUrl + '/users/advertisement-items', {
+        advertisementId: advertisementId,
+      })
+      .pipe(
+        take(1),
+        timeout(this.apiTimeoutValue),
+        finalize(() => {
+          this.spinner.hide();
+        }),
+        catchError((error) => {
+          this.toastService.error(
+            error.message,
+            'Retrieving Advertisement Items Info. Failed',
+            {
+              timeOut: this.toastrTimeoutValue,
+              positionClass: 'toast-top-right',
+              closeButton: true,
+              progressBar: true,
+            }
+          );
+          throw error;
+        })
+      );
+  }
   getRfpEditInfo(rfpId: any, userId: string): Observable<any> {
     this.spinner.show();
     return this.httpClient

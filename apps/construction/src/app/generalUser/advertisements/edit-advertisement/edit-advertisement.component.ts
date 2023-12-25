@@ -8,7 +8,21 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ToastrService } from 'ngx-toastr';
-import { tap, first, switchMap, map, startWith, Observable } from 'rxjs';
+import {
+  tap,
+  first,
+  switchMap,
+  map,
+  startWith,
+  Observable,
+  of,
+  OperatorFunction,
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  merge,
+} from 'rxjs';
 import { ApiService } from '../../../services/api.service';
 import { EncryptionService } from '../../../services/encryption-service';
 import { StorageService } from '../../../services/storage.service';
@@ -32,6 +46,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { UserService } from '../../../services/user-service';
 import { ENTER, COMMA } from '@angular/cdk/keycodes';
+import { NgbTypeahead } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-edit-advertisement',
@@ -68,6 +83,37 @@ export class EditAdvertisementComponent {
   filteredTags: Observable<string[]>;
   myTags: string[] = [];
   announcer = inject(LiveAnnouncer);
+  @ViewChild('instance', { static: true }) instance: NgbTypeahead;
+
+  focus$ = new Subject<string>();
+  click$ = new Subject<string>();
+  searchCategories: OperatorFunction<string, readonly string[]> = (
+    text$: Observable<string>
+  ) => {
+    const debouncedText$ = text$.pipe(
+      debounceTime(200),
+      distinctUntilChanged()
+    );
+    const clicksWithClosedPopup$ = this.click$.pipe(
+      filter(() => !this.instance?.isPopupOpen())
+    );
+    const inputFocus$ = this.focus$;
+
+    return merge(debouncedText$, inputFocus$, clicksWithClosedPopup$).pipe(
+      map((term) =>
+        (term === ''
+          ? this.advertisement.adType === 'rental'
+            ? this.userService.getConstructionRentalsTags()
+            : this.userService.getConstructionSales()
+          : this.advertisement.adType === 'rental'
+          ? this.userService.getConstructionRentalsTags()
+          : this.userService
+              .getConstructionSales()
+              .filter((v) => v.toLowerCase().indexOf(term.toLowerCase()) > -1)
+        ).slice(0, 10)
+      )
+    );
+  };
 
   constructionServices = this.userService.getConstructionServices();
   selectedAdvertisementID = this.storageService?.getSelectedAdvertisementId();
@@ -174,6 +220,75 @@ export class EditAdvertisementComponent {
             })
           );
       }),
+      switchMap((results: any) => {
+        const advertisement = results[0];
+        if (
+          advertisement?.adType === 'sale' ||
+          advertisement.adType === 'rental'
+        )
+          return this.apiService
+            .getAdvertisementItems(this.selectedAdvertisementID())
+            .pipe(
+              takeUntilDestroyed(this.destroyRef),
+              tap((items: any) => {
+                this.advertisement.items = [];
+
+                items.forEach((item) => {
+                  if (item?.itemImage) {
+                    const uint8Array = new Uint8Array(item?.itemImage.data);
+
+                    // Convert Uint8Array to Blob
+                    const blob = new Blob([uint8Array], {
+                      type: 'image/jpeg' /* specify MIME type if known */,
+                    });
+                    const temporaryFile = new File([blob], 'image.jpg', {
+                      type: 'image/jpeg',
+                    });
+
+                    // Create an Image object to get the dimensions
+                    const img = new Image();
+                    img.src = URL.createObjectURL(temporaryFile);
+
+                    img.onload = () => {
+                      // Set the dimensions on the temporaryFile
+                      temporaryFile['width'] = img.width;
+                      temporaryFile['height'] = img.height;
+
+                      // Now you can use temporaryFile with its dimensions
+
+                      this.itemImageFiles.push(temporaryFile);
+                      const imageUrl = URL.createObjectURL(temporaryFile);
+                      // this.advertisement.sliderImages.push(`${imageUrl}`);
+                      this.advertisement.items.push({
+                        itemImage: `${imageUrl}`,
+                        itemCategory: item.itemCategory,
+                        itemName: item.itemName,
+                        itemDescription: item.itemDescription,
+                      });
+                      (this.formArray?.get([1]).get('items') as FormArray).push(
+                        new FormGroup({
+                          itemImage: new FormControl('image', [
+                            Validators.required,
+                          ]),
+                          itemCategory: new FormControl(item.itemCategory, [
+                            Validators.required,
+                          ]),
+                          itemName: new FormControl(item.itemName, [
+                            Validators.required,
+                          ]),
+                          itemDescription: new FormControl(
+                            item.itemDescription,
+                            [Validators.required]
+                          ),
+                        })
+                      );
+                    };
+                  }
+                });
+              })
+            );
+        else return of(null);
+      }),
       switchMap(() =>
         this.apiService.getApplicationSetting().pipe(
           takeUntilDestroyed(this.destroyRef),
@@ -189,6 +304,7 @@ export class EditAdvertisementComponent {
     private sanitizer: DomSanitizer,
     private userService: UserService
   ) {
+    this.advertisement.items = [];
     const adObject = this.storageService?.getAdvertisement()();
     if (
       adObject?.advertisementSelected &&
@@ -198,6 +314,7 @@ export class EditAdvertisementComponent {
     else this.advertisement = {};
 
     this.advertisement.sliderImages = [];
+
     this.advertisementCommunicationService.message$
       .pipe(first())
       .subscribe((message) => {
@@ -231,6 +348,7 @@ export class EditAdvertisementComponent {
           jobLocation: new FormControl('', []),
           jobType: new FormControl('', []),
           jobResponsibilities: new FormControl('', []),
+          items: new FormArray([]),
         }),
         this.fb.group({
           showPhone: new FormControl('', []),
@@ -250,12 +368,18 @@ export class EditAdvertisementComponent {
   setTags() {
     if (this.advertisement?.adType === 'service')
       this.constructionServices = this.userService.getConstructionServices();
-    else if (this.advertisement?.adType === 'rental')
+    else if (this.advertisement?.adType === 'rental') {
+      (this.formArray?.get([1]).get('items') as FormArray).clear();
+      (this.formArray?.get([1]).get('items') as FormArray).patchValue([]);
       this.constructionServices = this.userService.getConstructionRentalsTags();
-    else if (this.advertisement?.adType === 'job')
+    } else if (this.advertisement?.adType === 'job')
       this.constructionServices = this.userService.getConstructionJobs();
-    else if (this.advertisement?.adType === 'sale')
+    else if (this.advertisement?.adType === 'sale') {
+      (this.formArray?.get([1]).get('items') as FormArray).clear();
+      (this.formArray?.get([1]).get('items') as FormArray).patchValue([]);
       this.constructionServices = this.userService.getConstructionSales();
+    }
+
     this.setFilterTags();
   }
   setFilterTags() {
@@ -266,7 +390,108 @@ export class EditAdvertisementComponent {
       )
     );
   }
+  itemImageFiles: File[] = [];
+  itemImageHandler(event: any, index: number): void {
+    const itemImageFile = event?.target?.files[0];
 
+    if (itemImageFile) {
+      const fileType = itemImageFile?.name?.split('.')?.pop()?.toLowerCase();
+      const allowedFileTypes = this.commonUtility._imageMimeTypes;
+      const maxFileSize = this.commonUtility._advertisementHeaderMaxSize;
+
+      // Check file type
+      if (fileType && !allowedFileTypes?.includes(fileType)) {
+        this.handleImageError(
+          'Selected file type is not allowed. Please select a file with one of the following extensions: ' +
+            allowedFileTypes.join(', '),
+          'Wrong File Type'
+        );
+
+        this.getItemsFormArrayControls()[index].get('itemImage').setValue('');
+        return;
+      }
+
+      // Check file size
+      if (itemImageFile.size === 0 || itemImageFile.size > maxFileSize) {
+        this.handleImageError(
+          `File size can not be empty and cannot exceed the maximum limit of ${this.utilityService.convertBytesToKbOrMb(
+            maxFileSize
+          )}`,
+          'Wrong File Size'
+        );
+        this.getItemsFormArrayControls()[index].get('itemImage').setValue('');
+        return;
+      }
+
+      // Check image dimensions
+      const [minWidth, maxWidth] =
+        this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[0];
+      const [minHeight, maxHeight] =
+        this.commonUtility._advertisementHeaderMinMaxWidthHeightPixel[1];
+
+      const img = new Image();
+      img.src = URL.createObjectURL(itemImageFile);
+
+      img.onload = () => {
+        const imageWidth = img.width;
+        // this.imageWidth = img.width;
+        const imageHeight = img.height;
+        // this.imageHeight = img.height;
+
+        if (
+          imageWidth < minWidth ||
+          imageWidth > maxWidth ||
+          imageHeight < minHeight ||
+          imageHeight > maxHeight
+        ) {
+          this.handleImageError(
+            `Image dimensions must be between ${minWidth}x${minHeight} and ${maxWidth}x${maxHeight} pixels.`,
+            'Invalid Image Dimensions'
+          );
+          this.getItemsFormArrayControls()[index].get('itemImage').setValue('');
+        } else {
+          // Image is within the specified dimensions
+          // this.advertisement.headerImageUrl = `url(${img.src})`;
+          // this.advertisement.headerImage = img.src;
+          // this.headerImageFile = headerImageFile;
+          // this.getItemsFormArrayControls()[index].get('itemImage').setValue('');
+          // file ok
+
+          // this.getItemsFormArrayControls()
+          //   [index].get('itemImage')
+          //   .setValue(itemImageFile);
+          this.itemImageFiles.push(itemImageFile);
+          this.advertisement.items[index].itemImage = img.src;
+        }
+      };
+    }
+  }
+  removeItemsFormGroup(index: number) {
+    (this.formArray?.get([1]).get('items') as FormArray).removeAt(index);
+    this.itemImageFiles.splice(index, 1);
+    this.advertisement.items.splice(index, 1);
+
+    // Remove the form group from the FormArray
+
+    // this.advertisement.sliderImages?.splice(index, 1);
+    //this.sliderImages?.splice(index, 1);
+  }
+  addClientFormControl() {
+    this.advertisement.items.push({
+      itemImage: '',
+      itemCategory: '',
+      itemName: '',
+      itemDescription: '',
+    });
+    (this.formArray?.get([1]).get('items') as FormArray).push(
+      new FormGroup({
+        itemImage: new FormControl('', [Validators.required]),
+        itemCategory: new FormControl('', [Validators.required]),
+        itemName: new FormControl('', [Validators.required]),
+        itemDescription: new FormControl('', [Validators.required]),
+      })
+    );
+  }
   private _filterTags(value: string): string[] {
     const filterValue = value.toLowerCase();
 
@@ -299,6 +524,9 @@ export class EditAdvertisementComponent {
     this.headerImageFile = null;
     this.advertisement.headerImage = null;
     this.advertisement.headerImageUrl = null;
+  }
+  getItemsFormArrayControls() {
+    return (this.formArray?.get([1]).get('items') as FormArray).controls;
   }
   private handleImageError(message: string, title: string): void {
     this.toastService.error(message, title, {
@@ -398,6 +626,25 @@ export class EditAdvertisementComponent {
           formData.append('sliderImages', file, file.name);
         }
       } else formData.append('sliderImages', '');
+      if (this.getItemsFormArrayControls()?.length > 0) {
+        for (const [
+          index,
+          item,
+        ] of this.getItemsFormArrayControls().entries()) {
+          formData.append(
+            'itemImages',
+            this.itemImageFiles[index],
+            this.itemImageFiles[index].name
+          );
+
+          formData.append('itemCategorys', item?.get('itemCategory').value);
+          formData.append('itemNames', item?.get('itemName').value);
+          formData.append(
+            'itemDescriptions',
+            item?.get('itemDescription').value
+          );
+        }
+      } else formData.append('itemImages', '');
 
       formData.append('title', this.advertisement?.title);
       formData.append('description', this.advertisement?.description);
